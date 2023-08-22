@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="DefaultCheckSQL">
+
+	<select id="DefaultCheckSQL.dolistMenu" parameterType="dataMap" resultType="dataMap">
+		/*
+			SQL ID : DefaultCheckSQL.dolistMenu
+			전체 메뉴 조회
+		*/
+		<![CDATA[
+			WITH RECURSIVE 
+				MENU_LEVEL(
+					MENUCD, 
+					MENUNM, 
+					MENUNM_EN, 
+					MENUNM_JP, 
+					MENUNM_CN, 
+					MENUNM_ETC, 
+					MENU_RFK, 
+					MENU_IDX, 
+					MENU_PCD, 
+					MENU_TCD, 
+					MENU_OPT, 
+					MENU_URL, 
+					MENU_ICON, 
+					UP_CD, 
+					USEYN,
+					MENU_LVL,
+					REF_SITEID,
+					SITEID,
+					PATH, 
+					CYCLE
+				)
+			AS (
+				SELECT
+					M.MENUCD,
+					M.MENUNM,
+					M.MENUNM_EN,
+					M.MENUNM_JP,
+					M.MENUNM_CN,
+					M.MENUNM_ETC,
+					M.MENU_RFK,
+					M.MENU_IDX,
+					M.MENU_PCD,
+					M.MENU_TCD,
+					M.MENU_OPT,
+					M.MENU_URL,
+					M.MENU_ICON,
+					M.UP_CD,
+					M.USEYN,
+					M.MENU_LVL,
+					M.REF_SITEID,
+					M.SITEID,
+					ARRAY[M.MENUCD::TEXT],
+					FALSE
+				FROM 
+					TA_MENU M
+				WHERE
+					M.REF_SITEID LIKE '%' || #{siteid} || '%' 
+				AND 
+					M.SITEID = #{siteid}
+				AND
+					M.MENU_PCD = #{menu_pcd}
+				AND
+					M.MENU_TCD = #{menu_tcd}
+				AND
+					M.USEYN = 'Y'
+				AND
+					M.MENU_LVL < 3
+					
+				UNION ALL 
+				SELECT 
+					M.MENUCD,
+					M.MENUNM,
+					M.MENUNM_EN,
+					M.MENUNM_JP,
+					M.MENUNM_CN,
+					M.MENUNM_ETC,
+					M.MENU_RFK,
+					M.MENU_IDX,
+					M.MENU_PCD,
+					M.MENU_TCD,
+					M.MENU_OPT,
+					M.MENU_URL,
+					M.MENU_ICON,
+					M.UP_CD,
+					M.USEYN,
+					M.MENU_LVL,
+					M.REF_SITEID,
+					M.SITEID,
+					ARRAY_APPEND(ML.PATH, M.MENUCD::TEXT), 
+					M.MENUCD = ANY(ML.PATH)
+				FROM
+					TA_MENU M, MENU_LEVEL ML
+				WHERE M.UP_CD = ML.MENUCD AND NOT CYCLE 
+			)
+			SELECT 
+				ML.MENUCD,
+				ML.MENUNM,
+				ML.MENUNM_EN,
+				ML.MENUNM_JP,
+				ML.MENUNM_CN,
+				ML.MENUNM_ETC,
+				ML.MENU_RFK,
+				ML.MENU_IDX,
+				ML.MENU_LVL,
+				ML.MENU_PCD,
+				ML.MENU_TCD,
+				ML.MENU_OPT,
+				ML.MENU_URL,
+				ML.MENU_ICON,
+				COUNT(*) OVER (PARTITION BY ML.UP_CD) AS SUB_CNT,
+				ML.UP_CD,
+				ML.USEYN 
+			FROM 
+				MENU_LEVEL ML, TA_MENU_AUTH R
+		]]>
+		WHERE ML.MENUCD = R.MENUCD
+			AND ML.USEYN = 'Y'
+			AND R.USEYN = 'Y'		
+			AND R.SITEID = #{siteid}
+		<if test="rolelist != null and rolelist != ''">
+			AND R.ROLE_PCD IN
+			<foreach collection="rolelist" item="rolerow" index="idx" open="(" separator="," close=")">
+				#{rolerow}
+			</foreach>
+		</if>
+		<if test="guest != null and guest != ''">
+			AND R.ROLE_PCD = #{guest}
+		</if>
+		ORDER BY PATH
+
+	</select>
+	
+	<select id="DefaultCheckSQL.doCountAdminMenuAuth" resultType="int">
+		<!-- 2020-05-14 최상규 -->
+		/*
+			SQL ID : DefaultCheckSQL.doCountAdminMenuAuth
+			관리자 메뉴 체크 여부
+		*/
+			SELECT
+				COUNT(*)
+			FROM
+				TA_MENU_AUTH
+			WHERE SITEID = #{siteid}
+			AND USEYN = 'Y'
+			<if test="rolelist != null and rolelist != ''">
+			AND ROLE_PCD IN
+				<foreach collection="rolelist" item="rolerow" index="idx" open="(" separator="," close=")">
+					#{rolerow}
+				</foreach>
+			</if>
+	</select>
+
+	<select id="DefaultCheckSQL.dolistMenuAll" parameterType="dataMap" resultType="dataMap">
+		/*
+			SQL ID : DefaultCheckSQL.dolistMenuAll
+			전체 메뉴 조회
+		*/
+		<![CDATA[
+		SELECT ROWNUM AS RSEQ
+			, M.MENUCD
+			, M.MENUNM
+			, M.MENUNM_EN
+			, M.MENUNM_JP
+			, M.MENUNM_CN
+			, M.MENUNM_ETC
+			, M.MENU_RFK
+			, M.MENU_CSS
+			, M.MENU_IDX
+			, M.MENU_LVL
+			, M.MENU_PCD
+			, M.MENU_TCD
+			, M.MENU_OPT
+			, M.MENU_URL
+			, NVL(M.UP_CD, '') AS UP_CD
+		FROM TA_MENU M
+		]]>
+		WHERE M.MENUCD IN (
+				SELECT R.MENUCD FROM TA_MENU_AUTH R
+				WHERE 1 = 1
+					AND R.SITEID = #{siteid}
+					AND R.USEYN = 'Y'
+				<if test="rolelist != null and rolelist != ''">
+					AND R.ROLE_PCD IN
+					<foreach collection="rolelist" item="rolerow" index="idx" open="(" separator="," close=")">
+						#{rolerow}
+					</foreach>
+				</if>
+		)
+			AND M.SITEID = #{siteid}
+			AND M.REF_SITEID LIKE '%' || #{siteid} || '%'
+			AND M.USEYN = 'Y'
+		ORDER BY M.MENU_LVL, M.UP_CD, M.MENU_IDX, M.MENUCD
+
+	</select>
+
+
+	<select id="DefaultCheckSQL.getoneMenu" parameterType="dataMap" resultType="dataMap">
+		/*
+			SQL ID : DefaultCheckSQL.getoneMenu
+						메뉴 단건 정보 조회
+		*/
+		<![CDATA[
+		SELECT M.MENUCD
+			, M.MENUNM
+			, M.MENUNM_EN
+			, M.MENUNM_JP
+			, M.MENUNM_CN
+			, M.MENUNM_ETC
+			, M.MENU_RFK
+			, M.MENU_CSS
+			, M.MENU_IDX
+			, M.MENU_LVL
+			, M.MENU_PCD
+			, M.MENU_TCD
+			, M.MENU_OPT
+			, M.MENU_URL
+			, COALESCE(M.UP_CD, '') AS UP_CD
+		FROM TA_MENU M
+		WHERE 1 = 1
+			AND M.SITEID = #{siteid}
+			AND M.REF_SITEID LIKE '%' || #{siteid} || '%'
+			AND M.USEYN = 'Y'	
+		]]>
+		<choose>
+			<when test="parent_uri !=''">
+				AND M.MENU_URL = #{parent_uri}
+			</when>
+			<otherwise>
+				AND M.MENU_URL = #{requri}
+			</otherwise>
+		</choose>
+	</select>
+
+	<select id="DefaultCheckSQL.getUseAuth" parameterType="dataMap" resultType="dataMap">
+		/*
+			SQL ID : DefaultCheckSQL.getUseAuth
+						사용권한(등록, 수정, 삭제) 조회
+		*/
+		<![CDATA[
+		SELECT A.MENUCD
+		  	,CASE WHEN A.INSERT_YN_CNT >= 1 THEN 'Y' ELSE 'N' END AS INSERT_YN
+		 	,CASE WHEN A.UPDATE_YN_CNT >= 1 THEN 'Y' ELSE 'N' END AS UPDATE_YN
+		  	,CASE WHEN A.DELETE_YN_CNT >= 1 THEN 'Y' ELSE 'N' END AS DELETE_YN
+		FROM
+		(	  
+			SELECT
+			   	MENUCD
+			   	,COUNT(CASE WHEN ((USEAUTH & 1) > 0)::INT > 0 THEN 1 ELSE NULL END) AS INSERT_YN_CNT
+			   	,COUNT(CASE WHEN ((USEAUTH & 2) > 0)::INT > 0 THEN 1 ELSE NULL END) AS UPDATE_YN_CNT
+			   	,COUNT(CASE WHEN ((USEAUTH & 4) > 0)::INT > 0 THEN 1 ELSE NULL END) AS DELETE_YN_CNT   
+			FROM TA_MENU_AUTH 
+			WHERE MENUCD = #{menucd}
+				AND ROLE_PCD IN (
+				   SELECT 
+				      ROLE_PCD 
+				   FROM 
+				      TU_USER_ROLE 
+				   WHERE USERNO = #{userno} AND ROLE_PCD != 'EX'
+			)
+			GROUP BY MENUCD
+		) A
+		]]>
+		
+	</select>
+
+	<select id="DefaultCheckSQL.countNewMessage" parameterType="dataMap" resultType="int">
+		/*
+			SQL ID : DefatulCheckSQL.countNewMessage
+			사용자가 로그인한 상태일 경우 해당 사용자의 쪽지 수신정보를 가져온다.
+		*/
+
+		SELECT COUNT(TM.MESG_SEQ) AS TOTAL_COUNT FROM TB_MESSAGE TM
+		WHERE TM.RECVERNO = #{userno} AND TM.MESG_SCD IN ('S', 'T')
+
+	</select>
+
+	<select id="DefaultCheckSQL.countTotalMessage" parameterType="dataMap" resultType="int">
+		/*
+			SQL ID : DefatulCheckSQL.countTotalMessage
+			사용자가 로그인한 상태일 경우 해당 사용자의 쪽지 수신정보를 가져온다.
+		*/
+		SELECT COUNT(TM.MESG_SEQ) AS TOTAL_COUNT
+		FROM TB_MESSAGE TM
+		WHERE TM.RECVERNO = #{userno}
+			AND TM.MESG_SCD IN ('S', 'T', 'Y')
+
+	</select>
+
+</mapper>

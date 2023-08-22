@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="UTF-8"?><!--Converted at: Sun Jul 26 10:59:33 KST 2015-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="EvalQuestionSql">
+
+    <!-- 문제 관련 -->
+	<sql id="sql_where"> 
+		/*		
+			조회조건(공통)
+		*/
+		
+		
+		
+		    AND QUE.QUESTION_TITLE LIKE '%'||#{search_value} ||'%'
+		
+		
+        
+        
+        
+        AND QUE.COURSE_CATEGORY_ID IN ( SELECT CATEGORY_ID 
+                                  FROM TB_L_COURSE_CATEGORY
+                                  START WITH CATEGORY_ID = #{course_category_id}
+                                  CONNECT BY PRIOR CATEGORY_ID = UPPER_CATEGORY_ID ) 
+        
+        
+        
+        
+        
+          AND QUE.USE_YN = #{use_yn}
+        
+        
+		
+		
+		  
+			QUE.SUBJECT_ID = '${subject_id}' 
+		 
+		
+						
+		
+		
+          AND QUE.ASP_ID = #{asp_id}
+        
+        
+		
+	</sql>
+	
+	<select id="EvalQuestionSql.doCountExamQuestion" resultType="int">
+		/*     
+			SQL ID : EvalQuestionSql.doCountExamQuestion
+			문제은행 목록 카운트
+		*/
+	    
+			SELECT	COUNT(QUESTION_NO) 
+			FROM TB_L_QUESTION QUE
+			WHERE	1=1
+		
+		<include refid="sql_where"/> 
+    </select>
+
+
+	<select id="EvalQuestionSql.doListExamQuestion" resultType="DataMap">
+		/*
+			SQL ID : EvalQuestionSql.doListExamQuestion
+			문제은행 목록 조회
+		*/
+		
+		SELECT
+		        AA.* 
+		        , SUBSTR(AA.INSERT_DT, 1, 4) || '.' 
+		        || SUBSTR(AA.INSERT_DT, 5, 2) || '.' 
+		        || SUBSTR(AA.INSERT_DT, 7, 2) AS MAKE_INSERT_DT
+		        , ( SELECT  COMMON_CD_NM
+                    FROM    TB_L_COMMON_CD_MNG
+                    WHERE   AA.QUESTION_TYPE = COMMON_CD
+                ) AS QUESTION_TYPE_NM
+                , ( SELECT  COMMON_CD_NM
+                    FROM    TB_L_COMMON_CD_MNG
+                    WHERE   AA.QUESTION_DIFFICULTY = COMMON_CD
+                ) AS QUESTION_DIFFICULTY_NM
+		FROM
+		        (     
+		            SELECT
+		                    ROW_NUMBER() OVER( ORDER BY ${sidx} ${sord}) AS RSEQ
+		                    , A.* 
+		            FROM
+		                    (      
+		                        SELECT
+		                                QUE.QUESTION_NO		                                
+		                                , QUE.QUESTION_TITLE
+		                                , QUE.QUESTION_TYPE
+		                                , QUE.USE_YN       
+		                                , QUE.SITE_ID
+		                                , QUE.ASP_ID       
+		                                , QUE.INSERT_DT     
+		                                , QUE.INSERT_USER_NO
+		                                , QUE.QUESTION_DIFFICULTY
+		                        FROM
+		                                TB_L_QUESTION QUE          
+		                        WHERE   1=1    
+		
+       	<include refid="sql_where"/>
+		
+				            ) A    
+				) AA    
+		WHERE   AA.RSEQ BETWEEN (${page}-1) * ${rows} + 1 AND ${page} * ${rows}
+		
+    </select>
+    
+        <select id="EvalQuestionSql.doGetExamQuestion" parameterType="dataMap" resultType="dataMap">
+        /*
+            SQL ID: EvalQuestionSql.doGetExamQuestion
+            문제 정보 한 건 조회 
+        */
+        
+            SELECT
+                    QUE.QUESTION_NO
+                    , QUE.COURSE_CATEGORY_ID
+                    , QUE.QUESTION_TITLE
+                    , QUE.QUESTION_CONTENT
+                    , QUE.QUESTION_DIFFICULTY
+                    , QUE.QUESTION_EXPLAIN
+                    , QUE.EXAMPLE_RANDOM_YN
+                    , QUE.ANSWER_SAMPLE
+                    , QUE.SIMILAR_ANSWER_SAMPLE
+                    , QUE.EXAMPLE_CNT
+                    , QUE.BASIC_SCR
+                    , QUE.QUESTION_TYPE
+                    , QUE.USE_YN       
+                    , QUE.INSERT_DT     
+                    , QUE.INSERT_USER_NO
+                    , ( SELECT CATEGORY_NM 
+	                    FROM   TB_L_COURSE_CATEGORY
+	                    WHERE  CATEGORY_ID = QUE.COURSE_CATEGORY_ID
+	                ) AS COURSE_CATEGORY_NM
+	                , ( SELECT  COMMON_CD_NM
+	                    FROM    TB_L_COMMON_CD_MNG
+	                    WHERE   QUE.QUESTION_TYPE = COMMON_CD
+	                ) AS QUESTION_TYPE_NM
+            FROM
+                    TB_L_QUESTION QUE
+            WHERE   QUESTION_NO = #{question_no}
+         
+    </select>
+	
+	<insert id="EvalQuestionSql.doAddExamQuestion" parameterType="DataMap">
+		/*
+			SQL ID : EvalQuestionSql.doAddExamQuestion
+			문제 등록
+		*/
+		
+			INSERT INTO TB_L_QUESTION (  
+				QUESTION_NO            
+				, COURSE_CATEGORY_ID       
+				, QUESTION_TITLE           
+				, QUESTION_CONTENT     
+				, QUESTION_TYPE        
+				, QUESTION_DIFFICULTY      
+				, QUESTION_EXPLAIN     
+				, ANSWER_SAMPLE        
+				, SIMILAR_ANSWER_SAMPLE  
+				, EXAMPLE_RANDOM_YN      
+				, EXAMPLE_CNT            
+				, BASIC_SCR 
+				, USE_YN
+				, SITE_ID
+				, ASP_ID
+				, INSERT_DT
+				, INSERT_USER_NO
+				, SUBJECT_ID
+			) VALUES ( 
+				#{question_no}              
+				, #{course_category_id}     
+				, #{question_title}         
+				, #{question_content}       
+				, #{question_type}          
+				, #{question_difficulty}    
+				, #{question_explain}       
+				, #{answer_sample}          
+				, #{similar_answer_sample}  
+				, #{example_random_yn}      
+				, #{example_cnt}            
+				, #{basic_scr}   
+				, #{use_yn}
+				, #{site_id}
+				, #{asp_id}
+				, TO_CHAR(SYSDATE,'YYYYMMDDHH24MISS')
+				, #{insert_user_no}
+				, #{subject_id}
+			)
+		
+	</insert>
+	
+	<update id="EvalQuestionSql.doModifyExamQuestion" parameterType="DataMap">
+        /*
+            SQL ID : EvalQuestionSql.doModifyExamQuestion
+            문제 수정
+        */
+        
+            UPDATE TB_L_QUESTION SET   
+                COURSE_CATEGORY_ID      = #{course_category_id}      
+                , QUESTION_TITLE        = #{question_title}            
+                , QUESTION_CONTENT      = #{question_content}       
+                , QUESTION_TYPE         = #{question_type}          
+                , QUESTION_DIFFICULTY   = #{question_difficulty}       
+                , QUESTION_EXPLAIN      = #{question_explain}       
+                , ANSWER_SAMPLE         = #{answer_sample}          
+                , SIMILAR_ANSWER_SAMPLE = #{similar_answer_sample}   
+                , EXAMPLE_RANDOM_YN     = #{example_random_yn}       
+                , EXAMPLE_CNT           = #{example_cnt}             
+                , BASIC_SCR             = #{basic_scr}   
+                , USE_YN                = #{use_yn}
+                , UPDATE_DT             = TO_CHAR(SYSDATE,'YYYYMMDDHH24MISS')
+                , UPDATE_USER_NO        = #{update_user_no}
+            WHERE QUESTION_NO = #{question_no} 
+        
+    </update>
+    
+    <update id="EvalQuestionSql.doModifyExamQuestionUseYn" parameterType="DataMap">
+        /*
+            SQL ID : EvalQuestionSql.doModifyExamQuestionUseYn
+            문제 사용 유무수정
+        */
+        
+            UPDATE TB_L_QUESTION SET   
+                USE_YN                = #{use_yn}
+                , UPDATE_DT             = TO_CHAR(SYSDATE,'YYYYMMDDHH24MISS')
+                , UPDATE_USER_NO        = #{update_user_no}
+            WHERE QUESTION_NO in  ( ${question_no_ary} ) 
+        
+    </update>
+    
+    <delete id="EvalQuestionSql.doRemoveExamQuestion" parameterType="DataMap">
+        /*
+            SQL ID : EvalQuestionSql.doRemoveExamQuestion
+            문제 삭제
+        */
+        
+            DELETE FROM TB_L_QUESTION    
+            WHERE QUESTION_NO = #{question_no} 
+        
+    </delete>
+    
+    <!-- 문제 보기 관련 -->
+    <select id="EvalQuestionSql.doListExample" resultType="DataMap">
+	    /*
+	            SQL ID : EvalQuestionSql.doListExample
+	            문제 보기 목록 조회
+	    */
+	    
+         SELECT
+                QUESTION_NO
+                , QUESTION_EXAMPLE_NO
+                , EXAMPLE_NM
+                , EXAMPLE_ORDERS
+                , ANSWER_YN
+         FROM   TB_L_QUESTION_EXAMPLE
+         WHERE  QUESTION_NO = #{question_no}
+         ORDER BY QUESTION_NO ASC
+         
+    </select>
+	
+    <insert id="EvalQuestionSql.doAddExample" parameterType="DataMap">
+        /*
+            SQL ID : EvalQuestionSql.doAddExample
+            문제 보기 등록
+        */
+        
+            INSERT INTO TB_L_QUESTION_EXAMPLE (  
+                QUESTION_NO
+				, QUESTION_EXAMPLE_NO
+				, EXAMPLE_NM
+				, EXAMPLE_ORDERS
+				, ANSWER_YN
+                , SITE_ID
+                , INSERT_DT
+                , INSERT_USER_NO
+            ) VALUES ( 
+                #{question_no}
+				, #{question_example_no}
+				, #{example_nm}
+				, #{example_orders}
+				, #{answer_yn}
+                , #{site_id}
+                , TO_CHAR(SYSDATE,'YYYYMMDDHH24MISS')
+                , #{insert_user_no}
+            )
+        
+    </insert>
+    
+    <update id="EvalQuestionSql.doModifyExample" parameterType="DataMap">
+        /*
+            SQL ID : EvalQuestionSql.doModifyExample
+            문제 보기 수정
+        */
+        
+            UPDATE TB_L_QUESTION_EXAMPLE SET   
+                EXAMPLE_NM            = #{example_nm}
+                , EXAMPLE_ORDERS        = #{example_orders}
+                , ANSWER_YN             = #{answer_yn}
+                , UPDATE_DT             = TO_CHAR(SYSDATE,'YYYYMMDDHH24MISS')
+                , UPDATE_USER_NO        = #{update_user_no}
+            WHERE QUESTION_EXAMPLE_NO = #{question_example_no} 
+        
+    </update>
+    
+    <delete id="EvalQuestionSql.doRemoveExample" parameterType="DataMap">
+        /*
+            SQL ID : EvalQuestionSql.doRemoveExample
+            문제 보기 삭제
+        */
+        
+            DELETE FROM TB_L_QUESTION_EXAMPLE
+            WHERE QUESTION_NO = #{question_no}   
+        
+    </delete>
+    
+    <delete id="EvalQuestionSql.doRemovePerExample" parameterType="DataMap">
+        /*
+            SQL ID : EvalQuestionSql.doRemovePerExample
+            문제 보기 개별 삭제
+        */
+        
+            DELETE FROM TB_L_QUESTION_EXAMPLE
+            WHERE QUESTION_EXAMPLE_NO = #{del_example_no}   
+        
+    </delete>
+	
+</mapper>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="TestSQL">
+
+	<insert id="TestSQL.doInsertTest" parameterType="dataMap">
+		/*
+			SQL ID : AuthSQL.doInsertTest
+			트랜잭션 TEST
+		*/
+		<![CDATA[
+			INSERT INTO TA_TEST
+				(
+					TEST_SEQ,
+					CMMT
+				)
+			VALUES
+				(
+					#{test_seq},
+					#{cmmt}
+				)
+		]]>
+	</insert>
+	
+</mapper>

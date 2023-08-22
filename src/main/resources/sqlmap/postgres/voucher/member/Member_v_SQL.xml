@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Member_v_SQL">
+
+	<select id="Member_v_SQL.doCountMemberId" resultType="int">
+		<!-- 2021-04-21 추정완 -->
+		/*
+			SQL ID : Member_v_SQL.doCountMemberId
+			아이디 중복검사
+		*/
+		<![CDATA[
+			SELECT
+				COUNT(*)
+			FROM
+				TBLMEMBER
+			WHERE
+				ID = #{id}
+		]]>
+	</select>
+	
+	<select id="Member_v_SQL.doCountBizRegno" resultType="int">
+		<!-- 2021-04-21 추정완 -->
+		/*
+			SQL ID : Member_v_SQL.doCountBizRegno
+			사업자등록번호 중복여부
+		*/
+		<![CDATA[
+			SELECT
+				COUNT(*)
+			FROM
+				TBLBUSINESS
+			WHERE
+				BIZ_REGNO = #{biz_regno}
+				
+		]]>
+	</select>
+	
+	<insert id="Member_v_SQL.doInsertBusiness" parameterType="dataMap">
+		<!-- 2021-04-21 추정완 -->
+		/*
+			SQL ID : Member_v_SQL.doInsertBusiness
+			회원가입 - 기업
+		*/
+		<![CDATA[
+			INSERT INTO TBLBUSINESS
+			(
+				BIZ_SEQNO,
+				BIZ_SIZE,
+				BIZ_REGNO,
+				BIZ_NAME,
+				OWNER,
+				TEL_NO,
+				ZIPCODE,
+				ADDRESS1,
+				ADDRESS2,
+				BIZ_TYPE,
+				BIZ_ITEM,
+				MAJOR_ITEMS,
+				EST_DATE,
+				EMPLOY_COUNT,
+				SALES_YEAR,
+				SALES_TOTAL,
+				VERI_FLAG,
+				VERI_DATE,
+				BIZ_IMAGE,
+				HOMEPAGE,
+				RND_REGISTNO,
+				STD_CLASS_CD1,
+				STD_CLASS_CD2,
+				STD_CLASS_CD3,
+				STD_CLASS_CD4,
+				STD_CLASS_CD5,
+				DC_SECTOR,
+				DC_SECTOR_DETAIL,
+				DC_RND_DETAIL,
+				SC_SECTOR,
+				SC_SECTOR_DETAIL,
+				INSERT_USER,
+				INSERT_IP,
+				INSERT_DATE,
+				UPDATE_USER,
+				UPDATE_IP,
+				UPDATE_DATE,
+				DELETE_FLAG,
+				location
+			)
+			VALUES
+			(
+				#{biz_seqno},
+				#{biz_size},
+				#{biz_regno},
+				#{biz_name},
+				#{owner},
+				#{tel_no},
+				#{zipcode},
+				#{address1},
+				#{address2},
+				#{biz_type},
+				#{biz_item},
+				#{major_items},
+				NOW(),
+				0,
+				#{sales_year},
+				0,
+				'N',
+				#{est_date},
+				#{biz_image},
+				#{homepage},
+				#{rnd_registno},
+				#{selStdClassCd1},
+				#{selStdClassCd2},
+				#{selStdClassCd3},
+				#{selStdClassCd4},
+				#{selStdClassCd5},
+				#{dc_sector},
+				#{dc_sector_detail},
+				#{dc_rnd_detail},
+				#{sc_sector},
+				#{sc_sector_detail},
+				NULL,
+				#{insert_ip},
+				NOW(),
+				NULL,
+				#{update_ip},
+				NOW(),
+				'N',
+				#{location}
+			)
+		]]>
+	</insert>
+	
+	<insert id="Member_v_SQL.doInsertMember" parameterType="dataMap">
+		<!-- 2021-04-21 추정완 -->
+		/*
+			SQL ID : Member_v_SQL.doInsertMember
+			회원가입 - 사용자
+		*/
+		<![CDATA[
+			INSERT INTO TBLMEMBER
+			(
+				MEMBER_SEQNO,
+				BIZ_SEQNO,
+				MEMBER_TYPE,
+				MEMBER_AUTH,
+				ID,
+				PW,
+				USER_NAME,
+				USER_TEL_NO,
+				USER_EMAIL,
+				USER_MOBILE_NO,
+				USER_FAX_NO,
+				USER_DEPART,
+				USER_RANK,
+				PW_TEMP_FLAG,
+				PW_INVALID_COUNT,
+				PW_NEXT_CHANGE_DATE,
+				VERI_IDENTITY_FLAG,
+				VERI_IDENTITY_DATE,
+				VERI_MOBILENO_FLAG,
+				VERI_MOBILENO_DATE,
+				VERI_EMAIL_FLAG,
+				VERI_EMAIL_DATE,
+				AGREE_PP_FLAG,
+				AGREE_TC_FLAG,
+				AGREE_3RD_FLAG,
+				REGIST_DATE,
+				UNREGIST_DATE,
+				INSERT_ID,
+				INSERT_IP,
+				INSERT_DATE,
+				UPDATE_ID,
+				UPDATE_IP,
+				UPDATE_DATE,
+				DELETE_FLAG
+			)
+			VALUES
+			(
+				#{member_seqno},
+				#{biz_seqno},
+				'P',
+				#{member_auth},
+				#{id},
+				#{pw},
+				#{user_name},
+				#{user_tel_no},
+				#{user_email},
+				#{user_mobile_no},
+				#{user_fax_no},
+				#{user_depart},
+				#{user_rank},
+				'Y',
+				0,
+				NOW(),
+				'N',
+				NOW(),
+				'N',
+				NOW(),
+				'N',
+				NOW(),
+				'Y',
+				'Y',
+				'Y',
+				NOW(),
+				NOW(),
+				NULL,
+				#{insert_ip},
+				NOW(),
+				NULL,
+				#{update_ip},
+				NOW(),
+				'N'
+			)
+		]]>
+	</insert>
+	
+	<select id="Member_v_SQL.doGetMemberInfo" resultType="dataMap">
+		<!-- 2021-04-21 추정완 -->
+		/*
+			SQL ID : Member_v_SQL.doGetMemberInfo
+			사용자 정보 가져오기
+		*/
+		<![CDATA[
+			SELECT
+			*
+			FROM
+			(
+				SELECT
+					*
+				FROM
+					TBLBUSINESS TBN
+				INNER JOIN
+				(
+					SELECT
+						*
+					FROM
+						TBLMEMBER
+					WHERE
+						MEMBER_SEQNO = #{member_seqno}::INT
+				) TBM
+				ON
+				TBN.BIZ_SEQNO = TBM.BIZ_SEQNO
+			) AS USERINFO
+		]]>
+	</select>
+	
+	<update id="Member_v_SQL.doUpdatePw" parameterType="dataMap">
+		<!-- 2021-04-21 추정완 -->
+		/*
+			SQL ID : Member_v_SQL.doUpdatePw
+			사용자 패스워드 변경
+		*/
+		<![CDATA[
+			UPDATE	
+				TBLMEMBER
+			SET
+				PW = #{pw}
+			WHERE
+				MEMBER_SEQNO = #{member_seqno}::INT
+			AND
+				ID = #{id}
+		]]>
+	</update>
+	
+	<update id="Member_v_SQL.doUpdateBusiness" parameterType="dataMap">
+		<!-- 2021-04-21 추정완 -->
+		/*
+			SQL ID : Member_v_SQL.doUpdateBusiness
+			회원관리정보 변경 - 사업자정보
+		*/
+		<![CDATA[
+			UPDATE	
+				TBLBUSINESS
+			SET
+				BIZ_REGNO = #{biz_regno},
+				BIZ_SIZE = #{biz_size},
+				BIZ_NAME = #{biz_name},
+				OWNER = #{owner},
+				TEL_NO = #{tel_no},
+				ZIPCODE = #{zipcode},
+				ADDRESS1 = #{address1},
+				ADDRESS2 = #{address2},
+				STD_CLASS_CD1 = #{std_class_cd1},
+				STD_CLASS_CD2 = #{std_class_cd2},
+				STD_CLASS_CD3 = #{std_class_cd3},
+				STD_CLASS_CD4 = #{std_class_cd4},
+				STD_CLASS_CD5 = #{std_class_cd5},
+				EMPLOY_COUNT = #{employ_count}::INT,
+				SALES_YEAR = #{sales_year},
+				RND_REGISTNO = #{rnd_registno},
+				DC_SECTOR = #{dc_sector},
+				DC_SECTOR_DETAIL = #{dc_sector_detail},
+				DC_RND_DETAIL = #{dc_rnd_detail},
+				SC_SECTOR = #{sc_sector},
+				SC_SECTOR_DETAIL = #{sc_sector_detail},
+				LOCATION = #{location},
+				BIZ_TYPE = #{biz_type},
+				BIZ_ITEM = #{biz_item},
+				UPDATE_USER = ${member_seqno},
+				UPDATE_DATE = NOW()
+			WHERE
+				BIZ_SEQNO = #{biz_seqno}::INT
+		]]>
+	</update>
+	
+	<update id="Member_v_SQL.doUpdateMember" parameterType="dataMap">
+		<!-- 2021-04-21 추정완 -->
+		/*
+			SQL ID : Member_v_SQL.doUpdateMember
+			회원관리정보 변경 - 사용자정보
+		*/
+		<![CDATA[
+			UPDATE
+				TBLMEMBER
+			SET
+				USER_NAME = #{user_name},
+				USER_MOBILE_NO = #{user_mobile_no},
+				USER_EMAIL = #{user_email},
+				USER_DEPART = #{user_depart},
+				USER_RANK = #{user_rank},
+				UPDATE_ID = ${member_seqno},
+				UPDATE_DATE = NOW()
+			WHERE
+				MEMBER_SEQNO = #{member_seqno}::INT
+			AND
+				ID = #{id}
+		]]>
+	</update>
+	
+	<select id="Member_v_SQL.doMemberBiz" resultType="dataMap">
+		<!-- 2021-04-21 추정완 -->
+		/*
+			SQL ID : Member_v_SQL.doMemberBiz
+			사업자등록증 확인
+		*/
+		<![CDATA[
+			select *
+			from(
+			select replace(bizno ,'-','')as trans_number,vbi.*
+			from voucher.nice_companyoutline_info vbi 
+			)A
+			where A.trans_number = #{bizRegno}
+		]]>
+	</select>
+</mapper>

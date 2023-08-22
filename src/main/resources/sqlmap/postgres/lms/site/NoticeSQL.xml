@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="NoticeSQL">
+
+<sql id="search">
+		<if test="sc_keywd != null and sc_keywd != ''">
+			<if test="sc_where == 'notice_all'">
+				<![CDATA[
+					AND notice_contents LIKE '%' || #{sc_keywd} || '%'
+	         		AND notice_title LIKE '%' || #{sc_keywd} || '%'
+	         	]]>
+			</if>				
+			<if test="sc_where == 'notice_title'">
+				<![CDATA[
+					AND notice_title LIKE '%' || #{sc_keywd} || '%'
+				]]>
+			</if>
+			<if test="sc_where == 'notice_contents'">
+				<![CDATA[
+					AND notice_contents LIKE '%' || #{sc_keywd} || '%'
+				]]>
+			</if>
+		</if>	
+	<if test ="sc_confirm != ''">
+		<if test="sc_confirm == '1999-01-01'">
+			AND notice_confirm_date = '1999-01-01'::timestamp 
+		</if>
+		<if test="sc_confirm != '1999-01-01'">
+			<![CDATA[
+			AND notice_confirm_date >= '1999-01-02'::timestamp 
+			]]>
+		</if>
+	</if>
+		
+		
+	</sql>	
+
+	<select id="NoticeSQL.doCountNotice" resultType="int">
+	
+		/*
+			SQL ID : NoticeSQL.doCountNotice
+			게시물 카운트
+		*/
+		<![CDATA[
+		SELECT COUNT(*) 
+		FROM 
+			TBLSUBJECT_NOTICE_SEND t 
+			inner join tblsubject_notice_send_detail tnsd 
+			on t.notice_seqno = tnsd.notice_seqno 
+		WHERE 1=1 
+		AND t.MEMBER_SEQNO = #{member_seqno}::INT
+		AND DELETE_FLAG = 'N'
+		]]>
+			<include refid="search"/>	
+	</select>	
+	
+	<select id="NoticeSQL.doListNotice" resultType="dataMap">
+		/*
+			SQL ID : NoticeSQL.doListNotice
+			통지내역 리스트
+		*/
+			<![CDATA[
+			SELECT
+			t.notice_seqno,
+			t.subject_seqno,
+			t.member_seqno,
+			t.send_type,
+			t.notice_type,
+			t.notice_title,
+			t.notice_contents,
+			t.confirm_required_flag,
+			TO_CHAR(notice_send_date,'YYYY-MM-DD') AS notice_send_date,
+			(select
+			case when
+			tns.notice_send_date + interval '7 day' > NOW()
+			THEN 'Y' 
+			ELSE 'N' 
+			END
+			from tblsubject_notice_send tns
+			where tns.notice_seqno  = t.notice_seqno) as NEW_MARK,
+			t.fmst_seqno,
+			TO_CHAR(tnsd.notice_confirm_date,'YYYY-MM-DD') AS notice_confirm_date
+			FROM
+			tblsubject_notice_send t 
+			inner join tblsubject_notice_send_detail tnsd 
+			on t.notice_seqno = tnsd.notice_seqno 
+			WHERE
+			t.delete_flag = 'N'
+			AND
+			t.MEMBER_SEQNO = #{member_seqno}::INT
+			]]>
+			<include refid="search"/>	
+			<![CDATA[
+			ORDER BY notice_seqno DESC
+			limit ${rows}::INT offset (${page}::INT -1) * 10
+			]]>
+	</select>
+	
+	<select id="NoticeSQL.doGetNotice" resultType="dataMap">
+		/*
+			SQL ID : NoticeSQL.doGetNotice
+			통지 상세
+		*/
+		
+		SELECT
+			*
+			FROM
+			tblsubject_notice_send t
+			inner join tblsubject_notice_send_detail tnsd 
+			on t.notice_seqno = tnsd.notice_seqno 
+			WHERE
+			t.notice_seqno = #{notice_seqno}::INT
+			AND
+			t.delete_flag = 'N'
+	</select>
+	
+	<select id="NoticeSQL.doListNoticeAttach" parameterType="dataMap" resultType="dataMap">
+		/*
+			SQL ID: NoticeSQL.doListNoticeAttach
+			첨부파일 리스트 조회
+		*/
+		SELECT * 
+		FROM tblsubject_notice_send
+		WHERE fmst_seqno = ${fmst_seqno}
+	</select>
+	
+	<update id="NoticeSQL.noticeConfirm" parameterType="dataMap" >
+		/*
+			SQL ID: NoticeSQL.noticeConfirm
+			통보확인
+		*/
+		UPDATE tblsubject_notice_send_detail
+		SET notice_confirm_date = CAST(NOW() AS timeStamp)
+		WHERE notice_seqno = #{notice_seqno}::INT
+	</update>
+	
+<insert id = "NoticeSQL.insertNotice" parameterType="dataMap" >
+	/* 
+			2021.07.21 유지민
+			SQL ID : NoticeSQL.insertNotice
+			통지 등록
+		*/
+		INSERT INTO tblsubject_notice_send 
+		(notice_seqno,
+		<if test="subject_seqno != ''">
+			subject_seqno,
+		</if>
+		<if test="subject_proc_step != ''">
+			subject_proc_step,
+		</if>
+		target,
+		member_seqno,
+		send_type,
+		notice_type,
+		notice_title,
+		notice_contents,
+		confirm_required_flag,
+		notice_send_date,
+		delete_flag
+		<if test="fmst_seqno != ''" >
+		,
+		fmst_seqno
+		</if>
+		)
+		VALUES (
+		#{notice_seqno}::INT,
+		<if test="subject_seqno != ''">
+			#{subject_seqno}::INT,
+		</if>
+		<if test="subject_proc_step != ''">
+			#{subject_proc_step},
+		</if>
+		#{target},
+		#{member_seqno}::INT,
+		#{send_type},
+		#{notice_type},
+		#{notice_title},
+		#{notice_contents_data},
+		#{confirm_required_flag},
+		CAST(NOW() AS timeStamp),
+		'N'
+		<if test="fmst_seqno != ''" >
+		,
+		#{fmst_seqno}::INT
+		</if>
+		)
+		
+	</insert>
+	
+	<insert id = "NoticeSQL.insertNoticeDetail" parameterType="dataMap" >
+	/* 
+			2021.07.21 유지민
+			SQL ID : NoticeSQL.insertNoticeDetail
+			통지 디테일 등록
+		*/
+		INSERT INTO tblsubject_notice_send_detail 
+		(notice_seqno,
+		<if test="subject_seqno != ''">
+			subject_seqno,
+		</if>
+		member_seqno,
+		notice_confirm_date
+		)
+		VALUES (
+		#{notice_seqno},
+		<if test="subject_seqno != ''">
+			#{subject_seqno}::INT,
+		</if>
+		#{member_seqno}::INT,
+		'1999-01-01'::timestamp
+		)
+		
+	</insert>
+	
+	<insert id = "NoticeSQL.insertNoticeHist" parameterType="dataMap" >
+	/* 
+			2021.07.21 유지민
+			SQL ID : NoticeSQL.insertNoticeHist
+			통지 hist 등록
+		*/
+		INSERT INTO tblsubject_notice_send_hist
+		(notice_seqno,
+		insert_date,
+		sendyn
+		)
+		VALUES (
+		#{notice_seqno},
+		CAST(NOW() AS timeStamp),
+		'N'
+		)
+		
+	</insert>
+	
+	<select id="NoticeSQL.NoticeUser" resultType="dataMap">
+	/*
+		SQL ID : NoticeSQL.NoticeUser
+		통지대상 리스트
+	*/
+		select 
+		ts.subject_seqno ,
+		ts.subject_title ,
+		ts.subject_ref,
+			case 
+				when ts.subject_proc_step = '000' then '사업공고'
+				when ts.subject_proc_step = '110' then '사업신청'
+				when ts.subject_proc_step = '120' then '협약체결'
+				when ts.subject_proc_step = '130' then '권한부여'
+				when ts.subject_proc_step = '141' then '선금신청'
+				when ts.subject_proc_step = '142' then '잔금신청'
+				when ts.subject_proc_step = '143' then '잔금반납'
+				when ts.subject_proc_step = '151' then '진도점검'
+				when ts.subject_proc_step = '152' then '현장실태조사'
+				when ts.subject_proc_step = '160' then '설문조사'
+				when ts.subject_proc_step = '170' then '최종평가'
+				when ts.subject_proc_step = '180' then '추적조사'
+				when ts.subject_proc_step = '900' then '사업종료'
+			else ''
+			end as subject_proc_step,
+		tcdDC.user_id as dc_user_id,
+		tcdSC.user_id as sc_user_id,
+		tcdadm .user_id as adm_user_id
+		from tblsubject ts
+		inner join tblsubject_contract_detail tcdDC on ts.subject_seqno = tcdDC.subject_seqno and tcdDC.user_gubun = 'DC'
+		inner join tblsubject_contract_detail tcdSC on ts.subject_seqno = tcdSC.subject_seqno and tcdSC.user_gubun = 'SC'
+		inner join tblsubject_contract_detail tcdADM on ts.subject_seqno = tcdADM.subject_seqno and tcdADM.user_gubun = 'adm'
+		where ts.delete_flag ='N'
+		and ts.subject_seqno = #{subject_seqno}::INT
+	</select>
+	
+	<select id="NoticeSQL.doPopupListNotice" resultType="dataMap">
+		/*
+			SQL ID : NoticeSQL.doPopupListNotice
+			통지내역 리스트
+		*/
+			SELECT
+			t.notice_seqno,
+			t.subject_seqno,
+			t.member_seqno,
+			t.send_type,
+			t.notice_type,
+			t.notice_title,
+			t.notice_contents,
+			t.confirm_required_flag,
+			TO_CHAR(notice_send_date,'YYYY-MM-DD') AS notice_send_date,
+			t.fmst_seqno,
+			TO_CHAR(tnsd.notice_confirm_date,'YYYY-MM-DD') AS notice_confirm_date
+			FROM
+			tblsubject_notice_send t 
+			inner join tblsubject_notice_send_detail tnsd 
+			on t.notice_seqno = tnsd.notice_seqno 
+			WHERE
+			t.delete_flag = 'N'
+			AND
+			t.MEMBER_SEQNO = #{member_seqno}::INT
+			AND
+			tnsd.notice_confirm_date = '1999-01-01'::timestamp
+			
+					ORDER BY notice_seqno ASC
+	</select>
+</mapper>

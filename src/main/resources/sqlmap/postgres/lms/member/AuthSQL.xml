@@ -1,0 +1,595 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="AuthSQL">
+
+	<!-- 권한 관련 SQL문 -->
+	<select id="AuthSQL.doListAuth" resultType="dataMap">
+		<!-- 2020-03-23 추정완 -->
+		/*
+			SQL ID : AuthSQL.doListAuth
+			권한 리스트
+		*/
+		<![CDATA[
+		SELECT
+			*
+		FROM
+		(
+			SELECT
+				(ROW_NUMBER() OVER()) AS RNUM,
+				COMMCD,
+				COMMCD_GCD,
+		]]>
+		<choose>
+			<when test="locale == 'en_US'">
+				CDNM_EN AS CDNM,
+			</when>
+			<otherwise>
+				CDNM,
+			</otherwise>
+		</choose>
+		<![CDATA[
+				COMMCD_VAL1,
+				USEYN,
+				REGUID,
+				TO_CHAR(TO_DATE(REGDTM, 'yyyymmddHH24MISS'),'YYYY/MM/DD HH24:MI') AS REGDTM,
+				MODUID,
+				TO_CHAR(TO_DATE(MODDTM, 'yyyymmddHH24MISS'),'YYYY/MM/DD HH24:MI') AS MODDTM
+			FROM 
+				TA_COMM_CODE 
+			WHERE 
+				COMMCD_GCD = 'ROLE_PCD'
+			AND
+				SITEID = #{siteid}
+			AND
+				COMMCD_LVL = 2
+			ORDER BY COMMCD_IDX 
+		) AS AUTHLIST
+		WHERE
+			RNUM BETWEEN (#{page}::INT -1) * (#{rows}::INT) + 1 AND #{page}::INT * #{rows}::INT
+		]]>
+	</select>
+	
+	<select id="AuthSQL.doCountAuth" resultType="int">
+		<!-- 2020-03-23 추정완 -->
+		/*
+			SQL ID : AuthSQL.doCountAuth
+			권한 카운트
+		*/
+		<![CDATA[
+			SELECT
+				COUNT(*)
+			FROM 
+					TA_COMM_CODE 
+				WHERE 
+					COMMCD_GCD = 'ROLE_PCD'
+				AND
+					SITEID = #{siteid}
+				AND
+					COMMCD_LVL = 2
+		]]>
+	</select>
+	
+	<select id="AuthSQL.doCheckCodeOverlap" parameterType="dataMap" resultType="int">
+		<!-- 2020-04-21 추정완 -->
+		/*
+			SQL ID : AuthSQL.doCheckCodeOverlap
+			코드명 중복확인
+		*/
+		<![CDATA[
+			SELECT	
+				COUNT(*)
+			FROM 
+				TA_COMM_CODE 
+			WHERE 
+				SITEID = #{siteid}
+			AND COMMCD = #{commcd}
+				
+		]]>
+	</select>
+	
+	<insert id="AuthSQL.doInsertAuth" parameterType="dataMap">
+		<!-- 2020-04-21 추정완 -->
+		/*
+			SQL ID : AuthSQL.doInsertAuth
+			권한 등록하기
+		*/
+		<![CDATA[
+			INSERT INTO TA_COMM_CODE
+				(
+					COMMCD,
+					COMMCD_GCD,
+					CDNM,
+					COMMCD_CMMT,
+					COMMCD_VAL1,
+					COMMCD_PCD,
+					COMMCD_TCD,
+					COMMCD_LVL,
+					COMMCD_IDX,
+					REGUID,
+					MODUID,
+					REGDTM,
+					MODDTM,
+					USEYN,
+					SITEID
+				)
+			VALUES
+				(
+					#{codenm},
+					'ROLE_PCD',
+					#{authnm},
+					#{authcmmt},
+					#{authcheck},
+					'TU_USER_ROLE',
+					'P',
+					2,
+					(SELECT MAX(COMMCD_IDX) + 1 FROM TA_COMM_CODE WHERE COMMCD_GCD = 'ROLE_PCD'),
+					#{userid},
+					#{userid},
+					TO_CHAR(NOW(), 'YYYYMMDDHH24MISS'),
+					TO_CHAR(NOW(), 'YYYYMMDDHH24MISS'),
+					#{usecheck},
+					#{siteid}
+				)
+		]]>
+	</insert>
+	
+	<select id="AuthSQL.doListMenuAllData" resultType="dataMap">
+			<!-- 2020-04-24 추정완 -->
+			/*
+				SQL ID : AuthSQL.doListMenuAllData
+				전체 메뉴 데이터
+			*/
+			SELECT
+				MENUCD
+			FROM
+				TA_MENU
+	</select>
+	
+	<select id="AuthSQL.doGetMenu" resultType="dataMap">
+		<!-- 2020-05-07 추정완 -->
+		/*
+			SQL ID : AuthSQL.doGetMenu
+			각 메뉴 가져오기
+		*/
+		<![CDATA[
+			SELECT
+				*
+			FROM
+				TA_MENU
+			WHERE
+				SITEID = #{siteid}
+			AND
+				MENUCD = #{menucd}
+		]]>
+	</select>
+	
+	
+	<insert id="AuthSQL.doInsertAuthMenuList" parameterType="dataMap" useGeneratedKeys="false">
+			<!-- 2020-04-21 추정완 -->
+			/*
+				SQL ID : AuthSQL.doInsertAuthMenuList
+				권한 등록 시 메뉴 리스트 등록
+			*/
+			<foreach collection="list" item="item" index="index" separator=";" close=";">
+				INSERT INTO TA_MENU_AUTH
+				(
+					MENUAUTH_SEQ
+					, MENUCD
+					, ROLE_PCD
+					, USEAUTH
+					, NOTE
+					, REGUID
+					, MODUID
+					, REGDTM
+					, MODDTM
+					, USEYN
+					, SITEID
+				)
+				VALUES
+				(
+					#{item.menuauth_seq}
+					, #{item.menucd}
+					, #{codenm}
+					, 0
+					, 'jstree-unchecked'
+					, #{userid}
+					, #{userid}
+					, TO_CHAR(NOW(), 'YYYYMMDDHH24MISS')
+					, TO_CHAR(NOW(), 'YYYYMMDDHH24MISS')
+					, 'N'
+					, #{siteid}
+				)
+			</foreach>
+	</insert>
+	
+	<select id="AuthSQL.doCountAuthOfMemberAuth" resultType="int">
+		<!-- 2020-04-29 추정완 -->
+		/*
+			SQL ID : AuthSQL.doDeleteAuthOfMemberAuth
+			삭제할 권한 존재여부
+		*/
+		<![CDATA[
+			SELECT
+				COUNT(*)
+			FROM
+				TU_USER_ROLE
+			WHERE
+				ROLE_PCD = #{role_pcd}
+		]]>
+	</select>
+		
+	<delete id="AuthSQL.doDeleteAuth" parameterType="dataMap">
+		<!-- 2020-04-21 추정완 -->
+		/*
+			SQL ID : AuthSQL.doDeleteAuth
+			권한 삭제하기
+		*/
+		<![CDATA[
+			DELETE
+			FROM
+				TA_COMM_CODE
+			WHERE
+				COMMCD = #{commcd}
+			AND
+				COMMCD_GCD = #{commcd_gcd}
+			AND
+				SITEID = #{siteid}
+		]]>
+	</delete>
+	
+	<delete id="AuthSQL.doDeleteAuthMenu" parameterType="dataMap">
+		<!-- 2020-04-21 추정완 -->
+		/*
+			SQL ID : AuthSQL.doDeleteAuth
+			권한 메뉴 삭제하기
+		*/
+		<![CDATA[
+			DELETE
+			FROM
+				TA_MENU_AUTH
+			WHERE
+				ROLE_PCD = #{role_pcd}
+			AND
+				SITEID = #{siteid}
+		]]>
+	</delete>
+	
+	<select id="AuthSQL.doGetAuthInfo" resultType="dataMap">
+		<!-- 2020-04-21 추정완 -->
+		/*
+			SQL ID : AuthSQL.doGetAuthInfo
+			권한 정보 가져오기
+		*/
+		<![CDATA[
+			SELECT
+				COMMCD,
+				COMMCD_GCD,
+				CDNM,
+				COMMCD_CMMT,
+				COMMCD_VAL1,
+				CDNM_ETC,
+				USEYN
+			FROM
+				TA_COMM_CODE
+			WHERE
+				COMMCD = #{commcd}
+			AND
+				COMMCD_GCD = #{commcd_gcd}
+			AND
+				SITEID = #{siteid}
+		]]>
+	</select>
+	
+	<update id="AuthSQL.doUpdateAuth" parameterType="dataMap">
+		<!-- 2020-04-21 추정완 -->
+		/*
+			SQL ID : AuthSQL.doUpdateAuth
+			권한 수정하기
+		*/
+		<![CDATA[
+			UPDATE TA_COMM_CODE
+			SET
+				COMMCD = #{codenm},
+				CDNM = #{authnm},
+				COMMCD_CMMT = #{authcmmt},
+				COMMCD_VAL1 = #{authcheck},
+				USEYN = #{usecheck},
+				MODUID = #{userid},
+				MODDTM = TO_CHAR(NOW(), 'YYYYMMDDHH24MISS')
+			WHERE
+				COMMCD = #{c_commcd}
+			AND
+				COMMCD_GCD = #{c_commcd_gcd}
+			AND
+				SITEID = #{siteid}
+		]]>
+	</update>
+	<update id="AuthSQL.doUpdateMenuAuth" parameterType="dataMap">
+		<!-- 2020-04-21 추정완 -->
+		/*
+			SQL ID : AuthSQL.doUpdateMenuAuth
+			권한메뉴 수정하기
+		*/
+		<![CDATA[
+			UPDATE TA_MENU_AUTH
+			SET
+				ROLE_PCD = #{codenm}
+			WHERE
+				ROLE_PCD = #{c_commcd}
+			AND
+				SITEID = #{siteid}
+		]]>
+	</update>
+	
+	<!-- 메뉴 관련 SQL문 -->
+	<select id="AuthSQL.doListAuthTree" resultType="dataMap">
+		<!-- 2020-03-25 추정완 -->
+		/*
+			SQL ID : AuthSQL.doListAuthTree
+			권한 트리 리스트 가져오기
+		*/
+			<![CDATA[
+			WITH RECURSIVE MENU_LIST
+				(
+					MENUCD,
+					UP_CD,
+			]]>
+			<choose>
+				<when test="locale == 'en_US'">
+					MENUNM_EN AS MENUNM,
+				</when>
+				<otherwise>
+					MENUNM,
+				</otherwise>
+			</choose>
+			<![CDATA[
+					MENU_IDX, 
+					MENU_LVL,
+					MENU_PCD, 
+					MENU_TCD, 
+					MENU_OPT, 
+					MENU_URL, 
+					PATH,
+					CYCLE
+				)
+			AS
+				(
+					SELECT
+						M.MENUCD, 
+						M.UP_CD,
+						M.MENUNM,
+						M.MENU_IDX,
+						M.MENU_LVL,
+						M.MENU_PCD,
+						M.MENU_TCD,
+						M.MENU_OPT,
+						M.MENU_URL,
+						ARRAY[M.MENUCD::TEXT],
+						FALSE
+					FROM
+						TA_MENU M
+					WHERE
+						M.MENU_LVL = 1 AND M.USEYN = 'Y' AND M.MENU_TCD = #{menu_tcd}
+					UNION ALL
+					SELECT
+						M.MENUCD, 
+						M.UP_CD,
+						M.MENUNM,
+						M.MENU_IDX,
+						M.MENU_LVL,
+						M.MENU_PCD,
+						M.MENU_TCD,
+						M.MENU_OPT,
+						M.MENU_URL,
+						ARRAY_APPEND(ML.PATH, M.MENUCD::text), 
+						M.MENUCD = ANY(ML.PATH)
+					FROM
+						TA_MENU M, MENU_LIST ML
+					WHERE M.UP_CD = ML.MENUCD AND NOT CYCLE 
+				)
+			SELECT 
+				ML.MENUCD, 
+				ML.UP_CD,
+				ML.MENUNM,
+				ML.MENU_IDX,
+				ML.MENU_LVL,
+				ML.MENU_PCD,
+				ML.MENU_TCD,
+				ML.MENU_OPT,
+				ML.MENU_URL
+			FROM 
+				MENU_LIST ML
+			ORDER BY PATH
+		]]>
+	</select>
+
+	<select id="AuthSQL.doListMenuAuth" resultType="dataMap">
+		<!-- 2020-04-22 추정완 -->
+		/*
+			SQL ID : AuthSQL.doListMenuAuth
+			권한에 따른 메뉴 데이터 가져오기
+		*/
+		<![CDATA[
+			SELECT
+				TMA.MENUCD,
+				TMA.ROLE_PCD,
+				TMA.USEAUTH,
+				TMA.USEYN,
+				TMA.NOTE,
+				TA.MENU_LVL,
+				TA.MENU_PCD,
+				(CASE WHEN ((TMA.USEAUTH & 1) > 0)::INT = 1 THEN 'Y' ELSE 'N' END) AS INSERT_YN,
+				(CASE WHEN ((TMA.USEAUTH & 2) > 0)::INT = 1 THEN 'Y' ELSE 'N' END) AS UPDATE_YN,
+				(CASE WHEN ((TMA.USEAUTH & 4) > 0)::INT = 1 THEN 'Y' ELSE 'N' END) AS DELETE_YN
+			FROM
+				TA_MENU_AUTH TMA, TA_MENU TA
+			WHERE
+				TMA.ROLE_PCD = #{commcd}
+			AND
+				TMA.SITEID = #{siteid}
+			AND
+				TMA.MENUCD = TA.MENUCD
+		]]>
+	</select>
+	
+	<select id="AuthSQL.doGetMaxMenuSeq" resultType="int">
+		<!-- 2020-04-23 추정완 -->
+		/*
+			SQL ID : AuthSQL.doGetMaxMenuSeq
+			메뉴 시퀀스 최댓값 구하기
+		*/
+		<![CDATA[
+			SELECT
+				MAX(MENUAUTH_SEQ) + 1
+			FROM
+				TA_MENU_AUTH
+		]]>
+	</select>
+	
+	<select id="AuthSQL.doListAuthMemory" resultType="dataMap">
+		<!-- 2020-04-24 추정완 -->
+		/*
+			SQL ID : AuthSQL.doListAuthMemory
+			권한 메뉴 메모리 리스트
+		*/
+		<![CDATA[
+			SELECT
+				*
+			FROM
+				TA_MENU_AUTH
+			WHERE
+				ROLE_PCD = #{role_pcd}
+			AND
+				USEYN = 'Y'
+			AND
+				SITEID = #{siteid}
+		]]>
+	</select>
+	
+	<update id="AuthSQL.doUpdateMenu" parameterType="dataMap">
+		<!-- 2020-04-24 추정완 -->
+		/*
+			SQL ID : AuthSQL.doUpdateMenu
+			권한 메뉴 저장(체크_메뉴 업데이트)
+		*/
+		<foreach  item="item" collection="list"  index="index" separator=";" close=";" >
+			<![CDATA[
+				UPDATE TA_MENU_AUTH
+				SET 
+					USEYN	= #{item.useyn},
+					USEAUTH = #{item.useauth}::INT,
+					NOTE = #{item.stateauth}
+				WHERE 
+					ROLE_PCD = #{role_pcd}
+					AND SITEID = #{siteid}
+					AND MENUCD = #{item.menucd}
+						
+			]]>		
+		</foreach>
+	</update>
+	
+	<update id="AuthSQL.doResetMenuAll" parameterType="dataMap">
+		<!-- 2020-04-26 추정완 -->
+		/*
+			SQL ID : AuthSQL.doResetMenuAll
+			권한 메뉴 초기화
+		*/
+		<![CDATA[
+			UPDATE TA_MENU_AUTH
+				SET 
+					USEYN	= 'N',
+					USEAUTH = 0
+				WHERE 
+					ROLE_PCD = #{role_pcd}
+				AND 
+					SITEID = #{siteid}
+		]]>
+	</update>
+	
+
+	
+	<select id="AuthSQL.doListNodeChild" resultType="dataMap">
+		<!-- 2020-04-24 추정완 -->
+		/*
+			SQL ID : AuthSQL.doListNodeChild
+			부모 노드의 자식노드 구하기
+		*/
+		<![CDATA[
+		SELECT
+			TMA.MENUAUTH_SEQ,
+			TMA.MENUCD,
+			TMA.ROLE_PCD,
+			TMA.USEAUTH,
+			TMA.USEYN,
+			TM.MENU_LVL,
+			TM.MENU_PCD
+		FROM
+			TA_MENU_AUTH TMA, TA_MENU TM
+		WHERE
+			TMA.MENUCD IN
+			(
+				SELECT
+					MENUCD
+				FROM
+					TA_MENU
+				WHERE
+					UP_CD = #{up_cd}
+				AND
+					SITEID = #{siteid}
+				AND
+					MENU_LVL != 1
+			)
+		AND
+			TMA.MENUCD = TM.MENUCD
+		]]>
+	</select>
+	
+	<select id="AuthSQL.doListNodeParent" resultType="dataMap">
+		<!-- 2020-04-24 추정완 -->
+		/*
+			SQL ID : AuthSQL.doListNodeParent
+			자식의 노드들의 부모 노드 구하기
+		*/
+		<![CDATA[
+		SELECT
+			*
+		FROM
+			TA_MENU_AUTH
+		WHERE
+			ROLE_PCD = #{role_pcd}
+		AND
+			MENUCD IN
+				(
+					SELECT
+					DISTINCT
+						UP_CD
+					FROM
+						TA_MENU
+					WHERE
+						SITEID = #{siteid}
+					AND
+						MENUCD IN 
+				]]>
+				<foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+						#{item.menucd}
+				</foreach>
+				)
+	</select>
+	
+	<select id="AuthSQL.doListNodeAll" resultType="dataMap">
+		<!-- 2020-04-25 추정완 -->
+		/*
+			SQL ID : AuthSQL.doListNodeAll
+			모든 노드 데이터 구하기
+		*/
+		<![CDATA[
+			SELECT
+				MENUCD
+			FROM
+				TA_MENU_AUTH
+			WHERE
+				ROLE_PCD = #{role_pcd}
+		]]>
+	</select>
+	
+</mapper>

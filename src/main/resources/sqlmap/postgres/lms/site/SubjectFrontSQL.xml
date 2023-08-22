@@ -1,0 +1,2461 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="SubjectFrontSQL">
+
+	<select id="SubjectFrontSQL.selectApplySignList"
+		resultType="dataMap">
+		/*
+		SQL ID : ProjectSQL.selectApplySignList
+		사업공고 신청 리스트
+		*/
+		SELECT
+		ts.subject_seqno
+		,ts.project_seqno
+		,ts.subject_title
+		,ts.sector_lev1
+		,ts.sector_lev2
+		,ts.subject_sdate
+		,ts.subject_edate
+		, tm.biz_name as dc_biz_name
+		, tm2.biz_name as sc_biz_name
+		,substring(cast(ta.user_date as text),0,11) as user_date
+		,ts.subject_proc_status as subject_proc_status
+		FROM tblsubject ts
+		INNER JOIN tblproject tp ON ts.project_seqno = tp.project_seqno
+		INNER JOIN tblsubject_apply ta ON ts.subject_seqno = ta.subject_seqno
+		INNER JOIN tblsubject_member tm ON ts.subject_seqno = tm.subject_seqno AND tm.member_role = 'DC'
+		INNER JOIN tblsubject_member tm2 ON ts.subject_seqno = tm2.subject_seqno AND tm2.member_role = 'SC'
+		where
+		ts.insert_user = #{insert_user}::INT
+		<if test="project_title != ''" >
+		AND 
+		tp.project_title like CONCAT('%',#{project_title},'%')
+		</if>
+		<if test="subject_ref != ''" >
+		AND 
+		ts.subject_ref like CONCAT('%',#{subject_ref},'%')
+		</if>
+		<if test="subject_title != ''" >
+		AND 
+		ts.subject_title like CONCAT('%',#{subject_title},'%')
+		</if>
+		<if test="subject_proc_status != ''" >
+		AND 
+		ta.subject_proc_status = '${subject_proc_status}'
+		</if>
+		ORDER BY ts.insert_date DESC
+		limit ${rows}::INT offset (${page}::INT -1) * 10
+	</select>
+	<select id="SubjectFrontSQL.countApplyList" resultType="int">
+		/*
+		SQL ID : SubjectFrontSQL.countApplyList
+		subject table 게시물 카운트
+		*/
+		SELECT COUNT(*)
+		FROM
+		tblsubject ts
+		INNER JOIN tblproject tp ON ts.project_seqno = tp.project_seqno
+		INNER JOIN tblsubject_apply ta ON ts.subject_seqno = ta.subject_seqno
+		INNER JOIN tblsubject_member tm ON ts.subject_seqno = tm.subject_seqno AND tm.member_role = 'DC'
+		INNER JOIN tblsubject_member tm2 ON ts.subject_seqno = tm2.subject_seqno AND tm2.member_role = 'SC'
+		where
+		ts.insert_user = #{insert_user}::INT
+		<if test="project_title != ''" >
+		AND 
+		tp.project_title like CONCAT('%',#{project_title},'%')
+		</if>
+		<if test="subject_ref != ''" >
+		AND 
+		ts.subject_ref like CONCAT('%',#{subject_ref},'%')
+		</if>
+		<if test="subject_title != ''" >
+		AND 
+		ts.subject_title like CONCAT('%',#{subject_title},'%')
+		</if>
+		<if test="subject_proc_status != ''" >
+		AND 
+		ta.subject_proc_status = '${subject_proc_status}'
+		</if>
+		<!-- WHERE project_name like CONCAT('%',#{project_name},'%') AND delete_flag 
+			= 'N' <if test="project_year != ''" > AND project_year = ${project_year}::varchar 
+			</if> <if test="process_status != ''" > AND process_status = ${process_status}::varchar 
+			</if> -->
+	</select>
+
+	<select id="SubjectFrontSQL.selectApplyStatusList"
+		resultType="dataMap">
+		/*
+		SQL ID : SubjectFrontSQL.selectApplyStatusList
+		사업신청 현황 리스트
+		*/
+		SELECT
+		*
+		FROM
+		tblsubject
+		inner join tblsubject_member
+		<!-- WHERE project_name like CONCAT('%',#{project_name},'%') AND delete_flag 
+			= 'N' <if test="project_year != ''" > AND project_year = ${project_year}::varchar 
+			</if> <if test="process_status != ''" > AND process_status = ${process_status}::varchar 
+			</if> limit ${rows}::INT offset (${page}::INT -1) * 10 -->
+	</select>
+
+	<select id="SubjectFrontSQL.doInsertSubject"
+		parameterType="dataMap" resultType="dataMap">
+		/*
+		2021.04.21 박성민
+		SQL ID : SubjectFrontSQL.doInsertSubject
+		사업참여
+		*/
+
+		INSERT
+		INTO tblsubject
+		(
+		subject_seqno,
+		project_seqno,
+		subject_title,
+		sector_lev1,
+		sector_lev2,
+		sector_opt,
+		subject_sdate,
+		subject_edate,
+		subject_term,
+		total_cost,
+		gov_cost,
+		com_cost,
+		voucher_total,
+		applier_type,
+		subject_proc_step,
+		subject_proc_status,
+		subject_result,
+		insert_user,
+		insert_ip,
+		insert_date,
+		update_user,
+		update_ip,
+		update_date,
+		delete_flag,
+		subject_ref
+		)
+		VALUES (
+		#{subject_seqno}::INT,
+		#{project_seqno}::INT,
+		#{subject_title},
+		#{sector_lev1},
+		#{sector_lev2},
+		#{sector_opt},
+		CAST(#{subject_sdate} AS
+		timeStamp),
+		CAST(#{subject_edate} AS timeStamp),
+		#{subject_term}::INT,
+		#{total_cost}::INT,
+		#{gov_cost}::INT,
+		#{com_cost}::INT,
+		#{voucher_total}::INT,
+		#{applier_type},
+		#{subject_proc_step}::INT,
+		#{subject_proc_status}::INT,
+		'N',	<!-- subject_result -->
+		#{member_seqno}::INT,
+		#{ip},
+		CAST(NOW() AS timeStamp),	<!-- insert_date -->
+		#{member_seqno}::INT,
+		#{ip},
+		CAST(NOW() AS timeStamp),	<!-- update_date -->
+		'N',
+		#{subject_ref}
+		)
+		RETURNING subject_seqno;
+	</select>
+	<select id="SubjectFrontSQL.searchBizRegno"
+		parameterType="dataMap" resultType="dataMap">
+		/*
+		2021.04.21 박성민
+		SQL ID : SubjectFrontSQL.searchBizRegnot
+		사업자 번호 검색
+		*/
+		SELECT *
+		FROM
+		tblbusiness tb,
+		tblmember tm
+		<![CDATA[
+		where
+		tb.biz_seqno = tm.biz_seqno  
+		and
+		biz_regno like CONCAT('%',#{biz_regno},'%') 
+		]]>
+
+	</select>
+	<insert id="SubjectFrontSQL.insertSubjectMember"
+		parameterType="dataMap">
+		/*
+		2021.04.16 박성민
+		SQL ID :
+		SubjectFrontSQL.insertSubjectMember
+		공고등록 수요기업 정보 insert
+		*/
+		INSERT INTO
+		tblsubject_member
+		(member_role,
+		subject_seqno,
+		member_seqno,
+		biz_name,
+		biz_regno,
+		address1,
+		homepage,
+		biz_size,
+		biz_type,
+		tel_no,
+		owner,
+		biz_item,
+		pic1_name,
+		pic1_rank,
+		pic1_depart,
+		pic1_major,
+		pic1_tel_no,
+		pic1_email,
+		pic1_mobile_no,
+		pic1_fax_no,
+		pic2_name,
+		pic2_rank,
+		pic2_depart,
+		pic2_major,
+		pic2_tel_no,
+		pic2_email,
+		pic2_mobile_no,
+		pic2_fax_no
+		)
+
+		VALUES
+		(
+		'DC',
+		#{subject_seqno}::INT,
+		#{member_seqno}::INT,
+		#{dc_biz_name},
+		#{dc_biz_regno},
+		#{dc_address},
+		#{dc_homepage},
+		#{dc_biz_size},
+		#{dc_biz_type},
+		#{dc_biz_item},
+		#{dc_tel_no},
+		#{dc_owner},
+		#{dc_pic1_name},
+		#{dc_pic1_rank},
+		#{dc_pic1_depart},
+		#{dc_pic1_major},
+		#{dc_pic1_tel_no},
+		#{dc_pic1_email},
+		#{dc_pic1_mobile_no},
+		#{dc_pic1_fax_no},
+		#{dc_pic2_name},
+		#{dc_pic2_rank},
+		#{dc_pic2_depart},
+		#{dc_pic2_major},
+		#{dc_pic2_tel_no},
+		#{dc_pic2_email},
+		#{dc_pic2_mobile_no},
+		#{dc_pic2_fax_no}
+		)
+		,(
+		'SC',
+		#{subject_seqno}::INT,
+		#{sc_member_seqno}::INT,
+		#{sc_biz_name},
+		#{sc_biz_regno},
+		#{sc_address},
+		#{sc_homepage},
+		#{sc_biz_size},
+		#{sc_biz_type},
+		#{sc_biz_item},
+		#{sc_tel_no},
+		#{sc_owner},
+		#{sc_pic1_name},
+		#{sc_pic1_rank},
+		#{sc_pic1_depart},
+		#{sc_pic1_major},
+		#{sc_pic1_tel_no},
+		#{sc_pic1_email},
+		#{sc_pic1_mobile_no},
+		#{sc_pic1_fax_no},
+		#{sc_pic2_name},
+		#{sc_pic2_rank},
+		#{sc_pic2_depart},
+		#{sc_pic2_major},
+		#{sc_pic2_tel_no},
+		#{sc_pic2_email},
+		#{sc_pic2_mobile_no},
+		#{sc_pic2_fax_no}
+		)
+		-->
+	</insert>
+	<select id="SubjectFrontSQL.selectSubjectJoinList"
+		parameterType="dataMap" resultType="dataMap">
+		/*
+		2021.04.21 박성민
+		SQL ID : SubjectFrontSQL.selectSubjectJoinList
+		사업신청
+		참여리스트 조회
+		*/
+		SELECT ts.*, tp.*
+		FROM
+		tblsubject ts,
+		tblproject tp
+		<![CDATA[
+		where
+		ts.insert_user = #{member_seqno} :: INT
+		and
+		ts.project_seqno = tp.project_seqno
+		limit 5  
+		]]>
+
+	</select>
+	<select id="SubjectFrontSQL.countJoinSubjectList"
+		resultType="int">
+
+		/*
+		SQL ID : "SubjectFrontSQL.countSubjectList"
+		subject table 게시물 카운트
+		*/
+		SELECT
+		COUNT(ts.subject_seqno)
+		FROM
+		tblsubject ts
+		inner join
+		tblsubject_apply ta on ts.subject_seqno = ta.subject_seqno,
+		tblproject tp
+		WHERE
+		ts.project_seqno = tp.project_seqno
+		AND
+		project_title like
+		CONCAT('%',#{project_title},'%')
+		AND
+		ts.insert_user =
+		${insert_user}::INT
+		<if test="project_year != ''">
+			AND
+			tp.project_year = ${project_year}::varchar
+		</if>
+		<if test="project_proc_status != ''">
+			AND
+			ts.project_proc_status =
+			${project_proc_status}::varchar
+		</if>
+	</select>
+	<select id="SubjectFrontSQL.selectSubjectJoinListAll"
+		parameterType="dataMap" resultType="dataMap">
+		/*
+		2021.04.21 박성민
+		SQL ID : SubjectFrontSQL.selectSubjectJoinListAll
+		사업신청
+		참여리스트 조회
+		*/
+		SELECT ts.*,
+		tp.project_seqno,
+		tp.project_year,
+		tp.project_title,
+		tp.project_proc_status,
+		TO_CHAR(tp.project_apply_sdate,'YYYY-MM-DD') as project_apply_sdate,
+		TO_CHAR(tp.project_apply_edate,'YYYY-MM-DD') as project_apply_edate,
+		tp.insert_user,
+		tp.insert_date,
+		tp.delete_flag,
+		tp.update_user,
+		tp.update_date,
+		tp.project_desc,
+		tp.fmst_seq,
+		ts.subject_proc_status as
+		status,
+		ta.subject_seqno as apply_subject_seqno,
+		ta.validation_confim_flag as apply_validation_confim_flag,
+		ta.subject_proc_status as apply_subject_proc_status,
+		ta.user_seqno as
+		apply_user_seqno,
+		ta.user_ip as apply_user_ip,
+		ta.user_date as
+		apply_user_date
+		FROM
+		tblsubject ts
+		inner join tblsubject_apply ta on ts.subject_seqno =
+		ta.subject_seqno,
+		tblproject tp
+		<![CDATA[
+		where
+		ts.insert_user = #{insert_user} :: INT
+		and
+		ts.project_seqno = tp.project_seqno
+		ORDER BY ts.insert_date DESC
+		limit ${rows}::INT offset (${page}::INT -1) * 10
+		]]>
+
+	</select>
+	<select id="SubjectFrontSQL.selectSubjectMemberSC"
+		parameterType="dataMap" resultType="dataMap">
+		/*
+		2021.04.21 박성민
+		SQL ID :
+		SubjectFrontSQL.selectSubjectMemberSC
+		사업신청 참여기업 조회
+		*/
+		SELECT *
+		FROM
+		tblsubject_member
+		where subject_seqno = #{subject_seqno}::INT
+		and member_role = 'SC';
+	</select>
+	<select id="SubjectFrontSQL.selectSubjectMemberDC"
+		parameterType="dataMap" resultType="dataMap">
+		/*
+		2021.04.21 박성민
+		SQL ID :
+		SubjectFrontSQL.selectSubjectMemberDC
+		사업신청 참여기업 조회
+		*/
+		SELECT *
+		FROM
+		tblsubject_member
+		where subject_seqno = #{subject_seqno}::INT
+		and member_role = 'DC';
+	</select>
+	<select id="SubjectFrontSQL.selectSubjectDetailSC"
+		parameterType="dataMap" resultType="dataMap">
+		/*
+		2021.11.18 박성민
+		SQL ID :
+		SubjectFrontSQL.selectSubjectDetailSC
+		사업신청 참여기업 상세조회(공급기업)
+		*/
+		SELECT ts.*
+		,
+		(SELECT biz_name FROM tblsubject_member WHERE subject_seqno =
+		ts.subject_seqno AND member_role = 'DC') AS dc_biz_name
+		, (SELECT biz_name FROM tblsubject_member WHERE subject_seqno =
+		ts.subject_seqno AND member_role = 'SC') AS sc_biz_name
+		, tp.project_title
+		, ts.subject_ref
+		FROM
+		tblsubject ts
+		inner join tblproject tp on ts.project_seqno = tp.project_seqno
+		inner join tblsubject_member tmsc on ts.subject_seqno = tmsc.subject_seqno  and tmsc.member_role ='SC'
+		where
+		ts.project_seqno = #{project_seqno}::INT
+		and
+		tmsc.member_seqno = #{insert_user}::INT
+		and
+		ts.subject_seqno = #{subject_seqno}::INT
+	</select>
+	<select id="SubjectFrontSQL.selectSubjectDetail"
+		parameterType="dataMap" resultType="dataMap">
+		/*
+		2021.04.21 박성민
+		SQL ID :
+		SubjectFrontSQL.selectSubjectDetail
+		사업신청 참여기업 상세조회
+		*/
+		SELECT ts.*
+		,
+		(SELECT biz_name FROM tblsubject_member WHERE subject_seqno =
+		ts.subject_seqno AND member_role = 'DC') AS dc_biz_name
+		, (SELECT biz_name FROM tblsubject_member WHERE subject_seqno =
+		ts.subject_seqno AND member_role = 'SC') AS sc_biz_name
+		, tp.project_title
+		, ts.subject_ref
+		FROM
+		tblsubject ts
+		inner join tblproject tp on ts.project_seqno = tp.project_seqno
+		where
+		ts.project_seqno = #{project_seqno}::INT
+		and
+		ts.insert_user = #{insert_user}::INT
+	</select>
+
+	<update id="SubjectFrontSQL.doUpdateSubject"
+		parameterType="dataMap">
+		/*
+		2021.04.21 박성민
+		SQL ID : SubjectFrontSQL.doUpdateSubject
+		사업참여 수정
+		*/
+
+		UPDATE tblsubject
+		SET
+		subject_title = #{subject_title},
+		sector_lev1 = #{sector_lev1},
+		sector_lev2 = #{sector_lev2},
+		sector_opt =
+		#{sector_opt},
+		subject_sdate =CAST(#{subject_sdate} AS timeStamp),
+		subject_edate = CAST(#{subject_edate} AS timeStamp),
+		subject_term =
+		#{subject_term}::INT,
+		total_cost = #{total_cost}::INT,
+		gov_cost =
+		#{gov_cost}::INT,
+		com_cost = #{com_cost}::INT,
+		voucher_total =
+		#{voucher_total}::INT,
+		applier_type = #{applier_type},
+		subject_proc_status = #{subject_proc_status}::INT,
+		update_user =
+		#{member_seqno}::INT,
+		update_ip = #{ip},
+		update_date = CAST(NOW() AS
+		timeStamp)
+		WHERE
+		subject_seqno = #{subject_seqno}::INT
+	</update>
+	<update id="SubjectFrontSQL.updateSubjectMemberDC"
+		parameterType="dataMap">
+		/*
+		2021.05.26 박성민
+		SQL ID :
+		SubjectFrontSQL.updateSubjectMemberDC
+		공고등록 수요기업 정보 update
+		*/
+		UPDATE
+		tblsubject_member
+		SET
+		biz_name = #{dc_biz_name},
+		biz_regno = #{dc_biz_regno},
+		address1 =
+		#{dc_address},
+		homepage = #{dc_homepage},
+		biz_size = #{dc_biz_size},
+		biz_type = #{dc_biz_type},
+		tel_no = #{dc_tel_no},
+		owner = #{dc_owner},
+		biz_item = #{dc_biz_item},
+		pic1_name = #{dc_pic1_name},
+		pic1_rank =
+		#{dc_pic1_rank},
+		pic1_depart = #{dc_pic1_depart},
+		pic1_major =
+		#{dc_pic1_major},
+		pic1_tel_no = #{dc_pic1_tel_no},
+		pic1_email =
+		#{dc_pic1_eamil},
+		pic1_mobile_no = #{dc_pic1_mobile_no},
+		pic1_fax_no =
+		#{dc_pic1_fax_no},
+		pic2_name = #{dc_pic2_name},
+		pic2_rank =
+		#{dc_pic2_rank},
+		pic2_depart = #{dc_pic2_depart},
+		pic2_major =
+		#{dc_pic2_major},
+		pic2_tel_no = #{dc_pic2_tel_no},
+		pic2_email =
+		#{dc_pic2_eamil},
+		pic2_mobile_no = #{dc_pic2_mobile_no},
+		pic2_fax_no =
+		#{dc_pic2_fax_no}
+		WHERE
+		member_role = 'DC'
+		AND
+		subject_seqno =
+		#{subject_seqno}::INT
+		AND
+		member_seqno = #{member_seqno}::INT
+
+	</update>
+	<update id="SubjectFrontSQL.updateSubjectMemberSC"
+		parameterType="dataMap">
+		/*
+		2021.04.16 박성민
+		SQL ID :
+		SubjectFrontSQL.updateSubjectMemberSC
+		공고등록 수요기업 정보 update
+		*/
+		UPDATE
+		tblsubject_member
+		SET
+		biz_name = #{sc_biz_name},
+		biz_regno = #{sc_biz_regno},
+		address1 =
+		#{sc_address},
+		homepage = #{sc_homepage},
+		biz_size = #{sc_biz_size},
+		biz_type = #{sc_biz_type},
+		tel_no = #{sc_tel_no},
+		owner = #{sc_owner},
+		biz_item = #{sc_biz_item},
+		pic1_name = #{sc_pic1_name},
+		pic1_rank =
+		#{sc_pic1_rank},
+		pic1_depart = #{sc_pic1_depart},
+		pic1_major =
+		#{sc_pic1_major},
+		pic1_tel_no = #{sc_pic1_tel_no},
+		pic1_email =
+		#{sc_pic1_eamil},
+		pic1_mobile_no = #{sc_pic1_mobile_no},
+		pic1_fax_no =
+		#{sc_pic1_fax_no},
+		pic2_name = #{sc_pic2_name},
+		pic2_rank =
+		#{sc_pic2_rank},
+		pic2_depart = #{sc_pic2_depart},
+		pic2_major =
+		#{sc_pic2_major},
+		pic2_tel_no = #{sc_pic2_tel_no},
+		pic2_email =
+		#{sc_pic2_eamil},
+		pic2_mobile_no = #{sc_pic2_mobile_no},
+		pic2_fax_no =
+		#{sc_pic2_fax_no}
+		WHERE
+		member_role = 'SC'
+		AND
+		subject_seqno =
+		#{subject_seqno}::INT
+		AND
+		member_seqno = #{member_seqno}::INT
+	</update>
+
+
+	<select id="SubjectFrontSQL.countSubject"
+		parameterType="dataMap" resultType="int">
+		/*
+		2021.06.07 박성민
+		SQL ID :
+		SubjectFrontSQL.countSubject
+		사업참여 여부 조회
+		*/
+		select count(*)
+		from
+		tblsubject
+		where
+		project_seqno = #{project_seqno}::INT
+		and
+		insert_user = #{insert_user}::INT
+	</select>
+	<insert id="SubjectFrontSQL.insertSubjectCost"
+		parameterType="dataMap">
+		/*
+		2021.06.14 박성민
+		SQL ID :
+		SubjectFrontSQL.insertSubjectCost
+		바우처항목 insert
+		*/
+		INSERT INTO
+		tblsubject_cost
+		(
+		subject_seqno,
+		sector_lev2,
+		cost
+		)
+
+		VALUES
+		(
+		#{subject_seqno}::INT,
+		'BS10',
+		#{bs10}::INT
+		),
+		(
+		#{subject_seqno}::INT,
+		'BS20',
+		#{bs20}::INT
+		),
+		(
+		#{subject_seqno}::INT,
+		'BS30',
+		#{bs30}::INT
+		),
+		(
+		#{subject_seqno}::INT,
+		'BS40',
+		#{bs40}::INT
+		),
+		(
+		#{subject_seqno}::INT,
+		'BS50',
+		#{bs50}::INT
+		),
+		(
+		#{subject_seqno}::INT,
+		'TS10',
+		#{ts10}::INT
+		),
+		(
+		#{subject_seqno}::INT,
+		'TS20',
+		#{ts20}::INT
+		),
+		(
+		#{subject_seqno}::INT,
+		'TS30',
+		#{ts30}::INT
+		)
+	</insert>
+	<insert id="SubjectFrontSQL.insertSubjectApply"
+		parameterType="dataMap">
+		/*
+		2021.06.14 박성민
+		SQL ID : SubjectFrontSQL.insertSubjectApply
+		과제신청 insert
+		*/
+		INSERT INTO tblsubject_apply
+		(
+		subject_seqno,
+		validation_confim_flag,
+		subject_proc_status,
+		user_seqno,
+		user_ip,
+		user_date,
+		fmst_seqno
+		)
+
+		VALUES
+		(
+		#{subject_seqno}::INT,
+		'N',
+		#{subject_proc_status}::INT,
+		#{member_seqno}::INT,
+		#{ip},
+		CAST(NOW() AS
+		timeStamp),	<!-- user_date -->
+		#{fmst_seqno}::INT
+		)
+		-->
+	</insert>
+	<insert id="SubjectFrontSQL.insertSubjectApplyDetail"
+		parameterType="dataMap">
+		/*
+		2021.06.14 박성민
+		SQL ID : SubjectFrontSQL.insertSubjectApplyDetail
+		과제신청
+		상세 insert
+		*/
+		INSERT INTO tblsubject_apply_detail
+		(
+		subject_seqno,
+		validation_item,
+		validation_result_flag,
+		validation_file,
+		validation_contents
+		)
+
+		VALUES
+		(
+		#{subject_seqno}::INT,
+		'', 	<!-- validation_item -->
+		'N', 	<!-- validation_result_flag -->
+		'', 	<!-- validation_file -->
+		'' 	<!-- validation_contents -->
+		)
+		-->
+	</insert>
+	<update id="SubjectFrontSQL.updateSubjectCost" parameterType="dataMap">
+		/*
+		2021.06.15 박성민
+		SQL ID : SubjectFrontSQL.updateSubjectCost
+		사업과제_바우처항목
+		수정
+		*/
+		<foreach collection="list" item="item" index="index"  separator=";"   >
+			UPDATE tblsubject_cost	
+			SET
+			cost = #{item.value}::INT
+			WHERE
+			subject_seqno = #{subject_seqno}::INT
+			and
+			sector_lev2 = #{item.id}
+		</foreach>
+	</update>
+	<update id="SubjectFrontSQL.updateSubjectApply"
+		parameterType="dataMap">
+		/*
+		2021.06.15 박성민
+		SQL ID :
+		SubjectFrontSQL.updateSubjectApply
+		과제신청 수정
+		*/
+
+		UPDATE
+		tblsubject_apply
+		SET
+		subject_proc_status = #{subject_proc_status}::INT,
+		user_date = CAST(NOW() AS timeStamp),
+		user_seqno = #{member_seqno}::INT
+		WHERE
+		subject_seqno = #{subject_seqno}::INT
+	</update>
+	<update id="SubjectFrontSQL.updateSubjectApplyDetail"
+		parameterType="dataMap">
+		/*
+		2021.06.15 박성민
+		SQL ID :
+		SubjectFrontSQL.updateSubjectApplyDetail
+		과제신청 상세 수정
+		*/
+
+		UPDATE
+		tblsubject_apply_detail
+		SET
+		validation_item = #{validation_item}
+		validation_item = #{validation_result_flag}
+		validation_item = #{validation_file}
+		validation_item = #{validation_contents}
+		WHERE
+		subject_seqno = #{subject_seqno}::INT
+	</update>
+	<select id="SubjectFrontSQL.selectSubjectCost"
+		resultType="dataMap" parameterType="dataMap">
+		/*
+		2021.06.15 박성민
+		SQL ID :
+		SubjectFrontSQL.selectSubjectCost
+		사업과제_바우처항목 조회
+		*/
+		SELECT
+		*
+		FROM
+		tblsubject_cost
+		where
+		subject_seqno = #{subject_seqno}::INT
+	</select>
+	<select id="SubjectFrontSQL.selectSubjectApply"
+		resultType="dataMap" parameterType="dataMap">
+		/*
+		2021.06.21 박성민
+		SQL ID :
+		SubjectFrontSQL.selectSubjectApply
+		사업과제_과제신청 조회
+		*/
+		SELECT
+		*
+		FROM
+		tblsubject_apply
+		where
+		subject_seqno = #{subject_seqno}::INT
+	</select>
+
+	<select id="SubjectFrontSQL.countContract" resultType="int"
+		parameterType="dataMap">
+		/*
+		2021.06.21 박성민
+		SQL ID : SubjectFrontSQL.countContract
+		협약신청 카운트
+		*/
+		SELECT
+		count(*)
+		from
+		tblsubject ts
+		inner join tblproject tp on ts.project_seqno = tp.project_seqno
+		inner join tblsubject_contract tc on ts.subject_seqno =	tc.subject_seqno
+		inner join tblsubject_member tmsc on ts.subject_seqno =	tmsc.subject_seqno and tmsc.member_role ='SC'
+		inner join tblsubject_member tmdc on ts.subject_seqno = tmdc.subject_seqno and tmdc.member_role ='DC'
+		where ts.insert_user = #{member_seqno}::INT
+		<if test="project_title != ''" >
+		AND 
+		tp.project_title like CONCAT('%',#{project_title},'%')
+		</if>
+		<if test="subject_ref != ''" >
+		AND 
+		ts.subject_ref like CONCAT('%',#{subject_ref},'%')
+		</if>
+		<if test="subject_title != ''" >
+		AND 
+		ts.subject_title like CONCAT('%',#{subject_title},'%')
+		</if>
+		<if test="subject_proc_status != ''" >
+		AND 
+		tc.subject_proc_status = '${subject_proc_status}'
+		</if>
+		AND
+		tc.delete_flag = 'N'
+	</select>
+	<select id="SubjectFrontSQL.selectContractList"
+		resultType="dataMap" parameterType="dataMap">
+		/*
+		2021.06.21 박성민
+		SQL ID :
+		SubjectFrontSQL.selectContractList
+		협약신청_리스트
+		*/
+		select
+		ts.project_seqno,
+		ts.subject_seqno,
+		ts.subject_title,
+		substring(cast(ts.subject_sdate as
+		text),3,9) as subject_sdate,
+		substring(cast(ts.subject_edate as
+		text),3,9) as subject_edate,
+		ts.subject_ref,
+		tc.total_cost ,
+		tc.gov_cost
+		,
+		tc.com_cost ,
+		tc.vat_cost ,
+		ts.sector_lev1 ,
+		ts.sector_lev2 ,
+		substring(cast(tc.complete_sign_date as text),3,9) as
+		complete_sign_date,
+		tmsc.biz_name as tmsc_biz_name,
+		tmdc.biz_name as
+		tmdc_biz_name,
+		ts.subject_proc_status as ts_subject_proc_status,
+		tc.subject_proc_status as tc_subject_proc_status
+		from
+		tblsubject ts
+		inner join tblproject tp on ts.project_seqno = tp.project_seqno
+		inner join tblsubject_contract tc on ts.subject_seqno =	tc.subject_seqno
+		inner join tblsubject_member tmsc on ts.subject_seqno =	tmsc.subject_seqno and tmsc.member_role ='SC'
+		inner join tblsubject_member tmdc on ts.subject_seqno = tmdc.subject_seqno and tmdc.member_role ='DC'
+		where ts.insert_user = #{member_seqno}::INT
+		<if test="project_title != ''" >
+		AND 
+		tp.project_title like CONCAT('%',#{project_title},'%')
+		</if>
+		<if test="subject_ref != ''" >
+		AND 
+		ts.subject_ref like CONCAT('%',#{subject_ref},'%')
+		</if>
+		<if test="subject_title != ''" >
+		AND 
+		ts.subject_title like CONCAT('%',#{subject_title},'%')
+		</if>
+		<if test="subject_proc_status != ''" >
+		AND 
+		tc.subject_proc_status = '${subject_proc_status}'
+		</if>
+		AND
+		tc.delete_flag = 'N'
+		ORDER BY ts.insert_date DESC
+		limit ${rows}::INT offset (${page}::INT -1) * 10
+	</select>
+
+	<select id="SubjectFrontSQL.selectSubjectContractDetail"
+		resultType="dataMap" parameterType="dataMap">
+		/*
+		2021.06.21 박성민
+		SQL ID :
+		SubjectFrontSQL.selectContractDetail
+		협약신청_상세조회
+		*/
+		SELECT
+		*
+		FROM
+		tblsubject_contract
+		where subject_seqno = #{subject_seqno}::INT
+		and delete_flag = 'N'
+	</select>
+	<select id="SubjectFrontSQL.selectContractDetailDC"
+		resultType="dataMap" parameterType="dataMap">
+		/*
+		2021.06.21 박성민
+		SQL ID :
+		SubjectFrontSQL.selectContractDetailDC
+		협약신청_상세_상세조회_DC
+		*/
+		SELECT
+		*
+		FROM
+		tblsubject_contract_detail tcd
+		inner join tblsubject_member tmdc on
+		tmdc.subject_seqno = tcd.subject_seqno and tmdc.member_role='DC'
+		where
+		tcd.subject_seqno = #{subject_seqno}::INT
+		and tcd.user_gubun = 'DC'
+	</select>
+	<select id="SubjectFrontSQL.selectContractDetailSC"
+		resultType="dataMap" parameterType="dataMap">
+		/*
+		2021.06.21 박성민
+		SQL ID :
+		SubjectFrontSQL.selectContractDetailSC
+		협약신청_상세_상세조회_공급기업
+		*/
+		SELECT
+		*
+		FROM
+		tblsubject_contract_detail tcd
+		inner join tblsubject_member tmsc on
+		tmsc.subject_seqno = tcd.subject_seqno and tmsc.member_role='SC'
+		where
+		tcd.subject_seqno = #{subject_seqno}::INT
+		and tcd.user_gubun = 'SC'
+	</select>
+	<select id="SubjectFrontSQL.selectContractDetailAdmin"
+		resultType="dataMap" parameterType="dataMap">
+		/*
+		2021.06.21 박성민
+		SQL ID :
+		SubjectFrontSQL.selectContractDetailAdmin
+		협약신청_상세_상세조회_admin
+		*/
+		SELECT
+		*
+		FROM
+		tblsubject_contract_detail tcd
+		inner join tu_member tm on
+		tcd.user_id = cast(tm.userno as int8)
+		where
+		tcd.subject_seqno = #{subject_seqno}::INT
+		and tcd.user_gubun = 'adm'
+	</select>
+	<update id="SubjectFrontSQL.updateContract"
+		parameterType="dataMap">
+		/*
+		SQL ID : SubjectFrontSQL.updateContract
+		사업신청 업데이트
+		*/
+		UPDATE tblsubject_contract
+		SET
+		complete_sign_date = CAST(NOW() AS timeStamp),
+		subject_proc_status = '20'::INT,
+		total_cost = #{total_cost}::INT,
+		gov_cost = #{gov_cost}::INT,
+		com_cost = #{com_cost}::INT,
+		vat_cost = #{vat_cost}::INT,
+		insert_user = #{insert_user}::INT,
+		insert_ip = #{insert_ip},
+		insert_date = CAST(NOW() AS timeStamp)
+		<if test="fmst_seqno != ''">
+			,fmst_seqno = #{fmst_seqno}::INT
+		</if>
+		WHERE
+		subject_seqno = #{subject_seqno}::INT
+	</update>
+
+	<select id="SubjectFrontSQL.countPermit" resultType="int"
+		parameterType="dataMap">
+		/*
+		2021.06.30 박성민
+		SQL ID : SubjectFrontSQL.countPermit
+		권한부여 카운트
+		*/
+		SELECT
+		count(*)
+		FROM
+		tblsubject ts
+		inner join tblsubject_permit tsp on ts.subject_seqno = tsp.subject_seqno
+		inner join tblproject tp on ts.project_seqno = tp.project_seqno
+		where ts.insert_user = #{member_seqno}::INT	
+		and ts.delete_flag ='N'
+		and tsp.subject_proc_status != '00'
+		<if test="project_title != ''" >
+		AND 
+		tp.project_title like CONCAT('%',#{project_title},'%')
+		</if>
+		<if test="subject_ref != ''" >
+		AND 
+		ts.subject_ref like CONCAT('%',#{subject_ref},'%')
+		</if>
+		<if test="subject_title != ''" >
+		AND 
+		ts.subject_title like CONCAT('%',#{subject_title},'%')
+		</if>
+		<if test="subject_proc_status != ''" >
+		AND 
+		tsp.subject_proc_status = '${subject_proc_status}'
+		</if>
+	</select>
+	<select id="SubjectFrontSQL.selectPermitList"
+		resultType="dataMap" parameterType="dataMap">
+		/*
+		2021.06.30 박성민
+		SQL ID :
+		SubjectFrontSQL.selectPermitList
+		권한부여_리스트
+		*/
+		select
+		ts.project_seqno,
+		ts.subject_seqno,
+		ts.subject_title,
+		tc.total_cost ,
+		tc.gov_cost ,
+		tc.com_cost ,
+		tc.vat_cost ,
+		substring(cast(ts.subject_sdate as text),3,9) as subject_sdate,
+		substring(cast(ts.subject_edate as text),3,9) as subject_edate,
+		ts.subject_ref,
+		ts.sector_lev1 ,
+		ts.sector_lev2 ,
+		tmsc.biz_name as tmsc_biz_name,
+		tmdc.biz_name as
+		tmdc_biz_name,
+		ts.subject_proc_status as ts_subject_proc_status,
+		tsp.subject_proc_status as tsp_subject_proc_status,
+		tsp.admin_date as
+		tsp_admin_date
+		from tblsubject ts
+		inner join tblproject tp on ts.project_seqno = tp.project_seqno
+		inner join tblsubject_permit tsp on ts.subject_seqno = tsp.subject_seqno
+		inner join tblsubject_contract tc on ts.subject_seqno = tc.subject_seqno
+		inner join tblsubject_member tmsc on ts.subject_seqno = tmsc.subject_seqno and tmsc.member_role ='SC'
+		inner join tblsubject_member tmdc on ts.subject_seqno =	tmdc.subject_seqno and tmdc.member_role ='DC'
+		where ts.insert_user = #{member_seqno}::INT
+		AND
+		tsp.subject_proc_status != '00'
+		<if test="project_title != ''" >
+		AND 
+		tp.project_title like CONCAT('%',#{project_title},'%')
+		</if>
+		<if test="subject_ref != ''" >
+		AND 
+		ts.subject_ref like CONCAT('%',#{subject_ref},'%')
+		</if>
+		<if test="subject_title != ''" >
+		AND 
+		ts.subject_title like CONCAT('%',#{subject_title},'%')
+		</if>
+		<if test="subject_proc_status != ''" >
+		AND 
+		tsp.subject_proc_status = '${subject_proc_status}'
+		</if>
+		ORDER BY ts.insert_date DESC
+		limit ${rows}::INT offset (${page}::INT -1) * 10
+	</select>
+	<select id="SubjectFrontSQL.selectPermitDetail"
+		resultType="dataMap" parameterType="dataMap">
+		/*
+		2021.07.09 박성민
+		SQL ID :
+		SubjectFrontSQL.selectPermitDetail
+		정산관리_상세조회
+		*/
+		SELECT
+		*
+		FROM
+		tblsubject_permit
+		where subject_seqno = #{subject_seqno}::INT
+	</select>
+	<update id="SubjectFrontSQL.updatePermit"
+		parameterType="dataMap">
+		/*
+		SQL ID : SubjectFrontSQL.updatePermit
+		권한부여 업데이트
+		*/
+		UPDATE tblsubject_permit
+		SET
+		subject_proc_status = '50'::INT,
+		user_seqno = #{user_seqno}::INT,
+		user_ip = #{user_ip},
+		user_date = CAST(NOW() AS timeStamp)
+		<if test="fmst_seqno != ''">
+			,fmst_seqno = #{fmst_seqno}::INT
+		</if>
+		WHERE
+		subject_seqno = #{subject_seqno}::INT
+	</update>
+	<select id="SubjectFrontSQL.countSettle" resultType="int"
+		parameterType="dataMap">
+		/*
+		2021.06.30 박성민
+		SQL ID : SubjectFrontSQL.countSettle
+		정산관리 카운트
+		*/
+		SELECT
+		count(*)
+		FROM
+		tblsubject ts
+		inner join tblsubject_member tmsc on ts.subject_seqno = tmsc.subject_seqno and tmsc.member_role ='SC' 
+		inner join tblsubject_settle tss on ts.subject_seqno = tss.subject_seqno
+		inner join tblproject tp on ts.project_seqno = tp.project_seqno
+		where tmsc.member_seqno = #{insert_user}::INT
+		and ts.delete_flag ='N'
+		<if test="subject_seqno != ''" >
+		AND 
+		tss.subject_seqno = #{subject_seqno}::INT
+		</if>
+		<if test="project_title != ''" >
+		AND 
+		tp.project_title like CONCAT('%',#{project_title},'%')
+		</if>
+		<if test="subject_ref != ''" >
+		AND 
+		ts.subject_ref like CONCAT('%',#{subject_ref},'%')
+		</if>
+		<if test="subject_title != ''" >
+		AND 
+		ts.subject_title like CONCAT('%',#{subject_title},'%')
+		</if>
+		<if test="settle_type != ''" >
+		AND 
+		tss.settle_type = '${settle_type}'
+		</if>
+	</select>
+	<select id="SubjectFrontSQL.selectSettleList"
+		resultType="dataMap" parameterType="dataMap">
+		/*
+		2021.06.30 박성민
+		SQL ID :
+		SubjectFrontSQL.selectSettleList
+		정산관리_리스트
+		*/
+		select
+		ts.project_seqno,
+		ts.subject_seqno,
+		ts.subject_title,
+		substring(cast(ts.subject_sdate as
+		text),3,9) as subject_sdate,
+		substring(cast(ts.subject_edate as
+		text),3,9) as subject_edate,
+		ts.subject_ref,
+		ts.sector_lev1 ,
+		ts.sector_lev2 ,
+		tmsc.biz_name as tmsc_biz_name,
+		tmdc.biz_name as
+		tmdc_biz_name,
+		ts.subject_proc_status as ts_subject_proc_status,
+		tss.subject_proc_status as tss_subject_proc_status,
+		tss.settle_type as
+		tss_settle_type
+		from tblsubject ts
+		inner join tblproject tp on ts.project_seqno = tp.project_seqno
+		inner join tblsubject_settle tss on ts.subject_seqno = tss.subject_seqno
+		inner join tblsubject_member tmsc on ts.subject_seqno = tmsc.subject_seqno and tmsc.member_role ='SC'
+		inner join tblsubject_member tmdc on ts.subject_seqno = tmdc.subject_seqno and tmdc.member_role ='DC'
+		where tmsc.member_seqno = #{insert_user}::INT
+		<if test="project_title != ''" >
+		AND 
+		tp.project_title like CONCAT('%',#{project_title},'%')
+		</if>
+		<if test="subject_ref != ''" >
+		AND 
+		ts.subject_ref like CONCAT('%',#{subject_ref},'%')
+		</if>
+		<if test="subject_title != ''" >
+		AND 
+		ts.subject_title like CONCAT('%',#{subject_title},'%')
+		</if>
+		<if test="settle_type != ''" >
+		AND 
+		tss.settle_type = '${settle_type}'
+		</if>
+		ORDER BY ts.insert_date DESC
+		limit ${rows}::INT offset (${page}::INT -1) * 10
+	</select>
+	<select id="SubjectFrontSQL.selectSettleDetail"
+		resultType="dataMap" parameterType="dataMap">
+		/*
+		2021.06.21 박성민
+		SQL ID :
+		SubjectFrontSQL.selectSettleDetail
+		정산관리_상세조회
+		*/
+		SELECT
+		*
+		FROM
+		tblsubject_settle
+		where subject_seqno = #{subject_seqno}::INT
+		and
+		settle_type = #{settle_type}
+	</select>
+	<select id="SubjectFrontSQL.selectSettleDetailList"
+		resultType="dataMap" parameterType="dataMap">
+		/*
+		2021.06.21 박성민
+		SQL ID :
+		SubjectFrontSQL.selectSettleDetailList
+		정산관리_디테일_상세조회
+		*/
+		SELECT
+		*
+		FROM
+		tblsubject_settle_detail
+		where subject_seqno = #{subject_seqno}::INT
+		and settle_type = #{settle_type}
+	</select>
+	<update id="SubjectFrontSQL.updateSettle"
+		parameterType="dataMap">
+		/*
+		SQL ID : SubjectFrontSQL.updateSettle
+		정산관리 업데이트
+		*/
+		UPDATE tblsubject_settle
+		SET
+		subject_proc_status = '20'::INT,
+		total_cost_items = #{total_cost_items}::INT,
+		total_cost_request = #{total_cost_request}::INT,
+		bank_code = #{bank_code},
+		account_no = #{account_no},
+		depositor = #{depositor},
+		user_seqno = #{user_seqno}::INT,
+		user_ip = #{user_ip},
+		user_date = CAST(NOW() AS timeStamp)
+		<if test="fmst_seqno != ''">
+			,fmst_seqno = #{fmst_seqno}::INT
+		</if>
+		WHERE
+		subject_seqno = #{subject_seqno}::INT
+
+	</update>
+	<insert id="SubjectFrontSQL.insertSettleDetail"
+		parameterType="dataMap">
+		/*
+		2021.06.30 박성민
+		SQL ID : SubjectFrontSQL.insertSettleDetail
+		선금신청 디테일 insert
+		*/
+		INSERT INTO tblsubject_settle_detail
+		(
+		subject_seqno,
+		settle_type,
+		settle_seqno,
+		item,
+		settle_desc,
+		cost,
+		use_cost
+		)
+		VALUES
+		<foreach collection="list" item="item" index="index"
+			separator=",">
+			(
+			#{subject_seqno}::INT,
+			#{settle_type},
+			#{index}+1::INT,
+			#{item.item},
+			#{item.desc},
+			#{item.cost}::INT,
+			0::INT
+			)
+		</foreach>
+	</insert>
+
+	<insert id="SubjectFrontSQL.insertSettle"
+		parameterType="dataMap">
+		/*
+		2021.06.30 박성민
+		SQL ID : SubjectFrontSQL.insertSettle
+		선금신청 insert (상태값에따라 잔금신청,반납)
+		*/
+		INSERT INTO tblsubject_settle
+		(
+		subject_seqno,
+		settle_type,
+		subject_proc_status
+		)
+		VALUES
+		(
+		#{subject_seqno}::INT,
+		#{settle_type},
+		'00'
+		)
+
+
+	</insert>
+	<insert id="SubjectFrontSQL.insertCheck" parameterType="dataMap">
+		/*
+		2021.06.30박성민
+		SQL ID : SubjectFrontSQL.insertCheck
+		진도점검 insert
+		*/
+		INSERT INTO tblsubject_check
+		(
+		subject_seqno,
+		check_date,
+		check_no,
+		subject_proc_status
+		)
+		VALUES
+		<foreach collection="list" item="arr" index="index"
+			separator=",">
+			(
+			#{subject_seqno}::INT,
+			#{arr}::INT,
+			#{index}+1::INT,
+			'00'
+			)
+		</foreach>
+	</insert>
+	<select id="SubjectFrontSQL.countCheck" resultType="int"
+		parameterType="dataMap">
+		/*
+		2021.06.30 박성민
+		SQL ID : SubjectFrontSQL.countCheck
+		진도점검
+		카운트
+		*/
+		SELECT
+		count(*)
+		FROM
+		tblsubject ts
+		inner join tblsubject_check tsc on ts.subject_seqno = tsc.subject_seqno
+		inner join tblproject tp on ts.project_seqno = tp.project_seqno
+		inner join tblsubject_member tmsc on ts.subject_seqno = tmsc.subject_seqno  and tmsc.member_role ='SC'
+		inner join tblsubject_member tmdc on ts.subject_seqno = tmdc.subject_seqno  and tmdc.member_role ='DC'
+		where tmsc.member_seqno = #{member_seqno}::INT
+		and ts.delete_flag ='N'
+		<if test="check_edate == ''" >
+		and #{check_date}::INT >= tsc.check_date
+		</if>
+		<if test="check_edate != ''" >
+		and tsc.check_date between #{check_sdate}::INT and  #{check_edate}::INT  
+		</if>    
+		<if test="project_title != ''" >
+		AND 
+		tp.project_title like CONCAT('%',#{project_title},'%')
+		</if>
+		<if test="subject_ref != ''" >
+		AND 
+		ts.subject_ref like CONCAT('%',#{subject_ref},'%')
+		</if>
+		<if test="subject_title != ''" >
+		AND 
+		ts.subject_title like CONCAT('%',#{subject_title},'%')
+		</if>
+		<if test="subject_proc_status != ''" >
+		AND 
+		tsc.subject_proc_status = '${subject_proc_status}'
+		</if>
+		<if test="sc_biz_name != ''" >
+		AND 
+		tmsc.biz_name like CONCAT('%',#{sc_biz_name},'%')
+		</if>
+		<if test="dc_biz_name != ''" >
+		AND 
+		tmdc.biz_name like CONCAT('%',#{dc_biz_name},'%')
+		</if>
+	</select>
+	<select id="SubjectFrontSQL.selectCheckList"
+		resultType="dataMap" parameterType="dataMap">
+		/*
+		2021.06.30 박성민
+		SQL ID :
+		SubjectFrontSQL.selectCheckList
+		진도점검_리스트
+		*/
+		select
+		ts.project_seqno,
+		ts.subject_seqno,
+		ts.subject_title,
+		tc.total_cost ,
+		tc.gov_cost ,
+		tc.com_cost ,
+		tc.vat_cost ,
+		substring(cast(ts.subject_sdate as
+		text),3,9) as subject_sdate,
+		substring(cast(ts.subject_edate as
+		text),3,9) as subject_edate,
+		ts.subject_ref,
+		ts.sector_lev1 ,
+		ts.sector_lev2 ,
+		tmsc.biz_name as tmsc_biz_name,
+		tmdc.biz_name as
+		tmdc_biz_name,
+		ts.subject_proc_status as ts_subject_proc_status,
+		tsc.check_date as tsc_check_date,
+		tsc.subject_proc_status as
+		tsc_subject_proc_status,
+		coalesce(tsc.subject_proc_date,'1999-01-01') as tsc_subject_proc_date,
+		tsc.check_no as tsc_check_no
+		from
+		tblsubject ts
+		inner join tblproject tp on ts.project_seqno = tp.project_seqno
+		inner join tblsubject_check tsc on ts.subject_seqno = tsc.subject_seqno
+		inner join tblsubject_contract tc on ts.subject_seqno =	tc.subject_seqno
+		inner join tblsubject_member tmsc on ts.subject_seqno =	tmsc.subject_seqno and tmsc.member_role ='SC'
+		inner join tblsubject_member tmdc on ts.subject_seqno = tmdc.subject_seqno and tmdc.member_role ='DC'
+		where tmsc.member_seqno = #{member_seqno}::INT
+		<!-- <if test="check_edate == ''" >
+		and #{check_date}::INT >= tsc.check_date
+		</if> -->
+		<if test="check_edate != ''" >
+		and tsc.check_date between #{check_sdate}::INT and  #{check_edate}::INT  
+		</if>    
+		<if test="project_title != ''" >
+		AND 
+		tp.project_title like CONCAT('%',#{project_title},'%')
+		</if>
+		<if test="subject_ref != ''" >
+		AND 
+		ts.subject_ref like CONCAT('%',#{subject_ref},'%')
+		</if>
+		<if test="subject_title != ''" >
+		AND 
+		ts.subject_title like CONCAT('%',#{subject_title},'%')
+		</if>
+		<if test="subject_proc_status != ''" >
+		AND 
+		tsc.subject_proc_status = '${subject_proc_status}'
+		</if>
+		<if test="sc_biz_name != ''" >
+		AND 
+		tmsc.biz_name like CONCAT('%',#{sc_biz_name},'%')
+		</if>
+		<if test="dc_biz_name != ''" >
+		AND 
+		tmdc.biz_name like CONCAT('%',#{dc_biz_name},'%')
+		</if>
+		ORDER BY ts.insert_date DESC
+		limit ${rows}::INT offset (${page}::INT -1) * 10
+	</select>
+	<select id="SubjectFrontSQL.selectCheckDetail"
+		resultType="dataMap" parameterType="dataMap">
+		/*
+		2021.06.21 박성민
+		SQL ID :
+		SubjectFrontSQL.selectCheckDetail
+		진도점검 디테일 조회
+		*/
+		SELECT
+		*
+		FROM
+		tblsubject_check tsc
+		where
+		tsc.subject_seqno = #{subject_seqno}::INT
+		and tsc.check_date = #{tsc_check_date}::INT
+	</select>
+
+	<update id="SubjectFrontSQL.updateCheck" parameterType="dataMap">
+		/*
+		SQL ID : SubjectFrontSQL.updateCheck
+		사업신청 업데이트
+		*/
+		UPDATE tblsubject_check
+		SET
+		subject_proc_status = '20'::INT,
+		user_seqno = #{user_seqno}::INT,
+		user_ip = #{user_ip},
+		user_date = CAST(NOW() AS timeStamp)
+		<if test="fmst_seqno != ''">
+			,fmst_seqno = #{fmst_seqno}::INT
+		</if>
+		WHERE
+		subject_seqno = #{subject_seqno}::INT
+		AND
+		check_date = #{check_date}::INT
+	</update>
+
+	<select id="SubjectFrontSQL.countAddCheck" resultType="int"
+		parameterType="dataMap">
+		/*
+		2021.06.30 박성민
+		SQL ID : SubjectFrontSQL.countAddCheck
+		실태조사 카운트
+		*/
+		SELECT
+		count(*)
+		FROM
+		tblsubject ts
+		inner join tblsubject_addcheck tsac on ts.subject_seqno = tsac.subject_seqno
+		inner join tblproject tp on ts.project_seqno = tp.project_seqno
+		inner join tblsubject_member tmsc on ts.subject_seqno = tmsc.subject_seqno  and tmsc.member_role ='SC'
+		inner join tblsubject_member tmdc on ts.subject_seqno = tmdc.subject_seqno  and tmdc.member_role ='DC'
+		where tmsc.member_seqno = #{member_seqno}::INT
+		and ts.delete_flag ='N'
+		and tsac.subject_proc_status != '00'
+		<if test="check_edate == ''" >
+		and #{check_date}::INT >= tsac.check_date
+		</if>
+		<if test="check_edate != ''" >
+		and tsac.check_date between #{check_sdate}::INT and  #{check_edate}::INT  
+		</if>    
+		<if test="project_title != ''" >
+		AND 
+		tp.project_title like CONCAT('%',#{project_title},'%')
+		</if>
+		<if test="subject_ref != ''" >
+		AND 
+		ts.subject_ref like CONCAT('%',#{subject_ref},'%')
+		</if>
+		<if test="subject_title != ''" >
+		AND 
+		ts.subject_title like CONCAT('%',#{subject_title},'%')
+		</if>
+		<if test="subject_proc_status != ''" >
+		AND 
+		tsac.subject_proc_status = '${subject_proc_status}'
+		</if>
+		<if test="sc_biz_name != ''" >
+		AND 
+		tmsc.biz_name like CONCAT('%',#{sc_biz_name},'%')
+		</if>
+		<if test="dc_biz_name != ''" >
+		AND 
+		tmdc.biz_name like CONCAT('%',#{dc_biz_name},'%')
+		</if>
+	</select>
+	<select id="SubjectFrontSQL.selectAddCheckList"
+		resultType="dataMap" parameterType="dataMap">
+		/*
+		2021.06.30 박성민
+		SQL ID :
+		SubjectFrontSQL.selectAddCheckList
+		실태조사_리스트
+		*/
+		select
+		ts.project_seqno,
+		ts.subject_seqno,
+		ts.subject_title,
+		tc.total_cost ,
+		tc.gov_cost ,
+		tc.com_cost ,
+		tc.vat_cost ,
+		substring(cast(ts.subject_sdate as
+		text),3,9) as subject_sdate,
+		substring(cast(ts.subject_edate as
+		text),3,9) as subject_edate,
+		ts.subject_ref,
+		ts.sector_lev1 ,
+		ts.sector_lev2 ,
+		tmsc.biz_name as tmsc_biz_name,
+		tmdc.biz_name as
+		tmdc_biz_name,
+		ts.subject_proc_status as ts_subject_proc_status,
+		tsac.subject_proc_status as tsac_subject_proc_status,
+		tsac.check_date
+		as tsac_check_date,
+		coalesce(tsac.subject_proc_date,'1999-01-01') as tsac_subject_proc_date,
+		tsac.addcheck_date as tsac_addcheck_date
+		from tblsubject ts
+		inner join tblproject tp on ts.project_seqno = tp.project_seqno
+		inner join tblsubject_addcheck tsac on ts.subject_seqno = tsac.subject_seqno
+		inner join tblsubject_contract tc on ts.subject_seqno = tc.subject_seqno
+		inner join tblsubject_member tmsc on ts.subject_seqno =	tmsc.subject_seqno and tmsc.member_role ='SC'
+		inner join tblsubject_member tmdc on ts.subject_seqno =	tmdc.subject_seqno and tmdc.member_role ='DC'
+		where tmsc.member_seqno = #{member_seqno}::INT
+		and tsac.subject_proc_status != '00'
+<!-- 		<if test="check_edate == ''" >
+		and #{check_date}::INT >= tsac.check_date
+		</if> -->
+		<if test="check_edate != ''" >
+		and tsac.check_date between #{check_sdate}::INT and  #{check_edate}::INT  
+		</if>    
+		<if test="project_title != ''" >
+		AND 
+		tp.project_title like CONCAT('%',#{project_title},'%')
+		</if>
+		<if test="subject_ref != ''" >
+		AND 
+		ts.subject_ref like CONCAT('%',#{subject_ref},'%')
+		</if>
+		<if test="subject_title != ''" >
+		AND 
+		ts.subject_title like CONCAT('%',#{subject_title},'%')
+		</if>
+		<if test="subject_proc_status != ''" >
+		AND 
+		tsac.subject_proc_status = '${subject_proc_status}'
+		</if>
+		<if test="sc_biz_name != ''" >
+		AND 
+		tmsc.biz_name like CONCAT('%',#{sc_biz_name},'%')
+		</if>
+		<if test="dc_biz_name != ''" >
+		AND 
+		tmdc.biz_name like CONCAT('%',#{dc_biz_name},'%')
+		</if>
+		ORDER BY tsac_subject_proc_date DESC
+		limit ${rows}::INT offset (${page}::INT -1) * 10
+	</select>
+	<select id="SubjectFrontSQL.selectAddCheckDetail"
+		resultType="dataMap" parameterType="dataMap">
+		/*
+		2021.06.21 박성민
+		SQL ID :
+		SubjectFrontSQL.selectAddCheckDetail
+		실태조사 디테일 조회
+		*/
+		SELECT
+		*
+		FROM
+		tblsubject_addcheck tsac
+		where
+		tsac.subject_seqno = #{subject_seqno}::INT
+		and tsac.check_date = #{tsac_check_date}::INT
+	</select>
+	<update id="SubjectFrontSQL.updateAddCheck"
+		parameterType="dataMap">
+		/*
+		SQL ID : SubjectFrontSQL.updateAddCheck
+		현장실태조사 업데이트
+		*/
+		UPDATE tblsubject_addcheck
+		SET
+		subject_proc_status = '20'::INT,
+		user_seqno = #{user_seqno}::INT,
+		user_ip = #{user_ip},
+		user_date = CAST(NOW() AS timeStamp)
+		<if test="fmst_seqno != ''">
+			,fmst_seqno = #{fmst_seqno}::INT
+		</if>
+		WHERE
+		subject_seqno = #{subject_seqno}::INT
+		AND
+		check_date = #{check_date}::INT
+	</update>
+	
+	<select id="SubjectFrontSQL.countSurvey" resultType="int"
+		parameterType="dataMap">
+		/*
+		2021.07.23 박성민
+		SQL ID : SubjectFrontSQL.countSurvey
+		설문조사 카운트
+		*/
+		SELECT
+		count(*)
+		FROM
+		tblsubject ts
+		inner join tblsubject_survey tsv on ts.subject_seqno = tsv.subject_seqno
+		inner join tblproject tp on ts.project_seqno = tp.project_seqno
+      	inner join tblsubject_contract tc on ts.subject_seqno = tc.subject_seqno
+		inner join tblsubject_member tmsc on ts.subject_seqno = tmsc.subject_seqno  and tmsc.member_role ='SC'
+		inner join tblsubject_member tmdc on ts.subject_seqno = tmdc.subject_seqno  and tmdc.member_role ='DC'
+		inner join te_eval_paper tep on ts.project_seqno = tep.project_seqno 
+		where ts.insert_user = #{member_seqno}::INT
+		and ts.delete_flag ='N'
+		and tsv.subject_proc_status::INT >= '20'::INT
+		<if test="project_title != ''" >
+		AND 
+		tp.project_title like CONCAT('%',#{project_title},'%')
+		</if>
+		<if test="subject_ref != ''" >
+		AND 
+		ts.subject_ref like CONCAT('%',#{subject_ref},'%')
+		</if>
+		<if test="subject_title != ''" >
+		AND 
+		ts.subject_title like CONCAT('%',#{subject_title},'%')
+		</if>
+		<if test="subject_proc_status != ''" >
+		AND 
+		tsv.subject_proc_status = '${subject_proc_status}'
+		</if>
+		<if test="sc_biz_name != ''" >
+		AND 
+		tmsc.biz_name like CONCAT('%',#{sc_biz_name},'%')
+		</if>
+		<if test="dc_biz_name != ''" >
+		AND 
+		tmdc.biz_name like CONCAT('%',#{dc_biz_name},'%')
+		</if>
+	</select>
+	<select id="SubjectFrontSQL.selectSurveyList"
+		resultType="dataMap" parameterType="dataMap">
+		 /*
+      2021.07.23 박성민
+      SQL ID :
+      SubjectFrontSQL.selectSurveyList
+      설문조사_리스트
+      */
+      select
+      ts.project_seqno,
+      ts.subject_seqno,
+      ts.subject_title,
+      tc.total_cost ,
+      tc.gov_cost ,
+      tc.com_cost ,
+      tc.vat_cost ,
+      substring(cast(ts.subject_sdate as
+      text),3,9) as subject_sdate,
+      substring(cast(ts.subject_edate as
+      text),3,9) as subject_edate,
+      ts.subject_ref,
+      ts.sector_lev1 ,
+      ts.sector_lev2 ,
+      tmsc.biz_name as tmsc_biz_name,
+      tmdc.biz_name as
+      tmdc_biz_name,
+      ts.subject_proc_status as ts_subject_proc_status,
+      tsv.subject_proc_status as tsv_subject_proc_status,
+      tsv.subject_proc_date as tsv_subject_proc_date
+      from tblsubject ts
+      inner join tblproject tp on ts.project_seqno = tp.project_seqno
+      inner join tblsubject_survey tsv on ts.subject_seqno = tsv.subject_seqno
+      inner join tblsubject_contract tc on ts.subject_seqno = tc.subject_seqno
+      inner join tblsubject_member tmsc on ts.subject_seqno =   tmsc.subject_seqno and tmsc.member_role ='SC'
+      inner join tblsubject_member tmdc on ts.subject_seqno =   tmdc.subject_seqno and tmdc.member_role ='DC'
+      inner join te_eval_paper tep on ts.project_seqno = tep.project_seqno 
+      where
+      ts.insert_user = #{member_seqno}::INT
+      and ts.delete_flag ='N'
+      and tsv.subject_proc_status::INT >= '20'::INT
+      <if test="project_title != ''" >
+      AND 
+      tp.project_title like CONCAT('%',#{project_title},'%')
+      </if>
+      <if test="subject_ref != ''" >
+      AND 
+      ts.subject_ref like CONCAT('%',#{subject_ref},'%')
+      </if>
+      <if test="subject_title != ''" >
+      AND 
+      ts.subject_title like CONCAT('%',#{subject_title},'%')
+      </if>
+      <if test="subject_proc_status != ''" >
+      AND 
+      tsv.subject_proc_status = '${subject_proc_status}'
+      </if>
+      <if test="sc_biz_name != ''" >
+      AND 
+      tmsc.biz_name like CONCAT('%',#{sc_biz_name},'%')
+      </if>
+      <if test="dc_biz_name != ''" >
+      AND 
+      tmdc.biz_name like CONCAT('%',#{dc_biz_name},'%')
+      </if>
+      ORDER BY ts.insert_date DESC
+      limit ${rows}::INT offset (${page}::INT -1) * 10
+	</select>
+	<select id="SubjectFrontSQL.selectSurveyDetail"
+		resultType="dataMap" parameterType="dataMap">
+		/*
+		2021.07.23 박성민
+		SQL ID :
+		SubjectFrontSQL.selectSurveyDetail
+		설문조 디테일 조회
+		*/
+		SELECT
+		*
+		FROM
+		tblsubject_survey tsv
+		where
+		tsv.subject_seqno = #{subject_seqno}::INT
+	</select>
+	<update id="SubjectFrontSQL.updateSurvey"
+		parameterType="dataMap">
+		/*
+		SQL ID : SubjectFrontSQL.updateSurvey
+		설문조사 업데이트
+		*/
+		UPDATE tblsubject_survey
+		SET
+		subject_proc_status = '50'::INT,
+		subject_proc_date = CAST(NOW() AS timeStamp),
+		update_user = #{insert_user}::INT,
+		update_ip = #{insert_ip},
+		update_date = CAST(NOW() AS timeStamp)
+		WHERE
+		subject_seqno = #{subject_seqno}::INT
+	</update>
+	<update id="SubjectFrontSQL.updateSubjectStatus"
+		parameterType="dataMap">
+		/*
+		SQL ID : SubjectFrontSQL.updateSubjectStatus
+		사업 진행상태  업데이트
+		*/
+		UPDATE tblsubject
+		SET
+		subject_proc_step = #{subject_proc_step}::INT
+		WHERE
+		subject_seqno = #{subject_seqno}::INT
+	</update>
+	
+	
+	<insert id="SubjectFrontSQL.insertSurvey"
+		parameterType="dataMap">
+		/*
+		2021.06.30 박성민
+		SQL ID : SubjectFrontSQL.insertSurvey
+		설문조사 insert
+		*/
+		INSERT INTO tblsubject_survey
+		(
+		subject_seqno,
+		subject_proc_status
+		)
+		VALUES
+		(
+		#{subject_seqno}::INT,
+		'00'
+		)
+
+	</insert>
+	<insert id="SubjectFrontSQL.insertEval" parameterType="dataMap">
+		/*
+		2021.06.30 박성민
+		SQL ID : SubjectFrontSQL.insertEval
+		최종평가 insert
+		*/
+		INSERT INTO tblsubject_eval
+		(
+		subject_seqno,
+		subject_proc_status
+		)
+		VALUES
+		(
+		#{subject_seqno}::INT,
+		'00'
+		)
+
+	</insert>
+	<insert id="SubjectFrontSQL.insertTrace" parameterType="dataMap">
+		/*
+		2021.06.30 박성민
+		SQL ID : SubjectFrontSQL.insertTrace
+		추적조사 insert
+		*/
+		INSERT INTO tblsubject_trace
+		(
+		subject_seqno,
+		subject_proc_status,
+		trace_date
+		)
+		VALUES
+		(
+		#{subject_seqno}::INT,
+		'00',
+		#{trace_date}
+		)
+
+	</insert>
+
+	<select id="SubjectFrontSQL.countEval" resultType="int"
+		parameterType="dataMap">
+		/*
+		2021.06.30 박성민
+		SQL ID : SubjectFrontSQL.countEval
+		실태조사
+		카운트
+		*/
+		SELECT
+		count(*)
+		FROM
+		tblsubject ts
+		inner join tblsubject_eval tse on ts.subject_seqno = tse.subject_seqno
+		inner join tblproject tp on ts.project_seqno = tp.project_seqno
+		inner join tblsubject_member tmsc on ts.subject_seqno = tmsc.subject_seqno  and tmsc.member_role ='SC'
+		inner join tblsubject_member tmdc on ts.subject_seqno = tmdc.subject_seqno  and tmdc.member_role ='DC'
+		where ts.insert_user = #{member_seqno}::INT
+		and ts.delete_flag ='N'
+		<!-- 테스트기간 임시 제거 추후 반영되어야함.
+		 and CAST(NOW() AS timeStamp) >= ts.subject_edate -->
+		<if test="project_title != ''" >
+		AND 
+		tp.project_title like CONCAT('%',#{project_title},'%')
+		</if>
+		<if test="subject_ref != ''" >
+		AND 
+		ts.subject_ref like CONCAT('%',#{subject_ref},'%')
+		</if>
+		<if test="subject_title != ''" >
+		AND 
+		ts.subject_title like CONCAT('%',#{subject_title},'%')
+		</if>
+		<if test="subject_proc_status != ''" >
+		AND 
+		tse.subject_proc_status = '${subject_proc_status}'
+		</if>
+	</select>
+	<select id="SubjectFrontSQL.selectEvalList" resultType="dataMap"
+		parameterType="dataMap">
+		/*
+		2021.06.30 박성민
+		SQL ID : SubjectFrontSQL.selectEvalList
+		최종평가_리스트
+		*/
+		select
+		ts.project_seqno,
+		ts.subject_seqno,
+		ts.subject_title,
+		substring(cast(ts.subject_sdate as
+		text),3,9) as subject_sdate,
+		substring(cast(ts.subject_edate as
+		text),3,9) as subject_edate,
+		ts.subject_ref,
+		ts.sector_lev1 ,
+		ts.sector_lev2 ,
+		tmsc.biz_name as tmsc_biz_name,
+		tmdc.biz_name as
+		tmdc_biz_name,
+		ts.subject_proc_status as ts_subject_proc_status,
+		tse.subject_proc_status as tse_subject_proc_status,
+		tse.subject_eval_result as tse_subject_eval_result,
+		tse.subject_proc_date as tse_subject_proc_date
+		from tblsubject
+		ts
+		inner join tblproject tp on ts.project_seqno = tp.project_seqno
+		inner join tblsubject_eval tse on ts.subject_seqno =
+		tse.subject_seqno
+		inner join tblsubject_member tmsc on
+		ts.subject_seqno = tmsc.subject_seqno and tmsc.member_role ='SC'
+		inner
+		join tblsubject_member tmdc on ts.subject_seqno =
+		tmdc.subject_seqno and tmdc.member_role ='DC'
+		where
+		ts.insert_user = #{member_seqno}::INT
+		and
+		CAST(NOW() AS timeStamp) >= ts.subject_edate 
+		<if test="project_title != ''" >
+		AND 
+		tp.project_title like CONCAT('%',#{project_title},'%')
+		</if>
+		<if test="subject_ref != ''" >
+		AND 
+		ts.subject_ref like CONCAT('%',#{subject_ref},'%')
+		</if>
+		<if test="subject_title != ''" >
+		AND 
+		ts.subject_title like CONCAT('%',#{subject_title},'%')
+		</if>
+		<if test="subject_proc_status != ''" >
+		AND 
+		tse.subject_proc_status = '${subject_proc_status}'
+		</if>
+		ORDER BY ts.insert_date DESC
+		limit ${rows}::INT offset (${page}::INT -1) * 10
+	</select>
+	<select id="SubjectFrontSQL.selectEvalDetail"
+		resultType="dataMap" parameterType="dataMap">
+		/*
+		2021.06.21 박성민
+		SQL ID :
+		SubjectFrontSQL.selectEvalDetail
+		실태조사 디테일 조회
+		*/
+		SELECT
+		tse.*
+		FROM
+		tblsubject ts
+		inner join tblsubject_eval tse on ts.subject_seqno =
+		tse.subject_seqno
+		where
+		tse.subject_seqno = #{subject_seqno}::INT
+		<!-- 테스트 임시 주석 추후 제거 
+		and CAST(NOW() AS timeStamp) >=	ts.subject_edate -->
+	</select>
+	<update id="SubjectFrontSQL.updateEval" parameterType="dataMap">
+		/*
+		SQL ID : SubjectFrontSQL.updateEval
+		사업신청 업데이트
+		*/
+		UPDATE tblsubject_eval
+		SET
+		subject_proc_status = '20'::INT,
+		user_seqno = #{user_seqno}::INT,
+		user_ip = #{user_ip},
+		user_date = CAST(NOW() AS timeStamp)
+		<if test="fmst_seqno != ''">
+			,fmst_seqno = #{fmst_seqno}::INT
+		</if>
+		WHERE
+		subject_seqno = #{subject_seqno}::INT
+	</update>
+	<select id="SubjectFrontSQL.countTrace" resultType="int"
+		parameterType="dataMap">
+		/*
+		2021.06.30 박성민
+		SQL ID : SubjectFrontSQL.countTrace
+		추적조사
+		카운트
+		*/
+		SELECT
+		count(*)
+		FROM
+		tblsubject ts
+		inner join tblsubject_trace tst on ts.subject_seqno = tst.subject_seqno
+		inner join tblproject tp on ts.project_seqno = tp.project_seqno
+		where ts.insert_user = #{member_seqno}::INT
+		and ts.delete_flag ='N'
+		<!-- and CAST(NOW() AS timeStamp) >= ts.subject_edate -->
+		<if test="project_title != ''" >
+		AND 
+		tp.project_title like CONCAT('%',#{project_title},'%')
+		</if>
+		<if test="subject_ref != ''" >
+		AND 
+		ts.subject_ref like CONCAT('%',#{subject_ref},'%')
+		</if>
+		<if test="subject_title != ''" >
+		AND 
+		ts.subject_title like CONCAT('%',#{subject_title},'%')
+		</if>
+		<if test="subject_proc_status != ''" >
+		AND 
+		tst.subject_proc_status = '${subject_proc_status}'
+		</if>
+	</select>
+	<select id="SubjectFrontSQL.selectTraceList"
+		resultType="dataMap" parameterType="dataMap">
+		/*
+		2021.06.30 박성민
+		SQL ID :
+		SubjectFrontSQL.selectTraceList
+		추적조사_리스트
+		*/
+		select
+		ts.project_seqno,
+		ts.subject_seqno,
+		ts.subject_title,
+		substring(cast(ts.subject_sdate as text),3,9) as subject_sdate,
+		substring(cast(ts.subject_edate as text),3,9) as subject_edate,
+		ts.subject_ref,
+		ts.sector_lev1 ,
+		ts.sector_lev2 ,
+		tmsc.biz_name as tmsc_biz_name,
+		tmdc.biz_name as
+		tmdc_biz_name,
+		ts.subject_proc_status as ts_subject_proc_status,
+		ts.subject_proc_step as ts_subject_proc_step,
+		tst.subject_proc_status as tst_subject_proc_status,
+		tst.trace_date as tst_trace_date
+		from
+		tblsubject ts
+		inner join tblproject tp on ts.project_seqno = tp.project_seqno
+		inner join tblsubject_trace tst on ts.subject_seqno = tst.subject_seqno
+		inner join tblsubject_member tmsc on ts.subject_seqno = tmsc.subject_seqno and tmsc.member_role ='SC'
+		inner join tblsubject_member tmdc on ts.subject_seqno =	tmdc.subject_seqno and tmdc.member_role ='DC'
+		where
+		ts.insert_user = #{member_seqno}::INT
+		
+		<!-- and CAST(NOW() AS timeStamp) >= ts.subject_edate -->
+		<if test="project_title != ''" >
+		AND 
+		tp.project_title like CONCAT('%',#{project_title},'%')
+		</if>
+		<if test="subject_ref != ''" >
+		AND 
+		ts.subject_ref like CONCAT('%',#{subject_ref},'%')
+		</if>
+		<if test="subject_title != ''" >
+		AND 
+		ts.subject_title like CONCAT('%',#{subject_title},'%')
+		</if>
+		<if test="subject_proc_status != ''" >
+		AND 
+		tst.subject_proc_status = '${subject_proc_status}'
+		</if>
+		ORDER BY ts.insert_date DESC
+		limit ${rows}::INT offset (${page}::INT -1) * 10
+	</select>
+	<select id="SubjectFrontSQL.selectTraceDetail"
+		resultType="dataMap" parameterType="dataMap">
+		/*
+		2021.07.08 박성민
+		SQL ID : SubjectFrontSQL.selectTraceDetail
+		추적조사 디테일 조회
+		*/
+		SELECT
+		tst.*
+		FROM
+		tblsubject ts
+		inner join tblsubject_trace tst on ts.subject_seqno =
+		tst.subject_seqno
+		where
+		tst.subject_seqno = #{subject_seqno}::INT
+		<!-- and CAST(NOW() AS timeStamp) >=
+		ts.subject_edate -->
+	</select>
+	<update id="SubjectFrontSQL.updateTrace" parameterType="dataMap">
+		/*
+		SQL ID : SubjectFrontSQL.updateEval
+		사업신청 업데이트
+		*/
+		UPDATE tblsubject_trace
+		SET
+		subject_proc_status = '20'::INT,
+		user_seqno = #{user_seqno}::INT,
+		user_ip = #{user_ip},
+		user_date = CAST(NOW() AS timeStamp)
+		<if test="fmst_seqno != ''">
+			,fmst_seqno = #{fmst_seqno}::INT
+		</if>
+		WHERE
+		subject_seqno = #{subject_seqno}::INT
+	</update>
+	<select id="SubjectFrontSQL.countCalc" resultType="int"
+		parameterType="dataMap">
+		/*
+		2021.08.03 박성민
+		SQL ID : SubjectFrontSQL.countCalc
+		정산관리 카운트
+		*/
+		SELECT
+		count(*)
+		FROM
+		tblsubject ts
+		inner join tblsubject_member tmsc on ts.subject_seqno = tmsc.subject_seqno  and tmsc.member_role ='SC'
+		inner join tblsubject_calc tscc on ts.subject_seqno = tscc.subject_seqno
+		inner join tblproject tp on ts.project_seqno = tp.project_seqno
+		where tmsc.member_seqno = #{member_seqno}::INT
+		and ts.delete_flag ='N'
+		<!-- and CAST(NOW() AS timeStamp) >= ts.subject_edate -->
+		<if test="project_title != ''" >
+		AND 
+		tp.project_title like CONCAT('%',#{project_title},'%')
+		</if>
+		<if test="subject_ref != ''" >
+		AND 
+		ts.subject_ref like CONCAT('%',#{subject_ref},'%')
+		</if>
+		<if test="subject_title != ''" >
+		AND 
+		ts.subject_title like CONCAT('%',#{subject_title},'%')
+		</if>
+		<if test="subject_proc_status != ''" >
+		AND 
+		tscc.subject_proc_status = '${subject_proc_status}'
+		</if>
+	</select>
+	<select id="SubjectFrontSQL.selectCalcList"
+		resultType="dataMap" parameterType="dataMap">
+		/*
+		2021.06.30 박성민
+		SQL ID :
+		SubjectFrontSQL.selectCalcList
+		정산관리_리스트
+		*/
+		select
+		ts.project_seqno,
+		ts.subject_seqno,
+		ts.subject_title,
+		substring(cast(ts.subject_sdate as text),3,9) as subject_sdate,
+		substring(cast(ts.subject_edate as text),3,9) as subject_edate,
+		ts.subject_ref,
+		ts.sector_lev1 ,
+		ts.sector_lev2 ,
+		tmsc.biz_name as tmsc_biz_name,
+		tmdc.biz_name as
+		tmdc_biz_name,
+		ts.subject_proc_status as ts_subject_proc_status,
+		ts.subject_proc_step as ts_subject_proc_step,
+		tscc.subject_proc_status as tscc_subject_proc_status
+		from
+		tblsubject ts
+		inner join tblproject tp on ts.project_seqno = tp.project_seqno
+		inner join tblsubject_calc tscc on ts.subject_seqno = tscc.subject_seqno
+		inner join tblsubject_member tmsc on ts.subject_seqno = tmsc.subject_seqno and tmsc.member_role ='SC'
+		inner join tblsubject_member tmdc on ts.subject_seqno =	tmdc.subject_seqno and tmdc.member_role ='DC'
+		where tmsc.member_seqno = #{member_seqno}::INT
+		<!-- and
+		CAST(NOW() AS timeStamp) >= ts.subject_edate -->
+		<if test="project_title != ''" >
+		AND 
+		tp.project_title like CONCAT('%',#{project_title},'%')
+		</if>
+		<if test="subject_ref != ''" >
+		AND 
+		ts.subject_ref like CONCAT('%',#{subject_ref},'%')
+		</if>
+		<if test="subject_title != ''" >
+		AND 
+		ts.subject_title like CONCAT('%',#{subject_title},'%')
+		</if>
+		<if test="subject_proc_status != ''" >
+		AND 
+		tscc.subject_proc_status = '${subject_proc_status}'
+		</if>
+		ORDER BY ts.insert_date DESC
+		limit ${rows}::INT offset (${page}::INT -1) * 10
+	</select>
+	<select id="SubjectFrontSQL.selectCalcDetail"
+		resultType="dataMap" parameterType="dataMap">
+		/*
+		2021.08.03 박성민
+		SQL ID : SubjectFrontSQL.selectCalcDetail
+		정산관리 디테일 조회
+		*/
+		SELECT
+		tscc.*
+		FROM
+		tblsubject ts
+		inner join tblsubject_calc tscc on ts.subject_seqno =
+		tscc.subject_seqno
+		where
+		tscc.subject_seqno = #{subject_seqno}::INT
+		<!-- and CAST(NOW() AS timeStamp) >=
+		ts.subject_edate -->
+	</select>
+	<select id="SubjectFrontSQL.doListFrontSurveyPaper" resultType="dataMap">
+		/*
+			SQL ID : SubjectFrontSQL.doListFrontSurveyPaper
+			설문지문제출제 목록 조회
+		*/
+		   SELECT EP.PPR_SEQ
+			, EP.PPR_TITLE
+			, EP.PPR_BODY
+			, EP.PPR_IDX
+			, EP.PPR_TOTPT
+			, EP.QUE_ECNT
+			, EP.PPR_OPT
+        	, (SELECT CDNM FROM TA_COMM_CODE WHERE COMMCD_GCD = 'PPR_PCD' AND EP.PPR_PCD = COMMCD) AS PPR_PCD
+        	, (SELECT CDNM FROM TA_COMM_CODE WHERE COMMCD_GCD = 'PPR_TCD' AND EP.PPR_TCD = COMMCD) AS PPR_TCD
+			, EP.REGUID
+			, EP.MODUID
+			, EP.EVAL_SDAY
+			, EP.EVAL_EDAY
+		 	, TO_CHAR(TO_DATE(EP.REGDTM, 'yyyymmddHH24MISS'),'YY/MM/DD HH24:MI') AS REGDTM
+		 	, TO_CHAR(TO_DATE(EP.MODDTM, 'yyyymmddHH24MISS'),'YY/MM/DD HH24:MI') AS MODDTM
+		 	, EP.USEYN
+		 	, EP.SITEID
+		 	, (SELECT CASE COUNT(*) WHEN 1 THEN 'Y' ELSE 'N' END
+               FROM TE_EVAL_APPLY EA
+               WHERE EA.PPR_SEQ = EP.PPR_SEQ AND EA.USERNO = #{userno}) AS SURVEY_STATE
+			FROM 
+				TE_EVAL_PAPER EP
+			WHERE EP.PPR_PCD = 'PPR_P002'
+			ORDER BY EP.PPR_SEQ ASC
+	</select>	
+	
+	<select id="SubjectFrontSQL.doListApplyDate" parameterType="dataMap" resultType="dataMap">
+		/*
+			SubjectFrontSQL.doListApplyDate
+			설문 기간 조회
+		*/
+	        SELECT   
+            	EA.USERNO
+              , EA.PPR_SEQ  
+              , TO_CHAR(TO_DATE(EA.APL_SDTM, 'yyyymmddHH24MISS'),'YY/MM/DD HH24:MI') AS APL_SDTM
+              , TO_CHAR(TO_DATE(EA.APL_EDTM, 'yyyymmddHH24MISS'),'YY/MM/DD HH24:MI') AS APL_EDTM
+            FROM TE_EVAL_APPLY EA
+            WHERE USERNO = #{userno} AND EA.PPR_PCD = 'PPR_P002'
+	</select>  
+	
+	<select id="SubjectFrontSQL.doListMultipleChoice" parameterType="dataMap" resultType="dataMap">
+		/*
+			SubjectFrontSQL.doListMultipleChoice
+			객관식 답안 목록 조회
+		*/
+			SELECT ts.subject_seqno ,
+					tp.project_seqno ,
+					tep.ppr_title ,
+					teq.que_title,
+					teq2.item_title ,
+					teq2.item_value ,
+					teq.que_seq 
+			FROM tblsubject_survey tsv 
+				inner join tblsubject ts on tsv.subject_seqno  = ts.subject_seqno 
+				inner join tblproject tp on ts.project_seqno = tp.project_seqno 
+				inner join te_eval_paper tep on tsv.ppr_seq = tep.ppr_seq 
+				inner join te_eval_set tes on tep.ppr_seq = tes.ppr_seq 
+				inner join te_eval_que teq on tes.que_seq = teq.que_seq 
+				inner join te_eval_queitem teq2 on teq.que_seq = teq2.que_seq 
+					
+			WHERE ts.subject_seqno = #{subject_seqno}::INT
+	</select> 
+	
+	<select id="SubjectFrontSQL.doListMultipleJu" parameterType="dataMap" resultType="dataMap">
+		/*
+			SubjectFrontSQL.doListMultipleJu
+			주관식 답안 목록 조회
+		*/
+			SELECT ts.subject_seqno ,
+					tp.project_seqno ,
+					tep.ppr_title ,
+					teq.que_title,
+					tea.apl_ans,
+					teq.que_seq 
+			FROM tblsubject_survey tsv 
+				inner join tblsubject ts on tsv.subject_seqno  = ts.subject_seqno 
+				inner join tblproject tp on ts.project_seqno = tp.project_seqno 
+				inner join te_eval_paper tep on tsv.ppr_seq = tep.ppr_seq 
+				inner join te_eval_set tes on tep.ppr_seq = tes.ppr_seq 
+				inner join te_eval_que teq on tes.que_seq = teq.que_seq 
+				inner join te_eval_applog tea on tea.que_seq = teq.que_seq 
+				and tea.ppr_seq = tsv.ppr_seq 
+					
+			WHERE ts.subject_seqno = #{subject_seqno}::INT
+			and teq.que_pcd='QUE_P002'
+			and tea.userno=#{userno}
+	</select> 
+	
+	<update id="SubjectFrontSQL.updateCalc" parameterType="dataMap">
+		/*
+		SQL ID : SubjectFrontSQL.updateCalc
+		정산관리 업데이트
+		*/
+		UPDATE tblsubject_calc
+		SET
+		subject_proc_status = '20'::INT,
+		user_seqno = #{insert_user}::INT,
+		user_ip = #{insert_ip},
+		user_date = CAST(NOW() AS timeStamp)
+		<if test="fmst_seqno != ''">
+			,fmst_seqno = #{fmst_seqno}::INT
+		</if>
+		WHERE
+		subject_seqno = #{subject_seqno}::INT
+	</update>
+	
+	<select id="SubjectFrontSQL.doListQueResult" parameterType="dataMap" resultType="dataMap">
+		/*
+			SubjectFrontSQL.doListQueResult
+			설문 결과
+		*/
+			select 
+				tea.*,
+				teq.que_title,
+				tep.project_seqno,
+				teq.que_pcd 
+			from te_eval_applog tea 
+			inner join te_eval_paper tep on tea.ppr_seq = tep.ppr_seq 
+			inner join te_eval_que teq on tea.que_seq = teq.que_seq 
+			where tea.ppr_seq = #{ppr_seq}::INT and tea.userno = #{update_user}
+	</select> 
+	
+	<select id="SubjectFrontSQL.doListMultipleChoiceList" parameterType="dataMap" resultType="dataMap">
+		/*
+			SubjectFrontSQL.doListMultipleChoiceList
+			객관식 답안 목록 조회
+		*/
+			SELECT 
+				A.*
+			    , CASE WHEN CNT = 0 THEN 0 ELSE ROUND(TRUNC((CNT::NUMERIC / TOT), 4), 1) * 100 END AS PERCENT
+			FROM(
+				SELECT ES.QUE_SEQ, EQ.QUE_TITLE, EI.ITEM_TITLE, EI.ITEM_VALUE,
+				(SELECT COUNT(*) FROM TE_EVAL_APPLOG WHERE QUE_SEQ = ES.QUE_SEQ AND PPR_SEQ = ${ppr_seq}) AS TOT, 
+				(SELECT COUNT(*) FROM TE_EVAL_APPLOG WHERE QUE_SEQ = ES.QUE_SEQ AND APL_ANS = EI.ITEM_TITLE AND PPR_SEQ = ${ppr_seq}) AS CNT 
+				FROM TE_EVAL_SET ES, TE_EVAL_QUE EQ, TE_EVAL_QUEITEM EI
+				
+				WHERE EI.QUE_SEQ = EQ.QUE_SEQ AND EI.QUE_SEQ = ES.QUE_SEQ AND EQ.QUE_PCD = 'QUE_P001' AND ES.USEYN = 'Y' AND ES.PPR_SEQ = ${ppr_seq}
+				
+				ORDER BY EI.ITEM_IDX ASC
+			)A
+	</select> 
+	
+	<select id="SubjectFrontSQL.doListMultipleChoiceScore" parameterType="dataMap" resultType="dataMap">
+		/*
+			SubjectFrontSQL.doListMultipleChoiceScore
+			객관식(점수) 답안 목록 조회
+		*/
+			SELECT 
+				A.*
+			    , CASE WHEN CNT = 0 THEN 0 ELSE ROUND(TRUNC((CNT::NUMERIC / TOT), 4), 1) * 100 END AS PERCENT
+			FROM(
+				SELECT ES.QUE_SEQ, EQ.QUE_TITLE, EI.ITEM_TITLE, EI.ITEM_VALUE,
+				(SELECT COUNT(*) FROM TE_EVAL_APPLOG WHERE QUE_SEQ = ES.QUE_SEQ AND PPR_SEQ = ${ppr_seq}) AS TOT, 
+				(SELECT COUNT(*) FROM TE_EVAL_APPLOG WHERE QUE_SEQ = ES.QUE_SEQ AND APL_ANS = EI.ITEM_TITLE AND PPR_SEQ = ${ppr_seq}) AS CNT 
+				FROM TE_EVAL_SET ES, TE_EVAL_QUE EQ, TE_EVAL_QUEITEM EI
+				WHERE EI.QUE_SEQ = EQ.QUE_SEQ AND EI.QUE_SEQ = ES.QUE_SEQ AND EQ.QUE_PCD = 'QUE_P006' AND ES.USEYN = 'Y' AND ES.PPR_SEQ = ${ppr_seq}
+				ORDER BY EI.ITEM_IDX ASC
+			)A
+	</select> 
+	
+	<select id="SubjectFrontSQL.doListSubjective" parameterType="dataMap" resultType="dataMap">
+		/*
+			SubjectFrontSQL.doListSubjective
+			주관식 답안 목록 조회
+		*/
+		
+			select 
+				A.*
+			FROM(
+				SELECT DISTINCT ES.QUE_SEQ, EQ.QUE_TITLE, EA.APL_ANS, tep.PPR_SEQ
+				FROM TE_EVAL_APPLOG EA
+				inner join TE_EVAL_QUE EQ on ea.QUE_SEQ = eq.QUE_SEQ
+				inner join te_eval_paper tep on ea.ppr_seq = tep.ppr_seq
+				inner join TE_EVAL_SET ES on ES.QUE_SEQ = EA.QUE_SEQ
+				WHERE  EQ.QUE_PCD = 'QUE_P002' AND ES.USEYN = 'Y' and ea.ppr_seq = ${ppr_seq}
+			)A
+	</select>
+	
+	<update id="SubjectFrontSQL.updateContractDetail" parameterType="dataMap">
+		/*
+			2021.12.16 박성민
+			SQL ID : SubjectFrontSQL.updateContractDetail
+			서명일자 수정
+		*/
+		UPDATE tblsubject_contract_detail
+		SET 
+			sign_date = #{sign_date}::timestamp
+		WHERE
+			subject_seqno = #{subject_seqno}::INT
+		and 
+			user_gubun = #{user_gubun}
+					
+	</update>
+		<update id="SubjectFrontSQL.updateSubjectDocument"
+		parameterType="dataMap">
+		/*
+		SQL ID : SubjectFrontSQL.updateSubjectDocument
+		사업 신청서 제출
+		*/
+		UPDATE tblsubject_apply
+		SET
+		subject_proc_status = #{subject_proc_status}::INT
+		WHERE
+		subject_seqno = #{subject_seqno}::INT
+	</update>
+</mapper>	

@@ -1,0 +1,784 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="SurveySQL">
+
+<!-- ====================================================================================== -->
+<!--							설문문항 (TE_EVAL_QUE)											-->
+<!-- ====================================================================================== -->	
+
+	<select id="SurveySQL.doCountSurveyQue" resultType="int">
+		/*
+			SQL ID : SurveySQL.doCountSurveyQue
+			설문문항 목록 카운트
+		*/
+		SELECT
+			COUNT(QUE_SEQ)
+		FROM 
+			TE_EVAL_QUE
+		WHERE
+			USEYN = 'Y'
+	</select>
+
+	<select id="SurveySQL.doGetSurveyQue" parameterType="dataMap" resultType="dataMap">
+		/*
+			SQL ID: SurveySQL.doGetSurveyQue
+			설문문항 정보 조회
+		*/
+		SELECT 
+			*
+		FROM 
+			TE_EVAL_QUE
+		WHERE 
+			PPR_PCD = 'PPR_P002' AND QUE_SEQ = ${que_seq}
+	</select>
+	
+	<select id="SurveySQL.doListSurveyQue" resultType="DataMap">
+		/*
+			SQL ID : SurveySQL.doListSurveyQue
+			설문문항 목록 조회
+		*/
+		SELECT QUE_SEQ
+		, PPR_PCD
+		, QUE_TITLE
+		, QUE_BODY
+		, QUE_EXPN
+		, QUE_TAG
+		, QUE_LVL
+		, ANS_CORRECT
+		, ANS_SIMILAR
+		, ITEM_CNT
+		, WEEKNO
+		, BAS_SCORE
+		, QUE_OPT	
+        , (SELECT CDNM FROM TA_COMM_CODE WHERE COMMCD_GCD = 'QUE_PCD' AND QUE_PCD = COMMCD) AS QUE_PCD
+        , (SELECT CDNM FROM TA_COMM_CODE WHERE COMMCD_GCD = 'QUE_TCD' AND QUE_TCD = COMMCD) AS QUE_TCD
+		, REGUID
+		, MODUID
+		, TO_CHAR(TO_DATE(REGDTM, 'yyyymmddHH24MISS'),'YY/MM/DD HH24:MI') AS REGDTM
+		, TO_CHAR(TO_DATE(MODDTM, 'yyyymmddHH24MISS'),'YY/MM/DD HH24:MI') AS MODDTM
+		, USEYN
+		, SITEID
+		
+		FROM TE_EVAL_QUE
+		WHERE PPR_PCD = 'PPR_P002' AND 1=1
+		<if test="sc_keywd != null and sc_keywd != ''">
+			<if test="sc_where == 'que_title'">
+				AND QUE_TITLE LIKE '%'|| #{ sc_keywd }||'%'
+			</if>
+			<if test="sc_where == 'reguid'">
+				AND REGUID LIKE '%'||#{ sc_keywd }||'%'
+			</if>
+			<if test="sc_where == 'moduid'">
+				AND MODUID LIKE '%'||#{ sc_keywd }||'%'
+			</if>				
+		</if>	
+        <if test="sc_useyn != ''">
+        	AND USEYN = #{ sc_useyn }
+        </if>		
+        <if test="sc_lvl != ''">
+        	AND QUE_LVL = #{ sc_lvl }
+        </if>	  
+        <if test="sc_pcd != ''">
+        	AND QUE_PCD = #{ sc_pcd }
+        </if>	 
+        ORDER BY QUE_SEQ ASC             				
+	</select>
+	
+		<select id="SurveySQL.doCountSetSurveyQue" resultType="int">
+		/*
+			SQL ID : SurveySQL.doCountSetSurveyQue
+			설문문항 목록 카운트 (진단지 구분)
+		*/
+		SELECT
+			COUNT(QUE_SEQ)
+		FROM 
+			TE_EVAL_QUE
+		WHERE
+			PPR_PCD = 'PPR_P002' AND USEYN = 'Y'
+	</select>
+	
+	<select id="SurveySQL.dolistSetSurveyQue" resultType="dataMap">
+		/*
+			SQL ID : SurveySQL.dolistSetSurveyQue
+			설문문항 목록 조회 (진단지 구분)
+		*/
+		SELECT A.QUE_SEQ
+		, A.PPR_PCD
+		, A.QUE_TITLE
+		, A.QUE_BODY
+		, A.QUE_EXPN
+		, A.QUE_TAG
+		, A.ANS_CORRECT
+		, A.ANS_SIMILAR
+		, A.ITEM_CNT
+		, A.WEEKNO
+		, A.BAS_SCORE
+		, A.QUE_OPT	
+        , (SELECT CDNM FROM TA_COMM_CODE WHERE COMMCD_GCD = 'QUE_PCD' AND A.QUE_PCD = COMMCD) AS QUE_PCD
+        , (SELECT CDNM FROM TA_COMM_CODE WHERE COMMCD_GCD = 'QUE_TCD' AND A.QUE_TCD = COMMCD) AS QUE_TCD
+		, A.REGUID
+		, A.MODUID
+		, TO_CHAR(TO_DATE(A.REGDTM, 'yyyymmddHH24MISS'),'YY/MM/DD HH24:MI') AS REGDTM
+		, TO_CHAR(TO_DATE(A.MODDTM, 'yyyymmddHH24MISS'),'YY/MM/DD HH24:MI') AS MODDTM
+		, A.USEYN
+		, A.SITEID
+		
+		FROM TE_EVAL_QUE A
+		WHERE A.PPR_PCD = 'PPR_P002' AND A.USEYN = 'Y'
+		<if test="sc_keywd != null and sc_keywd != ''">
+		<if test="sc_where == 'que_title'">
+			AND A.QUE_TITLE LIKE '%'|| #{ sc_keywd }||'%'
+		</if>
+		<if test="sc_where == 'reguid'">
+			AND A.REGUID LIKE '%'||#{ sc_keywd }||'%'
+		</if>
+		<if test="sc_where == 'moduid'">
+			AND A.MODUID LIKE '%'||#{ sc_keywd }||'%'
+		</if>				
+		</if>	
+        <if test="sc_useyn != ''">
+        	AND A.USEYN = #{ sc_useyn }
+        </if>		
+        <if test="que_pcd != ''">
+        	AND A.QUE_PCD = #{ que_pcd }
+        </if>	  
+        <if test="que_lvl != ''">
+        	AND A.QUE_LVL = #{ que_lvl }
+        </if>	        				
+	</select>
+	
+	<insert id="SurveySQL.addSurveyQue" parameterType="DataMap">
+		/*
+			SQL ID : SurveySQL.addSurveyQue
+			설문문항 등록
+		*/
+		INSERT INTO TE_EVAL_QUE 
+			( QUE_SEQ
+			, PPR_PCD
+			, QUE_TITLE
+			, QUE_BODY
+			, QUE_OPT
+			, QUE_PCD
+			, QUE_TCD
+			, REGUID
+			, MODUID
+			, REGDTM
+			, MODDTM
+			, USEYN
+			, SITEID
+			)
+		VALUES
+			( ${que_seq}
+			, 'PPR_P002'
+			, #{que_title}
+			, #{que_body}
+			, 0
+			, #{que_pcd}
+			, #{que_tcd}
+			, #{userid}
+			, #{userid}
+			, TO_CHAR(NOW(), 'YYYYMMDDHH24MISS')
+			, TO_CHAR(NOW(), 'YYYYMMDDHH24MISS')
+			, #{useyn}
+			, #{siteid}
+			)	
+	</insert>
+	
+	<update id="SurveySQL.doUpdateSurveyQue" parameterType="dataMap">
+		/*
+			SQL ID: SurveySQL.doUpdateSurveyQue
+			설문문항 수정
+		*/
+		UPDATE TE_EVAL_QUE
+		SET QUE_TITLE			= #{que_title}
+			, QUE_BODY			= #{que_body}
+			, QUE_EXPN			= #{que_expn}
+			, QUE_LVL			= #{que_lvl}
+			, ANS_CORRECT		= #{ans_correct}
+			, ANS_SIMILAR		= #{ans_similar}																	
+			, MODUID			= #{userid}
+			, MODDTM			= TO_CHAR(NOW(), 'YYYYMMDDHH24MISS')
+			, USEYN		 		= COALESCE(#{useyn},'N')
+		WHERE QUE_SEQ = ${que_seq}
+	</update>	
+	
+	<delete id="SurveySQL.doDeleteSurveyQue" parameterType="dataMap">
+		/*
+			SQL ID: SurveySQL.doDeleteSurveyQue
+			설문문항 삭제
+		*/
+		DELETE FROM TE_EVAL_QUE
+		WHERE QUE_SEQ IN
+		<foreach collection="list" item="list" index="index" open="(" separator="," close=")">
+			${list.que_seq}
+		</foreach>
+	</delete>
+	
+<!-- ====================================================================================== -->
+<!--						설문문항항목 (TE_EVAL_QUEITEM)										-->
+<!-- ====================================================================================== -->
+	<select id="SurveySQL.doGetOneSurveyQueitem" parameterType="dataMap" resultType="dataMap">
+		/*
+			SQL ID: SurveySQL.doGetOneSurveyQueitem
+			설문문항항목 정보 조회
+		*/
+		SELECT
+			 A.*
+		FROM 
+			TE_EVAL_QUEITEM A
+		WHERE 
+			A.QUE_SEQ = ${que_seq}
+		ORDER BY A.ITEM_IDX ASC
+	</select>
+	
+	<select id="SurveySQL.doListSurveyQueitem" parameterType="dataMap" resultType="dataMap">
+		/*
+			SQL ID: SurveySQL.doListSurveyQueitem
+			설문문항항목 특정 목록 조회
+		*/
+		SELECT ITEM_SEQ	
+			, QUE_SEQ
+			, ITEM_TITLE
+			, ITEM_IDX			
+			, REGUID
+			, MODUID 
+		 	, TO_CHAR(TO_DATE(REGDTM, 'yyyymmddHH24MISS'),'YY/MM/DD HH24:MI') AS REGDTM
+		 	, TO_CHAR(TO_DATE(MODDTM, 'yyyymmddHH24MISS'),'YY/MM/DD HH24:MI') AS MODDTM
+		FROM 
+			TE_EVAL_QUEITEM
+		WHERE 
+			QUE_SEQ = ${que_seq}
+		ORDER BY ITEM_IDX ASC
+	</select>	
+	
+	<select id="SurveySQL.doGetMaxQueItemIdx" parameterType="dataMap" resultType="dataMap">
+		/*
+			SQL ID: SurveySQL.doGetMaxQueItemIdx
+			설문문항항목 제일 높은 순서 조회
+		*/	
+		SELECT 
+			MAX(ITEM_IDX) AS MAX_IDX
+		FROM 
+			TE_EVAL_QUEITEM
+		WHERE 
+			QUE_SEQ = ${que_seq}
+	</select>	
+	
+	<select id="SurveySQL.doCountSurveyQueitem" resultType="int">
+		/*
+			SQL ID : SurveySQL.doCountSurveyQueitem
+			설문문항항목 목록 카운트
+		*/
+		SELECT
+			COUNT(ITEM_SEQ)
+		FROM 
+			TE_EVAL_QUEITEM
+		WHERE 
+			PPR_PCD = 'PPR_P002' AND 1=1
+	</select>
+<!--                                                                          -->
+	<update id="SurveySQL.doUpdateSurveyQueitem" parameterType="dataMap">
+		/*
+			SQL ID : SurveySQL.doUpdateSurveyQueitem
+			설문문항항목 수정
+		*/
+		<foreach  item="item" collection="lists"  index="index" separator=";" close=";" >	
+		UPDATE TE_EVAL_QUEITEM
+		SET ITEM_TITLE		= #{item.item_titles}
+			, ITEM_IDX		= #{item.item_idxs}
+			, MODUID		= #{userid}
+			, MODDTM		= TO_CHAR(NOW(), 'YYYYMMDDHH24MISS')
+		WHERE ITEM_SEQ = ${item.item_seqs} 
+		</foreach>
+	</update>
+
+	<insert id="SurveySQL.doAddSurveyQueitem" parameterType="dataMap" useGeneratedKeys="false">
+		/*
+			SQL ID : SurveySQL.doAddSurveyQueitem
+			설문문항항목 등록
+		*/
+		<foreach collection="list" item="item" index="index" separator=";" close=";">
+			INSERT INTO TE_EVAL_QUEITEM 
+			( ITEM_SEQ
+			, QUE_SEQ
+			, ITEM_TITLE
+			, ITEM_IDX
+			, CORRECT_YN
+			, ITEM_PCD
+			, REGUID
+			, MODUID
+			, REGDTM
+			, MODDTM
+			, SITEID
+			)
+			VALUES
+			( ${item.item_seq}
+			, ${item.que_seq}
+			, #{item.item_title}
+			, ${item.item_idx}
+			, 0
+			, 'H'
+			, #{userid}
+			, #{userid}
+			, TO_CHAR(NOW(), 'YYYYMMDDHH24MISS')
+			, TO_CHAR(NOW(), 'YYYYMMDDHH24MISS')
+			, #{siteid}
+			)
+		</foreach>
+	</insert>
+
+	<delete id="SurveySQL.deleteSurveyQueitem" parameterType="dataMap">
+		/*
+			SQL ID: SurveySQL.deleteSurveyQueitem
+			설문문항항목 삭제
+		*/
+		DELETE FROM TE_EVAL_QUEITEM
+		WHERE ITEM_SEQ	= ${item_seq}
+	</delete>	
+	
+<!-- ====================================================================================== -->
+<!--							설문지 (TE_EVAL_PAPER)											-->
+<!-- ====================================================================================== -->
+	<select id="SurveySQL.doGetSurveyPaper" parameterType="dataMap" resultType="dataMap">
+		/*
+			SQL ID: SurveySQL.doGetSurveyPaper
+			설문지 정보 조회
+		*/
+		SELECT 
+			A.*
+			, (SELECT COUNT(*) FROM TE_EVAL_APPLY C WHERE C.PPR_SEQ = ${ppr_seq}) AS APPLY_CNT
+            , A.EVAL_SDAY
+            , A.EVAL_EDAY
+		FROM
+			TE_EVAL_PAPER A
+		WHERE 
+			A.PPR_PCD = 'PPR_P002' AND PPR_SEQ = ${ppr_seq}
+	</select>
+	
+	<select id="SurveySQL.doCountSurveyPaper" resultType="int">
+		/*
+			SQL ID : SurveySQL.doCountSurveyPaper
+			설문지 목록 카운트
+		*/
+		SELECT 
+			COUNT(PPR_SEQ)
+		FROM 
+			TE_EVAL_PAPER
+		WHERE 
+			PPR_PCD = 'PPR_P002' AND USEYN = 'Y'
+	</select>
+
+	<select id="SurveySQL.doListSurveyPaper" resultType="dataMap">
+		/*
+			SQL ID : SurveySQL.doListSurveyPaper
+			설문지문제출제 목록 조회
+		*/
+		SELECT PPR_SEQ
+		, EVAL_SEQ
+		, PPR_TITLE
+		, PPR_BODY
+		, PPR_IDX
+		, PPR_TOTPT
+		, QUE_ECNT
+		, PPR_OPT
+        , (SELECT CDNM FROM TA_COMM_CODE WHERE COMMCD_GCD = 'PPR_PCD' AND PPR_PCD = COMMCD) AS PPR_PCD
+        , (SELECT CDNM FROM TA_COMM_CODE WHERE COMMCD_GCD = 'PPR_TCD' AND PPR_TCD = COMMCD) AS PPR_TCD
+		, REGUID
+		, MODUID
+	 	, TO_CHAR(TO_DATE(REGDTM, 'yyyymmddHH24MISS'),'YY/MM/DD HH24:MI') AS REGDTM
+	 	, TO_CHAR(TO_DATE(MODDTM, 'yyyymmddHH24MISS'),'YY/MM/DD HH24:MI') AS MODDTM
+	 	, USEYN
+	 	, SITEID	
+		FROM 
+			TE_EVAL_PAPER
+		WHERE PPR_PCD = 'PPR_P002' 
+		<if test="sc_keywd != null and sc_keywd != ''">
+			<if test="sc_where == 'ppr_title'">
+				AND PPR_TITLE LIKE '%'||#{ sc_keywd }||'%'
+			</if>
+			<if test="sc_where == 'reguid'">
+				AND REGUID LIKE '%'||#{ sc_keywd }||'%'
+			</if>
+			<if test="sc_where == 'moduid'">
+				AND MODUID LIKE '%'||#{ sc_keywd }||'%'
+			</if>				
+		</if>	
+        <if test="sc_useyn != ''">
+        	AND USEYN = #{ sc_useyn }
+        </if>		
+	</select>	
+	
+	<insert id="SurveySQL.doAddSurveyPaper" parameterType="dataMap">
+		/*
+			SQL ID : SurveySQL.doAddSurveyPaper
+			설문지 등록
+		*/
+		INSERT INTO TE_EVAL_PAPER 
+			( CMPTN_PCD
+			, PPR_SEQ
+			, EVAL_SEQ
+			, PPR_TITLE
+			, PPR_BODY
+			, QUE_ECNT
+			, PPR_TOTPT
+			, PPR_OPT
+			, PPR_PCD
+			, PPR_TCD
+			, REGUID
+			, MODUID
+			, REGDTM
+			, MODDTM
+			, USEYN
+			, SITEID
+			)
+		VALUES
+			( #{cmptn_pcd}
+			, ${ppr_seq}
+			, ${eval_seq}
+			, #{ppr_title}
+			, #{ppr_body}
+			, #{que_ecnt}
+			, #{ppr_totpt}
+			, 0
+			, 'PPR_P002'
+			, #{ppr_tcd}
+			, #{userid}
+			, #{userid}
+			, TO_CHAR(NOW(), 'YYYYMMDDHH24MISS')
+			, TO_CHAR(NOW(), 'YYYYMMDDHH24MISS')
+			, #{useyn}
+			, #{siteid} 
+			)
+	</insert>	
+	
+	<update id="SurveySQL.doUpdateSurveyPaper" parameterType="dataMap">
+		/*
+			SQL ID: SurveySQL.doUpdateSurveyPaper
+			설문지 수정
+		*/
+		UPDATE TE_EVAL_PAPER
+		SET PPR_TITLE			= #{ppr_title}
+			, EVAL_SEQ 			= ${eval_seq}
+			, PPR_BODY			= #{ppr_body}
+			, PPR_TCD			= #{ppr_tcd}											
+			, MODUID			= #{userid}
+			, MODDTM			= TO_CHAR(NOW(), 'YYYYMMDDHH24MISS')
+			, USEYN		 		= COALESCE(#{useyn},'N')
+		WHERE PPR_SEQ = ${ppr_seq}
+	</update>	
+	
+	<delete id="SurveySQL.doDeleteSurveyPaper" parameterType="dataMap">
+		/*
+			SQL ID: CmptnSQL.doDeleteSurveyPaper
+			설문지 삭제
+		*/
+		DELETE FROM TE_EVAL_PAPER
+		WHERE PPR_SEQ = ${ppr_seq} AND PPR_PCD = #{ppr_pcd}
+	</delete>
+
+<!-- ====================================================================================== -->
+<!--							설문지 문제 출제 (TE_EVAL_SET)										-->
+<!-- ====================================================================================== --> 	
+ 	<select id="SurveySQL.doGetSurveySet" parameterType="dataMap" resultType="dataMap">
+		/*
+			SurveySQL.doGetSurveySet
+			특정 설문지문제출제 정보 조회
+		*/
+		SELECT 
+			  A.ESET_SEQ
+			, A.PPR_SEQ
+			, A.QUE_SEQ
+			, A.QUE_SCORE
+			, A.QUE_IDX
+			, A.REGUID
+			, A.MODUID
+		 	, TO_CHAR(TO_DATE(A.REGDTM, 'yyyymmddHH24MISS'),'YY/MM/DD HH24:MI') AS REGDTM
+		 	, TO_CHAR(TO_DATE(A.MODDTM, 'yyyymmddHH24MISS'),'YY/MM/DD HH24:MI') AS MODDTM
+			, A.USEYN
+     	    , (SELECT CDNM FROM TA_COMM_CODE WHERE COMMCD_GCD = 'QUE_PCD' AND QUE_PCD = COMMCD) AS QUE_PCD
+			, B.QUE_TITLE
+			, B.QUE_LVL
+		FROM
+			TE_EVAL_SET A, TE_EVAL_QUE B
+		WHERE 
+			A.PPR_PCD = 'PPR_P002' AND A.PPR_SEQ = ${ppr_seq} AND A.QUE_SEQ = B.QUE_SEQ AND A.USEYN = 'Y'
+	</select>
+	
+	 <select id="SurveySQL.doListSurveySet" parameterType="dataMap" resultType="dataMap">
+		/*
+			SurveySQL.doListSurveySet
+			설문지문제출제 목록 조회
+		*/
+		SELECT 
+			  EP.EVAL_SEQ
+			, ES.ESET_SEQ
+			, ES.PPR_SEQ
+			, ES.QUE_SEQ
+			, ES.USEYN
+        	, (SELECT CDNM FROM TA_COMM_CODE WHERE COMMCD_GCD = 'QUE_PCD' AND EQ.QUE_PCD = COMMCD) AS QUE_PCD
+			, EQ.QUE_TITLE
+			, EP.PROJECT_SEQNO
+		FROM
+			TE_EVAL_SET ES, TE_EVAL_PAPER EP, TE_EVAL_QUE EQ
+		WHERE 
+			ES.QUE_SEQ = EQ.QUE_SEQ AND ES.PPR_SEQ = EP.PPR_SEQ AND ES.PPR_PCD = 'PPR_P002' AND ES.USEYN = 'Y' AND EP.PROJECT_SEQNO = ${project_seqno}
+	</select>
+	
+ 	<select id="SurveySQL.doListSurveySetQueS" parameterType="dataMap" resultType="dataMap">
+		/*
+			SurveySQL.doListSurveySetQueS
+			설문지문제출제 목록 조회 (주관식)
+		*/
+		SELECT 
+			  A.ESET_SEQ
+			, A.PPR_SEQ
+			, A.QUE_SEQ
+        	, (SELECT CDNM FROM TA_COMM_CODE WHERE COMMCD_GCD = 'QUE_PCD' AND B.QUE_PCD = COMMCD) AS QUE_PCD
+			, B.QUE_TITLE
+		FROM
+			TE_EVAL_SET A, TE_EVAL_QUE B
+		WHERE
+			A.PPR_PCD = 'PPR_P002' AND A.QUE_SEQ = B.QUE_SEQ AND A.PPR_SEQ = ${ppr_seq} AND B.QUE_PCD = 'QUE_P002' AND A.USEYN = 'Y'
+	</select>
+	
+	 <select id="SurveySQL.doListSurveySetQueO" parameterType="dataMap" resultType="dataMap">
+		/*
+			SurveySQL.doListSurveySetQueO
+			설문지문제출제 목록 조회 (객관식)
+		*/
+		SELECT 
+			  A.ESET_SEQ
+			, A.PPR_SEQ
+			, A.QUE_SEQ
+        	, (SELECT CDNM FROM TA_COMM_CODE WHERE COMMCD_GCD = 'QUE_PCD' AND B.QUE_PCD = COMMCD) AS QUE_PCD
+			, B.QUE_TITLE
+		FROM
+			TE_EVAL_SET A, TE_EVAL_QUE B
+		WHERE
+			A.PPR_PCD = 'PPR_P002' AND A.QUE_SEQ = B.QUE_SEQ AND A.PPR_SEQ = ${ppr_seq} AND B.QUE_PCD != 'QUE_P002' AND A.USEYN = 'Y'
+	</select>	
+	
+ 	<insert id="SurveySQL.doAddSurveySet" parameterType="dataMap" useGeneratedKeys="false">
+		/*
+			SQL ID : SurveySQL.doAddSurveySet
+			설문지문제출제 등록
+		*/
+		<foreach collection="lists" item="item" index="index" separator=";" close=";">	
+			INSERT INTO TE_EVAL_SET 
+				( ESET_SEQ
+				, PPR_SEQ
+				, PPR_PCD
+				, QUE_SEQ
+				, REGUID
+				, MODUID
+				, REGDTM
+				, MODDTM
+				, USEYN
+				, SITEID
+				)
+			VALUES
+				( ${item.eset_seqs}
+				, ${ppr_seq}
+				, 'PPR_P002'
+				, ${item.que_seqs}
+				, #{userid}
+				, #{userid}
+				, TO_CHAR(NOW(), 'YYYYMMDDHH24MISS')
+				, TO_CHAR(NOW(), 'YYYYMMDDHH24MISS')
+				, 'Y'
+				, #{siteid}
+				)
+		</foreach>
+	</insert>
+	
+	<delete id="SurveySQL.doDeleteSurveySet" parameterType="dataMap">
+		/*
+			SQL ID: SurveySQL.doDeleteSurveySet
+			설문지문제출제 삭제
+		*/
+		DELETE FROM TE_EVAL_SET
+		WHERE PPR_SEQ = ${ppr_seq} AND QUE_SEQ IN
+		<foreach collection="list" item="list" index="index" open="(" separator="," close=")">
+			${list.que_seq}
+		</foreach>
+	</delete>		
+<!--                                      Front            						            -->
+<!-- ====================================================================================== -->
+<!--							설문 조사 내역 (TE_EVAL_APPLOG)									-->
+<!-- ====================================================================================== -->		
+ 	 <select id="SurveySQL.doListMultipleChoice" parameterType="dataMap" resultType="dataMap">
+		/*
+			SurveySQL.doListMultipleChoice
+			객관식 답안 목록 조회
+		*/
+			SELECT 
+				A.*
+			    , CASE WHEN CNT = 0 THEN 0 ELSE ROUND(TRUNC((CNT::NUMERIC / TOT), 4), 1) * 100 END AS PERCENT
+			FROM(
+				SELECT ES.QUE_SEQ, EQ.QUE_TITLE, EI.ITEM_TITLE, EI.ITEM_VALUE,
+				(SELECT COUNT(*) FROM TE_EVAL_APPLOG WHERE QUE_SEQ = ES.QUE_SEQ AND PPR_SEQ = ${ppr_seq}) AS TOT, 
+				(SELECT COUNT(*) FROM TE_EVAL_APPLOG WHERE QUE_SEQ = ES.QUE_SEQ AND APL_ANS = EI.ITEM_TITLE AND PPR_SEQ = ${ppr_seq}) AS CNT 
+				FROM TE_EVAL_SET ES, TE_EVAL_QUE EQ, TE_EVAL_QUEITEM EI
+				WHERE EI.QUE_SEQ = EQ.QUE_SEQ AND EI.QUE_SEQ = ES.QUE_SEQ AND EQ.QUE_PCD != 'QUE_P002' AND ES.USEYN = 'Y' AND ES.PPR_SEQ = ${ppr_seq}
+				ORDER BY EI.ITEM_IDX ASC
+			)A
+	</select> 
+	
+	 <select id="SurveySQL.doListSubjective" parameterType="dataMap" resultType="dataMap">
+		/*
+			SurveySQL.doListSubjective
+			주관식 답안 목록 조회
+		*/
+			SELECT 
+				A.*
+			FROM(
+				SELECT DISTINCT ES.QUE_SEQ, EQ.QUE_TITLE, EA.APL_ANS
+				FROM TE_EVAL_SET ES, TE_EVAL_QUE EQ, TE_EVAL_APPLOG EA
+				WHERE ES.QUE_SEQ = EQ.QUE_SEQ AND ES.QUE_SEQ = EA.QUE_SEQ AND EQ.QUE_PCD = 'QUE_P002' AND ES.USEYN = 'Y' AND EA.PPR_SEQ = ${ppr_seq}
+			)A
+	</select>
+
+	<select id="SurveySQL.doListFrontSurveyPaper" resultType="dataMap">
+		/*
+			SQL ID : SurveySQL.doListFrontSurveyPaper
+			설문지문제출제 목록 조회
+		*/
+		   SELECT EP.PPR_SEQ
+			, EP.PPR_TITLE
+			, EP.PPR_BODY
+			, EP.PPR_IDX
+			, EP.PPR_TOTPT
+			, EP.QUE_ECNT
+			, EP.PPR_OPT
+        	, (SELECT CDNM FROM TA_COMM_CODE WHERE COMMCD_GCD = 'PPR_PCD' AND EP.PPR_PCD = COMMCD) AS PPR_PCD
+        	, (SELECT CDNM FROM TA_COMM_CODE WHERE COMMCD_GCD = 'PPR_TCD' AND EP.PPR_TCD = COMMCD) AS PPR_TCD
+			, EP.REGUID
+			, EP.MODUID
+			, EP.EVAL_SDAY
+			, EP.EVAL_EDAY
+		 	, TO_CHAR(TO_DATE(EP.REGDTM, 'yyyymmddHH24MISS'),'YY/MM/DD HH24:MI') AS REGDTM
+		 	, TO_CHAR(TO_DATE(EP.MODDTM, 'yyyymmddHH24MISS'),'YY/MM/DD HH24:MI') AS MODDTM
+		 	, EP.USEYN
+		 	, EP.SITEID
+		 	, (SELECT CASE COUNT(*) WHEN 1 THEN 'Y' ELSE 'N' END
+               FROM TE_EVAL_APPLY EA
+               WHERE EA.PPR_SEQ = EP.PPR_SEQ AND EA.USERNO = #{userno}) AS SURVEY_STATE
+			FROM 
+				TE_EVAL_PAPER EP
+			WHERE EP.PPR_PCD = 'PPR_P002'
+			ORDER BY EP.PPR_SEQ ASC
+	</select>		
+	 
+	<insert id="SurveySQL.doAddSurveyApplog" parameterType="dataMap" useGeneratedKeys="false">
+		/*
+			SQL ID : SurveySQL.doAddSurveyApplog
+			설문조사 참여내역 등록
+		*/
+		<foreach collection="list" item="item" index="index" separator=";" close=";">
+			INSERT INTO TE_EVAL_APPLOG
+				( PPR_SEQ
+				, PPR_PCD
+				, QUE_SEQ
+				, USERNO
+				, APL_ANS
+				, QUE_PCD
+				, CORRECT_YN
+				, REGUID
+				, MODUID
+				, REGDTM
+				, MODDTM
+				, SITEID	 
+				)
+			VALUES
+				( ${ppr_seq}
+				, 'PPR_P002'
+				, ${item.que_seq}
+				, #{userno}
+				, #{item.apl_ans}
+				, #{item.que_pcd}	
+				, 'Y'
+				, #{userid}
+				, #{userid}
+				, TO_CHAR(NOW(), 'YYYYMMDDHH24MISS')
+				, TO_CHAR(NOW(), 'YYYYMMDDHH24MISS')
+				, #{siteid} 
+				)
+		</foreach>
+	</insert> 
+<!-- ====================================================================================== -->
+<!--								설문 조사 (TE_EVAL_APPLY)									-->
+<!-- ====================================================================================== -->			
+	<select id="SurveySQL.doListSurveyApply" resultType="dataMap">
+		/*
+			SQL ID : SurveySQL.doListSurveyApply
+			설문조사 목록 조회
+		*/
+		   SELECT EA.PPR_SEQ
+		   		, EA.USERNO
+			FROM 
+				TE_EVAL_APPLY EA
+			WHERE EA.PPR_PCD = 'PPR_P002'
+	</select>	
+	
+		<select id="SurveySQL.doListApplyDate" parameterType="dataMap" resultType="dataMap">
+		/*
+			SurveySQL.doListApplyDate
+			설문 기간 조회
+		*/
+	        SELECT   
+            	EA.USERNO
+              , EA.PPR_SEQ  
+              , TO_CHAR(TO_DATE(EA.APL_SDTM, 'yyyymmddHH24MISS'),'YY/MM/DD HH24:MI') AS APL_SDTM
+              , TO_CHAR(TO_DATE(EA.APL_EDTM, 'yyyymmddHH24MISS'),'YY/MM/DD HH24:MI') AS APL_EDTM
+            FROM TE_EVAL_APPLY EA
+            WHERE USERNO = #{userno} AND EA.PPR_PCD = 'PPR_P002'
+	</select>  
+		
+	<insert id="SurveySQL.doAddSurveyApply" parameterType="dataMap" useGeneratedKeys="false">
+		/*
+			SQL ID : SurveySQL.doAddSurveyApply
+			설문조사  등록
+		*/
+		INSERT INTO TE_EVAL_APPLY
+			( PPR_SEQ
+			, PPR_PCD
+			, USERNO
+			, APL_OPT
+			, APL_SDTM
+			, APL_EDTM
+			, REGUID
+			, MODUID
+			, REGDTM
+			, MODDTM
+			, USEYN
+			, SITEID	 
+			)
+		VALUES
+			( ${ppr_seq}
+			, 'PPR_P002'
+			, #{userno}
+			, 0
+			, #{apl_sdtm}
+			, TO_CHAR(NOW(), 'YYYYMMDDHH24MISS')
+			, #{userno}
+			, #{userno}
+			, TO_CHAR(NOW(), 'YYYYMMDDHH24MISS')
+			, TO_CHAR(NOW(), 'YYYYMMDDHH24MISS')
+			, COALESCE(#{useyn}			, 'Y')
+			, #{siteid} 
+			)
+	</insert> 	
+	
+	<update id="SurveySQL.doUpdateSurvey" parameterType="dataMap">
+		/*
+			SQL ID : SurveySQL.doUpdateSurvey
+			설문조사 업데이트
+		*/
+		UPDATE tblsubject_survey tsv
+		SET 
+			ppr_seq = #{ppr_seq},
+		FROM tblsubject ts on tsv.subject_seqno  = ts.subject_seqno 
+		WHERE
+			subject_seqno = #{subject_seqno}::INT
+	</update>
+</mapper>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="SeqSQL">
+
+	<select id="SeqSQL.getoneSeq" resultType="int">
+		/*
+			SQL ID : SeqSql.getoneSeq
+			순번가져오기
+		*/
+    
+		SELECT SEQ_MAXNO FROM TA_TBL_SEQ
+		WHERE SEQ_TBLNM = #{seq_tblnm} 
+		
+    </select>
+	
+	<update id="SeqSQL.modifySeq" parameterType="dataMap">
+		/*
+			SQL ID: SeqSql.modifySeq
+			순번증가
+		*/		
+		INSERT INTO TA_TBL_SEQ
+		(
+			SEQ_TBLNM,
+			SEQ_MAXNO
+		)
+		VALUES
+		(
+			#{seq_tblnm},
+			100
+		)
+		ON CONFLICT (SEQ_TBLNM)
+		DO UPDATE
+		SET SEQ_MAXNO = (SELECT SEQ_MAXNO FROM TA_TBL_SEQ WHERE SEQ_TBLNM = #{seq_tblnm}) + 1
+	</update>
+</mapper>

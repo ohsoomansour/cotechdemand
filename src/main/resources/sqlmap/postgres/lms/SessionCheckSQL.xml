@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="SessionCheckSql">
+
+	<select id="SessionCheckSql.getoneSessionInfo" parameterType="dataMap" resultType="dataMap">
+		/*
+			SQL ID : SessionCheckSql.getoneSessionInfo
+						현재 세션 유지 정보 조회
+		*/
+		<![CDATA[
+		SELECT A.* FROM TA_USER_SESS A
+		WHERE USERNO = #{userno} AND SESSKEY = #{sesskey}
+		]]>
+
+	</select>
+
+	<select id="SessionCheckSql.getoneSessionByKey" parameterType="dataMap" resultType="dataMap">
+		/*
+			SQL ID : SessionCheckSql.getoneSessionByKey
+						현재 세션 유지 정보 조회
+		*/
+		<![CDATA[
+		SELECT A.* FROM TA_USER_SESS A
+		WHERE USEYN = 'Y' AND SESSKEY = #{sesskey}
+		]]>
+
+	</select>
+
+	<delete id="SessionCheckSql.removeSessionInfo" parameterType="dataMap">
+		/*
+			SQL ID : SessionCheckSql.removeSessionInfo
+						현재 세션 유지 정보 삭제
+		*/
+		<![CDATA[
+		DELETE FROM TA_USER_SESS
+		WHERE USERNO = #{userno} AND SESSKEY = #{sesskey}
+		]]>
+
+	</delete>
+
+	<delete id="SessionCheckSql.removeInvalidSession" parameterType="dataMap">
+		/*
+			SQL ID : SessionCheckSql.removeInvalidSession
+						하루 이상 지난 세션 삭제
+		*/
+		<![CDATA[
+		DELETE FROM TA_USER_SESS
+		WHERE TO_CHAR(NOW(), 'YYYYMMDD')::date - SUBSTR(MODDTM, 1, 8)::date > 1
+		]]>
+
+	</delete>
+
+	<update id="SessionCheckSql.modifySessionTime" parameterType="dataMap">
+		/*
+			SQL ID : SessionCheckSql.modifySessionTime
+						세션 유지 시간 갱신
+		*/
+
+		<![CDATA[
+		UPDATE TA_USER_SESS SET MODDTM = TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+		WHERE USERNO = #{userno} AND SESSKEY = #{sesskey}
+		]]>
+
+	</update>
+
+	<insert id="SessionCheckSql.appendUserSession" parameterType="dataMap">
+		/*
+			SQL ID : SessionCheckSql.appendUserSession
+						해당 사용자의 세션을 활성화 해준다
+		*/
+
+		<![CDATA[
+		INSERT INTO TA_USER_SESS
+			( SESSKEY
+			, USERNO
+			, USERID
+			, NOTE
+			, REGDTM
+			, MODDTM
+			, USEYN
+			, SITEID
+			)
+		VALUES
+			( #{sesskey}
+			, #{userno}
+			, #{userid}
+			, #{note}
+			, TO_CHAR(NOW(), 'YYYYMMDDHH24MISS')
+			, TO_CHAR(NOW(), 'YYYYMMDDHH24MISS')
+			, 'Y'
+			, #{siteid}
+			)
+		]]>
+
+	</insert>
+
+	<update id="SessionCheckSql.modifyUserSessionDisabled" parameterType="dataMap">
+		/*
+			SQL ID : SessionCheckSql.modifyUserSessionDisabled
+						해당 사용자의 다른 세션 정보를 비활성화 해준다
+		*/
+
+		<![CDATA[
+		UPDATE TA_USER_SESS SET USEYN = 'N' WHERE USERNO = #{userno} AND SESSKEY = #{sesskey}
+		]]>
+
+	</update>
+</mapper>

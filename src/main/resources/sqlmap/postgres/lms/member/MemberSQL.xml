@@ -1,0 +1,542 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="MemberSQL">
+	
+	<sql id="search">
+		<if test="division_type == 'all' and division_value != ''">
+       		AND (M.USERID LIKE '%' || #{division_value} || '%'
+       		OR M.USERNM LIKE '%' || #{division_value} || '%'
+       		OR M.MPHONE LIKE '%' || #{division_value} || '%')
+       	</if>
+		<if test="division_type == 'userId' and division_value != ''">
+       		AND M.USERID LIKE '%' || #{division_value} || '%'
+       	</if>
+       	<if test="division_type == 'userNm' and division_value != ''">
+       		AND M.USERNM LIKE '%' || #{division_value} || '%'
+       	</if>
+       	<if test="division_type == 'mPhone' and division_value != ''">
+       		AND M.MPHONE LIKE '%' || #{division_value} || '%'
+       	</if>
+         <if test="gender_value != null and gender_value != ''">
+         	AND M.GENDER_PCD = #{gender_value}
+         </if>
+         <if test="strdate != null and strdate != ''">
+       		<![CDATA[
+       			AND TO_CHAR(TO_DATE(M.REGDTM,'yyyymmddHH24MISS'),'YYYYMMDD') >= #{strdate}
+       		]]>
+         </if>
+         <if test="enddate != null and enddate != ''">
+         	<![CDATA[
+         		AND TO_CHAR(TO_DATE(M.REGDTM,'yyyymmddHH24MISS'),'YYYYMMDD') <= #{enddate}
+         	]]>
+         </if>		
+         <if test="strage != null and strage != ''">
+         	<![CDATA[
+         		AND TRUNC(EXTRACT(YEAR FROM AGE(CURRENT_DATE,TO_DATE(M.BIRTH, 'YYYYMMDD'))) + 2)::TEXT >= #{strage}
+         	]]>
+         </if>
+         <if test="endage != null and endage != ''">
+        	<![CDATA[
+        		AND TRUNC(EXTRACT(YEAR FROM AGE(CURRENT_DATE,TO_DATE(M.BIRTH, 'YYYYMMDD'))) + 2)::TEXT <= #{endage}
+        	]]>
+         </if>
+	</sql>
+	
+	<select id="MemberSQL.doCountMember" resultType="int">
+		<!-- 2020.03.19 추정완 -->
+		/*
+			SQL ID : MemberSQL.doCountMember
+			사용자 인원수
+		*/
+		<![CDATA[
+			SELECT
+				COUNT(*)
+			FROM
+				TU_MEMBER M
+			WHERE
+				SITEID = #{siteid}
+		]]>
+		<include refid="search"/>
+	</select>
+	
+	<select id="MemberSQL.doListMember" resultType="dataMap">
+		<!-- 2020.03.19 추정완 -->
+		/*
+			SQL ID : MemberSQL.doListMember
+			사용자 조회 리스트
+		*/
+		<![CDATA[
+			SELECT AA.*	
+			FROM(
+				SELECT
+					ROW_NUMBER() OVER(ORDER BY REGDTM DESC) AS RNUM,
+					M.STDNO,
+					M.USERNO,
+					M.USERID,
+					M.USERNM,
+					(SELECT CDNM FROM TA_COMM_CODE WHERE M.GENDER_PCD = COMMCD AND COMMCD_GCD = 'GENDER_PCD') AS GENDER,
+					EXTRACT(YEAR FROM AGE(CURRENT_DATE,TO_DATE(M.BIRTH, 'YYYYMMDD'))) + 2 AS AGE,
+					CONCAT(CONCAT(M.ADDR1, ' '), M.ADDR2) AS ADDR,
+					M.EMAIL,
+					M.MPHONE,
+					TO_CHAR(TO_DATE(M.REGDTM, 'yyyymmddHH24MISS'),'YYYY/MM/DD HH24:MI') AS REGDTM
+				FROM 
+					TU_MEMBER M
+				WHERE 
+					M.SITEID = #{siteid}
+		]]>	
+		<include refid="search"/>
+		<![CDATA[
+			) AA
+			WHERE 
+				AA.RNUM BETWEEN (#{page}::INT -1) * (#{rows}::INT) + 1 AND #{page}::INT * #{rows}::INT
+        ]]>	
+	</select>
+	
+	<select id="MemberSQL.doListAuthLookUp" resultType="dataMap">
+		/*
+			SQL ID : MemberSQL.doListAuthLookUp
+			권한 조회 리스트 가져오기
+		*/
+		<![CDATA[
+			SELECT
+			*
+			FROM
+			(
+				SELECT
+					ROW_NUMBER() OVER() AS ROWNUM,
+					TU.ROLE_PCD,
+					TC.CDNM,
+					TO_CHAR(TO_DATE(TU.REGDTM, 'yyyymmddHH24MISS'),'YYYY/MM/DD HH24:MI') AS INSERTDT,
+					TO_CHAR(TO_DATE(TU.MODDTM, 'yyyymmddHH24MISS'),'YYYY/MM/DD HH24:MI') AS UPDATEDT
+				FROM
+					TU_USER_ROLE TU, TA_COMM_CODE TC
+				WHERE
+					TU.USERNO = #{userno}
+				AND TC.COMMCD_GCD = 'ROLE_PCD'
+				AND TU.ROLE_PCD = TC.COMMCD
+				AND TU.USEYN = 'Y'
+				AND TU.SITEID = #{siteid}
+			) AS MEMBERAUTHLIST
+		]]>
+	</select>
+	
+	<select id="MemberSQL.doListAuthKinds" resultType="dataMap">
+		/*
+			SQL ID : MemberSQL.doListAuthKinds
+			권한 종류 리스트 가져오기
+		*/
+		<![CDATA[
+			SELECT
+				CDNM,
+				COMMCD,
+				COMMCD_GCD,
+				USEYN
+			FROM 
+				TA_COMM_CODE 
+			WHERE 
+				COMMCD_GCD = 'ROLE_PCD'
+			AND SITEID = #{siteid}
+			AND COMMCD_LVL = 2
+		]]>
+	</select>
+	<select id="MemberSQL.doListMemberAuth" resultType="dataMap">
+		/*
+			SQL ID : MemberSQL.doListMemberAuth
+			멤버 권한 리스트 가져오기
+		*/
+		<![CDATA[
+			SELECT
+				*
+			FROM
+				TU_USER_ROLE
+			WHERE
+				USERNO = #{userno}
+			AND	SITEID = #{siteid}
+		]]>
+	</select>
+	<select id="MemberSQL.doListCodeInfo" resultType="dataMap">
+		/*
+			SQL ID : AuthSQL.doListCodeInfo
+			코드정보 가져오기
+		*/
+		<![CDATA[
+			SELECT
+				*
+			FROM
+				TA_COMM_CODE
+			WHERE
+				COMMCD_GCD = 'ROLE_PCD'
+			AND	COMMCD IN
+		]]>
+			<foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+	</select>
+	<update id="MemberSQL.doUpdateAllMemberAuth" parameterType="dataMap">
+		/*
+			SQL ID : MemberSQL.doUpdateAllMemberAuth
+			권한 수정 시 초기에 가지고 있는 권한 사용여부를 N으로 변경
+		*/
+		UPDATE
+			TU_USER_ROLE
+		SET
+			USEYN = 'N'
+		WHERE
+			USERNO = #{userno}
+		AND SITEID = #{siteid}
+	</update>
+	<select id="MemberSQL.doGetMemberInfo" resultType="dataMap">
+		/*
+			SQL ID : MemberSQL.doGetMemberInfo
+			사용자정보가져오기
+		*/
+		<![CDATA[
+			SELECT
+				M.USERNO,
+				M.USERID,
+				M.USERPW,
+				M.USERNM,
+				M.MAJOR,
+				(SELECT CDNM FROM TA_COMM_CODE WHERE M.GENDER_PCD = COMMCD AND COMMCD_GCD = 'GENDER_PCD') AS GENDER,
+				TRUNC(EXTRACT(YEAR FROM AGE(CURRENT_DATE,TO_DATE(M.BIRTH, 'YYYYMMDD'))) + 2) AS AGE,
+				CONCAT(CONCAT(M.ADDR1, ' '), M.ADDR2) AS ADDR,
+				M.CREDIT,
+				M.EMAIL,
+				M.MPHONE,
+				M.POINT,
+				M.POSTCD,
+				M.PHOTO_PATH,
+				M.DTLINFO,
+				M.OPENYN,
+				M.STDNO,
+				M.DEGREE_PCD,
+				M.CAMPUS_PCD,
+				M.USER_SCD,
+				M.REGUID,
+				M.MODUID,
+				M.MODDTM,
+				M.OUTDTM,
+				M.OUTRESN,
+				M.USEYN,
+				M.POINT,
+				M.SITEID,
+				M.CONDTM,
+				TO_CHAR(TO_DATE(M.REGDTM, 'yyyymmddHH24MISS'),'YYYY/MM/DD HH24:MI') AS REGDTM,			
+				(SELECT CDNM FROM TA_COMM_CODE WHERE M.USER_PCD = COMMCD AND COMMCD_GCD = 'USER_PCD') AS USER_PCD,
+				(SELECT CDNM FROM TA_COMM_CODE WHERE M.USER_TCD = COMMCD AND COMMCD_GCD = 'USER_TCD') AS USER_TCD,
+				(SELECT CDNM FROM TA_COMM_CODE WHERE M.USER_SCD = COMMCD AND COMMCD_GCD = 'USER_SCD') AS STATE
+			FROM
+				TU_MEMBER M
+			WHERE
+				USERNO = #{userno}
+		]]>
+	</select>
+	<select id="MemberSQL.doGetMemberAuthInfo" resultType="dataMap">
+		/*
+			SQL ID : MemberSQL.doGetMemberAuthInfo
+			사용자가 가지고 있는 권한 조회
+		*/
+		<![CDATA[
+			SELECT
+				*
+			FROM
+				TU_USER_ROLE
+			WHERE
+				USERNO = (SELECT USERNO FROM TU_MEMBER WHERE USERNO = #{userno})
+		]]>
+	</select>
+		
+	<update id="MemberSQL.doUpdateCheckAuth" parameterType="dataMap">
+		/*
+			SQL ID : MemberSQL.doUpdateCheckAuth
+			사용자가 체크한 권한 포함 시
+		*/
+		<foreach  item="item" collection="list"  index="index" separator=";" close=";" >
+			<![CDATA[
+				UPDATE TU_USER_ROLE
+				SET 
+					USEYN = 'Y',
+					MODUID = #{moduid},
+					MODDTM  = TO_CHAR(NOW(), 'YYYYMMDDHH24MISS')
+				WHERE 
+					USERROLE_SEQ = #{item.userrole_seq}::INT
+				AND
+					SITEID = #{siteid}		
+			]]>		
+		</foreach>
+	</update>
+	
+	
+	<insert id="MemberSQL.doInsertAuthAll" parameterType="dataMap" useGeneratedKeys="false">
+		/*
+			SQL ID : MemberSQL.doInsertAuthAll
+			멤버 권한 체크 삽입하기
+		*/
+		<foreach collection="list" item="item" index="index" separator=";" close=";">
+			INSERT INTO TU_USER_ROLE
+			(	
+				USERROLE_SEQ,
+				USERNO,
+				ROLE_PCD,
+				ROLEUID,
+				ROLEREL_IDX,
+				ROLEREL_OPT,
+				REGUID,
+				MODUID,
+				REGDTM,
+				MODDTM,
+				USEYN,
+				SITEID
+			)
+		VALUES
+			(
+				#{item.userrole_seq},
+				#{userno},
+				#{item.role_pcd},
+				#{item.roleuid},
+				1,
+				0,
+				#{reguid},
+				#{moduid},
+				TO_CHAR(NOW(), 'YYYYMMDDHH24MISS'),
+				TO_CHAR(NOW(), 'YYYYMMDDHH24MISS'),
+				'Y',
+				#{siteid}
+			)
+		</foreach>
+	</insert>
+	
+	<insert id="MemberSQL.doInsertPointLog" parameterType="dataMap" useGeneratedKeys="false">
+		/* 
+			2020.04.29 박인정
+			SQL ID : MembwerSQL.doInsertPointLog
+			사용자 포인트 내역
+		*/
+		<foreach collection="list" item="item" index="index" separator=" " open="INSERT ALL" close="SELECT * FROM DUAL">
+	
+			INTO TU_POINT_LOG	
+				(
+					POINTLOG_SEQ,
+					USERNO,
+					POINT_PCD,
+					POINT_TCD,
+					POINT,
+					POINT_CMMT,
+					REGUID,
+					REGDTM,
+					SITEID
+				)
+			VALUES
+				(
+					#{item.pointlog_seq},
+					#{item.userno},
+					#{point_pcd},
+					#{point_tcd},
+					#{point},
+					#{point_cmmt},
+					#{reguid},
+					TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS'),
+					#{siteid}
+				)						
+		</foreach>
+	</insert>
+	
+	<select id="MemberSQL.doCountPointLookUp" resultType="int">
+		/*
+			2020.03.24 박인정
+			SQL ID : MemberSQL.doCountPointLookUp
+			포인트 내역 조회 카운트
+		*/
+		<![CDATA[	
+			SELECT 
+				COUNT(*)
+			FROM  
+				TU_POINT_LOG 
+			WHERE 
+				SITEID = #{siteid}	
+			AND USERNO = #{userno}
+		]]>
+	</select>
+	
+	<select id="MemberSQL.doListPointLookUp" resultType="dataMap">
+		/*
+			2020.03.24 박인정
+			SQL ID : MemberSQL.doListPointLookUp
+			포인트 내역 조회 리스트
+		*/
+		<![CDATA[	
+			SELECT
+			*
+			FROM
+			(
+				SELECT 
+					ROW_NUMBER() OVER(ORDER BY PL.REGDTM DESC) RNUM,
+					PL.USERNO,
+					M.USERID,
+					(SELECT CDNM FROM TA_COMM_CODE WHERE COMMCD_GCD = 'POINT_PCD' AND PL.POINT_PCD = COMMCD) AS POINT_PCD,
+					(SELECT CDNM FROM TA_COMM_CODE WHERE COMMCD_GCD = 'POINT_TCD' AND PL.POINT_TCD = COMMCD) AS POINT_TCD,
+					PL.POINT,
+					PL.POINT_CMMT,
+					PL.REGUID,
+					TO_CHAR(TO_DATE(PL.REGDTM, 'yyyymmddHH24MISS'),'YYYY/MM/DD HH24:MI') AS REGDTM
+				FROM  
+					TU_POINT_LOG PL, TU_MEMBER M
+				WHERE 
+					PL.SITEID = #{siteid}
+				AND PL.USERNO = M.USERNO
+				AND PL.USERNO = #{userno}
+				)
+				WHERE	
+					RNUM BETWEEN (TO_NUMBER(#{page})-1) * TO_NUMBER(#{rows}) + 1 AND TO_NUMBER(#{page}) * TO_NUMBER(#{rows})   				
+		]]>
+	</select>
+
+	<update id="MemberSQL.doAddMemberPoint" parameterType="dataMap">
+		<!-- 2020-05-08 박인정 -->
+		/*
+			SQL ID : MemberSQL.doUpdateMemberPoint
+			구성원 포인트 적립
+		*/
+		<foreach  item="item" collection="list"  index="index" separator=";" open="DECLARE BEGIN" close="; END;" >
+			<![CDATA[
+				UPDATE TU_MEMBER
+				SET 
+					POINT = (SELECT POINT + #{point} FROM TU_MEMBER WHERE USERNO = #{item.userno})	 			
+				WHERE 
+					USERNO = #{item.userno}				
+			]]>		
+		</foreach>
+	</update>
+	
+	<update id="MemberSQL.doSubtractMemberPoint" parameterType="dataMap">
+		<!-- 2020-05-08 박인정 -->
+		/*
+			SQL ID : MemberSQL.doUpdateMemberPoint
+			구성원 포인트 차감
+		*/
+		<foreach  item="item" collection="list"  index="index" separator=";" open="DECLARE BEGIN" close="; END;" >
+			<![CDATA[
+				UPDATE TU_MEMBER
+				SET 
+					POINT = (SELECT POINT - #{point} FROM TU_MEMBER WHERE USERNO = #{item.userno})	 			
+				WHERE 
+					USERNO = #{item.userno}				
+			]]>		
+		</foreach>
+	</update>
+
+	<update id="MemberSQL.doMemberPoint" parameterType="dataMap">
+		<!-- 2020-05-08 박인정 -->
+		/*
+			SQL ID : MemberSQL.doUpdateMemberPoint
+			구성원 포인트 변경
+		*/
+		<foreach  item="item" collection="list"  index="index" separator=";" open="DECLARE BEGIN" close="; END;" >
+			<![CDATA[
+				UPDATE TU_MEMBER
+				SET 
+					POINT = (SELECT POINT - #{point} FROM TU_MEMBER WHERE USERNO = #{item.userno})	 			
+				WHERE 
+					USERNO = #{item.userno}				
+			]]>		
+		</foreach>
+	</update>
+	
+	<select id="MemberSQL.doGetTotalPoint" resultType="dataMap">
+		/*
+			SQL ID : MemberSQL.doGetTotalPoint
+			포인트 합계
+		*/
+		<![CDATA[	
+				SELECT DISTINCT
+					PL.USERNO,
+					M.USERID,
+					M.POINT AS TOTALPOINT
+				FROM  
+					TU_POINT_LOG PL, TU_MEMBER M
+				WHERE 
+					PL.SITEID = #{siteid}
+				AND PL.USERNO = M.USERNO
+				AND PL.USERNO = #{userno}
+		]]>
+	</select>
+	
+	<select id="MemberSQL.doListRankPoint" resultType="dataMap">
+		/*
+			SQL ID : MemberSQL.doListRankPoint
+			포인트 랭킹 리스트
+		*/
+		<![CDATA[	
+			SELECT
+			A.*,
+            ROUND(A.TOTALPOINT/A.MAXPOINT*100, 1) AS PERCENT 
+			FROM
+			(
+				SELECT DISTINCT
+					ROWNUM AS RNUM,		 
+					USERNO,
+					USERID,
+					POINT AS TOTALPOINT,
+     				RANK() OVER (ORDER BY POINT DESC ) AS RK,
+                    (SELECT MAX(POINT) FROM TU_MEMBER) AS MAXPOINT
+     		FROM TU_MEMBER 
+			WHERE	
+				SITEID = 'ttmsoft'
+			)A
+			WHERE RNUM BETWEEN (TO_NUMBER(#{page})-1) * TO_NUMBER(#{rows}) + 1 AND TO_NUMBER(#{page}) * TO_NUMBER(#{rows})   					     		
+		]]>
+	</select>
+	
+	<select id="MemberSQL.doCountRankPoint" resultType="int">
+		/*
+			SQL ID : MemberSQL.doCountRankPoint
+			포인트 랭킹 카운트
+		*/
+		<![CDATA[	
+				SELECT DISTINCT
+					COUNT(*)
+     			FROM  
+     				TU_MEMBER 
+		]]>
+	</select>
+	
+	 <select id="MemberSQL.doGetRankPoint" resultType="dataMap">
+		/*
+			SQL ID : MemberSQL.doGetRankPoint
+			포인트 랭킹 가져오기
+		*/
+		<![CDATA[	
+			SELECT 
+			* 
+			FROM
+			(
+			SELECT DISTINCT 
+					USERNO,
+					USERID,
+					POINT AS TOTALPOINT,
+     				RANK() OVER (ORDER BY POINT DESC ) AS RK
+     		FROM TU_MEMBER) T 
+     		WHERE USERNO = #{userno}
+		]]>
+	</select>	
+	
+	<select id="MemberSQL.doCountCheckAttendPoint" resultType="int">
+		/*
+			SQL ID : MemberSQL.doCountCheckAttendPoint
+			출석체크 여부
+		*/
+		<![CDATA[	
+			SELECT 
+                COUNT(*)
+				FROM  
+					TU_POINT_LOG PL, TU_MEMBER M
+				WHERE 
+					PL.USERNO = M.USERNO
+				AND PL.USERNO = #{userno}
+                AND TO_CHAR(TO_DATE(PL.REGDTM, 'yyyymmddHH24MISS'),'YYYYMMDD') = TO_CHAR(sysdate, 'YYYYMMDD')
+                AND PL.POINT_TCD = (SELECT COMMCD FROM TA_COMM_CODE WHERE COMMCD = 'POINT_T001')
+                
+		]]>
+	</select>	
+</mapper>

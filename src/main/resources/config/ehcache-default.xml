@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache>
+    <diskStore path="user.dir/second"/>
+    <defaultCache maxElementsInMemory="10000" 
+                  eternal="false" 
+                  timeToIdleSeconds="120" 
+                  timeToLiveSeconds="120" 
+                  overflowToDisk="true" 
+                  diskPersistent="true"  
+                  diskExpiryThreadIntervalSeconds="120"/>
+ 
+    <cache name="defaultCache"
+           maxElementsInMemory="100"
+           eternal="false"
+           timeToIdleSeconds="360"
+           timeToLiveSeconds="1000"
+           overflowToDisk="false"
+           diskPersistent="false"  
+           memoryStoreEvictionPolicy="LRU">
+    </cache>   
+    
+    
+    <cache name="CodeCache"
+           maxElementsInMemory="10000"
+           maxElementsOnDisk="1000"
+           eternal="false"
+           overflowToDisk="true"
+           timeToIdleSeconds="300"
+           timeToLiveSeconds="600"
+           memoryStoreEvictionPolicy="LFU"/>
+    
+</ehcache>

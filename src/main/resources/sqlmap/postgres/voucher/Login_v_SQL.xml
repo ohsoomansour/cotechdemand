@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Login_v_SQL">	
+	<!-- 바우처 로그인 -->
+	<select id="Login_v_SQL.doCountUserInfo" resultType="int">
+		<!-- 2021-04-22 추정완 -->
+		/*
+			SQL ID : Login_v_SQL.doCountUserInfo
+			사용자 존재 여부 확인
+		*/
+		<![CDATA[
+			SELECT
+				COUNT(*)
+			FROM
+				TBLMEMBER
+			WHERE
+				ID = #{id}
+			AND
+				PW = #{pw}
+		]]>
+	</select>
+	
+	<select id="Login_v_SQL.doCountId" resultType="int">
+		<!-- 2021-04-22 추정완 -->
+		/*
+			SQL ID : Login_v_SQL.doCountId
+			존재하는 아이디인지 체크
+		*/
+		<![CDATA[
+			SELECT
+				COUNT(*)
+			FROM
+				TBLMEMBER
+			WHERE
+				ID = #{id}
+		]]>
+	</select>
+	
+	<select id="Login_v_SQL.doGetOneUserInfo" resultType="dataMap">
+		<!-- 2021-04-22 추정완 -->
+		/*
+			SQL ID : Login_v_SQL.doGetOneUserInfo
+			사용자 데이터 가져오기
+		*/
+		<![CDATA[
+			SELECT
+				*
+			FROM
+				TBLMEMBER
+			WHERE
+				ID = #{id}
+		]]>
+			<if test='pw != ""'>
+				AND PW = #{pw}
+			</if>
+	</select>
+	
+	<update id="Login_v_SQL.doUpdateInvalidCountReset" parameterType="dataMap">
+		<!-- 2021-04-26 추정완 -->
+		/*
+			SQL ID : Login_v_SQL.doUpdateInvalidCountReset
+			로그인 성공 시 비밀번호 오류 횟수 초기화
+		*/
+		<![CDATA[
+			UPDATE
+				TBLMEMBER
+			SET
+				PW_INVALID_COUNT = 0
+			WHERE
+				ID = #{id}
+		]]>
+	</update>
+	
+	<select id="Login_v_SQL.doFindId" resultType="dataMap">
+		<!-- 2021-04-22 추정완 -->
+		/*
+			SQL ID : Login_v_SQL.doFindId
+			아이디 찾기
+		*/
+		<![CDATA[
+			SELECT
+				*
+			FROM
+				TBLMEMBER
+			WHERE	
+				BIZ_SEQNO = (SELECT BIZ_SEQNO FROM TBLBUSINESS WHERE BIZ_REGNO = #{biz_regno})
+			AND
+				USER_EMAIL = #{user_email}	
+		]]>
+	</select>
+	
+	<select id="Login_v_SQL.doFindPw" resultType="dataMap">
+		<!-- 2021-04-22 추정완 -->
+		/*
+			SQL ID : Login_v_SQL.doFindPw
+			비밀번호 찾기
+		*/
+		<![CDATA[
+			SELECT
+				*
+			FROM
+				TBLMEMBER
+			WHERE	
+				BIZ_SEQNO = (SELECT BIZ_SEQNO FROM TBLBUSINESS WHERE BIZ_REGNO = #{biz_regno})
+			AND
+				USER_EMAIL = #{user_email}
+			AND
+				ID = #{id}
+		]]>
+	</select>
+	
+	<update id="Login_v_SQL.doUpdateTempPw" parameterType="dataMap">
+		<!-- 2021-04-22 추정완 -->
+		/*
+			SQL ID : Login_v_SQL.doUpdateTempPw
+			임시비밀번호 업데이트
+		*/
+		<![CDATA[
+			UPDATE
+				TBLMEMBER
+			SET
+				PW = #{pw},
+				PW_TEMP_FLAG = 'Y',
+				PW_INVALID_COUNT = 0
+			WHERE
+				BIZ_SEQNO = (SELECT BIZ_SEQNO FROM TBLBUSINESS WHERE BIZ_REGNO = #{biz_regno})
+			AND
+				USER_EMAIL = #{user_email}
+			AND
+				ID = #{id}
+		]]>
+	</update>
+	
+	<update id="Login_v_SQL.doUpdatePwInvalid" parameterType="dataMap">
+		<!-- 2021-04-26 추정완 -->
+		/*
+			SQL ID : Login_v_SQL.doUpdatePwInvalid
+			비밀번호 오류 횟수
+		*/
+		<![CDATA[
+			UPDATE
+				TBLMEMBER
+			SET
+				PW_INVALID_COUNT = PW_INVALID_COUNT + 1
+			WHERE
+				ID = #{id}
+		]]>
+	</update>
+	
+	<select id="Login_v_SQL.doGetPwInvalid" parameterType="dataMap" resultType="int">
+		<!-- 2021-04-26 추정완 -->
+		/*
+			SQL ID : Login_v_SQL.doGetPwInvalid
+			비밀번호 오류 횟수 조회
+		*/
+		<![CDATA[
+			SELECT
+				PW_INVALID_COUNT
+			FROM
+				TBLMEMBER
+			WHERE
+				ID = #{id}
+		]]>
+	</select>
+</mapper>

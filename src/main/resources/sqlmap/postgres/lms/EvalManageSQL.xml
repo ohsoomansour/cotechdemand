@@ -1,0 +1,950 @@
+<?xml version="1.0" encoding="UTF-8"?><!--Converted at: Sun Jul 26 10:59:33 KST 2015-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="EvalManageSql">
+	
+	<sql id="sql_where">
+	</sql>
+
+	
+	<select id="EvalManageSql.doCountExamManage" resultType="int">
+		/*     
+			SQL ID : EvalManageSql.doCountExamManage
+			시험 목록 카운트
+		*/
+	    
+			SELECT	COUNT(EXAM.EXAM_NO) 
+			FROM TB_L_EXAM EXAM
+			WHERE	1=1
+		
+		<include refid="sql_where"/> 
+    </select>
+
+
+	<select id="EvalManageSql.doListExamManage" resultType="DataMap">
+		/*
+			SQL ID : EvalManageSql.doListExamManage
+			시험 목록 조회
+		*/
+		
+		SELECT
+		        AA.* 
+		        , SUBSTR(AA.OPEN_DT, 1, 4) || '.' 
+		        || SUBSTR(AA.OPEN_DT, 5, 2) || '.' 
+		        || SUBSTR(AA.OPEN_DT, 7, 2) AS MAKE_OPEN_DT
+		        , ( SELECT  COMMON_CD_NM
+                    FROM    TB_L_COMMON_CD_MNG
+                    WHERE   AA.EXAM_TYPE = COMMON_CD
+                ) AS EXAM_TYPE_NM
+		FROM
+		        (     
+		            SELECT
+		                    ROW_NUMBER() OVER( ORDER BY ${sidx} ${sord}) AS RSEQ
+		                    , A.* 
+		            FROM
+		                    (      
+		                        SELECT  
+								        EXAM.EXAM_NO
+								        , EXAM.EXAM_TITLE
+								        , EXAM.EXAM_TYPE 
+								        , EXAM.OPEN_DT
+								        , EXAM.EXAM_STR_DT   
+								        , EXAM.EXAM_END_DT   
+								        , EXAM.EXAM_TIME 
+								        , EXAM.QUESTION_CNT
+								        , EXAM.RANDOM_MULTIPLE_TYPE
+								        , EXAM.REEXAM_YN         
+								        , EXAM.REEXAM_SUBTRACT_RATIO
+								        , EXAM.UPPER_EXAM_NO  
+								        , EXAM.SET_QUESTION_TYPE
+								        , EXAM.EXAM_WEIGHT           
+								        , EXAM.USE_YN    
+								        , EXAM.EXAM_ANSWER_OPEN_YN
+								        , EXAM.EXAM_RESULT_OPEN_YN
+								        , EXAM.FINISH_AUTO_END_YN    
+								        , EXAM.APPLY_MEMBER  
+								        , EXAM.STR_WEEKSEQ_NO    
+								        , EXAM.END_WEEKSEQ_NO    
+								        , EXAM.RANDOM_YN 
+								        , EXAM.COURSE_ID 
+								        , EXAM.CLASS_NO  
+								        , EXAM.SITE_ID   
+								        , EXAM.ASP_ID    
+								        , EXAM.INSERT_DT 
+								FROM    TB_L_EXAM EXAM        
+		                        WHERE   1=1    
+		
+       	<include refid="sql_where"/>
+		
+				            ) A    
+				) AA    
+		WHERE   AA.RSEQ BETWEEN (${page}-1) * ${rows} + 1 AND ${page} * ${rows}
+		
+    </select>
+    
+    <select id="EvalManageSql.doGetExamManage" parameterType="dataMap" resultType="dataMap">
+    /*
+        SQL ID: EvalManageSql.doGetExamManage
+                             시험 정보 한 건 조회 
+    */
+    
+    SELECT  
+             EXAM.EXAM_NO
+             , EXAM.EXAM_TITLE
+             , EXAM.EXAM_TYPE
+             , ( SELECT  COMMON_CD_NM
+                FROM    TB_L_COMMON_CD_MNG
+                WHERE   EXAM.EXAM_TYPE = COMMON_CD
+             ) AS EXAM_TYPE_NM
+             , ( SELECT  COMMON_CD_NM
+                FROM    TB_L_COMMON_CD_MNG
+                WHERE   EXAM.MARK_TYPE = COMMON_CD
+             ) AS MARK_TYPE_NM 
+             , EXAM.OPEN_DT
+             , EXAM.EXAM_STR_DT   
+             , EXAM.EXAM_END_DT   
+             , EXAM.EXAM_TIME 
+             , EXAM.QUESTION_CNT
+             , EXAM.RANDOM_MULTIPLE_TYPE
+             , EXAM.REEXAM_YN         
+             , EXAM.REEXAM_SUBTRACT_RATIO
+             , EXAM.UPPER_EXAM_NO
+             , ( 
+                SELECT  A.EXAM_TITLE 
+                FROM    TB_L_EXAM A 
+                WHERE   EXAM.UPPER_EXAM_NO = A.EXAM_NO 
+             ) AS UPPER_EXAM_TITLE  
+             , EXAM.SET_QUESTION_TYPE
+             , ( SELECT  COMMON_CD_NM
+                FROM    TB_L_COMMON_CD_MNG
+                WHERE   EXAM.SET_QUESTION_TYPE = COMMON_CD
+             ) AS SET_QUESTION_TYPE_NM 
+             , EXAM.EXAM_WEIGHT           
+             , EXAM.USE_YN    
+             , EXAM.EXAM_ANSWER_OPEN_YN
+             , EXAM.EXAM_RESULT_OPEN_YN
+             , EXAM.FINISH_AUTO_END_YN    
+             , EXAM.APPLY_MEMBER  
+             , EXAM.STR_WEEKSEQ_NO    
+             , EXAM.END_WEEKSEQ_NO    
+             , EXAM.RANDOM_YN 
+             , EXAM.COURSE_ID
+             , EXAM.CLASS_NO
+             , EXAM.MARK_TYPE
+             , EXAM.EXAM_TOTAL_SCR
+             , SUBSTR(EXAM.EXAM_STR_DT, 1, 4) || '.' 
+               || SUBSTR(EXAM.EXAM_STR_DT, 5, 2) || '.' 
+               || SUBSTR(EXAM.EXAM_STR_DT, 7, 2) || ' '
+               || SUBSTR(EXAM.EXAM_STR_DT, 9, 2) || ':'
+               || SUBSTR(EXAM.EXAM_STR_DT, 11, 2) || ':'
+               || SUBSTR(EXAM.EXAM_STR_DT, 13, 2) 
+               AS MAKE_EXAM_STR_DT
+               , SUBSTR(EXAM.EXAM_END_DT, 1, 4) || '.' 
+               || SUBSTR(EXAM.EXAM_END_DT, 5, 2) || '.' 
+               || SUBSTR(EXAM.EXAM_END_DT, 7, 2) || ' '
+               || SUBSTR(EXAM.EXAM_END_DT, 9, 2) || ':'
+               || SUBSTR(EXAM.EXAM_END_DT, 11, 2) || ':'
+               || SUBSTR(EXAM.EXAM_END_DT, 13, 2) 
+               AS MAKE_EXAM_END_DT
+               ,(        
+	                SELECT            
+	                    TU.USER_NM AS USER_NAME 
+	                FROM 
+	                    TB_L_COURSE_PROF CP
+	                    ,TB_L_USER TU
+	                WHERE 
+	                    CP.COURSE_ID = EXAM.COURSE_ID
+	                AND
+	                    CP.CLASS_NO = EXAM.CLASS_NO            
+	                AND
+	                    CP.ASP_ID = EXAM.ASP_ID
+	                AND
+	                    CP.USER_NO = TU.USER_NO
+	                AND
+	                    CP.PROF_GUBUN = 'PROF_GUBUN_P'
+	            ) AS COURSE_PROF_NAME /** 주교수 이름*/
+               , EXAM.PASS_STANDARD_SCORE
+     FROM    TB_L_EXAM EXAM      
+    WHERE    EXAM.EXAM_NO = #{exam_no}
+     
+    </select>
+    
+    <insert id="EvalManageSql.doAddExam" parameterType="DataMap">
+	    /*
+	        SQL ID : EvalManageSql.doAddExam
+	                     시험 등록
+	    */
+	    
+	    INSERT INTO TB_L_EXAM (
+	        EXAM_NO
+	        , EXAM_TITLE
+	        , EXAM_TYPE
+	        , OPEN_DT
+	        , EXAM_STR_DT
+	        , EXAM_END_DT
+	        , EXAM_TIME
+	        , QUESTION_CNT
+	        , MARK_TYPE
+	        , RANDOM_MULTIPLE_TYPE
+	        , REEXAM_YN
+	        , REEXAM_SUBTRACT_RATIO
+	        , UPPER_EXAM_NO
+	        , SET_QUESTION_TYPE
+	        , EXAM_WEIGHT
+	        , USE_YN
+	        , EXAM_ANSWER_OPEN_YN
+	        , EXAM_RESULT_OPEN_YN
+	        , FINISH_AUTO_END_YN
+	        , APPLY_MEMBER
+	        , STR_WEEKSEQ_NO
+	        , END_WEEKSEQ_NO
+	        , EXAM_TOTAL_SCR
+	        , RANDOM_YN
+	        , COURSE_ID
+	        , CLASS_NO
+	        , SITE_ID
+	        , ASP_ID
+	        , INSERT_DT
+	        , INSERT_USER_NO
+	        , PASS_STANDARD_SCORE
+	    ) VALUES (
+	        #{exam_no}
+	        , #{exam_title}
+	        , #{exam_type}
+	        , #{open_dt}
+	        , #{exam_str_dt}
+	        , #{exam_end_dt}
+	        , #{exam_time}
+	        , #{question_cnt}
+	        , #{mark_type}
+	        , #{random_multiple_type}
+	        , #{reexam_yn}
+	        , #{reexam_subtract_ratio}
+	        , #{upper_exam_no}
+	        , #{set_question_type}
+	        
+	        <!-- 시험이 수시평가 일때 -->
+	        <if test="exam_type == &quot;EXAMGUBUN_A&quot;">
+	        
+	        , #{exam_weight}
+	        
+	        </if>
+	        <!-- 시험이 중간평가 일때 -->
+	        <if test="exam_type == &quot;EXAMGUBUN_B&quot;">
+	        
+            , ( SELECT  MIDEXAM_RATIO
+                FROM    TB_L_COURSE
+                WHERE   COURSE_ID   = #{course_id}
+                AND     CLASS_NO    = #{class_no}
+                AND     ASP_ID      = #{asp_id}
+            )
+            
+	        </if>
+	        <!-- 시험이 최종평가 일때 -->
+	        <if test="exam_type == &quot;EXAMGUBUN_C&quot;">
+            
+            , ( SELECT  FINALEXAM_RATIO
+                FROM    TB_L_COURSE
+                WHERE   COURSE_ID   = #{course_id}
+                AND     CLASS_NO    = #{class_no}
+                AND     ASP_ID      = #{asp_id}
+            )
+            
+            </if>
+            <!-- 시험이 수료평가 일때 -->
+            <if test="exam_type == &quot;EXAMGUBUN_D&quot;">
+            
+            , #{exam_weight}
+            
+            </if>
+	        
+	        , #{use_yn}
+	        , #{exam_answer_open_yn}
+	        , #{exam_result_open_yn}
+	        , #{finish_auto_end_yn}
+	        , #{apply_member}
+	        , #{str_weekseq_no}
+	        , #{end_weekseq_no}
+	        , #{exam_total_scr}
+	        , #{random_yn}
+			
+			
+			
+			, 'NOT_ASSIGNED'
+			
+			
+			
+			
+			, #{course_id}
+			
+			
+			
+			
+			, '01'
+			
+			
+			
+			
+			, #{class_no}
+			
+			
+		
+	        , #{site_id}
+	        , #{asp_id}
+	        , TO_CHAR(SYSDATE,'YYYYMMDDHH24MISS')
+	        , #{insert_user_no}
+	        , #{pass_standard_score}
+	    )
+	    
+    </insert>
+	
+	<update id="EvalManageSql.doModifyExam" parameterType="DataMap">
+        /*
+            SQL ID : EvalManageSql.doModifyExam
+                                시험 수정
+        */
+        
+        UPDATE TB_L_EXAM SET   
+            EXAM_TITLE                = #{exam_title}
+			, EXAM_TYPE               = #{exam_type}
+			, OPEN_DT                 = #{open_dt}
+			, EXAM_STR_DT             = #{exam_str_dt}
+			, EXAM_END_DT             = #{exam_end_dt}
+			, EXAM_TIME               = #{exam_time}
+			, QUESTION_CNT            = #{question_cnt}
+			, MARK_TYPE               = #{mark_type}
+			, RANDOM_MULTIPLE_TYPE    = #{random_multiple_type}
+			, REEXAM_YN               = #{reexam_yn}
+			, REEXAM_SUBTRACT_RATIO   = #{reexam_subtract_ratio}
+			, UPPER_EXAM_NO           = #{upper_exam_no}
+			, SET_QUESTION_TYPE       = #{set_question_type}
+			, EXAM_WEIGHT             = #{exam_weight}
+			, USE_YN                  = #{use_yn}
+			, EXAM_ANSWER_OPEN_YN     = #{exam_answer_open_yn}
+			, EXAM_RESULT_OPEN_YN     = #{exam_result_open_yn}
+			, FINISH_AUTO_END_YN      = #{finish_auto_end_yn}
+			, APPLY_MEMBER            = #{apply_member}
+			, STR_WEEKSEQ_NO          = #{str_weekseq_no}
+			, END_WEEKSEQ_NO          = #{end_weekseq_no}
+			, EXAM_TOTAL_SCR          = #{exam_total_scr}
+			, RANDOM_YN               = #{random_yn}
+            , UPDATE_DT               = TO_CHAR(SYSDATE,'YYYYMMDDHH24MISS')
+            , UPDATE_USER_NO          = #{update_user_no}
+        WHERE EXAM_NO = #{exam_no} 
+        
+    </update>
+    
+    <select id="EvalManageSql.doListDetailInfo" resultType="DataMap">
+        /*
+            SQL ID : EvalManageSql.doListDetailInfo
+                                시험 세부정보 목록 조회
+        */
+        
+        SELECT  
+                EXAM_NO
+		        , QUESTION_TYPE
+		        , QUESTION_DIFFICULTY
+		        , QUESTION_CNT
+		        , QUESTION_SCR
+        FROM    TB_L_EXAM_DETAIL_INFO        
+        WHERE   EXAM_NO = #{exam_no}    
+        
+    </select>
+    
+    <insert id="EvalManageSql.doAddDetailInfo" parameterType="DataMap">
+    /*
+        SQL ID : EvalManageSql.doAddDetailInfo
+                     시험 상세정보 등록
+    */
+    
+    INSERT INTO TB_L_EXAM_DETAIL_INFO (
+        EXAM_NO
+        , QUESTION_TYPE
+        , QUESTION_DIFFICULTY
+        , QUESTION_CNT
+        , QUESTION_SCR
+        , SITE_ID
+        , ASP_ID
+        , INSERT_DT
+        , INSERT_USER_NO
+    ) VALUES (
+        #{exam_no}
+        , #{question_type}         
+        , #{question_difficulty}   
+        , #{question_cnt}          
+        , #{question_scr}
+        , #{site_id}
+        , #{asp_id}
+        , TO_CHAR(SYSDATE,'YYYYMMDDHH24MISS')
+        , #{insert_user_no}
+    )
+    
+    </insert>
+    
+    <update id="EvalManageSql.doModifyDetailInfo" parameterType="DataMap">
+    /*
+        SQL ID : EvalManageSql.doModifyDetailInfo
+                     시험 상세정보 변경
+    */
+    
+        UPDATE  TB_L_EXAM_DETAIL_INFO SET   
+                QUESTION_CNT        = #{question_cnt}
+                , QUESTION_SCR      = #{question_scr}
+                , UPDATE_DT         = TO_CHAR(SYSDATE,'YYYYMMDDHH24MISS')
+                , UPDATE_USER_NO    = #{update_user_no}
+        WHERE   EXAM_NO = #{exam_no}
+        AND     QUESTION_TYPE = #{question_type}
+        AND     QUESTION_DIFFICULTY = #{question_difficulty}
+    
+    </update>
+    
+    <delete id="EvalManageSql.doRemoveDetailInfo" parameterType="DataMap">
+    /*
+        SQL ID : EvalManageSql.doRemoveDetailInfo
+                     시험 상세정보 삭제
+    */
+    
+        DELETE FROM  TB_L_EXAM_DETAIL_INFO   
+        WHERE   EXAM_NO = #{exam_no}
+    
+    </delete>
+    
+    <select id="EvalManageSql.doListExamPaper" parameterType="dataMap" resultType="dataMap">
+    /*
+        SQL ID: EvalManageSql.doListExamPaper
+                             문제지 리스트 
+    */
+    
+    SELECT  
+             EXAM_NO
+             , QUESTION_NO
+             , QUESTION_SCR
+             , QUESTION_ORDERS
+     FROM    TB_L_EXAM_PAPER      
+    WHERE    EXAM_NO = #{exam_no}
+     
+    </select>
+    
+    
+    <insert id="EvalManageSql.doAddExamPaper" parameterType="DataMap">
+    /*
+        SQL ID : EvalManageSql.doAddExamPaper
+                     시험문제지 등록
+    */
+    
+    INSERT INTO TB_L_EXAM_PAPER (
+        EXAM_NO
+        , QUESTION_NO
+        , QUESTION_SCR
+        , QUESTION_ORDERS
+        , SITE_ID
+        , ASP_ID
+        , INSERT_DT
+        , INSERT_USER_NO
+    ) VALUES (
+        #{exam_no}
+        , #{question_no}   
+        , #{question_scr}   
+        , #{question_orders}          
+        , #{site_id}
+        , #{asp_id}
+        , TO_CHAR(SYSDATE,'YYYYMMDDHH24MISS')
+        , #{insert_user_no}
+    )
+    
+    </insert>
+    
+    <delete id="EvalManageSql.doRemoveExamPaper" parameterType="DataMap">
+    /*
+        SQL ID : EvalManageSql.doRemoveExamPaper
+                     시험문제지 삭제
+    */
+    
+    DELETE  FROM TB_L_EXAM_PAPER 
+    WHERE   EXAM_NO = #{exam_no}
+    
+    </delete>
+
+    <select id="EvalManageSql.doListExamTotalCount" resultType="DataMap">
+	    /*
+	            SQL ID : EvalManageSql.doListExamTotalCount
+	            문제 목록 유형별 총 카운트
+	    */
+	    
+         SELECT QUESTION_TYPE
+                , ( SELECT COMMON_CD_NM FROM SCIS.TB_L_COMMON_CD_MNG WHERE QUESTION_TYPE = COMMON_CD ) AS QUESTION_TYPE_NM
+                , NVL(SUM(DECODE(QUESTION_DIFFICULTY, 'QUESTION_DIFFICULTY_H', 1)), 0) AS QUESTION_H
+                , NVL(SUM(DECODE(QUESTION_DIFFICULTY, 'QUESTION_DIFFICULTY_M', 1)), 0) AS QUESTION_M
+                , NVL(SUM(DECODE(QUESTION_DIFFICULTY, 'QUESTION_DIFFICULTY_L', 1)), 0) AS QUESTION_L
+         FROM   SCIS.TB_L_QUESTION
+         WHERE  SUBJECT_ID = #{subject_id} AND USE_YN = 'Y'
+		 GROUP BY QUESTION_TYPE
+         ORDER BY QUESTION_TYPE ASC
+         
+    </select>
+    
+    <select id="EvalManageSql.doListExamQuestion" resultType="DataMap">
+        /*
+            SQL ID : EvalManageSql.doListExamQuestion
+            문제은행 목록 조회
+        */
+        
+        SELECT
+                AA.* 
+                , SUBSTR(AA.INSERT_DT, 1, 4) || '.' 
+                || SUBSTR(AA.INSERT_DT, 5, 2) || '.' 
+                || SUBSTR(AA.INSERT_DT, 7, 2) AS MAKE_INSERT_DT
+                , (SELECT CATEGORY_NM 
+                     FROM TB_L_COURSE_CATEGORY
+                WHERE CATEGORY_ID = AA.COURSE_CATEGORY_ID
+                ) AS COURSE_CATEGORY_NM
+                , ( SELECT  COMMON_CD_NM
+                    FROM    TB_L_COMMON_CD_MNG
+                    WHERE   AA.QUESTION_TYPE = COMMON_CD
+                ) AS QUESTION_TYPE_NM
+                , ( SELECT  COMMON_CD_NM
+                    FROM    TB_L_COMMON_CD_MNG
+                    WHERE   AA.QUESTION_DIFFICULTY = COMMON_CD
+                ) AS QUESTION_DIFFICULTY_NM
+        
+        <if test="mode == &quot;U&quot;">
+        
+                , DECODE(PPR.QUESTION_NO, NULL, 'N', 'Y') AS IS_SELECTED
+        
+        </if>
+        <if test="mode == &quot;R&quot;">
+        
+                , DECODE(PPR.QUESTION_NO, NULL, 'N', 'Y') AS IS_SELECTED
+              
+        </if>
+        
+        
+                , 'N' AS IS_SELECTED
+              
+          
+        
+        FROM
+                (     
+                    SELECT
+                            ROW_NUMBER() OVER( ORDER BY ${sidx} ${sord}) AS RSEQ
+                            , A.* 
+                    FROM
+                            (      
+                                SELECT
+                                        QUE.QUESTION_NO
+                                        , QUE.COURSE_CATEGORY_ID
+                                        , QUE.QUESTION_TITLE
+                                        , QUE.QUESTION_TYPE
+                                        , QUE.USE_YN       
+                                        , QUE.SITE_ID
+                                        , QUE.ASP_ID       
+                                        , QUE.INSERT_DT     
+                                        , QUE.INSERT_USER_NO
+                                        , QUE.QUESTION_DIFFICULTY
+                                FROM
+                                        TB_L_QUESTION QUE          
+                                WHERE   1=1 
+                                AND     QUE.USE_YN = 'Y'
+							
+							<!--isNotEmpty prepend="AND" property="course_category_id">
+							<![CDATA[  
+							/*
+								QUE.COURSE_CATEGORY_ID IN ( 
+									SELECT CATEGORY_ID FROM TB_L_COURSE_CATEGORY
+										START WITH CATEGORY_ID = #{course_category_id}
+										CONNECT BY PRIOR CATEGORY_ID = UPPER_CATEGORY_ID 
+								)
+							*/ 
+							]]> 
+							</isNotEmpty-->
+							
+							  
+								QUE.SUBJECT_ID = #{subject_id}
+							 
+							
+							<if test="mark_type == &quot;MARKTYPE_B&quot;">
+							
+                                AND     QUE.QUESTION_TYPE &lt;&gt; 'QUESTION_TYPE_D'  
+							
+							</if>
+        
+                                AND     QUE.ASP_ID = #{asp_id}   
+                            ) A    
+                ) AA
+        
+        <if test="mode == &quot;U&quot;">
+        
+                , TB_L_EXAM_PAPER PPR    
+        WHERE   AA.QUESTION_NO  = PPR.QUESTION_NO(+)
+        AND     PPR.EXAM_NO(+)  = #{exam_no} 
+        
+        </if> 
+    </select>
+    
+    <select id="EvalManageSql.doListExamApplyResult" resultType="DataMap">
+    /*
+            SQL ID : EvalManageSql.doListExamApplyResult
+            시험 응시 결과 리스트 조회
+        */
+        
+        SELECT  APP.QUESTION_NO
+		        , QUE.QUESTION_NO
+		        , QUE.QUESTION_TITLE
+		        , QUE.QUESTION_TYPE
+		        , (   SELECT COMMON_CD_NM
+		              FROM TB_L_COMMON_CD_MNG
+		              WHERE QUE.QUESTION_TYPE = COMMON_CD
+		        ) AS QUESTION_TYPE_NM
+		        , QUE.QUESTION_DIFFICULTY
+		        , QUE.BASIC_SCR
+		        , QUE.QUESTION_EXPLAIN
+		        , QUE.EXAMPLE_RANDOM_YN
+		        , QUE.QUESTION_CONTENT
+		        , EMP.QUESTION_EXAMPLE_NO
+		        , QUE.ANSWER_SAMPLE
+		        , QUE.SIMILAR_ANSWER_SAMPLE
+		        , (SELECT PPR.QUESTION_SCR FROM TB_L_EXAM_PAPER PPR 
+					WHERE PPR.EXAM_NO = APP.EXAM_NO AND PPR.QUESTION_NO = APP.QUESTION_NO
+				  ) AS QUESTION_POINT
+		        , CASE WHEN QUE.QUESTION_TYPE = 'QUESTION_TYPE_A' AND QUESTION_EXAMPLE_NO = APP.APPLY_ANSWER
+		                THEN   'Y'
+		               WHEN QUE.QUESTION_TYPE = 'QUESTION_TYPE_B' AND QUE.ANSWER_SAMPLE LIKE APP.APPLY_ANSWER
+		                THEN 'Y'
+		               WHEN  QUE.QUESTION_TYPE = 'QUESTION_TYPE_C' AND  
+		                ((INSTR(';' || REGEXP_REPLACE(QUE.SIMILAR_ANSWER_SAMPLE,'&lt;[^&lt;&gt;]*&gt;','') || ';', ';' || APP.APPLY_ANSWER || ';') &gt; 0) OR (INSTR(QUE.ANSWER_SAMPLE, APP.APPLY_ANSWER) &gt; 0))
+		                THEN 'Y'
+		               ELSE 'N'
+		        END AS ANSWER_YN
+		        , APP.ANSWER_CMT AS APPLY_CMT
+		        , APP.APPLY_ANSWER
+		FROM    TB_L_QUESTION QUE
+		        , TB_L_QUESTION_EXAMPLE EMP
+		        , TB_L_EXAM_APPLY_LOG APP
+		WHERE   QUE.QUESTION_NO = EMP.QUESTION_NO(+)
+		AND     EMP.ANSWER_YN(+)= 'Y'
+		AND     APP.QUESTION_NO = QUE.QUESTION_NO
+		AND     APP.EXAM_NO     = #{exam_no}
+		AND     APP.USER_NO     = #{user_no}
+        
+    </select>
+    
+    <update id="EvalManageSql.doModifyExamApplyResult" parameterType="DataMap">
+        /*
+            SQL ID : EvalManageSql.doModifyExamApplyResult
+                            시험 응시 결과 자동 채점
+        */
+        
+		UPDATE TB_L_EXAM_APPLY_LOG LOGS SET
+		    ANSWER_YN = (
+		                    SELECT CASE WHEN QUE.QUESTION_TYPE = 'QUESTION_TYPE_A' AND QUESTION_EXAMPLE_NO = APP.APPLY_ANSWER
+						                THEN   'Y'
+						               WHEN QUE.QUESTION_TYPE = 'QUESTION_TYPE_B' AND QUE.ANSWER_SAMPLE LIKE APP.APPLY_ANSWER
+						                THEN 'Y'
+						               WHEN  QUE.QUESTION_TYPE = 'QUESTION_TYPE_C' AND  
+						                ((INSTR(';' || REGEXP_REPLACE(QUE.SIMILAR_ANSWER_SAMPLE,'&lt;[^&lt;&gt;]*&gt;','') || ';', ';' || APP.APPLY_ANSWER || ';') &gt; 0) OR (INSTR(QUE.ANSWER_SAMPLE, '&gt;'||APP.APPLY_ANSWER||'&lt;') &gt; 0))
+						                THEN 'Y'
+						               ELSE 'N'
+						        END AS ANSWER_YN
+		                    FROM    TB_L_QUESTION QUE
+		                            , TB_L_QUESTION_EXAMPLE EMP
+		                            , TB_L_EXAM_APPLY_LOG APP
+		                    WHERE   QUE.QUESTION_NO = EMP.QUESTION_NO(+)
+		                    AND     EMP.ANSWER_YN(+)= 'Y'
+		                    AND     APP.QUESTION_NO = QUE.QUESTION_NO
+		                    AND     APP.EXAM_NO     = #{exam_no}
+		                    AND     APP.USER_NO     = #{user_no}
+		                    AND     LOGS.QUESTION_NO = QUE.QUESTION_NO
+		                )
+		WHERE   EXAM_NO     = #{exam_no}
+		AND     USER_NO     = #{user_no}    
+        
+    </update>
+    
+    <select id="EvalManageSql.doCountExamScore" resultType="DataMap">
+        /*
+            SQL ID : EvalManageSql.doCountExamScore
+                              시험 응시 결과 총점 조회
+        */
+        
+        SELECT  CASE WHEN B.REEXAM_YN = 'Y' THEN
+		                A.TOTAL_SCR * 0.01 * B.REEXAM_SUBTRACT_RATIO
+		             ELSE
+		                A.TOTAL_SCR
+		        END AS TOTAL_SCR
+		FROM    (
+			        SELECT  NVL(SUM(QUE.QUESTION_SCR), 0) TOTAL_SCR
+					FROM    TB_L_EXAM_PAPER QUE
+					        , TB_L_EXAM_APPLY_LOG APP
+					WHERE   APP.QUESTION_NO = QUE.QUESTION_NO
+					AND     APP.EXAM_NO     = QUE.EXAM_NO
+					AND     APP.ANSWER_YN   = 'Y'
+					AND     APP.EXAM_NO     = #{exam_no}
+					AND     APP.USER_NO     = #{user_no}
+			     ) A
+		        , TB_L_EXAM B
+		WHERE   B.EXAM_NO = #{exam_no}
+    
+    </select>
+    
+    <select id="EvalManageSql.doListExamApplyUser" resultType="DataMap">
+        /*
+            SQL ID : EvalManageSql.doListExamApplyUser
+                              시험 응시 대상 리스트 조회
+        */
+        
+		SELECT 
+		        EXAM.EXAM_NO
+		        , US.USER_NO
+		        , US.USER_ID
+		        , US.USER_NM AS USER_NM
+		        , NVL(APP.EXAM_SCR, 0) AS EXAM_SCR
+		        , APP.EXAM_APPLY_STR_DT
+		        , APP.EXAM_APPLY_END_DT
+		        , SUBSTR(APP.EXAM_APPLY_STR_DT, 1, 4) || '.' 
+		          || SUBSTR(APP.EXAM_APPLY_STR_DT, 5, 2) || '.' 
+		          || SUBSTR(APP.EXAM_APPLY_STR_DT, 7, 2) || ' '
+		          || SUBSTR(APP.EXAM_APPLY_STR_DT, 9, 2) || ':'
+		          || SUBSTR(APP.EXAM_APPLY_STR_DT, 11, 2) || ':'
+		          || SUBSTR(APP.EXAM_APPLY_STR_DT, 13, 2) 
+		          AS MAKE_EXAM_APPLY_STR_DT
+		          , SUBSTR(APP.EXAM_APPLY_END_DT, 1, 4) || '.' 
+		          || SUBSTR(APP.EXAM_APPLY_END_DT, 5, 2) || '.' 
+		          || SUBSTR(APP.EXAM_APPLY_END_DT, 7, 2) || ' '
+		          || SUBSTR(APP.EXAM_APPLY_END_DT, 9, 2) || ':'
+		          || SUBSTR(APP.EXAM_APPLY_END_DT, 11, 2) || ':'
+		          || SUBSTR(APP.EXAM_APPLY_END_DT, 13, 2) 
+		          AS MAKE_EXAM_APPLY_END_DT
+		        , DECODE(APP.EXAM_APPLY_STR_DT, NULL, 'N', 'Y') AS APPLY_YN
+		        , DECODE(APP.EXAM_SCR, NULL, 'N', 'Y') AS MARK_YN
+		        , TRUNC((TO_DATE(APP.EXAM_APPLY_END_DT, 'YYYYMMDDHH24MISS') - TO_DATE(APP.EXAM_APPLY_STR_DT, 'YYYYMMDDHH24MISS')) * 24 * 60, 1) AS EXAM_TIME
+		FROM    TB_L_COURSE_STUDENT STU
+		        , TB_L_EXAM EXAM
+		        , TB_L_EXAM_APPLY APP
+		        , TB_L_USER US
+		WHERE   STU.COURSE_ID = EXAM.COURSE_ID
+		AND     STU.CLASS_NO  = EXAM.CLASS_NO
+		AND     STU.ASP_ID    = EXAM.ASP_ID
+		AND     APP.USER_NO(+) = STU.USER_NO
+        AND     APP.EXAM_NO(+) = #{exam_no}
+		AND     EXAM.EXAM_NO = #{exam_no}
+		AND     US.USER_NO = STU.USER_NO
+    
+	        
+	            
+	    AND     STU.ASP_ID  = #{asp_id}
+	    
+	    
+    </select>
+    
+    <select id="EvalManageSql.doGetExamApplyUser" resultType="DataMap">
+        /*
+            SQL ID : EvalManageSql.doGetExamApplyUser
+                              시험 응시 대상 조회
+        */
+        
+        SELECT 
+                APP.EXAM_NO
+                , US.USER_NO
+                , US.USER_ID
+                , US.USER_NM AS USER_NM
+                , NVL(APP.EXAM_SCR, 0) AS EXAM_SCR
+                , APP.EXAM_APPLY_STR_DT
+                , APP.EXAM_APPLY_END_DT
+                , SUBSTR(APP.EXAM_APPLY_STR_DT, 1, 4) || '.' 
+                  || SUBSTR(APP.EXAM_APPLY_STR_DT, 5, 2) || '.' 
+                  || SUBSTR(APP.EXAM_APPLY_STR_DT, 7, 2) || ' '
+                  || SUBSTR(APP.EXAM_APPLY_STR_DT, 9, 2) || ':'
+                  || SUBSTR(APP.EXAM_APPLY_STR_DT, 11, 2) || ':'
+                  || SUBSTR(APP.EXAM_APPLY_STR_DT, 13, 2) 
+                  AS MAKE_EXAM_APPLY_STR_DT
+                  , SUBSTR(APP.EXAM_APPLY_END_DT, 1, 4) || '.' 
+                  || SUBSTR(APP.EXAM_APPLY_END_DT, 5, 2) || '.' 
+                  || SUBSTR(APP.EXAM_APPLY_END_DT, 7, 2) || ' '
+                  || SUBSTR(APP.EXAM_APPLY_END_DT, 9, 2) || ':'
+                  || SUBSTR(APP.EXAM_APPLY_END_DT, 11, 2) || ':'
+                  || SUBSTR(APP.EXAM_APPLY_END_DT, 13, 2) 
+                  AS MAKE_EXAM_APPLY_END_DT
+                , DECODE(APP.EXAM_APPLY_STR_DT, NULL, 'N', 'Y') AS APPLY_YN
+                , DECODE(APP.EXAM_SCR, NULL, 'N', 'Y') AS MARK_YN
+                , TRUNC((TO_DATE(APP.EXAM_APPLY_END_DT, 'YYYYMMDDHH24MISS') - TO_DATE(APP.EXAM_APPLY_STR_DT, 'YYYYMMDDHH24MISS')) * 24 * 60, 1) AS EXAM_TIME
+                , CONNECT_IP
+                ,(        
+	                SELECT            
+	                    TU.USER_NM AS USER_NAME 
+	                FROM 
+	                    TB_L_COURSE_PROF CP
+	                    ,TB_L_USER TU
+	                WHERE 
+	                    CP.COURSE_ID = EXAM.COURSE_ID
+	                AND
+	                    CP.CLASS_NO = EXAM.CLASS_NO            
+	                AND
+	                    CP.ASP_ID = EXAM.ASP_ID
+	                AND
+	                    CP.USER_NO = TU.USER_NO
+	                AND
+	                    CP.PROF_GUBUN = 'PROF_GUBUN_P'
+	                AND ROWNUM &lt; 2
+	            ) AS COURSE_PROF_NAME /** 주교수 이름*/
+        FROM    TB_L_COURSE_STUDENT STU
+                , TB_L_EXAM EXAM
+                , TB_L_EXAM_APPLY APP
+                , TB_L_USER US
+        WHERE   STU.COURSE_ID   = EXAM.COURSE_ID
+        AND     STU.CLASS_NO    = EXAM.CLASS_NO
+        AND     STU.ASP_ID      = EXAM.ASP_ID
+        AND     EXAM.EXAM_NO    = APP.EXAM_NO
+        AND     EXAM.EXAM_NO    = #{exam_no}
+        AND     US.USER_NO      = STU.USER_NO
+        AND     STU.USER_NO     = #{user_no}
+        AND     APP.USER_NO     = STU.USER_NO
+    
+            
+                
+        AND     STU.ASP_ID      = #{asp_id}
+        
+        
+    </select>
+    
+    
+    <update id="EvalManageSql.doModifyApplyLog" parameterType="DataMap">
+    /*
+        SQL ID : EvalManageSql.doModifyApplyLog
+                     정답 유무 입력
+    */
+     
+    UPDATE TB_L_EXAM_APPLY_LOG SET
+            ANSWER_YN = #{answer_yn}
+            , UPDATE_DT               = TO_CHAR(SYSDATE,'YYYYMMDDHH24MISS')
+            , UPDATE_USER_NO          = #{update_user_no}
+    WHERE   EXAM_NO = #{exam_no} 
+    AND     USER_NO = #{user_no}   
+    AND     QUESTION_NO = #{question_no}
+    
+    </update>
+    
+    <delete id="EvalManageSql.doRemoveApplyLog" parameterType="DataMap">
+    /*
+        SQL ID : EvalManageSql.doRemoveApplyLog
+                     시험 응시 로그 삭제
+    */
+     
+    DELETE FROM TB_L_EXAM_APPLY_LOG
+    WHERE   EXAM_NO = #{exam_no} 
+    AND     USER_NO = #{user_no}   
+    
+    </delete>
+    
+    <delete id="EvalManageSql.doRemoveApply" parameterType="DataMap">
+    /*
+        SQL ID : EvalManageSql.doRemoveApply
+                    시험 응시 삭제
+    */
+     
+    DELETE FROM TB_L_EXAM_APPLY
+    WHERE   EXAM_NO = #{exam_no} 
+    AND     USER_NO = #{user_no}  
+    
+    </delete>
+    
+    <update id="EvalManageSql.doModifyPassExam" parameterType="DataMap">
+    /*
+        SQL ID : EvalManageSql.doModifyPassExam
+                     수료 시험 합격 여부 처리
+    */
+     
+	UPDATE TB_L_COURSE_STUDENT SET
+	    EXAM_PASS_YN = #{exam_pass_yn}
+	WHERE   COURSE_ID   = #{course_id}
+	AND     CLASS_NO    = #{class_no}
+	AND     ASP_ID      = #{asp_id}
+	AND     USER_NO     = #{user_no}
+    
+    </update>
+    
+    <select id="EvalManageSql.doGetRegExamYn" parameterType="DataMap" resultType="DataMap">
+    /*
+        SQL ID : EvalManageSql.doGetRegExamYn
+                     가중치 점수에 따른 시험 등록 가능 여부
+    */
+     
+    SELECT  CASE WHEN #{exam_type} = 'EXAMGUBUN_A' 
+	                  AND ( 
+	                        SELECT  NVL(SUM(EXAM_WEIGHT), 0) 
+	                        FROM    TB_L_EXAM
+	                        WHERE   COURSE_ID = #{course_id}
+	                        AND     CLASS_NO = #{class_no}
+	                        AND     ASP_ID      = #{asp_id}
+	                        AND     EXAM_TYPE = 'EXAMGUBUN_A' 
+	                        AND     REEXAM_YN &lt;&gt; 'Y'
+	                        AND     USE_YN       = 'Y' 
+	                      ) &gt;= NVL(TC.FORMATIVEEVAL_RATIO, 0) 
+	                THEN
+	                    'N'
+	             WHEN  #{exam_type} = 'EXAMGUBUN_B' 
+	                    AND (
+	                            ( 
+	                                SELECT  COUNT(*) 
+	                                FROM    TB_L_EXAM 
+	                                WHERE   COURSE_ID    = #{course_id}
+	                                AND     CLASS_NO     = #{class_no}
+	                                AND     ASP_ID      = #{asp_id}
+	                                AND     EXAM_TYPE    = 'EXAMGUBUN_B'
+	                                AND     USE_YN       = 'Y' 
+	                             ) &gt; 0
+	                        OR  (
+	                                SELECT  NVL(SUM(EXAM_WEIGHT), 0) 
+	                                FROM    TB_L_EXAM
+	                                WHERE   COURSE_ID = #{course_id}
+	                                AND     CLASS_NO = #{class_no}
+	                                AND     ASP_ID      = #{asp_id}
+	                                AND     EXAM_TYPE = 'EXAMGUBUN_B'
+	                                AND     USE_YN       = 'Y' 
+	                            ) &gt;= NVL(TC.MIDEXAM_RATIO, 0) 
+	                        )
+	             THEN
+	                'N'
+	             WHEN  #{exam_type} = 'EXAMGUBUN_C' 
+	                   AND  (
+	                            ( 
+	                                SELECT  COUNT(*) 
+	                                FROM    TB_L_EXAM 
+	                                WHERE   COURSE_ID    = #{course_id}
+	                                AND     CLASS_NO     = #{class_no}
+	                                AND     ASP_ID      = #{asp_id}
+	                                AND     EXAM_TYPE    = 'EXAMGUBUN_C'
+	                                AND     USE_YN       = 'Y' 
+	                            ) &gt; 0
+	                        OR  (
+	                                SELECT  NVL(SUM(EXAM_WEIGHT), 0) 
+	                                FROM    TB_L_EXAM
+	                                WHERE   COURSE_ID = #{course_id}
+	                                AND     CLASS_NO = #{class_no}
+	                                AND     ASP_ID      = #{asp_id}
+	                                AND     EXAM_TYPE = 'EXAMGUBUN_C'
+	                            )  &gt;= NVL(TC.FINALEXAM_RATIO, 0)
+	                         )
+	             THEN
+                    'N'
+	             WHEN  #{exam_type} = 'EXAMGUBUN_D' 
+	                   AND  ( 
+	                            SELECT  COUNT(*) 
+	                            FROM    TB_L_EXAM 
+	                            WHERE   COURSE_ID    = #{course_id}
+	                            AND     CLASS_NO     = #{class_no}
+	                            AND     ASP_ID      = #{asp_id}
+	                            AND     EXAM_TYPE    = 'EXAMGUBUN_D'
+	                            AND     USE_YN       = 'Y'
+	                        ) &gt; 0
+	             THEN
+	                'N'
+	             ELSE 'Y'
+	        END AS RESULT_YN
+	FROM    
+	        TB_L_COURSE TC
+	WHERE   TC.COURSE_ID    = #{course_id}
+	AND     TC.CLASS_NO     = #{class_no}
+	AND     TC.ASP_ID       = #{asp_id}
+	
+    </select>
+</mapper>

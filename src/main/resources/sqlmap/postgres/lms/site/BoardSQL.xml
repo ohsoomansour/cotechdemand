@@ -1,0 +1,886 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="BoardSQL">
+
+	<sql id="where_mng">
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="sc_boardmng_pcd != null and sc_boardmng_pcd != ''">
+				AND BOARDMNG_PCD = #{sc_boardmng_pcd}
+			</if>
+			<if test="sc_useyn != null and sc_useyn != ''">
+				AND USEYN = #{sc_useyn}
+			</if>
+			<if test="sc_boardnm != null and sc_boardnm != ''">
+				AND BOARDNM = LIKE '%' || #{sc_boardnm} || '%'
+			</if>
+		</trim>
+	</sql>
+	
+	<sql id="where_item">
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="sc_keywd != null and sc_keywd != ''">
+				<if test="sc_where == 'all'">
+					AND (A.BOARDNM LIKE '%'|| #{ sc_keywd }||'%'
+					OR A.REGUID LIKE '%'||#{ sc_keywd }||'%'
+					OR A.MODUID LIKE '%'||#{ sc_keywd }||'%')
+				</if>
+				<if test="sc_where == 'boardnm'">
+					AND A.BOARDNM LIKE '%'|| #{ sc_keywd }||'%'
+				</if>
+				<if test="sc_where == 'reguid'">
+					AND A.REGUID LIKE '%'||#{ sc_keywd }||'%'
+				</if>
+				<if test="sc_where == 'moduid'">
+					AND A.MODUID LIKE '%'||#{ sc_keywd }||'%'
+				</if>
+			</if>	
+			<if test="sc_useyn != ''">
+           		AND A.USEYN = #{ sc_useyn }
+        	</if>	
+		</trim>
+	</sql>
+	
+	<sql id="where_boarditem">
+		<if test="sc_keywd != null and sc_keywd != ''">
+			<if test="sc_where == 'all'">
+				AND (A.BITEM_TITLE LIKE '%'|| #{ sc_keywd }||'%'
+				OR A.BITEM_BODY LIKE '%'||#{ sc_keywd }||'%'
+				OR A.REGUID LIKE '%'||#{ sc_keywd }||'%')
+			</if>				
+			<if test="sc_where == 'bitem_title'">
+				AND A.BITEM_TITLE LIKE '%'|| #{ sc_keywd }||'%'
+			</if>
+			<if test="sc_where == 'bitem_body'">
+				AND A.BITEM_BODY LIKE '%'||#{ sc_keywd }||'%'
+			</if>
+			<if test="sc_where == 'reguid'">
+				AND A.REGUID LIKE '%'||#{ sc_keywd }||'%'
+			</if>
+		</if>	
+		<if test="strdate !=''">		
+			<![CDATA[	
+				AND TO_CHAR(TO_DATE(A.REGDTM,'yyyymmddHH24MISS'),'YYYYMMDD') >= #{strdate} 
+			]]>
+		</if>
+		<if test="enddate !=''">
+			<![CDATA[
+				AND TO_CHAR(TO_DATE(A.REGDTM,'yyyymmddHH24MISS'),'YYYYMMDD') <= #{enddate}
+			]]>
+		</if>
+		<if test="siteid != null and siteid != ''">
+			AND A.SITEID = #{siteid}
+		</if>				
+		<if test="sc_useyn != ''">
+           	AND A.USEYN = #{ sc_useyn }
+        </if>
+		<if test="board_seq != null and board_seq != ''">
+			AND A.BOARD_SEQ = ${board_seq}
+		</if>	
+		<if test="sc_boardpcd != ''">
+          	AND AA.BOARD_PCD = #{ sc_boardpcd }
+        </if>	
+        <if test="sc_boardseq != ''">
+           	AND AA.BOARD_SEQ = ${ sc_boardseq }
+        </if>	
+	</sql>	
+
+
+<!-- ====================================================================================== -->
+<!--						게시판관리 (TB_BOARD_MNG)											-->
+<!-- ====================================================================================== -->
+
+	<select id="BoardSQL.doCountBoard" resultType="int">
+		/*
+			SQL ID : BoardSQL.doCountBoard
+			게시판 카운트
+		*/
+		SELECT COUNT(*) FROM TB_BOARD_MNG
+		<include refid="where_mng"/>
+	</select>
+
+	<select id="BoardSQL.dolistBoard" resultType="dataMap">
+		/*
+			SQL ID : BoardSQL.dolistBoard
+			게시판 리스트
+		*/
+		<![CDATA[
+		SELECT A.BOARD_SEQ
+		, A.BOARDNM
+		, A.BOARD_PCD
+		, A.BOARD_OPT
+		, A.REGUID
+		, A.MODUID
+		, TO_CHAR(TO_DATE(A.REGDTM, 'yyyymmddHH24MISS'),'YY-MM-DD') AS REGDTM
+		, A.MODDTM
+		, A.USEYN
+		, A.SITEID
+		]]>
+		FROM TB_BOARD_MNG A		
+		<include refid="where_item"/>	
+		ORDER BY A.BOARD_SEQ ASC				
+	</select>	
+	
+	<select id="BoardSQL.doGetMngBoard" parameterType="dataMap" resultType="dataMap">
+		/*
+			SQL ID: BoardSQL.doGetMngBoard
+			게시판 싱글데이터 조회
+		*/
+		<![CDATA[
+		SELECT BOARD_SEQ
+		       , BOARDNM
+		       , BOARD_PCD
+		       , BOARD_TCD
+		       , BOARD_OPT
+		       , ATTF_MAXCNT
+		       , ATTF_MAXSIZE
+		       , ATTF_AVAILEXT
+		       , BOARD_CMMT
+		       , REGUID
+		       , MODUID
+		       , REGDTM
+		       , MODDTM
+		       , USEYN
+		       , SITEID
+		       , (CASE WHEN ((BOARD_OPT & 1) > 0)::INT = 1 THEN 'Y' ELSE 'N' END) AS CMMT_YN
+		       , (CASE WHEN ((BOARD_OPT & 2) > 0)::INT = 1 THEN 'Y' ELSE 'N' END) AS RECOM_YN
+		       , (CASE WHEN ((BOARD_OPT & 4) > 0)::INT = 1 THEN 'Y' ELSE 'N' END) AS ATTACH_YN
+		FROM TB_BOARD_MNG
+		]]>
+		WHERE BOARD_SEQ = ${board_seq}
+	</select>
+
+	
+	<insert id="BoardSQL.doAddBoard" parameterType="dataMap" useGeneratedKeys="false">
+		/*
+			SQL ID : BoardSQL.doAddBoard
+			게시판 등록
+		*/
+		INSERT INTO TB_BOARD_MNG
+			( BOARD_SEQ
+			, BOARDNM
+			, BOARD_PCD
+			, BOARD_TCD
+			, BOARD_OPT
+			, NEWD_STDT
+			, ATTF_MAXCNT
+			, ATTF_MAXSIZE
+			, ATTF_AVAILEXT
+			, BOARD_CMMT
+			, REGUID
+			, MODUID
+			, REGDTM
+			, MODDTM
+			, USEYN
+			, SITEID
+			)
+		VALUES
+			( ${board_seq}
+			, #{boardnm}
+			, COALESCE(#{board_pcd}::TEXT, '')
+			, COALESCE(#{board_tcd}::TEXT, '')
+			, ${board_opt}
+			, 0
+			, ${attf_maxcnt}
+			, ${attf_maxsize}
+			, COALESCE(#{attf_availext}::TEXT, '')
+			, #{board_cmmt}
+			, #{userid}
+			, #{userid}
+			, TO_CHAR(NOW(), 'YYYYMMDDHH24MISS')
+			, TO_CHAR(NOW(), 'YYYYMMDDHH24MISS')
+			, COALESCE(#{useyn}::TEXT, 'N')
+			, #{siteid}				
+			)
+	</insert>	
+	
+	<update id="BoardSQL.doUpdateBoard" parameterType="dataMap">
+		/*
+			SQL ID: BoardSQL.doUpdateBoard
+			게시판 수정
+		*/
+		UPDATE TB_BOARD_MNG
+		SET BOARDNM				= #{boardnm}
+			, BOARD_PCD			= #{board_pcd}
+			, BOARD_TCD			= #{board_tcd}
+			, BOARD_OPT			= ${board_opt}
+			, ATTF_MAXCNT		= ${attf_maxcnt}
+			, ATTF_MAXSIZE		= ${attf_maxsize}
+			, ATTF_AVAILEXT		= #{attf_availext}
+			, MODUID			= #{userid}
+			, MODDTM			= TO_CHAR(NOW(), 'YYYYMMDDHH24MISS')
+			, USEYN		 		= COALESCE(#{useyn},'N')
+		WHERE BOARD_SEQ = ${board_seq}::INT
+	</update>	
+	
+	<delete id="BoardSQL.doDeleteBoard" parameterType="dataMap">
+		/*
+			SQL ID: BoardSQL.doDeleteBoard
+			게시판 삭제
+		*/
+		DELETE FROM TB_BOARD_MNG 
+		WHERE BOARD_SEQ = ${board_seq}
+	</delete>	
+	
+	<delete id="BoardSQL.doDeleteBoarddownBoardItem" parameterType="dataMap">
+		/*
+			SQL ID: BoardSQL.doDeleteBoarddownBoardItem
+			게시판 관련 하위 게시물 삭제
+		*/
+		DELETE FROM TB_BOARD_ITEM
+		WHERE BOARD_SEQ = ${board_seq}
+	</delete>	
+	
+	<delete id="BoardSQL.doDeleteBoarddownCtgr" parameterType="dataMap">
+		/*
+			SQL ID: BoardSQL.doDeleteBoarddownCtgr
+			게시판 관련 하위 카테고리 삭제
+		*/
+		DELETE FROM TB_BOARD_CTGR 
+		WHERE BOARD_SEQ = ${board_seq}
+	</delete>
+	
+<!-- ====================================================================================== -->
+<!--						게시판 카테고리 (TB_BOARD_CTGR)									-->
+<!-- ====================================================================================== -->
+	<select id="BoardSQL.doListBoardCtgr" parameterType="dataMap" resultType="dataMap">
+		/*
+			SQL ID: BoardSQL.doListBoardCtgr
+			게시판 카테고리 조회
+		*/
+		SELECT A.* 
+		FROM TB_BOARD_CTGR A
+		WHERE  A.BOARD_SEQ = ${board_seq}
+		ORDER BY A.CTGR_SEQ ASC
+	</select>	
+	
+	<select id="BoardSQL.dolistBoardCtgr" parameterType="dataMap" resultType="dataMap">
+		/*
+			SQL ID: BoardSQL.dolistBoardCtgr
+			게시판 카테고리 조회(BoardMng)
+		*/
+		SELECT A.* 
+		FROM TB_BOARD_CTGR A
+		WHERE  A.BOARD_SEQ = ${board_seq}
+		ORDER BY A.CTGR_SEQ ASC
+	</select>		
+	
+	<insert id="BoardSQL.doAddBoardCtgr" parameterType="dataMap" useGeneratedKeys="false">
+		/*
+			SQL ID : BoardSQL.doAddBoardCtgr
+			게시판 카테고리 등록
+		*/
+		<foreach collection="list" item="item" index="index" separator=";" close=";">
+        	INSERT INTO TB_BOARD_CTGR
+			( CTGR_SEQ
+			, BOARD_SEQ
+			, CTGRNM
+			, REGUID
+			, MODUID
+			, REGDTM
+			, MODDTM
+			, SITEID			                
+            ) 
+            VALUES			
+            ( ${item.ctgr_seq}
+			, ${item.board_seq}
+			, #{item.ctgrnm}
+			, #{userid}
+			, #{userid}
+			, TO_CHAR(NOW(), 'YYYYMMDDHH24MISS')
+			, TO_CHAR(NOW(), 'YYYYMMDDHH24MISS')
+			, #{siteid}
+			)
+             </foreach>		
+	</insert>
+	
+	<update id="BoardSQL.doUpdateBoardCtgr" parameterType="dataMap">
+		/*
+			SQL ID: BoardSQL.doUpdateBoardCtgr
+			카테고리 수정
+		*/
+		<foreach  item="item" collection="lists"  index="index" separator=";" close=";" >	
+		UPDATE TB_BOARD_CTGR
+		SET CTGRNM				= #{item.ctgrnms}
+			, MODUID			= #{userid}
+			, MODDTM			= TO_CHAR(NOW(), 'YYYYMMDDHH24MISS')
+		WHERE CTGR_SEQ = ${item.ctgr_seqs} 
+		</foreach>
+	</update>		 
+
+	<delete id="BoardSQL.doDeleteBoardCtgr" parameterType="dataMap">
+		/*
+			SQL ID: BoardSQL.doDeleteBoardCtgr
+			게시판 카테고리 삭제
+		*/
+		DELETE FROM TB_BOARD_CTGR 
+		WHERE CTGR_SEQ =  ${ctgr_seq}
+	</delete>
+	
+<!-- ====================================================================================== -->
+<!--						게시물 (TB_BOARD_ITEM)	 (통합게시판)									-->
+<!-- ====================================================================================== -->
+	
+	<select id="BoardSQL.doCountBoardItem" resultType="int">
+	
+		/*
+			SQL ID : BoardSQL.doCountBoardItem
+			게시물 카운트
+		*/
+		SELECT COUNT(*) 
+		FROM 
+			TB_BOARD_ITEM A
+		WHERE 1=1 AND USEYN = 'Y'
+		<include refid="where_boarditem"/>
+	</select>	
+	
+	<select id="BoardSQL.doListBoardItem" resultType="dataMap">
+		/*
+			SQL ID : BoardSQL.doListBoardItem
+			게시물 리스트
+		*/
+		<![CDATA[
+		SELECT A.*
+	 	FROM (
+		 	SELECT 
+			 	(ROW_NUMBER() OVER()) AS RNUM
+			 	, A.BITEM_SEQ
+				, A.CTGR_SEQ
+				, A.BOARD_SEQ
+				, A.UP_SEQ
+				, A.BITEM_TITLE
+				, A.BITEM_BODY
+				, A.BITEM_RFK
+				, A.BITEM_SEECNT
+				, A.BITEM_PCD
+				, A.BITEM_OPT
+				, A.REGUID
+				, A.MODUID
+				, TO_CHAR(TO_DATE(A.REGDTM, 'yyyymmddHH24MISS'),'YYYY-MM-DD') AS REGDTM
+				, A.MODDTM
+				, A.USEYN
+				, A.SITEID
+				, A.FMST_SEQNO 
+				,(SELECT COUNT(*) FROM TB_BOARD_CMMT WHERE BITEM_SEQ=A.BITEM_SEQ) AS CMMT_COUNT		
+				,(SELECT COUNT(1) FROM TB_BOARD_RECOM WHERE A.BITEM_SEQ = BITEM_SEQ) AS RECOM_CNT			
+				,(SELECT COUNT(*) FROM TB_BOARD_ATTACH WHERE BITEM_SEQ=A.BITEM_SEQ) AS ATTACH_COUNT
+				,(SELECT CASE WHEN C.BITEM_BODY LIKE '%<img alt="" src="%' THEN 'Y' ELSE 'N' END FROM TB_BOARD_ITEM C WHERE A.BITEM_SEQ = C.BITEM_SEQ) AS IMAGE_YN
+		        ,(SELECT CASE WHEN to_date(substring(b.regdtm,0,9), 'YYYYMMDD')+ interval '7 day'> NOW()
+		        	THEN 'Y' 
+		        	ELSE 'N' 
+	      	   		END
+	      	  	FROM TB_BOARD_ITEM B 
+	      		WHERE A.BITEM_SEQ = B.BITEM_SEQ) AS NEW_MARK		
+			]]>
+			FROM TB_BOARD_ITEM A
+			WHERE 1=1 AND A.USEYN = 'Y'
+			<include refid="where_boarditem"/>	
+		) A
+		<!-- WHERE A.RNUM BETWEEN (#{page}::INT -1) * (#{rows}::INT) + 1 AND #{page}::INT * #{rows}::INT -->
+	    ORDER BY A.BITEM_SEQ DESC		
+	    limit ${rows}::INT offset (${page}::INT -1) * 10
+	</select>
+	
+	<select id="BoardSQL.doListNotice" resultType="dataMap">
+		/*
+			SQL ID : BoardSQL.doListNotice
+			공지사항 목록 조회
+		*/
+		<![CDATA[
+		SELECT 
+		 	  A.BITEM_SEQ
+			, A.CTGR_SEQ
+			, A.BOARD_SEQ
+			, A.UP_SEQ
+			, A.BITEM_TITLE
+			, A.BITEM_BODY
+			, A.BITEM_RFK
+			, A.BITEM_SEECNT
+			, A.BITEM_PCD
+			, A.BITEM_OPT
+			, A.REGUID
+			, A.MODUID
+			, TO_CHAR(TO_DATE(A.REGDTM, 'yyyymmddHH24MISS'),'YYYY.MM.DD') AS REGDTM
+			, A.MODDTM
+			, A.USEYN
+			, A.SITEID
+			,(SELECT COUNT(*) FROM TB_BOARD_CMMT WHERE BITEM_SEQ=A.BITEM_SEQ) AS CMMT_COUNT		
+			,(SELECT COUNT(1) FROM TB_BOARD_RECOM WHERE A.BITEM_SEQ = BITEM_SEQ) AS RECOM_CNT			
+			,(SELECT COUNT(*) FROM TB_BOARD_ATTACH WHERE BITEM_SEQ=A.BITEM_SEQ) AS ATTACH_COUNT
+			,(SELECT CASE WHEN C.BITEM_BODY LIKE '%<img alt="" src="%' THEN 'Y' ELSE 'N' END FROM TB_BOARD_ITEM C WHERE A.BITEM_SEQ = C.BITEM_SEQ) AS IMAGE_YN
+	        ,(SELECT CASE WHEN to_date(substring(b.regdtm,0,9), 'YYYYMMDD')+ interval '7 day'> NOW()
+		        	THEN 'Y' 
+		        	ELSE 'N' 
+	      	   		END
+	      	  	FROM TB_BOARD_ITEM B 
+	      		WHERE A.BITEM_SEQ = B.BITEM_SEQ) AS NEW_MARK	
+			]]>
+			FROM TB_BOARD_ITEM A
+			WHERE 1=1 AND A.USEYN = 'Y' AND A.BOARD_SEQ = ${board_seq}
+			ORDER BY A.BITEM_SEQ DESC
+	</select>	
+	
+	<select id="BoardSQL.doGetBoardItem" parameterType="dataMap" resultType="dataMap">
+		/*
+			SQL ID: BoardSQL.doGetBoardItem
+			게시물 싱글데이터 조회
+		*/
+		SELECT 
+			*
+		FROM 
+			TB_BOARD_ITEM
+		WHERE 
+			BITEM_SEQ = ${bitem_seq} AND USEYN = 'Y'
+	</select>
+
+	<select id="BoardSQL.doGetNextBoardItem" parameterType="dataMap" resultType="dataMap">
+		/*
+			SQL ID: BoardSQL.doGetNextBoardItem
+			게시물 다음글 조회
+		*/
+		SELECT 
+			*
+		FROM 
+			TB_BOARD_ITEM
+		WHERE 
+			USEYN = 'Y' AND BITEM_SEQ IN (
+		( SELECT MIN(BITEM_SEQ)
+		FROM TB_BOARD_ITEM
+		WHERE BOARD_SEQ = ${ board_seq } AND BITEM_SEQ > ${ bitem_seq })
+		)
+	</select>	
+	
+	<select id="BoardSQL.doGetBeforeBoardItem" parameterType="dataMap" resultType="dataMap">
+		/*
+			SQL ID: BoardSQL.doGetBeforeBoardItem
+			게시물 이전글 조회
+		*/
+		<![CDATA[		
+		SELECT 
+			*
+		FROM 
+			TB_BOARD_ITEM
+		WHERE 
+			USEYN = 'Y' AND BITEM_SEQ IN (
+		( SELECT MAX(BITEM_SEQ)
+		FROM TB_BOARD_ITEM
+		WHERE BOARD_SEQ = ${ board_seq } AND BITEM_SEQ < ${ bitem_seq })
+		)
+		]]>
+	</select>		
+	
+ 	<select id="BoardSQL.doViewBoardItem" resultType="dataMap">
+		/*
+			SQL ID : BoardSQL.doViewBoardItem
+			게시물 상세조회
+		*/
+		<![CDATA[
+		SELECT 
+		  AA.BITEM_SEQ
+		, AA.BOARD_SEQ
+		, AA.CTGR_SEQ
+		, AA.BITEM_TITLE
+		, AA.BITEM_BODY
+		, AA.BITEM_SEECNT		
+		, AA.REGUID
+		, TO_CHAR(TO_DATE(AA.REGDTM, 'yyyymmddHH24MISS'),'YY-MM-DD') AS REGDTM
+		, (SELECT COUNT(1) FROM TB_BOARD_RECOM WHERE AA.BITEM_SEQ = BITEM_SEQ) AS RECOM_CNT		
+		, (SELECT CTGRNM FROM TB_BOARD_CTGR
+			WHERE AA.CTGR_SEQ = CTGR_SEQ AND AA.BOARD_SEQ = BOARD_SEQ) AS CTGRNM		
+		]]>
+		, AA.fmst_seqno
+		FROM TB_BOARD_ITEM AA
+		WHERE AA.BITEM_SEQ = ${bitem_seq} AND AA.BOARD_SEQ = ${board_seq} AND USEYN = 'Y'
+	</select>	 
+	
+	<insert id="BoardSQL.doAddBoardItem" parameterType="dataMap" useGeneratedKeys="false">
+		/*
+			SQL ID : BoardSQL.doAddBoardItem
+			게시물 등록
+		*/
+		INSERT INTO TB_BOARD_ITEM
+			( BITEM_SEQ
+			, BOARD_SEQ
+			<if test="ctgr_seq != ''">
+				, CTGR_SEQ
+			</if>
+			, UP_SEQ
+			, BITEM_TITLE
+			, BITEM_BODY
+			, BITEM_RFK
+			, BITEM_LVL
+			, BITEM_IDX
+			, BITEM_SEECNT
+			, BITEM_ATTCNT
+			, BITEM_PCD
+			, BITEM_OPT
+			, BITEM_SCD
+			, REGUID
+			, MODUID
+			, REGDTM
+			, MODDTM
+			, USEYN
+			, SITEID
+			<if test="fmst_seqno != '' " >
+				,fmst_seqno
+			</if>
+			
+			)
+		VALUES
+			( ${bitem_seq}
+			, ${board_seq}
+			<if test="ctgr_seq != ''">
+				, #{ctgr_seq}::INT
+			</if>			
+			, 0
+			, #{bitem_title}
+			, #{bitem_body}
+			, 0
+			, 0
+			, 0
+			, 0
+			, 0
+			, COALESCE(#{bitem_pcd}::TEXT, 'BITEM_P001')
+			, 0
+			, 'scd'
+			, #{userid}
+			, #{userid}
+			, TO_CHAR(NOW(), 'YYYYMMDDHH24MISS')
+			, TO_CHAR(NOW(), 'YYYYMMDDHH24MISS')
+			, 'Y'
+			, #{siteid}
+			<if test="fmst_seqno != '' " >
+				,#{fmst_seqno}::INT
+			</if>
+			)
+	</insert>
+	
+	<update id="BoardSQL.doUpdateBoardItem" parameterType="dataMap">
+		/*
+			SQL ID: BoardSQL.doUpdateBoardItem
+			게시물 수정
+		*/
+		UPDATE TB_BOARD_ITEM
+		SET BITEM_TITLE		= #{bitem_title},
+			BITEM_BODY		= #{bitem_body},
+			<if test="ctgr_seq != ''">
+			CTGR_SEQ		= ${ctgr_seq},
+			</if>
+			<if test="fmst_seqno != ''">
+			fmst_seqno		= ${fmst_seqno},
+			</if>
+			BITEM_PCD		= #{bitem_pcd},
+			MODDTM			= TO_CHAR(NOW(), 'YYYYMMDDHH24MISS'),
+			MODUID			= #{userid}
+		WHERE BITEM_SEQ = ${bitem_seq} AND BOARD_SEQ = ${board_seq}
+	</update>
+	
+	<update id="BoardSQL.doDeleteBoardItem" parameterType="dataMap">
+		/*
+			SQL ID: BoardSQL.doDeleteBoardItem
+			게시물  삭제
+		*/
+
+		UPDATE TB_BOARD_ITEM
+		SET USEYN			= 'N',
+			MODDTM			= TO_CHAR(NOW(), 'YYYYMMDDHH24MISS'),
+			MODUID			= #{userid}
+		WHERE BITEM_SEQ = ${bitem_seq}
+	</update>	
+	
+	<update id="BoardSQL.doAddBoardViewCnt" parameterType="dataMap">
+		/*
+			SQL ID: BoardSQL.doAddBoardViewCnt
+			게시물 조회수 증가
+		*/
+		UPDATE TB_BOARD_ITEM
+		SET BITEM_SEECNT = BITEM_SEECNT + 1
+		WHERE BITEM_SEQ = ${bitem_seq}
+	</update>
+	
+<!-- ====================================================================================== -->
+<!--									댓글 (TB_BOARD_CMMT)									-->
+<!-- ====================================================================================== -->
+
+	<select id="BoardSQL.doListBoardCmmt" parameterType="dataMap" resultType="dataMap">
+		/*
+			SQL ID: BoardSQL.doListBoardCmmt
+			댓글 데이터 조회
+		*/
+		SELECT CMMT_SEQ
+		, BITEM_SEQ
+		, CMMT_TITLE
+		, CMMT_BODY
+		, REGUID
+		, to_timestamp(REGDTM, 'yyyymmddHH24MISS') AS REGDTM
+		, to_timestamp(moddtm, 'yyyymmddHH24MISS') AS moddtm
+		, fmst_seqno
+		FROM TB_BOARD_CMMT
+		WHERE BITEM_SEQ = ${bitem_seq}
+		ORDER BY CMMT_SEQ DESC
+	</select>
+
+	<insert id="BoardSQL.doAddBoardCmmt" parameterType="dataMap" useGeneratedKeys="false">
+		/*
+			SQL ID : BoardSQL.doAddBoardCmmt
+			댓글  등록
+		*/
+		INSERT INTO TB_BOARD_CMMT
+			( CMMT_SEQ
+			, BITEM_SEQ
+			, CMMT_BODY
+			, REGUID
+			, MODUID
+			, REGDTM
+			, MODDTM
+			, SITEID
+			)
+		VALUES
+			( ${cmmt_seq}
+			, ${bitem_seq}
+			, #{cmmt_body}
+			, #{userid}			
+			, #{userid}
+			, TO_CHAR(NOW(), 'YYYYMMDDHH24MISS')			
+			, TO_CHAR(NOW(), 'YYYYMMDDHH24MISS')
+			, #{siteid}
+			)
+	</insert>
+	
+	<update id="BoardSQL.doUpdateBoardCmmt" parameterType="dataMap">
+		/*
+			SQL ID: BoardSQL.doUpdateBoardCmmt
+			댓글 수정
+		*/
+		UPDATE TB_BOARD_CMMT
+		SET CMMT_BODY		= #{cmmt_body},
+			MODDTM			= TO_CHAR(NOW(), 'YYYYMMDDHH24MISS'),
+			MODUID			= #{userid}
+		WHERE CMMT_SEQ = ${cmmt_seq}	
+	</update>	
+
+	<delete id="BoardSQL.doDeleteBoardCmmt" parameterType="dataMap">
+		/*
+			SQL ID: BoardSQL.doDeleteBoardCmmt
+			댓글 삭제
+		*/
+		DELETE FROM TB_BOARD_CMMT
+		WHERE CMMT_SEQ = ${cmmt_seq}
+			AND SITEID = #{siteid}
+	</delete>
+
+	<delete id="BoardSQL.doDeleteBoardCmmtAll" parameterType="dataMap">
+		/*
+			SQL ID: BoardSQL.doDeleteBoardCmmtAll
+			게시물에 달린 댓글 전체 삭제
+		*/
+		DELETE FROM TB_BOARD_CMMT
+		WHERE BITEM_SEQ = ${bitem_seq}
+			AND SITEID = #{siteid}
+	</delete>	
+	
+<!-- ====================================================================================== -->
+<!--							첨부파일 (TB_BOARD_ATTACH)										-->
+<!-- ====================================================================================== -->
+
+	<select id="BoardSQL.doListBoardAttach" parameterType="dataMap" resultType="dataMap">
+		/*
+			SQL ID: BoardSQL.doListBoardAttach
+			첨부파일 리스트 조회
+		*/
+		SELECT * 
+		FROM TB_BOARD_ATTACH
+		WHERE BITEM_SEQ = ${bitem_seq}
+	</select>
+
+	<select id="BoardSQL.doGetBoardAttach" parameterType="dataMap" resultType="dataMap">
+		/*
+			SQL ID: BoardSQL.doGetBoardAttach
+			단일 파일조회
+		*/
+		SELECT A.* 
+		FROM TB_BOARD_ATTACH A
+		WHERE ATTF_SEQ = ${attf_seq}
+			AND SITEID = #{siteid}
+	</select>
+
+	<insert id="BoardSQL.doAddBoardAttach" parameterType="dataMap" useGeneratedKeys="false">
+		/*
+			SQL ID : BoardSQL.doAddBoardAttach
+			파일 등록
+		*/
+		<foreach collection="files" item="item" index="index" separator=";" close=";">
+			INSERT INTO TB_BOARD_ATTACH
+			( ATTF_SEQ
+			, BITEM_SEQ
+			, FILE_NAME
+			, REAL_NAME
+			, FILE_PATH
+			, FILE_SIZE
+			, FILE_EXT
+			, ATTF_OPT
+			, REGUID
+			, REGDTM
+			, SITEID
+			)
+		VALUES
+			( ${item.attf_seq}
+			, ${bitem_seq}
+			, #{item.file_name}			
+			, #{item.real_name}
+			, #{item.file_path}
+			, ${item.file_size}
+			, #{item.file_ext}
+			, 0
+			, #{userid}
+			, TO_CHAR(NOW(), 'YYYYMMDDHH24MISS')
+			, #{siteid}
+			)
+			</foreach>
+	</insert>
+
+	<delete id="BoardSQL.doDeleteBoardAttach" parameterType="dataMap">
+		/*
+			SQL ID: BoardSQL.doDeleteBoardAttach
+			첨부파일 삭제
+		*/
+		DELETE FROM TB_BOARD_ATTACH
+		WHERE BITEM_SEQ = ${bitem_seq} AND ATTF_SEQ = ${attf_seq}
+	</delete>
+
+	<delete id="BoardSQL.removeBoardAttachAll" parameterType="dataMap">
+		/*
+			SQL ID: BoardSQL.removeBoardAttachAll
+			게시물에 달린 첨부파일 삭제
+		*/
+		DELETE TB_BOARD_ATTACH
+		WHERE BITEM_SEQ = ${bitem_seq}
+	</delete>	
+	
+<!-- ====================================================================================== -->
+<!--						게시물 추천 (TB_BOARD_RECOM)										-->
+<!-- ====================================================================================== -->
+	<select id="BoardSQL.doGetBoardRecom" parameterType="dataMap" resultType="dataMap">
+		/*
+			SQL ID: BoardSQL.doGetBoardRecom
+			게시물 추천수 조회
+		*/
+		SELECT * FROM TB_BOARD_RECOM
+		WHERE BITEM_SEQ = ${bitem_seq} AND REGUID = #{userid}
+	</select>
+
+	<insert id="BoardSQL.doAddBoardRecom" parameterType="dataMap">
+		/*
+			SQL ID: BoardSQL.doAddBoardRecom
+			게시물 추천하기
+		*/
+		INSERT INTO TB_BOARD_RECOM
+			( RECOM_USERKEY
+			, BITEM_SEQ
+			, RECOM_PCD
+			, REGUID
+			, REGDTM
+			, SITEID
+			)
+		VALUES
+			( #{recom_userkey}
+			, ${bitem_seq}
+			, 'RECOM_P001'
+			, #{userid}
+			, TO_CHAR(NOW(), 'YYYYMMDDHH24MISS')
+			, #{siteid}
+			)
+	</insert>		
+
+	<delete id="BoardSQL.doCancleBoardRecom" parameterType="dataMap">
+		/*
+			SQL ID: BoardSQL.doCancleBoardRecom
+			게시물 추천 취소
+		*/
+		DELETE FROM TB_BOARD_RECOM
+		WHERE BITEM_SEQ = ${bitem_seq} AND REGUID = #{userid}
+	</delete>
+	
+	
+<!-- ====================================================================================== -->
+<!--						게시물 (TB_BOARD_ITEM)	 (통합게시물)									-->
+<!-- ====================================================================================== -->
+
+	<select id="BoardSQL.doCountBoardItemMng" resultType="int">
+	
+		/*
+			SQL ID : BoardSQL.doCountBoardItemMng
+			게시물 카운트 (통합게시물)
+		*/
+		SELECT COUNT(*) 
+		FROM 
+			TB_BOARD_ITEM A, TB_BOARD_MNG AA
+		WHERE 1=1
+		<include refid="where_boarditem"/>
+	</select>
+	
+	<select id="BoardSQL.doListBoardItemMng" resultType="dataMap">
+		/*
+			SQL ID : BoardSQL.doListBoardItemMng
+			게시물 리스트 (통합게시물)
+		*/
+		<![CDATA[
+			SELECT A.BITEM_SEQ
+		, A.CTGR_SEQ
+		, AA.BOARD_SEQ
+		, A.BITEM_TITLE
+		, A.BITEM_SEECNT
+		, A.REGUID
+		, TO_CHAR(TO_DATE(A.REGDTM, 'yyyymmddHH24MISS'),'YY-MM-DD') AS REGDTM
+		, A.USEYN
+		, A.SITEID
+		, AA.BOARDNM	
+		, AA.BOARD_PCD
+		]]>
+		FROM TB_BOARD_ITEM A, TB_BOARD_MNG AA		
+		WHERE A.BOARD_SEQ = AA.BOARD_SEQ	
+		<include refid="where_boarditem"/>            		
+        ORDER BY A.BITEM_SEQ ASC					
+	</select>	
+	
+	<update id="BoardSQL.doUpdateBoardItemState" parameterType="dataMap">
+		/*
+			SQL ID: BoardSQL.doUpdateBoardItemState
+			게시물  상태 변경
+		*/
+		<foreach  item="list" collection="list"  index="index" separator=";" close=";" >
+		UPDATE TB_BOARD_ITEM
+		SET USEYN			= #{list.useyn},
+			MODDTM			= TO_CHAR(NOW(), 'YYYYMMDDHH24MISS'),
+			MODUID			= #{userid}
+		WHERE BITEM_SEQ = ${list.bitem_seq}
+		</foreach>
+	</update>		
+	
+	<select id="BoardSQL.doListMainNotice" resultType="dataMap">
+		/*
+			SQL ID : BoardSQL.doListMainNotice
+			메인페이지 공지사항
+		*/
+		SELECT 
+			ROWNUM
+			, A.BITEM_SEQ
+			, A.BITEM_TITLE
+			, TO_CHAR(TO_DATE(A.REGDTM, 'yyyymmddHH24MISS'),'YYYY/MM/DD') AS REGDTM
+	        ,(SELECT 
+	        	CASE  WHEN B.REGDTM+1000000 > (SELECT TO_CHAR(NOW(), 'yyyymmddHH24MISS') FROM DUAL) 
+		        THEN 'Y' 
+		        ELSE 'N' 
+	      	   	END
+	      	  FROM TB_BOARD_ITEM B 
+	      	  WHERE A.BITEM_SEQ = B.BITEM_SEQ) AS NEW_MARK		
+		FROM TB_BOARD_ITEM A
+		WHERE 1=1 AND USEYN = 'Y'
+		AND A.BOARD_SEQ = '101'	
+		AND A.SITEID = #{siteid}
+		<![CDATA[
+			AND ROWNUM <= 4		
+		]]>
+	    ORDER BY A.BITEM_SEQ DESC		
+	</select>
+		
+</mapper>

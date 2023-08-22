@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+	"-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+	"http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+	
+<tiles-definitions>
+
+	<!-- 서비스 템플릿 -->
+	<definition name="/*/**.front" template="/WEB-INF/view/template/front.jsp">
+		<put-attribute name="title" value="과학기술일자리진흥원 바우처사업관리시스템" type="string" />
+		<put-attribute name="head" value="/WEB-INF/view/template/front_head.jsp" />
+		<!-- <put-attribute name="menu" value="/WEB-INF/view/template/front_menu.jsp" /> -->
+		<put-attribute name="footer" value="/WEB-INF/view/template/front_footer.jsp" />
+		<put-attribute name="body" value="/WEB-INF/view/{1}/{2}.jsp"/>
+	</definition>
+
+	<!-- 관리자 템플릿 -->
+	<definition name="/*/**.admin" template="/WEB-INF/view/template/admin.jsp">
+		<put-attribute name="title" value="과학기술일자리진흥원 바우처사업관리시스템" type="string" />
+		<put-attribute name="head" value="/WEB-INF/view/template/admin_head.jsp" />
+		<put-attribute name="menu" value="/WEB-INF/view/template/admin_menu.jsp" />
+		<put-attribute name="footer" value="/WEB-INF/view/template/admin_footer.jsp" /> 
+		<!-- <put-attribute name="side" value="/WEB-INF/view/template/admin_side.jsp" /> -->
+		<put-attribute name="body" value="/WEB-INF/view/{1}/{2}.jsp"/>	
+	</definition>
+
+
+	<!-- 단일 템플릿 -->
+	<definition name="/*/**.single" template="/WEB-INF/view/template/single.jsp">
+		<put-attribute name="title" value="과학기술일자리진흥원 바우처사업관리시스템" type="string" />
+		<put-attribute name="footer" value="/WEB-INF/view/template/front_footer.jsp" />
+		<put-attribute name="body" value="/WEB-INF/view/{1}/{2}.jsp"/>
+	</definition>
+
+
+	<!-- 팝업 템플릿 -->
+	<definition name="/*/**.adminPopup" template="/WEB-INF/view/template/admin_popup.jsp">
+		<put-attribute name="title" value="과학기술일자리진흥원 바우처사업관리시스템" type="string" /> 
+		<put-attribute name="body" value="/WEB-INF/view/{1}/{2}.jsp"/>
+	</definition>
+	
+	<!-- 팝업 템플릿 -->
+	<definition name="/*/**.frontPopup" template="/WEB-INF/view/template/front_popup.jsp">
+		<put-attribute name="title" value="과학기술일자리진흥원 바우처사업관리시스템" type="string" /> 
+		<put-attribute name="body" value="/WEB-INF/view/{1}/{2}.jsp"/>
+	</definition>
+	
+	
+	<!-- empty 템플릿 -->
+	<definition name="/*/**.blank" template="/WEB-INF/view/template/blank.jsp">
+		<put-attribute name="title" value="과학기술일자리진흥원 바우처사업관리시스템" type="string" />
+		<put-attribute name="body" value="/WEB-INF/view/{1}/{2}.jsp"/>
+	</definition>
+
+	<!-- 단일 템플릿 -->
+	<definition name="/*/**.login" template="/WEB-INF/view/template/front_login.jsp">
+		<put-attribute name="title" value="과학기술일자리진흥원 바우처사업관리시스템" type="string" />
+		<put-attribute name="body" value="/WEB-INF/view/{1}/{2}.jsp"/>
+	</definition>
+
+</tiles-definitions>

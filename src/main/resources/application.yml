@@ -1,0 +1,143 @@
+spring:
+  resources:
+    add-mappings: true
+  profiles:
+    active: local
+server:
+  port: 8880
+  servlet:
+    context-path: /
+    
+--- 
+spring:
+  profiles: local
+  postgresql:
+    datasource:
+      driverClassName: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+      jdbc-url: jdbc:log4jdbc:postgresql://114.202.2.226:5433/postgres?currentSchema=voucher
+      username: postgres
+      password: xlxldpa!@#
+  mvc:
+    view:
+      prefix: /WEB-INF/view/
+      suffix: .jsp
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+#  mail:
+#    host: smtp.gmail.com
+#    port: 587
+#    username: ttmaiproject@gmail.com
+#    password: xlxldpa!@#
+#    properties:
+#      mail:
+#        smtp:
+#          auth: true
+#          starttls:
+#            enable: true
+
+  mail:
+    host: mail.compa.re.kr
+    port: 25
+    username: rndvoucher@compa.re.kr
+    password: qkdncj43@!
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: false
+  messages:
+    encoding: UTF-8
+    
+upload:
+  path: C:\data\voucher\upload
+siteid: ttmsoft
+  
+--- 
+spring:
+  profiles: development
+  postgresql:
+    datasource:
+      driverClassName: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+      #jdbc-url: jdbc:log4jdbc:postgresql://114.202.2.226:5433/postgres?currentSchema=development
+      jdbc-url: jdbc:log4jdbc:postgresql://114.202.2.226:5433/postgres?currentSchema=voucher
+      username: postgres
+      password: ttm123
+  mvc:
+    view:
+      prefix: /WEB-INF/view/
+      suffix: .jsp
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+#  mail:
+#    host: smtp.gmail.com
+#    port: 587
+#    username: ttmaiproject@gmail.com
+#    password: xlxldpa!@#
+#    properties:
+#      mail:
+#        smtp:
+#          auth: true
+#          starttls:
+#            enable: true
+
+  mail:
+    host: mail.compa.re.kr
+    port: 25
+    username: rndvoucher@compa.re.kr
+    password: qkdncj43@!
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: false
+  messages:
+    encoding: UTF-8
+     
+upload:
+  path: /home/ttm/volumes/voucher/data
+siteid: ttmsoft
+  
+  
+--- 
+spring:
+  profiles: production
+  postgresql:
+    datasource:
+      driverClassName: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+      jdbc-url: jdbc:log4jdbc:postgresql://192.68.0.76:5432/voucher?currentSchema=voucher
+      #jdbc-url: jdbc:log4jdbc:postgresql://192.68.0.50:5432/voucher?currentSchema=voucher
+      username: ttmvoucher
+      password: ttm123
+  mvc:
+    view:
+      prefix: /WEB-INF/view/
+      suffix: .jsp
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+  mail:
+    host: 192.68.1.34
+    port: 25
+    username: rndvoucher@compa.re.kr
+    password: qkdncj43@!
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: false
+          ssl:
+            enable: true
+  messages:
+    encoding: UTF-8
+    
+upload:
+  path: D:\\voucher
+siteid: ttmsoft

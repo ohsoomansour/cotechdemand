@@ -1,0 +1,670 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="OrgUserSQL">
+	
+	
+<!-- ====================================================================================== -->
+<!--																	조직마스터 (TU_ORGAN)																	-->
+<!-- ====================================================================================== -->
+	
+	
+	<select id="OrgUserSQL.getoneOrgan" parameterType="dataMap" resultType="dataMap">
+		/*
+			SQL ID: OrgUserSQL.getoneOrgan
+						조직마스터 정보 조회
+		*/
+
+		SELECT A.*
+			 , UFN_CODENM('ORG_PCD', A.ORG_PCD, NULL) AS ORG_PNM
+			 , UFN_CODENM('ORG_TCD', A.ORG_TCD, NULL) AS ORG_TNM
+		FROM TU_ORGAN A
+		WHERE A.UP_SEQ 	= #{up_seq}
+			AND A.ORGNO 	= #{orgno}
+			AND A.SITEID 	= #{siteid}
+	</select>
+
+	<select id="OrgUserSQL.countOrgan" resultType="int">
+		/*
+			SQL ID : OrgUserSQL.countOrgan
+						조직마스터 목록 카운트
+		*/
+
+		SELECT COUNT(1)
+		FROM TU_ORGAN A
+		WHERE 1=1
+			AND A.USEYN 	= 'Y'
+		<if test="mse_seq != null and mse_seq != ''">
+			AND A.MSE_SEQ 	= #{mse_seq}
+		</if>			
+		<if test="ppr_seq != null and ppr_seq != ''">
+			AND A.PPR_SEQ 	= #{ppr_seq}
+		</if>				
+		<if test="que_seq != null and que_seq != ''">
+			AND A.QUE_SEQ 	= #{que_seq}
+		</if>	
+		<if test="useyn != null and useyn != ''">
+			AND A.USEYN 	= #{useyn}
+		</if>
+		<if test="siteid != null and siteid != ''">
+			AND A.SITEID 	= #{siteid}
+		</if>
+	</select>
+
+
+	<select id="OrgUserSQL.dolistOrgan" resultType="DataMap">
+		/*
+			SQL ID : OrgUserSQL.dolistOrgan
+						조직마스터 목록 조회
+		*/
+		
+ 		SELECT 
+			 A.*
+		FROM TU_ORGAN A
+		WHERE 1=1
+			AND A.USEYN 	= 'Y'
+		<if test="mse_seq != null and mse_seq != ''">
+			AND A.MSE_SEQ 	= #{mse_seq}
+		</if>			
+		<if test="ppr_seq != null and ppr_seq != ''">
+			AND A.PPR_SEQ 	= #{ppr_seq}
+		</if>				
+		<if test="que_seq != null and que_seq != ''">
+			AND A.QUE_SEQ 	= #{que_seq}
+		</if>	
+		<if test="useyn != null and useyn != ''">
+			AND A.USEYN 	= #{useyn}
+		</if>
+		<if test="siteid != null and siteid != ''">
+			AND A.SITEID 	= #{siteid}
+		</if>
+		ORDER BY A.ORG_LVL ASC
+	</select>
+	
+	<select id="OrgUserSQL.categoryOrgan" resultType="DataMap">
+		SELECT 
+			ORGNO AS id, 
+			DECODE(ORG_LVL, 4 , '#', UP_SEQ) AS parent, 
+			ORG_LVL AS levels,  
+			ORGNM AS text
+		FROM TU_ORGAN A
+		WHERE 1=1 
+		--A.UP_SEQ != 0
+		CONNECT BY PRIOR A.ORGNO = A.UP_SEQ
+		START WITH A.ORG_LVL = 4
+	</select>
+	
+	<select id="OrgUserSQL.categoryOrganDesc" resultType="DataMap">
+	SELECT 
+	    A.ORGNO AS id, 
+	    DECODE(A.ORG_LVL, 4 , '#', A.UP_SEQ) AS parent, 
+	    A.ORG_LVL AS levels,  
+	    A.ORGNM
+	
+	FROM TU_ORGAN A
+	WHERE
+	    1=1
+	    -- A.UP_SEQ != 0
+	START WITH A.ORGNO = #{orgno} 
+	CONNECT BY PRIOR A.UP_SEQ = A.ORGNO 
+	ORDER BY LEVELS ASC
+	</select>
+	
+
+	<update id="OrgUserSQL.modifyOrgan" parameterType="DataMap">
+		/*
+			SQL ID : OrgUserSQL.modifyOrgan
+						조직마스터 수정
+		*/
+
+		UPDATE TU_ORGAN
+		SET MODDTM = TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS'), MODUID = #{userno}
+		<if test="orgno  		!= ''"> , ORGNO  		= #{orgno}  	</if>
+		<if test="siteid 		!= ''"> , SITEID 		= #{siteid} 	</if>
+		<if test="up_seq 		!= ''"> , UP_SEQ 		= #{up_seq} 	</if>
+		<if test="orgid  		!= ''"> , ORGID  		= #{orgid}  	</if>
+		<if test="orgnm  		!= ''"> , ORGNM  		= #{orgnm}    	</if>
+		<if test="org_lvl		!= ''"> , ORG_LVL		= #{org_lvl}	</if>
+		<if test="org_idx 		!= ''"> , ORG_IDX		= #{org_idx}	</if>
+		<if test="org_rfk		!= ''"> , ORG_RFK		= #{org_rfk}	</if>
+		<if test="org_cd 		!= ''"> , ORG_CD 		= #{org_cd} 	</if>
+		<if test="org_cmmt		!= ''"> , ORG_CMMT		= #{org_cmmt}	</if>
+		<if test="org_sday		!= ''"> , ORG_SDAY		= #{org_sday}	</if>     
+		<if test="org_eday		!= ''"> , ORG_EDAY		= #{org_eday}	</if>  
+		<if test="contact		!= ''"> , CONTACT		= #{contact}	</if>  
+		<if test="url    		!= ''"> , URL    		= #{url}    	</if>  
+		<if test="email  		!= ''"> , EMAIL  		= #{email}  	</if>  
+		<if test="fax    		!= ''"> , FAX    		= #{fax}    	</if>  
+		<if test="addr1  		!= ''"> , ADDR1  		= #{addr1}    	</if>
+		<if test="addr2  		!= ''"> , ADDR2  		= #{addr2}  	</if>  
+		<if test="zip		 	!= ''"> , ZIP    		= #{zip}		</if>
+		<if test="map_x  		!= ''"> , MAP_X  		= #{map_x}  	</if>  
+		<if test="map_y  		!= ''"> , MAP_Y  		= #{map_y}  	</if>  
+		<if test="org_pcd		!= ''"> , ORG_PCD		= #{org_pcd}	</if>  
+		<if test="org_tcd		!= ''"> , ORG_TCD		= #{org_tcd}	</if>  
+		<if test="workerid		!= ''"> , WORKERID		= #{workerid}	</if>  
+		<if test="workernm		!= ''"> , WORKERNM		= #{workernm}	</if>  
+		<if test="reguid 		!= ''"> , REGUID 		= #{reguid} 	</if>  
+		<if test="moduid 		!= ''"> , MODUID 		= #{moduid} 	</if>  
+		<if test="useyn  		!= ''"> , USEYN 		= #{useyn}      </if>  
+  
+		WHERE UP_SEQ = #{up_seq}
+
+	</update>
+
+	<insert id="OrgUserSQL.appendOrgan" parameterType="DataMap">
+		/*
+			SQL ID : OrgUserSQL.appendOrgan
+						조직마스터 등록
+		*/
+
+			INSERT INTO TU_ORGAN (
+			   ORGNO, SITEID, 
+			   UP_SEQ, ORGID, ORGNM, 
+			   ORG_LVL, ORG_IDX, ORG_RFK, 
+			   ORG_CD, ORG_CMMT, ORG_SDAY, 
+			   ORG_EDAY, CONTACT, URL, 
+			   EMAIL, FAX, ADDR1, 
+			   ADDR2, ZIP, MAP_X, 
+			   MAP_Y, ORG_PCD, ORG_TCD, 
+			   WORKERID, WORKERNM, REGUID, 
+			   MODUID, REGDTM, MODDTM, 
+			   USEYN) 
+			VALUES
+			(	
+			  #{orgno}
+			 ,#{siteid}
+			 ,#{up_seq}
+			 ,#{orgid}
+			 ,#{orgnm}
+			 ,#{org_lvl}
+			 ,#{org_idx}
+			 ,#{org_rfk}
+			 ,#{org_cd}
+			 ,#{org_cmmt}
+			 ,#{org_sday}
+			 ,#{org_eday}
+			 ,#{contact}
+			 ,#{url}
+			 ,#{email}
+			 ,#{fax}
+			 ,#{addr1}
+			 ,#{addr2}
+			 ,#{zip}
+			 ,#{map_x}
+			 ,#{map_y}
+			 ,#{org_pcd}
+			 ,#{org_tcd}
+			 ,#{workerid}
+			 ,#{workernm}
+			 ,#{reguid}
+			 ,#{moduid}
+			 ,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+			 ,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+			 ,#{useyn});
+	</insert>
+
+	<delete id="OrgUserSQL.removeOrgan" parameterType="dataMap">
+		/*
+			SQL ID: OrgUserSQL.removeOrgan
+						조직마스터 삭제
+		*/
+		DELETE FROM TU_ORGAN
+		WHERE UP_SEQ = #{up_seq}
+		<if test="orgno != null and orgno != ''">
+			AND ORGNO = #{orgno}
+		</if>
+		<if test="siteid != null and siteid != ''">
+			AND SITEID = #{siteid}
+		</if>
+	</delete>
+
+
+
+<!-- ====================================================================================== -->
+<!--																	조직별 직무 (TU_ORGJOB)																-->
+<!-- ====================================================================================== -->
+	
+	
+	<select id="OrgUserSQL.getoneOrgJob" parameterType="dataMap" resultType="dataMap">
+		/*
+			SQL ID: OrgUserSQL.getoneOrgJob
+						조직별 직무 정보 조회
+		*/
+
+		SELECT A.*
+			 , UFN_CODENM('ORGJOB_TCD', A.ORGJOB_TCD, NULL) AS ORGJOB_TNM
+		FROM TU_ORGJOB A
+		WHERE A.JOBNO = #{jobno}
+			AND A.ORGNO 	= #{orgno}
+			AND A.SITEID 	= #{siteid}
+	</select>
+
+	<select id="OrgUserSQL.countOrgJob" resultType="int">
+		/*
+			SQL ID : OrgUserSQL.countOrgJob
+						조직별 직무 목록 카운트
+		*/
+
+		SELECT COUNT(1)
+		FROM TU_ORGJOB A
+		WHERE 1=1
+			AND A.USEYN 	= 'Y'
+		<if test="jobno != null and jobno != ''">
+			AND A.JOBNO 	= #{jobno}
+		</if>				
+		<if test="orgno != null and orgno != ''">
+			AND A.ORGNO 	= #{orgno}
+		</if>
+		<if test="siteid != null and siteid != ''">
+			AND A.SITEID 	= #{siteid}
+		</if>
+	</select>
+
+
+	<select id="OrgUserSQL.dolistOrgJob" resultType="DataMap">
+		/*
+			SQL ID : OrgUserSQL.dolistOrgJob
+						조직별 직무 목록 조회
+		*/
+		
+		SELECT AA.*
+			 , (SELECT JOBNM FROM TU_JOBTYPE
+			 	WHERE JOBNO = AA.JOBNO
+			 ) AS ORGJOB_NM
+		FROM (
+			SELECT ROW_NUMBER() OVER(ORDER BY ${sidx} ${sord}) AS RSEQ
+				, A.*
+			FROM TU_ORGJOB A
+			WHERE 1=1
+				AND A.USEYN 	= 'Y'
+			<if test="jobno != null and jobno != ''">
+				AND A.JOBNO 	= #{jobno}
+			</if>				
+			<if test="orgno != null and orgno != ''">
+				AND A.ORGNO 	= #{orgno}
+			</if>
+			<if test="siteid != null and siteid != ''">
+				AND A.SITEID 	= #{siteid}
+			</if>
+		)AA	
+		WHERE AA.RSEQ BETWEEN (${page}-1) * ${rows} + 1 AND ${page} * ${rows}
+		
+	</select>
+
+
+	<update id="OrgUserSQL.modifyOrgJob" parameterType="DataMap">
+		/*
+			SQL ID : OrgUserSQL.modifyOrgJob
+						조직별 직무 수정
+		*/
+
+		UPDATE TU_ORGJOB
+		SET MODDTM = TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS'), MODUID = #{userno}
+		<if test="jobno    		!= ''"> , JOBNO				= #{jobno}     	</if>
+		<if test="orgno    		!= ''"> , ORGNO				= #{orgno}     	</if>
+		<if test="siteid   		!= ''"> , SITEID			= #{siteid}    	</if>
+		<if test="note     		!= ''"> , NOTE				= #{note}      	</if>
+		<if test="orgjob_idx	!= ''"> , ORGJOB_IDX	= #{orgjob_idx}	</if>
+		<if test="orgjob_tcd	!= ''"> , ORGJOB_TCD	= #{orgjob_tcd}	</if>
+		<if test="reguid   		!= ''"> , REGUID			= #{reguid}    	</if>
+		<if test="moduid   		!= ''"> , MODUID			= #{moduid}    	</if>
+		<if test="useyn    		!= ''"> , USEYN				= #{useyn}     	</if>    
+		WHERE JOBNO = #{jobno}             
+
+	</update>
+
+	<insert id="OrgUserSQL.appendOrgJob" parameterType="DataMap">
+		/*
+			SQL ID : OrgUserSQL.appendOrgJob
+						조직별 직무 등록
+		*/
+
+			INSERT INTO TU_ORGJOB (
+			   JOBNO, ORGNO, SITEID, 
+			   NOTE, ORGJOB_IDX, 
+			   ORGJOB_TCD, REGUID, MODUID, 
+			   REGDTM, MODDTM, USEYN) 
+			VALUES 
+			( #{jobno}
+			 ,#{orgno}
+			 ,#{siteid}
+			 ,#{note}
+			 ,#{orgjob_idx}
+			 ,#{orgjob_tcd}
+			 ,#{reguid}
+			 ,#{moduid}
+			 ,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+			 ,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+			 ,#{useyn} )
+	</insert>
+
+	<delete id="OrgUserSQL.removeOrgJob" parameterType="dataMap">
+		/*
+			SQL ID: OrgUserSQL.removeOrgJob
+						조직별 직무 삭제
+		*/
+		DELETE FROM TU_ORGJOB
+		WHERE JOBNO = #{jobno}		
+			<if test="orgno != null and orgno != ''">
+				AND A.ORGNO 	= #{orgno}
+			</if>
+			<if test="siteid != null and siteid != ''">
+				AND A.SITEID 	= #{siteid}
+			</if>
+	</delete>
+
+
+
+<!-- ====================================================================================== -->
+<!--																	직무유형 마스터 (TU_JOBTYPE)													-->
+<!-- ====================================================================================== -->
+	
+	
+	<select id="OrgUserSQL.getoneJobType" parameterType="dataMap" resultType="dataMap">
+		/*
+			SQL ID: OrgUserSQL.getoneJobType
+						조직마스터 정보 조회
+		*/
+
+		SELECT A.*
+			 , UFN_CODENM('JOB_PCD', A.JOB_PCD, NULL) AS JOB_PNM
+			 , UFN_CODENM('JOB_TCD', A.JOB_TCD, NULL) AS JOB_TNM
+			 , UFN_CODENM('JOB_GCD', A.JOB_GCD, NULL) AS JOB_GNM	
+			 --
+			 --, UFN_CODENM(A.JOBCD, NULL) AS JOB_NM
+			 --		 
+		FROM TU_JOBTYPE A
+		WHERE A.MSE_SEQ 	= #{mse_seq}
+			AND A.PPR_SEQ 	= #{ppr_seq}
+			AND A.QUE_SEQ 	= #{que_seq}
+	</select>
+
+	<select id="OrgUserSQL.countJobType" resultType="int">
+		/*
+			SQL ID : OrgUserSQL.countJobType
+						조직마스터 목록 카운트
+		*/
+
+		SELECT COUNT(1)
+		FROM TU_JOBTYPE A
+		WHERE 1=1
+			AND A.USEYN 	= 'Y'
+		<if test="jobno != null and jobno != ''">
+			AND A.JOBNO 	= #{jobno}
+		</if>			
+	</select>
+
+
+	<select id="OrgUserSQL.dolistJobType" resultType="DataMap">
+		/*
+			SQL ID : OrgUserSQL.dolistJobType
+						조직마스터 목록 조회
+		*/
+		
+		SELECT AA.*
+			 , UFN_CODENM('JOB_PCD', AA.JOB_PCD, NULL) AS JOB_PNM
+			 , UFN_CODENM('JOB_TCD', AA.JOB_TCD, NULL) AS JOB_TNM
+			 , UFN_CODENM('JOB_GCD', AA.JOB_GCD, NULL) AS JOB_GNM	
+			 --
+			 --, UFN_CODENM(AA.JOBCD, NULL) AS JOB_NM
+			 --		 
+		FROM (
+			SELECT ROW_NUMBER() OVER(ORDER BY ${sidx} ${sord}) AS RSEQ
+				, A.*
+			FROM TU_JOBTYPE A
+			WHERE 1=1
+				AND A.USEYN 	= 'Y'
+			<if test="jobno != null and jobno != ''">
+				AND A.JOBNO 	= #{jobno}
+			</if>			
+		)AA	
+		WHERE AA.RSEQ BETWEEN (${page}-1) * ${rows} + 1 AND ${page} * ${rows}
+		
+	</select>
+
+
+	<update id="OrgUserSQL.modifyJobType" parameterType="DataMap">
+		/*
+			SQL ID : OrgUserSQL.modifyJobType
+						조직마스터 수정
+		*/
+
+		UPDATE TU_JOBTYPE
+		SET MODDTM = TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS'), MODUID = #{userno}
+		<if test="jobnm			!= ''"> , JOBNM				= #{jobnm}		</if>
+		<if test="jobcd			!= ''"> , JOBCD				= #{jobcd}		</if>
+		<if test="job_gcd 	!= ''"> , JOB_GCD 		= #{job_gcd}  </if>
+		<if test="job_cmmt	!= ''"> , JOB_CMMT		= #{job_cmmt} </if>
+		<if test="note			!= ''"> , NOTE				= #{note}		 	</if>
+		<if test="job_pcd 	!= ''"> , JOB_PCD 		= #{job_pcd}  </if>
+		<if test="job_tcd 	!= ''"> , JOB_TCD 		= #{job_tcd}  </if>
+		<if test="reguid 	 	!= ''"> , REGUID 			= #{reguid}		</if>
+		<if test="moduid 		!= ''"> , MODUID 			= #{moduid} 	</if>
+		<if test="useyn			!= ''"> , USEYN				= #{useyn}		</if>      
+		<if test="aspsid		!= ''"> , ASPSID			= #{aspsid}		</if>
+		WHERE JOBNO = #{jobno}      
+
+	</update>
+
+	<insert id="OrgUserSQL.appendJobType" parameterType="DataMap">
+		/*
+			SQL ID : OrgUserSQL.appendJobType
+						조직마스터 등록
+		*/
+
+			INSERT INTO TU_JOBTYPE (
+			   JOBNO, JOBNM, JOBCD, 
+			   JOB_GCD, JOB_CMMT, NOTE, 
+			   JOB_PCD, JOB_TCD, REGUID, 
+			   MODUID, REGDTM, MODDTM, 
+			   USEYN, ASPSID) 
+			VALUES 
+			( #{jobno}
+			 ,#{jobnm}
+			 ,#{jobcd}
+			 ,#{job_gcd}
+			 ,#{job_cmmt}
+			 ,#{note}
+			 ,#{job_pcd}
+			 ,#{job_tcd}
+			 ,#{reguid}
+			 ,#{moduid}
+			 ,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+			 ,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+			 ,#{useyn}
+			 ,#{aspsid} )
+	</insert>
+
+	<delete id="OrgUserSQL.removeJobType" parameterType="dataMap">
+		/*
+			SQL ID: OrgUserSQL.removeJobType
+						조직마스터 삭제
+		*/
+		DELETE FROM TU_JOBTYPE
+		WHERE JOBNO = #{jobno}
+		<if test="siteid != null and siteid != ''">
+			AND SITEID 	= #{siteid}
+		</if>
+	</delete>
+
+
+
+<!-- ====================================================================================== -->
+<!--																	구성원 (TU_MEMBER)																		-->
+<!-- ====================================================================================== -->
+	
+	
+	<select id="OrgUserSQL.getoneMember" parameterType="dataMap" resultType="dataMap">
+		/*
+			SQL ID: OrgUserSQL.getoneMember
+						조직마스터 정보 조회
+		*/
+STAFFNO 
+JLVL_PCD
+JROL_PCD
+USER_PCD
+USER_TCD
+
+		SELECT A.*
+			 --
+			 --, UFN_CODENM(A.STAFFNO , NULL) AS ANS_PNM
+			 --
+			 , UFN_CODENM('JLVL_PCD', A.JLVL_PCD, NULL) AS JLVL_PNM
+			 , UFN_CODENM('JROL_PCD', A.JROL_PCD, NULL) AS JROL_PNM
+			 , UFN_CODENM('USER_PCD', A.USER_PCD, NULL) AS USER_PNM 
+			 , UFN_CODENM('USER_TCD', A.USER_TCD, NULL) AS USER_TNM
+		FROM TU_MEMBER A
+		WHERE A.USERNO = #{userno}
+	</select>
+
+	<select id="OrgUserSQL.countMember" resultType="int">
+		/*
+			SQL ID : OrgUserSQL.countMember
+						조직마스터 목록 카운트
+		*/
+
+		SELECT COUNT(1)
+		FROM TU_MEMBER A
+		WHERE 1=1
+			AND A.USEYN 	= 'Y'
+		<if test="orgno != null and orgno != ''">
+			AND A.ORGNO 	= #{orgno}
+		</if>
+		<if test="siteid != null and siteid != ''">
+			AND A.SITEID 	= #{siteid}
+		</if>
+	</select>
+
+
+	<select id="OrgUserSQL.dolistMember" resultType="DataMap">
+		/*
+			SQL ID : OrgUserSQL.dolistMember
+						조직마스터 목록 조회
+		*/
+		
+		SELECT AA.*
+			 --
+			 --, UFN_CODENM(AA.STAFFNO , NULL) AS ANS_PNM
+			 --
+			 , UFN_CODENM('JLVL_PCD', AA.JLVL_PCD, NULL) AS JLVL_PNM
+			 , UFN_CODENM('JROL_PCD', AA.JROL_PCD, NULL) AS JROL_PNM
+			 , UFN_CODENM('USER_PCD', AA.USER_PCD, NULL) AS USER_PNM 
+			 , UFN_CODENM('USER_TCD', AA.USER_TCD, NULL) AS USER_TNM
+		FROM (
+			SELECT ROW_NUMBER() OVER(ORDER BY ${sidx} ${sord}) AS RSEQ
+				, A.*
+			FROM TU_MEMBER A
+			WHERE 1=1
+				AND A.USEYN 	= 'Y'
+			<if test="orgno != null and orgno != ''">
+				AND A.ORGNO 	= #{orgno}
+			</if>
+			<if test="siteid != null and siteid != ''">
+				AND A.SITEID 	= #{siteid}
+			</if>
+		)AA	
+		WHERE AA.RSEQ BETWEEN (${page}-1) * ${rows} + 1 AND ${page} * ${rows}
+		
+	</select>
+
+
+	<update id="OrgUserSQL.modifyMember" parameterType="DataMap">
+		/*
+			SQL ID : OrgUserSQL.modifyMember
+						조직마스터 수정
+		*/
+
+		UPDATE TU_MEMBER
+		SET MODDTM = TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS'), MODUID = #{userno}
+		<if test="userno  		!= ''"> , USERNO  		= #{userno}   	</if>
+		<if test="userid  		!= ''"> , USERID  		= #{userid}   	</if>
+		<if test="orgno   		!= ''"> , ORGNO   		= #{orgno}    	</if>
+		<if test="userpw  		!= ''"> , USERPW  		= #{userpw}   	</if>
+		<if test="usernm  		!= ''"> , USERNM  		= #{usernm}   	</if>
+		<if test="dutyarea		!= ''"> , DUTYAREA		= #{dutyarea} 	</if>
+		<if test="capa    		!= ''"> , CAPA    		= #{capa}     	</if>
+		<if test="belong   		!= ''"> , BELONG  		= #{belong}			</if>
+		<if test="email   		!= ''"> , EMAIL   		= #{email}    	</if>
+		<if test="tphone  		!= ''"> , TPHONE  		= #{tphone}   	</if>
+		<if test="hphone  		!= ''"> , HPHONE  		= #{hphone}   	</if>
+		<if test="addr1   		!= ''"> , ADDR1   		= #{addr1}   		</if>       
+		<if test="addr2   		!= ''"> , ADDR2   		= #{addr2}    	</if>
+		<if test="zip     		!= ''"> , ZIP     		= #{zip}      	</if>
+		<if test="pht_path		!= ''"> , PHT_PATH		= #{pht_path} 	</if>
+		<if test="dtlinfo 		!= ''"> , DTLINFO 		= #{dtlinfo}  	</if>
+		<if test="staffno 		!= ''"> , STAFFNO 		= #{staffno}  	</if>
+		<if test="jlvl_pcd		!= ''"> , JLVL_PCD		= #{jlvl_pcd} 	</if>
+		<if test="jrol_pcd		!= ''"> , JROL_PCD		= #{jrol_pcd} 	</if>
+		<if test="user_pcd 		!= ''"> , USER_PCD		= #{user_pcd}		</if>
+		<if test="user_tcd		!= ''"> , USER_TCD		= #{user_tcd} 	</if>
+		<if test="reguid  		!= ''"> , REGUID  		= #{reguid}   	</if>
+		<if test="moduid  		!= ''"> , MODUID  		= #{moduid}   	</if>
+		<if test="useyn   		!= ''"> , USEYN   		= #{useyn}    	</if>
+		<if test="siteid  		!= ''"> , SITEID  		= #{siteid}   	</if>
+		
+		     	
+		WHERE MSE_SEQ = #{mse_seq}
+
+	</update>
+
+	<insert id="OrgUserSQL.appendMember" parameterType="DataMap">
+		/*
+			SQL ID : OrgUserSQL.appendMember
+						조직마스터 등록
+		*/
+			INSERT INTO TU_MEMBER (
+			   USERNO, USERID, ORGNO, 
+			   USERPW, USERNM, DUTYAREA, 
+			   CAPA, BELONG, EMAIL, 
+			   TPHONE, HPHONE, ADDR1, 
+			   ADDR2, ZIP, PHT_PATH, 
+			   DTLINFO, STAFFNO, JLVL_PCD, 
+			   JROL_PCD, USER_PCD, USER_TCD, 
+			   REGUID, MODUID, REGDTM, 
+			   MODDTM, USEYN, SITEID) 
+			VALUES 
+			(	#{USERNO}
+			 ,#{USERID}
+			 ,#{ORGNO}
+			 ,#{USERPW}
+			 ,#{USERNM}
+			 ,#{DUTYAREA}
+			 ,#{CAPA}
+			 ,#{BELONG}
+			 ,#{EMAIL}
+			 ,#{TPHONE}
+			 ,#{HPHONE}
+			 ,#{ADDR1}
+			 ,#{ADDR2}
+			 ,#{ZIP}
+			 ,#{PHT_PATH}
+			 ,#{DTLINFO}
+			 ,#{STAFFNO}
+			 ,#{JLVL_PCD}
+			 ,#{JROL_PCD}
+			 ,#{USER_PCD}
+			 ,#{USER_TCD}
+			 ,#{REGUID}
+			 ,#{MODUID}
+			 ,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+			 ,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+			 ,#{USEYN} 
+			 ,#{SITEID} )
+	</insert>
+
+	<delete id="OrgUserSQL.removeMember" parameterType="dataMap">
+		/*
+			SQL ID: OrgUserSQL.removeMember
+						조직마스터 삭제
+		*/
+		DELETE FROM TU_MEMBER
+		WHERE USERNO = #{userno}
+			<if test="orgno != null and orgno != ''">
+				AND A.ORGNO 	= #{orgno}
+			</if>
+			<if test="siteid != null and siteid != ''">
+				AND A.SITEID 	= #{siteid}
+			</if>
+	</delete>
+	
+</mapper>

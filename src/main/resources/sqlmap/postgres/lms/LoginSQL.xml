@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="LoginSQL">
+
+	<select id="LoginSQL.countUserInfo" resultType="int">
+		/*
+			SQL ID : LoginSQL.countUserInfo
+			사용자가 존재하는지 카운트
+		*/
+		<![CDATA[
+		SELECT COUNT(*) FROM TU_MEMBER
+		WHERE USERID = #{userid}
+			AND USERPW = #{userpw}
+			AND SITEID = #{siteid}
+			AND USEYN <> 'N'
+		]]>
+	</select>
+
+
+	<select id="LoginSQL.getoneUserCount" resultType="dataMap">
+		/*
+			SQL ID : LoginSQL.getoneUserCount
+			사용자가 존재하는지 카운트 및 구분 조회
+		*/
+		<![CDATA[
+		SELECT
+		(
+			SELECT COUNT(*) FROM TU_MEMBER
+			WHERE USERID = #{userid}
+				AND USERPW = #{userpw}
+				AND SITEID = #{siteid}
+				AND USEYN <> 'N'
+		) AS CNT,
+		(
+			SELECT USER_PCD FROM TU_MEMBER
+			WHERE USERID = #{userid}			
+				AND SITEID = #{siteid}
+				AND USEYN <> 'N'
+		) AS PCD
+		FROM DUAL
+		AS LOGIN
+		]]>
+
+	</select>
+
+	<select id="LoginSQL.getoneUserInfo" resultType="dataMap">
+		/*
+			SQL ID : LoginSQL.getoneUserInfo
+			로그인시 세션에 담을 사용자 정보를 얻는다.
+		*/
+		<![CDATA[
+		SELECT *
+		FROM (
+				SELECT U.*
+				, (SELECT SITENM FROM TA_SITE_INFO WHERE SITEID = U.SITEID) AS SITENM
+				, (SELECT CDNM FROM TA_COMM_CODE WHERE U.USER_PCD = COMMCD AND COMMCD_GCD = 'USER_PCD') AS POSNM
+				, (SELECT ARRAY_TO_STRING(ARRAY_AGG(R.ROLE_PCD), ',') FROM TU_USER_ROLE R WHERE R.USERNO = U.USERNO AND R.USEYN = 'Y') AS ROLES
+			FROM 
+				TU_MEMBER U
+			WHERE 
+				U.USERID = #{userid}
+				AND U.SITEID = #{siteid}
+				AND U.USEYN <> 'N'
+		]]>
+			<if test='autologin != "Y"'>
+				AND U.USERPW = #{userpw}
+			</if>
+		) AS LOGININFO
+	</select>
+
+	<select id="LoginSQL.dolistUserInfo" resultType="dataMap">
+		/*
+			SQL ID : LoginSQL.dolistUserInfo
+			로그인시 세션에 담을 사용자 정보를 얻는다.
+		*/
+		<![CDATA[
+			SELECT U.*
+				, U.JROL_PCD AS ROLE_PCD
+				, UFN_CODENM('JROL_PCD', U.JROL_PCD, NULL) AS ROLENM 
+				, (SELECT SITENM FROM TA_SITE_INFO WHERE SITEID = U.SITEID) AS SITENM
+				, (SELECT ARRAY_TO_STRING(ARRAY_AGG(R.ROLE_PCD), ',') FROM TC_USER_ROLE R WHERE R.USERNO = U.USERNO) AS ROLES
+			FROM TU_MEMBER U
+			WHERE U.USERID = #{userid}
+				AND U.SITEID = #{siteid}
+		]]>
+			<if test='autologin != "Y" and userpw != ""'>
+				AND U.USERPW = #{userpw}
+			</if>
+			ORDER BY U.REGDTM DESC
+	</select>
+
+
+	<insert id="LoginSQL.appendLogConnect" parameterType="dataMap">
+		/*
+			SQL ID : LoginSQL.appendLogConnect
+			해당 사용자의 접속 로그를 등록해 준다
+		*/
+		<![CDATA[
+		INSERT INTO TA_CONN_LOG
+			( CONNLOG_SEQ
+			, USERID
+			, CONUNO
+			, CONDTM
+			, CONN_IP
+			, CONN_SESSKEY
+			, CONN_AGENT
+			, CONN_PCD
+			, CONN_TCD
+			, CONN_SCD
+			, NOTE
+			, SITEID
+			)
+		VALUES
+			((SELECT COALESCE(MAX(CONNLOG_SEQ), 0) + 1 FROM TA_CONN_LOG)
+			, #{userid}
+			, #{userno}
+			, TO_CHAR(NOW(), 'YYYYMMDDHH24MISS')
+			, #{conn_ip}
+			, #{conn_sesskey}
+			, #{conn_agent}
+			, #{conn_pcd}
+			, #{conn_tcd}
+			, #{conn_scd}
+			, #{note}
+			, #{siteid}
+			)
+		]]>
+	</insert>
+
+	<update id="LoginSQL.modifyLogin" parameterType="dataMap">
+		/*
+			SQL ID: LoginSQL.modifyLogin
+			로그인 접속시간 업데이트
+		*/
+		<![CDATA[
+		UPDATE TU_MEMBER
+		SET CONDTM = TO_CHAR(NOW(), 'YYYYMMDDHH24MISS')
+		WHERE USEYN <> 'N'
+			AND USERID = #{userid}
+			AND SITEID = #{siteid}
+		]]>
+		<if test='autologin != "Y" and userpw != ""'>
+			AND USERPW = #{userpw}
+		</if>
+	</update>
+	
+	<select id="LoginSQL.doCountAdminMenuAuth" resultType="int">
+		<!-- 2020-05-14 최상규 -->
+		/*
+			SQL ID : DefaultCheckSQL.doCountAdminMenuAuth
+			관리자 메뉴 체크 여부
+		*/
+			SELECT
+				COUNT(*)
+			FROM
+				TA_MENU M, TA_MENU_AUTH R
+			WHERE 
+				M.MENUCD = R.MENUCD
+			AND M.USEYN = 'Y'
+			AND R.USEYN = 'Y'		
+			AND R.SITEID = 'ttmsoft'
+			AND M.MENU_TCD = 'MENU_T004'
+			<if test="rolelist != null and rolelist != ''">
+			AND R.ROLE_PCD IN
+				<foreach collection="rolelist" item="rolerow" index="idx" open="(" separator="," close=")">
+					#{rolerow}
+				</foreach>
+			</if>
+	</select>
+	
+	<!-- 바우처 로그인 -->
+	<select id="LoginSQL.doCountUserInfo" resultType="int">
+		<!-- 2021-04-22 추정완 -->
+		/*
+			SQL ID : LoginSQL.doCountUserInfo
+			사용자 존재 여부 확인
+		*/
+		<![CDATA[
+			SELECT
+				COUNT(*)
+			FROM
+				TBLMEMBER
+			WHERE
+				ID = #{id}
+			AND
+				PW = #{pw}
+		]]>
+	</select>
+	
+	<select id="LoginSQL.doGetOneUserInfo" resultType="dataMap">
+		<!-- 2021-04-22 추정완 -->
+		/*
+			SQL ID : LoginSQL.doCountUserInfo
+			사용자 데이터 가져오기
+		*/
+		<![CDATA[
+			SELECT
+				*
+			FROM
+				TBLMEMBER
+			WHERE
+				ID = #{id}
+			AND
+				PW = #{pw}
+		]]>
+	</select>
+
+</mapper>

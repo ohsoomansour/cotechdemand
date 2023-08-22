@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ProtoTypeSQL">
+
+	<insert id="ProtoTypeSQL.createItem" parameterType="dataMap"> 
+		/*
+			SQL ID: ProtoTypeSQL.createItem
+			Operation Create  
+		*/
+		 INSERT INTO ${tblnm} 		 
+		 	<foreach collection="insertarg" index="key" item="val"  open="(" separator="," close=")">
+	        	${key} 
+	  		</foreach>
+	  		VALUES
+	  		<foreach collection="insertarg" index="key" item="val"  open="(" separator="," close=")">
+	        	#{val} 
+	  		</foreach>
+	</insert>
+
+		
+	<select id="ProtoTypeSQL.getNextID" resultType="int">
+		/*
+			SQL ID: ProtoTypeSQL.getNextID
+			해당 테이블의 다음 ID를 반환하여 줍니다.
+		*/
+		SELECT MAX(${id}) + 1 from ${tblnm} 
+	</select>
+	
+	<select id="ProtoTypeSQL.getPTRead" resultType="dataMap">
+		/*
+			SQL ID : ProtoTypeSQL.getPTRead
+			
+			1) Paging기능을 테스트  
+		*/
+		<![CDATA[
+		SELECT * from ${tblnm}
+		]]>
+		WHERE id BETWEEN (${page}-1) * ${take} + 1 AND ${page} * ${take}
+	</select>
+	
+		
+	<select id="ProtoTypeSQL.getPTRead_3" resultType="dataMap">
+		/*		
+			SQL ID : ProtoTypeSQL.getPTRead_3
+			1) 선택보기를 추가
+			2) 필터링 기능을 추가										 
+		*/		
+		SELECT * from ${tblnm}							
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+				<if test="srchselrow != null and srchselrow != ''" >				 
+					AND id IN
+					<foreach collection="srchselrow" index="index" item="item" open="(" separator="," close=")">
+	        		#{item}
+	  				</foreach>	  				
+  				</if>
+  				<if test="filter != null and filter !=''">  					
+  					<foreach collection="filter" index="index" item="item" >
+  					AND ${item.Field} ${item.Op} #{item.Val}  						
+	  				</foreach>
+  				</if>	
+		</trim>						
+	</select>	
+	
+	<select id="ProtoTypeSQL.getPTRead_4" resultType="dataMap">
+		/*		
+			SQL ID : ProtoTypeSQL.getPTRead_4
+			1) 선택보기를 추가
+			2) 필터링 기능을 추가
+			3) 페이징을 추가  										 
+		*/				
+		SELECT AA.* FROM  
+			(SELECT ROW_NUMBER() OVER (ORDER BY a.id) AS RSEQ , A.* 
+				FROM
+					( SELECT * from ${tblnm} 							
+					<trim prefix="WHERE" prefixOverrides="AND |OR ">
+							<if test="srchselrow != null and srchselrow != ''" >				 
+								AND id IN
+								<foreach collection="srchselrow" index="index" item="item" open="(" separator="," close=")">
+				        		#{item}
+				  				</foreach>	  				
+			  				</if>
+			  				<if test="filter != null and filter !=''">  					
+			  					<foreach collection="filter" index="index" item="item" >
+			  					AND ${item.Field} ${item.Op} #{item.Val}  						
+				  				</foreach>
+			  				</if>	
+					</trim>
+					) A 
+			) AA
+		WHERE AA.RSEQ BETWEEN (${page}-1) * ${take} + 1 AND ${page} * ${take}				
+	</select>
+	
+	<select id="ProtoTypeSQL.getPTRead_5" resultType="dataMap">
+		/*		
+			SQL ID : ProtoTypeSQL.getPTRead_5
+			1) 선택보기를 추가
+			2) 필터링 기능을 추가
+			3) 페이징을 추가  			
+			4) 정렬 기능을 추가		 
+		*/				
+		SELECT AA.* FROM  
+			(SELECT ROW_NUMBER() OVER (ORDER BY a.id) AS RSEQ , A.* 
+				FROM
+					( SELECT * from ${tblnm} 							
+					<trim prefix="WHERE" prefixOverrides="AND |OR ">
+							<if test="srchselrow != null and srchselrow != ''" >				 
+								AND id IN
+								<foreach collection="srchselrow" index="index" item="item" open="(" separator="," close=")">
+				        		#{item}
+				  				</foreach>	  				
+			  				</if>
+			  				<if test="filter != null and filter !=''">  					
+			  					<foreach collection="filter" index="index" item="item" >
+			  					AND ${item.Field} ${item.Op} #{item.Val}  						
+				  				</foreach>
+			  				</if>	
+					</trim>
+					<if test="arrsort != null and arrsort != ''" >				 
+						ORDER BY 
+						<foreach collection="arrsort" index="index" item="item"  separator="," >
+			       		${item.Field} ${item.Dir}
+			 			</foreach>	  				
+					</if>
+					) A 
+			) AA
+		WHERE AA.RSEQ BETWEEN (${page}-1) * ${take} + 1 AND ${page} * ${take}						
+    </select>
+    
+    <select id="ProtoTypeSQL.getPTRead_6" resultType="dataMap">
+		/*		
+			SQL ID : ProtoTypeSQL.getPTRead_6
+			1) 선택보기를 추가
+			2) 필터링 기능을 추가
+			3) 페이징을 추가  			
+			4) 정렬 기능을 추가		 
+			5) ServerSide 정렬을 지원 
+		*/				
+		SELECT AA.* FROM  
+			(SELECT ROW_NUMBER() OVER ( ORDER BY
+					<if test="arrsort == null or arrsort == ''" >
+						${pkid} asc
+					</if>
+					<if test="arrsort != null and arrsort != ''" >
+						<foreach collection="arrsort" index="index" item="item"  separator="," >
+			       		${item.Field} ${item.Dir}
+			 			</foreach>	  				
+					</if>
+			) AS RSEQ , A.* 
+				FROM
+					( SELECT * from ${tblnm} 							
+					<trim prefix="WHERE" prefixOverrides="AND |OR ">
+							<if test="srchselrow != null and srchselrow != ''" >				 
+								AND id IN
+								<foreach collection="srchselrow" index="index" item="item" open="(" separator="," close=")">
+				        		#{item}
+				  				</foreach>	  				
+			  				</if>
+			  				<if test="filter != null and filter !=''">  					
+			  					<foreach collection="filter" index="index" item="item" >
+			  					AND ${item.Field} ${item.Op} #{item.Val}  						
+				  				</foreach>
+			  				</if>	
+					</trim>
+					
+					) A 
+			) AA
+		WHERE AA.RSEQ BETWEEN (${page}-1) * ${take} + 1 AND ${page} * ${take}						
+    </select>
+    
+    <select id="ProtoTypeSQL.getPTRead_FOR_Cmn" resultType="dataMap">
+		/*		
+			SQL ID : ProtoTypeSQL.getPTRead_6
+			1) 선택보기를 추가
+			2) 필터링 기능을 추가
+			3) 페이징을 추가  			
+			4) 정렬 기능을 추가		 
+			5) ServerSide 정렬을 지원 
+		*/				
+		SELECT /*AA.rseq
+			,AA.id 
+			,AA.num1     
+			,AA.num2     
+			,AA.num3     
+			,AA.num4     
+			,AA.num5     
+			,AA.rnum1    
+			,AA.rnum2    
+			,AA.rnum3    
+			,AA.rnum4    
+			,AA.rnum5    
+			,AA.email    
+			,AA.mobile   
+			,AA.string1  
+			,AA.string2  
+			,AA.string3  
+			,AA.string4  
+			,AA.string5  
+			,TO_CHAR(AA.vdate1,'YYYY-MM-DD HH24:MI:SS') as vdate1  
+			,TO_CHAR(AA.vdate2,'YYYY-MM-DD HH24:MI:SS') as vdate2  
+			,TO_CHAR(AA.vdate3,'YYYY-MM-DD HH24:MI:SS') as vdate3 */
+			AA.*
+			FROM  
+			(SELECT ROW_NUMBER() OVER ( ORDER BY
+					<if test="arrsort == null or arrsort == ''" >
+						${pkid} asc
+					</if>
+					<if test="arrsort != null and arrsort != ''" >
+						<foreach collection="arrsort" index="index" item="item"  separator="," >
+			       		${item.Field} ${item.Dir}
+			 			</foreach>	  				
+					</if>
+			) AS RSEQ , A.* 
+				FROM
+					( SELECT * from ${tblnm} 							
+					<trim prefix="WHERE" prefixOverrides="AND |OR ">
+							<if test="srchselrow != null and srchselrow != ''" >				 
+								AND id IN
+								<foreach collection="srchselrow" index="index" item="item" open="(" separator="," close=")">
+				        		#{item}
+				  				</foreach>	  				
+			  				</if>
+			  				<if test="filter != null and filter !=''">  					
+			  					<foreach collection="filter" index="index" item="item" >
+			  					AND ${item.Field} ${item.Op} #{item.Val}  						
+				  				</foreach>
+			  				</if>	
+					</trim>
+					
+					) A 
+			) AA
+		WHERE AA.RSEQ BETWEEN (${page}-1) * ${take} + 1 AND ${page} * ${take}						
+    </select>
+    
+	<select id="ProtoTypeSQL.getPTCount" resultType="int">
+		/*
+			SQL ID : ProtoTypeSQL.getPTCount
+			ProtoType 1 테이블의 카운트를 반환
+		*/
+		
+		SELECT COUNT(*) from ${tblnm}
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="srchselrow != null and srchselrow != ''" >				 
+				AND id IN
+				<foreach collection="srchselrow" index="index" item="item" open="(" separator="," close=")">
+        		#{item}
+  				</foreach>	  				
+ 			</if>
+			<if test="filter != null and filter !=''">  					
+				<foreach collection="filter" index="index" item="item" >
+				AND ${item.Field} ${item.Op} #{item.Val}  						
+				</foreach>
+			</if>	
+		</trim>
+	</select>
+	
+	<update id="ProtoTypeSQL.updatePT" parameterType="dataMap">
+		/*
+			SQL ID: ProtoTypeSQL.updatePT
+			ProtoType Update 샘플
+		*/
+		UPDATE ${tblnm} SET
+		
+		<if test="updatearg != null and updatearg != ''" >
+			<foreach collection="updatearg" index="key" item="val"  separator="," >
+        	${key} = #{val}
+  			</foreach>
+ 		</if>		
+		<if test="updateargdate != null and updateargdate != ''" >
+			<foreach collection="updateargdate" index="key" item="val"  separator="," >
+        	${key} = TO_DATE(#{val},'YYYY-MM-DD HH:MI')   
+  			</foreach>
+ 		</if>				
+ 		WHERE ${pkid}  = #{id}
+	</update>
+	
+	<update id="ProtoTypeSQL.updatePT2" parameterType="dataMap">
+		/*
+			SQL ID: ProtoTypeSQL.updatePT
+			ProtoType Update 샘플
+		*/
+		UPDATE ${tblnm} SET		
+		<if test="updatearg != null and updatearg != ''" >
+			<foreach collection="updatearg" index="key" item="val"  separator="," >
+        	${key} = #{val}
+  			</foreach>
+ 		</if> 		
+ 		<if test="updatearg != null and updatearg != '' and updateargdate != null and updateargdate != ''" >
+ 			,
+ 		</if> 			 		
+		<if test="updateargdate != null and updateargdate != ''" >
+			<foreach collection="updateargdate" index="key" item="val"  separator="," >
+        	${key} = TO_DATE(#{val},'YYYY-MM-DD HH:MI')   
+  			</foreach>
+ 		</if>				
+ 		WHERE ${pkid}  = #{id}
+	</update>
+	
+	<delete id="ProtoTypeSQL.removeItem" parameterType="dataMap">
+		/*
+			SQL ID: ProtoTypeSQL.removeItem
+			ProtoType 1의 id에 해당되는 Row를 삭제 
+		*/
+		
+		DELETE FROM ${tblnm} 
+		WHERE ${pkid} =
+		<if test="id != null and  id != ''">
+			#{id}
+		</if>
+	</delete>
+	
+</mapper>

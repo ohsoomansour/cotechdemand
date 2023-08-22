@@ -1,0 +1,588 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="CodeSQL">
+	
+	<sql id="search">
+		<if test="search_pcd != ''">
+			AND COMMCD_PCD = #{search_pcd}
+		</if>	
+		<if test="search_con == 'all' and search_text != ''">
+			AND (COMMCD_GCD LIKE '%' || #{search_text} || '%'	
+			OR CDNM LIKE '%' || #{search_text} || '%')
+		</if>
+		<if test="search_con == 'commcd' and search_text != ''">
+			AND COMMCD_GCD LIKE '%' || #{search_text} || '%'
+		</if>
+		<if test="search_con == 'cdnm' and search_text != ''">
+			AND CDNM LIKE '%' || #{search_text} || '%'	
+		</if>
+	</sql>
+	<!-- ====================================================================================== -->
+	<!--									기타 SQL												-->
+	<!-- ====================================================================================== -->
+
+	<select id="CodeSQL.doListCodePCD" resultType="dataMap">
+		<!-- 2020-04-29 추정완 -->
+		/*
+			SQL ID : CodeSQL.doListCodePCD
+			구분 코드 리스트 
+		*/
+		<![CDATA[
+			SELECT
+				COMMCD,
+				CDNM
+			FROM
+				TA_COMM_CODE
+			WHERE
+				COMMCD_GCD = 'COMMCD_PCD'
+			AND COMMCD_LVL = 2
+			AND SITEID = #{siteid}
+		]]>
+	</select>
+	
+	<select id="CodeSQL.doCheckCodeOverlap" parameterType="dataMap" resultType="int">
+		<!-- 2020-04-30 추정완 -->
+		/*
+			SQL ID : CodeSQL.doCheckCodeOverlap
+			코드 중복 검사
+		*/
+		<![CDATA[
+			SELECT
+				COUNT(*)
+			FROM
+				TA_COMM_CODE
+			WHERE
+				SITEID = #{siteid}
+		]]>
+		<if test="commcd != ''">
+			AND COMMCD = #{commcd}
+		</if>
+		<if test="commcd_gcd != ''">
+			AND COMMCD_GCD = #{commcd_gcd}
+		</if>
+		<if test="commcd_lvl != ''">
+			AND COMMCD_LVL = #{commcd_lvl}
+		</if>
+	</select>
+
+	<!-- ====================================================================================== -->
+	<!--									메인코드 SQL											-->
+	<!-- ====================================================================================== -->
+	<select id="CodeSQL.doCountMainCode" resultType="int">
+		<!-- 2020-04-28 추정완 -->
+		/*
+			SQL ID : CodeSQL.doCountMainAuth
+			메인 코드 카운트
+		*/
+		<![CDATA[
+			SELECT
+				COUNT(*)
+			FROM
+				TA_COMM_CODE
+			WHERE
+				COMMCD_LVL = 1
+			AND SITEID = #{siteid}
+		]]>
+		<include refid="search"/>
+	</select>
+	
+	<select id="CodeSQL.doListMainCode" resultType="dataMap">
+		<!-- 2020-04-28 추정완 -->
+		/*
+			SQL ID : CodeSQL.doListMainCode
+			메인 코드 리스트 조회
+		*/
+		<![CDATA[
+		SELECT 
+			A.*
+		FROM
+		(
+			SELECT
+				(ROW_NUMBER() OVER()) AS RNUM,
+				COMMCD_GCD,
+				COMMCD,
+		]]>
+		<choose>
+			<when test="locale == 'en_US'">
+				CDNM_EN AS CDNM,
+			</when>
+			<otherwise>
+				CDNM,
+			</otherwise>
+		</choose>
+		<![CDATA[
+				USEYN,
+				COMMCD_PCD,
+				TO_CHAR(TO_DATE(REGDTM, 'yyyymmddHH24MISS'),'YYYY/MM/DD HH24:MI') AS REGDTM,
+				TO_CHAR(TO_DATE(MODDTM, 'yyyymmddHH24MISS'),'YYYY/MM/DD HH24:MI') AS MODDTM
+			FROM
+				TA_COMM_CODE
+			WHERE
+				COMMCD_LVL = 1
+			AND SITEID = #{siteid}
+		]]>
+		<include refid="search"/>
+			ORDER BY REGDTM
+		<![CDATA[
+		) A
+		WHERE 
+			RNUM BETWEEN (#{page}::INT -1) * (#{rows}::INT) + 1 AND #{page}::INT * #{rows}::INT
+		]]>
+	</select>
+		
+	<insert id="CodeSQL.doInsertMainCode" parameterType="dataMap">
+		<!-- 2020-04-28 추정완 -->
+		/*
+			SQL ID : CodeSQL.doInsertMainCode
+			메인 코드 등록
+		*/
+		<![CDATA[
+			INSERT INTO TA_COMM_CODE
+			(
+				COMMCD,
+				COMMCD_GCD,
+				CDNM,
+				CDNM_EN,
+				COMMCD_CMMT,
+				COMMCD_VAL1,
+				COMMCD_VAL2,
+				COMMCD_PCD,
+				COMMCD_TCD,
+				COMMCD_LVL,
+				COMMCD_IDX,
+				REGUID,
+				MODUID,
+				REGDTM,
+				MODDTM,
+				USEYN,
+				SITEID
+			)
+			VALUES
+			(
+				#{commcd},
+				#{commcd},
+				#{cdnm},
+				#{cdnm_en},
+				#{commcd_cmmt},
+				#{commcd_val1},
+				#{commcd_val2},
+				#{commcd_pcd},
+				#{commcd_tcd},
+				1,
+				0,
+				#{userid},
+				#{userid},
+				TO_CHAR(NOW(), 'YYYYMMDDHH24MISS'),
+				TO_CHAR(NOW(), 'YYYYMMDDHH24MISS'),
+				#{useyn},
+				#{siteid}
+			)
+		]]>
+	</insert>
+	
+	<select id="CodeSQL.doGetMainCodeInfo" resultType="dataMap">
+		<!-- 2020-04-28 추정완 -->
+		/*
+			SQL ID : CodeSQL.doGetMainCodeInfo
+			메인 코드 정보가져오기
+		*/
+		<![CDATA[
+			SELECT
+				*
+			FROM
+				TA_COMM_CODE
+			WHERE
+				COMMCD = #{c_commcd}
+			AND	COMMCD_GCD = #{c_commcd_gcd}
+			AND	SITEID = #{siteid}
+		]]>
+	</select>
+	
+	<update id="CodeSQL.doUpdateMainCode" parameterType="dataMap">
+		<!-- 2020-04-29 추정완 -->
+		/*
+			SQL ID : CodeSQL.doUpdateMainCode
+			메인 코드 수정하기
+		*/
+		<![CDATA[
+			UPDATE
+				TA_COMM_CODE
+			SET
+				COMMCD = #{commcd},
+				COMMCD_GCD = #{commcd},
+				CDNM = #{cdnm},
+				CDNM_EN = #{cdnm_en},
+				COMMCD_CMMT = #{commcd_cmmt},
+				COMMCD_VAL1 = #{commcd_val1},
+				COMMCD_VAL2 = #{commcd_val2},
+				COMMCD_PCD = #{commcd_pcd},
+				COMMCD_TCD = #{commcd_tcd},
+				MODUID = #{userid},
+				MODDTM = TO_CHAR(NOW(), 'YYYYMMDDHH24MISS'),
+				USEYN = #{useyn}
+			WHERE
+				COMMCD = #{c_commcd}
+			AND	COMMCD_GCD = #{c_commcd_gcd}
+			AND	SITEID = #{siteid}
+		]]>
+	</update>
+	
+	<select id="CodeSQL.doListMainCodeOfSubCode" resultType="dataMap">
+		<!-- 2020-04-29 추정완 -->
+		/*
+			SQL ID : CodeSQL.doListMainCodeOfSubCode
+			메인 코드 수정 시 관련된 서브코드 리스트
+		*/
+		<![CDATA[
+			SELECT
+				*
+			FROM
+				TA_COMM_CODE
+			WHERE
+				COMMCD_GCD = #{c_commcd_gcd}
+			AND	COMMCD_LVL = 2
+			AND	SITEID = #{siteid}
+		]]>
+	</select>
+	
+	<update id="CodeSQL.doUpdateMainCodeOfSubCode" parameterType="dataMap">
+		<!-- 2020-04-29 추정완 -->
+		/*
+			SQL ID : CodeSQL.doUpdateMainCodeOfSubCode
+			메인 코드 수정 시 관련된 서브코드 수정하기
+		*/
+		<foreach  item="item" collection="list"  index="index" separator=";" close=";" >
+			<![CDATA[
+				UPDATE
+					TA_COMM_CODE
+				SET
+					COMMCD_GCD = #{commcd},
+					COMMCD_TCD = #{commcd_tcd},
+					COMMCD_PCD = #{commcd_pcd}
+				WHERE
+					COMMCD = #{item.commcd}
+			]]>
+		</foreach>
+	</update>
+	
+	<delete id="CodeSQL.doDeleteMainCode" parameterType="dataMap">
+		<!-- 2020-05-01 추정완 -->
+		/*
+			SQL ID : CodeSQL.doDeleteMainCode
+			메인 코드 삭제
+		*/
+		<![CDATA[
+			DELETE
+			FROM
+				TA_COMM_CODE
+			WHERE
+				COMMCD_GCD = #{commcd_gcd}
+			AND
+				SITEID = #{siteid}
+		]]>
+	</delete>
+		
+	<!-- ====================================================================================== -->
+	<!--									서브코드 SQL											-->
+	<!-- ====================================================================================== -->
+	
+	<select id="CodeSQL.doCountSubCode" resultType="int">
+		<!-- 2020-04-28 추정완 -->
+		/*
+			SQL ID : CodeSQL.doCountSubCode
+			서브 코드 카운트
+		*/
+		<![CDATA[
+			SELECT
+				COUNT(*)
+			FROM
+				TA_COMM_CODE
+			WHERE
+				COMMCD_LVL = 2
+			AND	COMMCD_GCD = #{commcd_gcd}
+			AND	SITEID = #{siteid}
+		]]>
+	</select>
+	
+	<select id="CodeSQL.doListSubCode" resultType="dataMap">
+		<!-- 2020-04-28 추정완 -->
+		/*
+			SQL ID : CodeSQL.doListSubCode
+			서브 코드 리스트 조회
+		*/
+		<![CDATA[
+			SELECT
+				*
+			FROM
+			(
+				SELECT
+					(ROW_NUMBER() OVER()) AS RNUM,
+					COMMCD_GCD,
+					COMMCD,
+		]]>
+			<choose>
+				<when test="locale == 'en_US'">
+					CDNM_EN AS CDNM,
+				</when>
+				<otherwise>
+					CDNM,
+				</otherwise>
+			</choose>
+		<![CDATA[
+					USEYN,
+					COMMCD_PCD,
+					TO_CHAR(TO_DATE(REGDTM, 'yyyymmddHH24MISS'),'YYYY/MM/DD HH24:MI') AS REGDTM,
+					TO_CHAR(TO_DATE(MODDTM, 'yyyymmddHH24MISS'),'YYYY/MM/DD HH24:MI') AS MODDTM
+				FROM
+					TA_COMM_CODE
+				WHERE
+					COMMCD_LVL = 2
+				AND COMMCD_GCD = #{commcd_gcd}
+				AND	SITEID = #{siteid}
+				ORDER BY COMMCD_IDX
+		]]>
+		<![CDATA[
+			) AS SUBCODELIST
+			WHERE
+				RNUM BETWEEN (#{page}::INT -1) * (#{rows}::INT) + 1 AND #{page}::INT * #{rows}::INT
+		]]>
+		
+	</select>
+	
+	<select id="CodeSQL.doListSubCodeInfo" resultType="dataMap">
+		<!-- 2020-06-24 최상규 -->
+		/*
+			SQL ID : CodeSQL.doListSubCodeInfo
+			서브 코드 리스트 조회
+		*/
+		<![CDATA[
+			SELECT
+				COMMCD,
+				CDNM,
+				CDNM_EN,
+				USEYN
+			FROM
+				TA_COMM_CODE
+			WHERE
+				COMMCD_LVL = 2
+			AND COMMCD_GCD = #{commcd_gcd}
+			AND USEYN = 'Y'
+			AND	SITEID = #{siteid}			
+		]]>
+	</select>
+	
+	<select id="CodeSQL.doMaxCodeIdx" resultType="int">
+		<!-- 2020-04-28 추정완 -->
+		/*
+			SQL ID : CodeSQL.doMaxCodeIdx
+			코드 인덱스 최댓값 가져오기
+		*/
+		<![CDATA[
+			SELECT
+				MAX(COMMCD_IDX)
+			FROM
+				TA_COMM_CODE
+			WHERE
+				COMMCD_GCD = #{c_commcd_gcd}
+		]]>
+	</select>
+		
+	<insert id="CodeSQL.doInsertSubCode" parameterType="dataMap">
+		<!-- 2020-04-28 추정완 -->
+		/*
+			SQL ID : CodeSQL.doInsertSubCode
+			서브 코드 등록
+		*/
+		<![CDATA[
+			INSERT INTO TA_COMM_CODE
+			(
+				COMMCD,
+				COMMCD_GCD,
+				CDNM,
+				CDNM_EN,
+				COMMCD_CMMT,
+				COMMCD_VAL1,
+				COMMCD_VAL2,
+				COMMCD_PCD,
+				COMMCD_TCD,
+				COMMCD_LVL,
+				COMMCD_IDX,
+				REGUID,
+				MODUID,
+				REGDTM,
+				MODDTM,
+				USEYN,
+				SITEID
+			)
+			VALUES
+			(
+				#{commcd},
+				#{commcd_gcd},
+				#{cdnm},
+				#{cdnm_en},
+				#{commcd_cmmt},
+				#{commcd_val1},
+				#{commcd_val2},
+				#{commcd_pcd},
+				#{commcd_tcd},
+				2,
+				#{commcd_idx},
+				#{userid},
+				#{userid},
+				TO_CHAR(NOW(), 'YYYYMMDDHH24MISS'),
+				TO_CHAR(NOW(), 'YYYYMMDDHH24MISS'),
+				#{useyn},
+				#{siteid}
+			)
+		]]>
+	</insert>
+	
+	<select id="CodeSQL.doGetSubCodeInfo" resultType="dataMap">
+		<!-- 2020-04-30 추정완 -->
+		/*
+			SQL ID : CodeSQL.doGetSubCodeInfo
+			서브 코드 정보가져오기
+		*/
+		<![CDATA[
+			SELECT
+				*
+			FROM
+				TA_COMM_CODE
+			WHERE
+				COMMCD = #{commcd}
+			AND COMMCD_GCD = #{commcd_gcd}
+			AND SITEID = #{siteid}
+		]]>
+	</select>
+	<select id="CodeSQL.doGetMainCodeInfoOfCG" resultType="dataMap">
+		<!-- 2020-07-10 추정완 -->
+		/*
+			SQL ID : CodeSQL.doGetMainCodeInfoOfCG
+			서브 코드 정보가져오기
+		*/
+		<![CDATA[
+			SELECT
+				*
+			FROM
+				TA_COMM_CODE
+			WHERE
+				COMMCD_GCD = #{c_commcd_gcd}
+			AND COMMCD_LVL = '1'
+			AND SITEID = #{siteid}
+		]]>
+	</select>
+	<update id="CodeSQL.doUpdateSubCode" parameterType="dataMap">
+		<!-- 2020-04-30 추정완 -->
+		/*
+			SQL ID : CodeSQL.doUpdateSubCode
+			서브 코드 수정하기
+		*/
+		<![CDATA[
+			UPDATE
+				TA_COMM_CODE
+			SET
+				COMMCD = #{commcd},
+				CDNM = #{cdnm},
+				CDNM_EN = #{cdnm_en},
+				COMMCD_CMMT = #{commcd_cmmt},
+				COMMCD_VAL1 = #{commcd_val1},
+				COMMCD_VAL2 = #{commcd_val2},
+				COMMCD_PCD = #{commcd_pcd},
+				MODUID = #{userid},
+				MODDTM = TO_CHAR(NOW(), 'YYYYMMDDHH24MISS'),
+				USEYN = #{useyn}
+			WHERE
+				COMMCD = #{c_commcd}
+			AND	COMMCD_GCD = #{c_commcd_gcd}
+			AND SITEID = #{siteid}
+		]]>
+	</update>
+	<delete id="CodeSQL.doDeleteSubCode" parameterType="dataMap">
+		<!-- 2020-05-01 추정완 -->
+		/*
+			SQL ID : CodeSQL.doDeleteSubCode
+			서브 코드 삭제하기
+		*/
+		<![CDATA[
+			DELETE
+			FROM
+				TA_COMM_CODE
+			WHERE
+				COMMCD = #{commcd}
+			AND	COMMCD_GCD = #{commcd_gcd}
+			AND SITEID = #{siteid}
+		]]>
+	</delete>
+	<update id="CodeSQL.doUpdateSubCodeIdx" parameterType="dataMap">
+		<!-- 2020-05-01 추정완 -->
+		/*
+			SQL ID : CodeSQL.doUpdateSubCodeIdx
+			서브 코드 삭제시 인덱스 정렬하기
+		*/
+		<![CDATA[
+			UPDATE
+				TA_COMM_CODE
+			SET
+				COMMCD_IDX = COMMCD_IDX - 1
+			WHERE
+				COMMCD_GCD = #{commcd_gcd}
+			AND	COMMCD_IDX > #{commcd_idx}::INT
+			AND SITEID = #{siteid}
+		]]>
+	</update>
+	<select id="CodeSQL.doGetStdCodeInfo" resultType="dataMap">
+		<!-- 2021-07-05  이효상 -->
+		/*
+			SQL ID : CodeSQL.doGetStdCodeInfo
+			표준산업분류코드 대분류 정보가져오기
+		*/
+		<![CDATA[
+			SELECT
+				*
+			FROM
+				TBLCOMM_STD_CLS
+			WHERE CODE_DEPTH = #{depth}::INT
+			
+		]]>
+			<if test="parent_code_key != ''">
+			AND PARENT_CODE_KEY = #{parent_code_key}
+			</if>
+			ORDER BY CODE_KEY ASC
+	</select>
+	<select id="CodeSQL.doGetStdMiddleCodeInfo" parameterType="dataMap" resultType="dataMap">
+		<!-- 2021-07-05  이효상 -->
+		/*
+			SQL ID : CodeSQL.doGetStdCodeInfo
+			표준산업분류코드 종분류 정보가져오기
+		*/
+		<![CDATA[
+			SELECT
+				*
+			FROM
+				TBLCOMM_STD_CLS
+			WHERE CODE_DEPTH = #{depth}
+		]]>
+		<if test="parent_code_key != ''">
+			AND PARENT_CODE_KEY = #{parent_code_key}
+		</if>
+		ORDER BY CODE_KEY ASC
+	</select>
+	<select id="CodeSQL.doGetStdSubCodeInfo" parameterType="dataMap" resultType="dataMap">
+		<!-- 2021-07-05  이효상 -->
+		/*
+			SQL ID : CodeSQL.doGetStdSubCodeInfo
+			표준산업분류코드 소분류 정보가져오기
+		*/
+		<![CDATA[
+			SELECT
+				*
+			FROM
+				TBLCOMM_STD_CLS
+			WHERE CODE_DEPTH = '3'
+		]]>
+		<if test="parent_code_key != ''">
+			AND PARENT_CODE_KEY = #{parent_code_key}
+		</if>
+		ORDER BY CODE_KEY ASC
+	</select>
+</mapper>

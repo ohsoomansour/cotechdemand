@@ -1,0 +1,120 @@
+@charset 'UTF-8';
+
+
+html{ height:auto;}
+body{font-family:NanumSquareRound, "Apple SD Neo Gothic", "malgun gothic", dotum, sans-serif;}
+.pop_cmptn_header{height: 120px;background: #136ec2; position: relative; }
+.pop_cmptn_header h3{font-weight: 800; font-size: 32px; color: #fff; line-height: 120px; padding-left: 30px}
+.pop_cmptn_list{border: 1px solid #136ec2;/* background: #fff; */margin-bottom: 0;padding: 20px;background: #e2f1ff;border-radius: 5px;-webkit-box-shadow: 0px 0px 5px 0px rgba(71,71,71,0.3);}
+.pop_cmptn_content .pop_cmptn_box{}
+
+.pop_cmptn_list li{display:inline-block; width:33%}
+.pop_cmptn_list ul{margin-bottom:0}
+.pop_cmptn_list li .title{display: inline-block;width: 90px; font-weight: bold; font-size: 16px;}
+.pop_cmptn_list li .title i{margin-right: 4px; width: 16px}
+.pop_cmptn_list li .txt { font-size: 16px;}
+.pop_cmptn_content{padding:0px /* 30px 30px */; background: #f9f9f9}
+.pop_cmptn_title{margin-bottom: 10px; font-weight: 800; font-size:18px; clear: both}
+
+
+.table3 { border-top:1px solid #006dad; }
+.table3.noBorder { border-top:0;}
+.table3 table { width:100%;}
+.table3 table th,
+.table3 table td { text-align:center; padding:10px 0; vertical-align:middle; border: 1px solid #ccc}
+.table3 table thead th { background:#e2f1ff; font-size:13px; border:1px solid #8eadbf;font-weight:800;color: #002b52}
+.table3 table tbody th { background:#e2f1ff; border-top:1px solid #8eadbf;border-right:1px solid #8eadbf; border-bottom:1px solid #8eadbf;  font-weight:800;color: #002b52}
+.table3 table tbody td { border-bottom:1px solid #ccc; line-height:1.6;}
+.table3 table .left { text-align:left !important; padding-left:10px; padding-right:10px;}
+.table3 table .right { text-align:right !important; padding-left:10px; padding-right:10px;}
+.table3 table tbody.view td { text-align:left; padding-left:10px; padding-right:10px;}
+.table3 table thead + tbody tr:hover td { background-color:#f6f6f6;}
+.table3 table .bgWhite td { background:#fff;}
+
+.table3 table .line th,
+.table3 table .line td { border-left:1px solid #e4e4e4;}
+.table3 table .line tr > *:first-child { border-left-width:0;}
+.table3 table .content { line-height:1.4;}
+
+.pop_cmptn_content .pop_cmptn_box{-webkit-box-shadow: 0px 0px 5px 0px rgba(71,71,71,0.3);
+-moz-box-shadow: 0px 0px 5px 0px rgba(71,71,71,0.3);
+box-shadow: 0px 0px 5px 0px rgba(71,71,71,0.3); padding: 20px; border-radius: 4px; margin-top: 20px; background: #fff }
+.ui-widget-overlay{background: #000000 !important;opacity:.4}
+
+.non-display{display:none}
+
+.cmptn_header{height: 60px}
+.cmptn_header h3{line-height: 60px; font-size: 24px}
+
+.cmptn_table_box table{ border-top:1px solid #006dad; width: 100%}
+.cmptn_table_box table th{text-align: center}
+.cmptn_table_box table thead th { background:#e2f1ff; font-size:13px; border:1px solid #8eadbf; font-weight:700;}
+.cmptn_table_box table thead th.noborL { border-width: 1px 0px 1px 0 }
+.cmptn_table_box{border-top:1px solid #006dad}
+.cmptn_table_box table th{padding:10px 0;}
+.cmptn_table_box table td{padding:15px 0;}
+.cmptn_table_box table td{text-align: center}
+.cmptn_table_box table td.left{text-align: left}
+.cmptn_table_box table tbody td { border-bottom:1px solid #e4e4e4; line-height:1.6;}
+.cmptn_bu{width: 100%; padding:0 10px;}
+.cmptn_bu:after{content: ''; width: 150px; background: url(../../images/front/common/cmptn_arrow.png) no-repeat; display: inline-block; height: 10px}
+.cmptn_bu .left{float: left;}
+.cmptn_bu .right{float: right;}
+
+.alignCenter{text-align: center}
+.btn{border-radius: 3px}
+
+/* .pop_layout{padding:20px; background: #f9f9f9;} */
+.pop_layout{padding:20px; background: white;}
+#popContent{border:none;}
+#cmptnAvgChart{margin-top: -25px; text-align:center;}
+.ui-widget{font-family:NanumSquareRound, "Apple SD Neo Gothic", "malgun gothic", dotum, sans-serif}
+.ui-widget-header{background: #136ec2;height: 60px;border:none}
+.ui-dialog .ui-dialog-titlebar{padding:10px 20px}
+.ui-widget-header .ui-dialog-title{font-size: 24px;}
+.ui-widget-header{color:#fff}
+.ui-widget.ui-widget-content{border:none}
+.ui-dialog-titlebar-close{background:none !important; border:none !important;  }
+.ui-icon-closethick{background-image:url(../../images/front/common/pop_close.png) !important; background-position:0 0; width:24px; height:24px}
+.ui-dialog .ui-dialog-titlebar-close{width:40px; height:40px; margin:-20px 0 0; right:20px}
+.ui-dialog{padding:0}
+.ui-corner-all, .ui-corner-bottom, .ui-corner-right, .ui-corner-br{border-radius:0}
+.ui-icon-closethick{} 
+.ui-dialog .ui-dialog-content{padding:20px}
+.ui-widget-content{background: #f9f9f9;}
+
+
+/*설문*/
+.checkBox {overflow:hidden; padding:11px 20px; border:1px solid #e6e6e6}
+/* checkList */
+.checkList {padding-bottom:10px;}
+.checkList:after {content:""; display:block; clear:both;}
+.checkList .tit {position:relative; z-index:1; margin-top:30px;}
+.checkList .tit:before {display:block; content:"";position:absolute; top:19px; left:0; z-index:-1; width:100%}
+.checkList .tit h5 {display:inline-block; padding:0 16px; line-height:40px; font-size:14px; font-family:'ngb'; letter-spacing:-0.5px; color:#8c1526;}
+.checkList .tit h5 {background:#fedbe0;}
+.checkList .tit:before {border-top:1px solid #fedbe0;}
+.checkList .txt{margin:-7px 0 27px; line-height:26px}
+.checkList dl {margin-bottom:33px}
+.checkList dl:last-child {margin-bottom:0px;}
+.checkList dl dt {margin-bottom:15px; line-height:26px; font-size:14px; color:#666; font-weight:normal}
+.checkList dl dt span {font-family:'ngb'; letter-spacing:-0.5px; color:#333}
+.checkList dl dd {font-size:14px}
+.checkList dl dd strong.sTit{display:block; margin:30px 0 20px; font-size:14px; font-family:'ngb'; letter-spacing:-0.5px; color:#333}
+.checkList dl dd textarea.ipType01 {height:176px}
+.checkList dl dd .checkMsg {line-height:30px; margin-top:6px}
+
+.checkList.v1 {padding:0;}
+.checkList.v1 .titleArea {margin:50px 0 30px 0 !important;}
+.checkList.v1 .titleArea:first-child {margin-top:0 !important;}
+.checkList.v1 dl {}
+.checkList.v1 dl:first-child {}
+.checkList.v1 dl:last-child {margin-bottom:40px !important;}
+.checkBox {overflow:hidden; padding:11px 20px; border:1px solid #e6e6e6}
+.checkBox label.chk,
+.checkBox span.chk  {display:inline-block}
+.checkBox > label.chk,
+.checkBox > span.chk {float:left; padding-right:20px; min-width:90px}
+label.chk {line-height:32px; font-size:14px; color:#666; letter-spacing:-0.25px}
+label.chk input[type=radio],
+label.chk input[type=checkbox] {margin:0 6px 0 0}
