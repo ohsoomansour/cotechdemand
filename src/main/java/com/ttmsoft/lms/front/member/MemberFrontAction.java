@@ -226,7 +226,7 @@ public class MemberFrontAction extends BaseAct {
 			paraMap.put("text", text);
 			String user_email = paraMap.getstr("user_email1")+"@"+paraMap.getstr("user_email2");
 			paraMap.put("user_email", user_email);
-			CommonUtil.doMailSender(paraMap);
+			//CommonUtil.doMailSender(paraMap);
 			
 			/*
 			String pw = CommonUtil.randomString();
