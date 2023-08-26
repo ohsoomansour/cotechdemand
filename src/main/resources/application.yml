@@ -14,7 +14,7 @@ spring:
   postgresql:
     datasource:
       driverClassName: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
-      jdbc-url: jdbc:log4jdbc:postgresql://114.202.2.226:5433/postgres?currentSchema=tibiz
+      jdbc-url: jdbc:log4jdbc:postgresql://114.202.2.226:5433/postgres?currentSchema=tbiz
       username: postgres
       password: xlxldpa!@#
   mvc:
