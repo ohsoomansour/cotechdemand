@@ -48,7 +48,7 @@ public class SessionCheck extends HandlerInterceptorAdapter {
 	}
 
 	public boolean preHandle (HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-
+		/*
 		boolean result = false;
 
 		try {	
@@ -92,10 +92,13 @@ public class SessionCheck extends HandlerInterceptorAdapter {
 			 * if (logger.isDebugEnabled()) { e.printStackTrace();
 			 * logger.debug(" Exception - preHandle : " + e.toString()); }
 			 */
+		/*
 		}
-
+	      
+			
 		// 로그인 설정 요청 반환
-		return result;
+	return result;*/
+		return true;
 	}
 
 	private int makeUserInfoSession (HttpServletRequest request) {

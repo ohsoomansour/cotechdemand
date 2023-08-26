@@ -11,16 +11,16 @@ import org.springframework.web.servlet.ModelAndView;
 import com.ttmsoft.toaf.object.DataMap;
 
 @Controller
-public class MainAction {
+public class TBizAction {
 	@RequestMapping ("/")
 	public ModelAndView doMain (@ModelAttribute("paraMap")DataMap paraMap,HttpServletRequest request, HttpServletResponse response) {
 		
 		try {
 			String member_seqno = request.getSession().getAttribute("member_seqno").toString();
-			ModelAndView mv = new ModelAndView("redirect:/front/mainView.do");
+			ModelAndView mv = new ModelAndView("redirect:/tbiz/mainView.do");
 			return mv;
 		}catch(Exception e) {
-			ModelAndView mv = new ModelAndView("redirect:/front/login.do");
+			ModelAndView mv = new ModelAndView("redirect:/tbiz/login.do");
 			return mv;
 		}
 		

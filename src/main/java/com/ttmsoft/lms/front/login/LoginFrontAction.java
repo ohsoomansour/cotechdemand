@@ -21,7 +21,7 @@ import com.ttmsoft.toaf.util.AES256Util;
 import com.ttmsoft.toaf.util.CommonUtil;
 
 @Controller
-@RequestMapping ("/front")
+@RequestMapping ("/tbiz")
 public class LoginFrontAction extends BaseAct{
 	
 	@Autowired
@@ -57,7 +57,7 @@ public class LoginFrontAction extends BaseAct{
 	public ModelAndView doFormLogin (@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpSession session) {
 		String sessionKey = request.getSession().getId();
 		paraMap.put("sesskey", sessionKey);
-		ModelAndView mav = new ModelAndView("/lms/front/login/login.login");
+		ModelAndView mav = new ModelAndView("/tbiz/front/login/login.login");
 		
 		paraMap.put("board_seq", 100);			
 		
