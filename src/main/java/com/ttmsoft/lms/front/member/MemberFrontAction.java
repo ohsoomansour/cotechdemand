@@ -36,7 +36,7 @@ import com.ttmsoft.toaf.util.CommonUtil;
  *
  */
 @Controller
-@RequestMapping ("/front")
+@RequestMapping ("/techtalk")
 public class MemberFrontAction extends BaseAct {
 	
 	@Autowired
@@ -91,11 +91,12 @@ public class MemberFrontAction extends BaseAct {
 	 * @Explain  : 
 	 *
 	 */
-	@RequestMapping (value = "/memberJoinFormPage.do",  method = RequestMethod.POST)
-	public ModelAndView doMemberJoinFormPage(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
-		ModelAndView mav = new ModelAndView("/lms/front/member/memberJoinForm.front");
+	@RequestMapping (value = "/memberJoinFormPage.do",  method = RequestMethod.GET)
+	public ModelAndView doMemberJoinFormPage(HttpServletRequest request, HttpServletResponse response) {
+		ModelAndView mav = new ModelAndView("/techtalk/front/member/memberJoinForm.front");
 		
 		try {
+			DataMap paraMap = new DataMap();
 			paraMap.put("depth", '1');
 			List<DataMap> stdCode = memberFrontService.doGetStdMainCodeInfo(paraMap);
 			mav.addObject("stdMainCode", stdCode);
