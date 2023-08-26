@@ -30,7 +30,7 @@ public class DefaultCheck extends HandlerInterceptorAdapter {
 
 	public boolean preHandle (HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 		HttpSession session = request.getSession();
-
+		/*
 		logger.info("DefaultCheck start!!");
 		
 		if (logger.isDebugEnabled() && session.getAttribute("userno") != null) {			
@@ -72,7 +72,7 @@ public class DefaultCheck extends HandlerInterceptorAdapter {
 			// 쪽지 정보
 //			request.setAttribute("mesg_info", this.defaultCheckService.getMessageMap(paramMap));
 		}
-
+*/
 		return true;
 	}
 
