@@ -21,7 +21,7 @@ import com.ttmsoft.toaf.util.AES256Util;
 import com.ttmsoft.toaf.util.CommonUtil;
 
 @Controller
-@RequestMapping ("/tbiz")
+@RequestMapping ("/techtalk")
 public class LoginFrontAction extends BaseAct{
 	
 	@Autowired
