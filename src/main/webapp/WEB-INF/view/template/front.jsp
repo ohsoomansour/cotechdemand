@@ -13,8 +13,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=1240">
-    <title>과학기술일자리진흥원 바우처사업관리시스템</title>
-    <meta name="description" content="바우처사업관리시스템">
+    <title>TECHTALK - TBIZ</title>
+    <meta name="description" content="TECHTALK - TBIZ">
     
     <script src="${pageContext.request.contextPath}/js/jquery-2.2.3.min.js?v=1"></script>
 	<script>

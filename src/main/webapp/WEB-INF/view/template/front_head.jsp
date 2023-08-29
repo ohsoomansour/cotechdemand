@@ -19,7 +19,7 @@
 	<div class="wrap_head">
 		<div class="box_gnb">
 			<h1 class="tit_logo">
-				<a href="/tibz/mainView.do" class="link_cv" title="메인화면">
+				<a href="/techtalk/mainView.do" class="link_cv" title="메인화면">
 					<span class="tit_service">TECH TALK</span>
 				</a>
 			</h1>

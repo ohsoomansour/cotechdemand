@@ -53,7 +53,7 @@ public class LoginFrontAction extends BaseAct{
 	public ModelAndView doFormLogin (@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpSession session) {
 		String sessionKey = request.getSession().getId();
 		paraMap.put("sesskey", sessionKey);
-		ModelAndView mav = new ModelAndView("/tbiz/front/login/login.login");
+		ModelAndView mav = new ModelAndView("/techtalk/front/login/login.login");
 		
 		paraMap.put("board_seq", 100);			
 		
@@ -208,7 +208,7 @@ public class LoginFrontAction extends BaseAct{
 	 */
 	@RequestMapping ("/loginForm.do")
 	public ModelAndView doLoginForm (@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
-		ModelAndView mav = new ModelAndView("/lms/front/login/loginForm.frontPopup");
+		ModelAndView mav = new ModelAndView("/techtalk/front/login/loginForm.frontPopup");
 		try {
 			mav.addObject("mode", paraMap.get("mode"));
 		} catch (Exception e) {

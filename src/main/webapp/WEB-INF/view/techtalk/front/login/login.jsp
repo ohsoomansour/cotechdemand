@@ -29,7 +29,7 @@ var LoginCtrl = {
 		}
 				
 		$.ajax({
-			url : "/front/loginx.do",
+			url : "/techtalk/loginx.do",
 			type : "POST",
 			data : $("#frm_login").serialize(),
 			dataType : "json",
@@ -64,7 +64,7 @@ var LoginCtrl = {
 };
 
 function doLogout() {
-	var strLogoutUrl = "/login/logoutx.do";
+	var strLogoutUrl = "/techtalk/logoutx.do";
 
 	$.ajax({
 		url : strLogoutUrl,
@@ -219,7 +219,7 @@ function fncGetEmailToId() {
 	
 	$.ajax({
 		type : 'POST',
-		url : '/front/getEmailToId.do',
+		url : '/techtalk/getEmailToId.do',
 		data : {
 			saveId : saveId,
 			saveEmail : saveEmail
@@ -256,7 +256,7 @@ function fncFindPw() {
 	if(!isBlank('이메일', '#email_PW')) {
 		$.ajax({
 			type : 'POST',
-			url : '/front/getEmailToPw.do',
+			url : '/techtalk/getEmailToPw.do',
 			data : {
 				biz_regno : bizNo_PW,
 				id : id,
@@ -437,7 +437,7 @@ function memberJoin() {
 } 
 
 function moveBoard(board_seq){
-	var action="/front/listBoardItem.do"
+	var action="/techtalk/listBoardItem.do"
 	
 	var form = document.createElement('form');
 
@@ -458,9 +458,9 @@ function moveBoard(board_seq){
 	form.submit(); 	
 }
 </script>
-<form action="/front/memberJoinAgreePage.do" id="frm3" name="frm3" method="post">
+<form action="/techtalk/memberJoinAgreePage.do" id="frm3" name="frm3" method="post">
 </form>
-<form action="/front/viewBoardItem.do" id="frm2" name="frm2" method="post">
+<form action="/techtalk/viewBoardItem.do" id="frm2" name="frm2" method="post">
 	<input type="hidden" id="bitemSeq" name="bitem_seq" value=""/>
 	<input type="hidden" id="boardSeq" name="board_seq" value="100"/>
 </form>

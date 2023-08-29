@@ -66,7 +66,7 @@ public class MemberFrontAction extends BaseAct {
 	 */
 	@RequestMapping (value = "/memberJoinAgreePage.do",  method = RequestMethod.POST)
 	public ModelAndView doMemberJoinAgreePage(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
-		ModelAndView mav = new ModelAndView("/lms/front/member/memberJoinAgree.front");
+		ModelAndView mav = new ModelAndView("/techtalk/front/member/memberJoinAgree.front");
 		DataMap navi = new DataMap();
 		navi.put("one", "메인");
 		navi.put("two", "회원가입");
@@ -124,7 +124,7 @@ public class MemberFrontAction extends BaseAct {
 	 */
 	@RequestMapping (value = "/memberJoinCompletePage.do")
 	public ModelAndView doMemberJoinCompletePage(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
-		ModelAndView mav = new ModelAndView("/lms/front/member/memberJoinComplete.front");
+		ModelAndView mav = new ModelAndView("/techtalk/front/member/memberJoinComplete.front");
 		DataMap navi = new DataMap();
 		navi.put("one", "메인");
 		navi.put("two", "회원가입");
@@ -151,7 +151,7 @@ public class MemberFrontAction extends BaseAct {
 	 */
 	@RequestMapping (value = "/memberJoinPage.do")
 	public ModelAndView doMemberJoinPage(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
-		ModelAndView mav = new ModelAndView("/lms/front/member/memberJoin.front");
+		ModelAndView mav = new ModelAndView("/techtalk/front/member/memberJoin.front");
 		DataMap navi = new DataMap();
 		navi.put("one", "메인");
 		navi.put("two", "회원가입");
@@ -268,7 +268,7 @@ public class MemberFrontAction extends BaseAct {
 	 */
 	@RequestMapping (value = "/memberUpdatePage.do")
 	public ModelAndView doMemberUpdatePage(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
-		ModelAndView mav = new ModelAndView("/lms/front/member/memberUpdateForm.front");
+		ModelAndView mav = new ModelAndView("/techtalk/front/member/memberUpdateForm.front");
 		try {
 			paraMap.put("member_seqno", session.getAttribute("member_seqno"));
 			mav.addObject("userInfo", memberFrontService.doGetMemberInfo(paraMap));
@@ -302,7 +302,7 @@ public class MemberFrontAction extends BaseAct {
 	 */
 	@RequestMapping (value = "/memberPrivacyPage.do")
 	public ModelAndView doMemberPrivacyPage(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
-		ModelAndView mav = new ModelAndView("/lms/front/member/memberPrivacy.front");
+		ModelAndView mav = new ModelAndView("/techtalk/front/member/memberPrivacy.front");
 		try {
 			paraMap.put("member_seqno", session.getAttribute("member_seqno"));
 			mav.addObject("userInfo", memberFrontService.doGetMemberInfo(paraMap));
@@ -330,7 +330,7 @@ public class MemberFrontAction extends BaseAct {
 	 */
 	@RequestMapping (value = "/updatePwForm.do")
 	public ModelAndView doUpdatePwForm(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
-		ModelAndView mav = new ModelAndView("/lms/front/member/memberPrivacyForm.frontPopup");
+		ModelAndView mav = new ModelAndView("/techtalk/front/member/memberPrivacyForm.frontPopup");
 		try {
 			
 		} catch (Exception e) {

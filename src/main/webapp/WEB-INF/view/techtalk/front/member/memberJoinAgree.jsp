@@ -53,11 +53,11 @@ $(document).on('ready', function() {
 	
 	//[회원가입] - 로그인 화면 이동 -> 2021/06/30 이효상
 	function fncLoginPage() {
-		location.href="/front/login.do";
+		location.href="/techtalk/login.do";
 	}
 </script>
 <!-- compaVcContent s:  -->
-<form action="/front/memberJoinFormPage.do" id="frm2" name="frm2" method="post">
+<form action="/techtalk/memberJoinFormPage.do" id="frm2" name="frm2" method="get">
 </form>
 <form action="#" id="frm" name="frm" method="post">
 <div id="compaVcContent" class="cont_cv">

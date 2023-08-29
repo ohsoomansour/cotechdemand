@@ -41,7 +41,7 @@
 		if(!isBlank('이메일', '#email_ID')){
 			$.ajax({
 				type : 'POST',
-				url : '/front/findId.do',
+				url : '/techtalk/findId.do',
 				data : {
 					biz_regno : bizNo_ID,
 					user_email : email_ID
@@ -85,7 +85,7 @@
 		
 		$.ajax({
 			type : 'POST',
-			url : '/front/getEmailToId.do',
+			url : '/techtalk/getEmailToId.do',
 			data : {
 				saveId : saveId,
 				saveEmail : saveEmail
@@ -115,7 +115,7 @@
 		if(!isBlank('이메일', '#email_PW')) {
 			$.ajax({
 				type : 'POST',
-				url : '/front/getEmailToPw.do',
+				url : '/techtalk/getEmailToPw.do',
 				data : {
 					biz_regno : bizNo_PW,
 					id : id,

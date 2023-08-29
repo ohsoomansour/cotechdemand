@@ -71,7 +71,8 @@
 					</div>
                     <div class="info_copyright">
 						<div class="info_addr">
-							<span class="txt_addr"><a href="/front/terms.do" class="txt_addr" style="width:80px;display:contents;" title="이용약관">이용약관</a> <a href="/front/policy.do" class="txt_addr" style="width:200px;display:contents;" title="개인정보처리방침">개인정보처리방침</a></span>
+							<span class="txt_addr"><a href="/techtalk/terms.do" class="txt_addr" style="width:80px;display:contents;" title="이용약관">이용약관</a> 
+							<a href="/techtalk/policy.do" class="txt_addr" style="width:200px;display:contents;" title="개인정보처리방침">개인정보처리방침</a></span>
 				
 							<span class="txt_addr">대표전화 : 02-736-9037 F.02-736-9799<br/>
 							(우) 03737 서울특별시 서대문구 충정로 13(충정로3가) 삼창빌딩 7층, 10층</span>
