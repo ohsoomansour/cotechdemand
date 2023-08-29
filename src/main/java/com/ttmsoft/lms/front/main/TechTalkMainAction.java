@@ -1,6 +1,5 @@
 package com.ttmsoft.lms.front.main;
 
-import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,11 +15,6 @@ import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
-import com.ttmsoft.lms.admin.site.BannerService;
-import com.ttmsoft.lms.admin.site.PopupService;
-import com.ttmsoft.lms.front.boarditem.BoardItemFrontService;
-import com.ttmsoft.lms.front.notice.NoticeFrontService;
-import com.ttmsoft.lms.front.projectapply.ProjectFrontService;
 import com.ttmsoft.toaf.basemvc.BaseAct;
 import com.ttmsoft.toaf.object.DataMap;
 
@@ -41,33 +35,18 @@ public class TechTalkMainAction extends BaseAct {
 	private String			siteid;
 	
 	@Autowired
-	private BannerService bannerService;
-	
-	@Autowired
-	private PopupService popupService;
-		
-	@Autowired
-	private BoardItemFrontService boardService;
-	
-	@Autowired
-	private ProjectFrontService applyFrontService;
-	
-	@Autowired
-	private BoardItemFrontService boardItemFrontService;
-	
-	@Autowired
-	private NoticeFrontService noticeFrontService;
-	
-	@Autowired
 	private TechTalkMainService techTalkMainService;
-
-
-//	@RequestMapping ("/")
-//	public ModelAndView doMain (@ModelAttribute("paraMap")DataMap paraMap,HttpServletRequest request, HttpServletResponse response) {
-//		ModelAndView mv = new ModelAndView("redirect:/front/mainView.do");
-//		return mv;
-//	}
 	
+	/**
+	 *
+	 * @Author   : psm
+	 * @Date	 : 2023. 8. 29.
+	 * @Parm	 : DataMap
+	 * @Return   : ModelAndView
+	 * @Function : 메인페이지
+	 * @Explain  : 
+	 *
+	 */
 	@RequestMapping ("/mainView.do")
 	public ModelAndView doMainView (@ModelAttribute("paraMap")DataMap paraMap,HttpServletRequest request, HttpServletResponse response, HttpSession session) {
 		
@@ -99,31 +78,6 @@ public class TechTalkMainAction extends BaseAct {
 			e.printStackTrace();
 			return new ModelAndView("error");
 		}
-		return mav;
-	}
-	
-	@RequestMapping ("/tttttest.do")
-	public ModelAndView tttttest (@ModelAttribute("paraMap")DataMap paraMap,HttpServletRequest request, HttpServletResponse response) {
-		ModelAndView mav = new ModelAndView("jsonView");	
-		mav.addObject(paraMap);
-		System.out.println("나오냐"+paraMap);
-		return mav;
-	}
-	
-	
-	@RequestMapping ("/tttt.do")
-	public ModelAndView doTttt (@ModelAttribute("paraMap")DataMap paraMap,HttpServletRequest request, HttpServletResponse response, HttpSession session) {
-		
-		ModelAndView mav = new ModelAndView("/techtalk/front/main/main2.front");
-		return mav;
-	}
-	@RequestMapping ("/check.do")
-	public ModelAndView idCheck (@ModelAttribute("paraMap")DataMap paraMap,HttpServletRequest request, HttpServletResponse response) {
-		ModelAndView mav = new ModelAndView("jsonView");	
-		List<DataMap> result = techTalkMainService.doCheck(paraMap);
-		
-		mav.addObject(result);
-		System.out.println("나오냐"+result);
 		return mav;
 	}
 }

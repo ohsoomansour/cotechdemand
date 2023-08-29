@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.ttmsoft.lms.cmm.intercept.SessionCheckService;
-import com.ttmsoft.lms.front.boarditem.BoardItemFrontService;
 import com.ttmsoft.toaf.basemvc.BaseAct;
 import com.ttmsoft.toaf.object.DataMap;
 import com.ttmsoft.toaf.util.AES256Util;
@@ -32,9 +31,6 @@ public class LoginFrontAction extends BaseAct{
 	
 	@Autowired
 	private SessionCheckService sessionCheckService;
-	
-	@Autowired
-	private BoardItemFrontService boardItemFrontService;	
 	
 	@Autowired
 	private CommonUtil CommonUtil;
@@ -61,7 +57,6 @@ public class LoginFrontAction extends BaseAct{
 		
 		paraMap.put("board_seq", 100);			
 		
-		mav.addObject("notice", this.boardItemFrontService.doListNotice(paraMap));		
 		return mav;
 	}
 	

@@ -1,4 +1,4 @@
-package com.ttmsoft.lms.front.main;
+package com.ttmsoft.lms.front.techsearch;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ import com.ttmsoft.toaf.object.DataMap;
 
 @Service
 @Transactional(value = "postgresqlTransactionManager", propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-public class TechTalkMainService extends BaseSvc<DataMap> {
+public class TechSearchService extends BaseSvc<DataMap> {
 	
 	
 	/**

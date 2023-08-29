@@ -37,9 +37,13 @@ function test(){
 			<h2 class="screen_out">본문영역</h2>
 			<div class="wrap_cont">
 				<!-- page_content s:  -->
-				<div style="padding-top:300px;">
-					<a href= "javascript:void(0);" >연구자검색 </a>
-					<a href="javascript:void(0);">수요기업검색</a>
+				<div style="padding-top:300px; display:flex; text-align:center;">
+					<div style="width:50%; min-height:300px; border:1px solid black; background-color:silver;">
+						<a href= "/techtalk/searchResearcher.do" style="font-size:30px;">연구자검색 </a>
+					</div>
+					<div style="width:50%; min-height:300px; border:1px solid black; background-color:silver;">
+						<a href="/techtalk/searchBusiness.do" style="font-size:30px;">수요기업검색</a>
+					</div>
 				</div>
 				
 				<div>
