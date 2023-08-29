@@ -1,5 +1,6 @@
 package com.ttmsoft.lms.front.main;
 
+import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
@@ -56,6 +57,9 @@ public class TechTalkMainAction extends BaseAct {
 	
 	@Autowired
 	private NoticeFrontService noticeFrontService;
+	
+	@Autowired
+	private TechTalkMainService techTalkMainService;
 
 
 //	@RequestMapping ("/")
@@ -103,6 +107,23 @@ public class TechTalkMainAction extends BaseAct {
 		ModelAndView mav = new ModelAndView("jsonView");	
 		mav.addObject(paraMap);
 		System.out.println("나오냐"+paraMap);
+		return mav;
+	}
+	
+	
+	@RequestMapping ("/tttt.do")
+	public ModelAndView doTttt (@ModelAttribute("paraMap")DataMap paraMap,HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+		
+		ModelAndView mav = new ModelAndView("/techtalk/front/main/main2.front");
+		return mav;
+	}
+	@RequestMapping ("/check.do")
+	public ModelAndView idCheck (@ModelAttribute("paraMap")DataMap paraMap,HttpServletRequest request, HttpServletResponse response) {
+		ModelAndView mav = new ModelAndView("jsonView");	
+		List<DataMap> result = techTalkMainService.doCheck(paraMap);
+		
+		mav.addObject(result);
+		System.out.println("나오냐"+result);
 		return mav;
 	}
 }

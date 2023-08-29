@@ -4,9 +4,9 @@ spring:
   profiles:
     active: local
 server:
-  port: 8880
+  port: 8882
   servlet:
-    context-path: /
+    context-path: /techtalk
     
 --- 
 spring:
