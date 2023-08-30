@@ -2459,16 +2459,56 @@
 		subject_seqno = #{subject_seqno}::INT
 	</update>
 	
-	<select id="SubjectFrontSQL,selectCheck"
-		parameterType="dataMap" resultType="dataMap">
+	<select id="SubjectFrontSQL.doGetStdMiddleCodeInfo" parameterType="dataMap" resultType="dataMap">
+		<!-- 2021-07-05  이효상 -->
 		/*
-		2023.08.28 박성민
-		SQL ID : SubjectFrontSQL,selectCheck
-		사업참여
+			SQL ID : SubjectFrontSQL.doGetStdCodeInfo
+			표준산업분류코드 종분류 정보가져오기
 		*/
-		select *
-		from tblmember
-		where tblmember.id like CONCAT ('%',#{id},'%')
+		<![CDATA[
+			SELECT
+				*
+			FROM
+				TBLCOMM_STD_CLS
+			WHERE CODE_DEPTH = #{depth}
+		]]>
+		<if test="parent_code_key != ''">
+			AND PARENT_CODE_KEY = #{parent_code_key}
+		</if>
+		ORDER BY CODE_KEY ASC
+	</select>
 	
+	<select id="SubjectFrontSQL.doGetKeywordList" parameterType="dataMap" resultType="dataMap">
+		<!-- 2023-08-29  유지민 -->
+		/*
+			SQL ID : SubjectFrontSQL.doGetKeywordList
+			키워드 정보 연구원 가져오기
+		*/
+		<![CDATA[
+			SELECT RESEARCH_SEQNO, RE_INTRO_FIELD, RE_BELONG ,RE_POSITION ,RE_NM ,RE_TEL ,RE_EMAIL ,EXCEL_YN ,TECH_NM1, TECH_NM2, TECH_NM3, KEYWORD
+			FROM TBRESEARCH 
+		]]>
+		<if test="keyword != ''">
+			WHERE KEYWORD = #{keyword}
+		</if>
+		ORDER BY APLICAT_DATE DESC
+		LIMIT 5;
+	</select>
+	
+	<select id="SubjectFrontSQL.doGetKeywordCount" resultType="int">
+		<!-- 2023-08-29  유지민 -->
+		/*
+			SQL ID : SubjectFrontSQL.doGetKeywordCount
+			키워드 정보 연구원 수 가져오기
+		*/
+		<![CDATA[
+			SELECT COUNT(*)
+			FROM TBRESEARCH 
+		]]>
+		<if test="parent_code_key != ''">
+			AND KEYWORD = #{keyword}
+		</if>
+		ORDER BY APLICAT_DATE DESC
+		LIMIT 5;
 	</select>
 </mapper>	
