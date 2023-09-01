@@ -6,9 +6,7 @@
 <script>
 
 $(document).ready(function(){
-	setTimeout(function(){
-		$('#sc_keywd').focus();
-	}, 500);	
+
 });
 
 
@@ -20,8 +18,8 @@ $('#stdClassSrch').click(function() {
 });
 
 //키워드분야 클릭
-function keywordClick(research_no, research_seqno, keyword){
- 	var url = "/techtalk/doKeywordResult.do";
+function keywordClick(corporate_no, tech_class_nm){
+ 	var url = "/techtalk/doCorporateKeywordResult.do";
  	var form = $('#frm')[0];
 	var data = new FormData(form);
 	$.ajax({
@@ -39,35 +37,26 @@ function keywordClick(research_no, research_seqno, keyword){
 				ahtml +="<caption class='caption_hide'>연구자 리스트</caption>"
 				ahtml +="<colgroup>"
 				ahtml +="<col style='width:5%' />"
-				ahtml +="<col style='width:10%' />"
 				ahtml +="<col style='width:20%' />"
-				ahtml +="<col style='width:15%' />"
-				ahtml +="<col style='width:15%' />"
 				ahtml +="<col style='width:15%' />"
 				ahtml +="<col style='width:15%' />"
 				ahtml +="</colgroup>"
 				ahtml +="<thead>"
 				ahtml +="<tr>"
 				ahtml +="<th>번호</th>"
-				ahtml +="<th>연구자명</th>"
-				ahtml +="<th>출원인</th>"
-				ahtml +="<th>기술분류1</th>"
-				ahtml +="<th>기술분류2</th>"
-				ahtml +="<th>기술분류3</th>"
+				ahtml +="<th>기술명</th>"
+				ahtml +="<th>업데이트 일자</th>"
 				ahtml +="<th>키워드</th>"
 				ahtml +="<tr>"
 				ahtml +="</thead>"
 				ahtml +="<tbody>"
 				for(var i=0; i<res.data.length;i++){
 				ahtml +="<tr>"
-					ahtml +=	"<td >"+res.data[i].research_seqno+"</td>"
+					ahtml +=	"<td >"+res.data[i].corporate_no+"</td>"
 					ahtml +=	"<td >"
-					ahtml +=	"<a href=javascript:void(0); onclick=researchDetail("+res.data[i].research_no+","+res.data[i].research_seqno+","+res.data[i].keyword+")>"+res.data[i].re_nm +"</a>"
+					ahtml +=	"<a href=javascript:void(0); onclick=researchDetail("+res.data[i].corporate_no+","+res.data[i].tech_class_nm+")>"+res.data[i].tech_class_nm +"</a>"
 					ahtml +=	"</td>"
-					ahtml +=	"<td >"+res.data[i].re_belong+"</td>"
-					ahtml +=	"<td >"+res.data[i].tech_nm1+"</td>"
-					ahtml +=	"<td >"+res.data[i].tech_nm2+"</td>"
-					ahtml +=	"<td >"+res.data[i].tech_nm3+"</td>"
+					ahtml +=	"<td >"+res.data[i].co_update_dt+"</td>"
 					ahtml +=	"<td >"+res.data[i].keyword+"</td>"
 				ahtml +="<tr>"
 				}
@@ -163,21 +152,15 @@ function researchDetail(research_no, research_seqno, keyword){
 							<caption class="caption_hide">연구자 리스트</caption>
 							<colgroup>
 								<col style="width:5%" />
-								<col style="width:10%" />
 								<col style="width:20%" />
-								<col style="width:15%" />
-								<col style="width:15%" />
 								<col style="width:15%" />
 								<col style="width:15%" />
 							</colgroup>
 							<thead>
 								<tr>
 									<th>번호</th>
-									<th>연구자명</th>
-									<th>출원인</th>	
-									<th>기술분류1</th>
-									<th>기술분류2</th>
-									<th>기술분류3</th>
+									<th>기술명</th>
+									<th>업데이트 일자</th>
 									<th>키워드</th>
 								</tr>
 							</thead>
@@ -186,15 +169,11 @@ function researchDetail(research_no, research_seqno, keyword){
 								<c:when test="${ not empty data }">
 									<c:forEach var="data" items="${ data }">
 										<tr>
-											<td>${ data.research_seqno }</td>
+											<td>${ data.corporate_no }</td>
 											<td>
-												<a href="javascript:void(0);" onclick="researchDetail('${data.research_no}','${data.research_seqno}','${data.keyword}')" title="연구자${data.re_nm }상세보기">${ data.re_nm }</a> 
+												<a href="javascript:void(0);" onclick="researchDetail('${data.corporate_no}','${data.corporate_no}'" title="연구자${data.tech_class_nm }상세보기">${ data.tech_class_nm }</a> 
 											</td>
-											<%-- <td>${ data.re_nm }</td> --%>
-											<td>${ data.re_belong }</td>
-											<td>${ data.tech_nm1 }</td>			
-											<td>${ data.tech_nm2 }</td>			
-											<td>${ data.tech_nm3 }</td>			
+											<td>${ data.co_update_dt }</td>			
 											<td>${ data.keyword }</td>			
 										</tr>
 									</c:forEach>

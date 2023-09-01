@@ -25,40 +25,15 @@
 			</h1>
 			
 			<div class="user_info">
-				<button id="loginButton" onclick="doLogin();" title="로그인버튼">
-						<i class="icon_user">
-							<svg version="1.1" id="Capa_2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve" tabindex="-1">
-								<g>
-									<g>
-										<path d="M437,331c-27.9-27.9-61.1-48.5-97.3-61c38.8-26.7,64.3-71.4,64.3-122C404,66.4,337.6,0,256,0S108,66.4,108,148
-											c0,50.5,25.5,95.3,64.3,122c-36.2,12.5-69.4,33.1-97.3,61C26.6,379.3,0,443.6,0,512h40c0-119.1,96.9-216,216-216s216,96.9,216,216
-											h40C512,443.6,485.4,379.3,437,331z M256,256c-59.6,0-108-48.4-108-108S196.4,40,256,40s108,48.4,108,108S315.6,256,256,256z"></path>
-									</g>
-								</g>
-							</svg>
-						</i>
-						<span class="user_name">로그인</span>
-				</button>
-				</div>
-				<div class="user_info">
-				<button id="loginButton" onclick="doJoin();" title="회원가입버튼">
-						<i class="icon_user">
-							<svg version="1.1" id="Capa_2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve" tabindex="-1">
-								<g>
-									<g>
-										<path d="M437,331c-27.9-27.9-61.1-48.5-97.3-61c38.8-26.7,64.3-71.4,64.3-122C404,66.4,337.6,0,256,0S108,66.4,108,148
-											c0,50.5,25.5,95.3,64.3,122c-36.2,12.5-69.4,33.1-97.3,61C26.6,379.3,0,443.6,0,512h40c0-119.1,96.9-216,216-216s216,96.9,216,216
-											h40C512,443.6,485.4,379.3,437,331z M256,256c-59.6,0-108-48.4-108-108S196.4,40,256,40s108,48.4,108,108S315.6,256,256,256z"></path>
-									</g>
-								</g>
-							</svg>
-						</i>
-						<span class="user_name">회원가입</span>
-				</button>
+				<button id="loginButton" onclick="doJoin();" title="회원가입버튼"><span class="user_name">회원가입</span></button><button id="loginButton" onclick="doLogin();" title="로그인버튼"><span class="user_name">로그인</span></button>
 			</div>
 			<!-- //user_info e:  -->
 		</div>
-		<div class="box_info">
+		
+
+		<!-- 메인페이지일때만 안나오게 변경 -->
+		<c:if test="${not empty navi.one}">
+			<div class="box_info">
 			<div class="inner_info">
 				<strong class="screen_out">페이지 네비게이션</strong>
 				<ul class="info_path">
@@ -88,5 +63,8 @@
 				</ul>
 			</div>
 		</div>
+		</c:if>
+		
+		<!-- 메인페이지일때만 안나오게 변경 -->
 	</div>
 </header>

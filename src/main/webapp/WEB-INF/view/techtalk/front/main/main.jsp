@@ -31,31 +31,39 @@ function test(){
 
 
 </script>
-<form id="frm" name="frm" action="/techtalk/tttttest.do" method="post">
-	<div id="compaVcContent" class="cont_cv">
+<form id="frm" name="frm" action="/techtalk/tttttest.do" method="post" class="main_form">
+	<div id="compaVcContent" class="cont_cv main_wrap">
 		<div id="mArticle" class="assig_app">
 			<h2 class="screen_out">본문영역</h2>
 			<div class="wrap_cont">
 				<!-- page_content s:  -->
-				<div style="padding-top:300px; display:flex; text-align:center;">
-					<div style="width:50%; min-height:300px; border:1px solid black; background-color:silver;">
-						<a href= "/techtalk/searchResearcher.do" style="font-size:30px;">연구자검색 </a>
+				<div class="main_vi_wrap">
+					<div class="main_txt_wrap">
+						<h2 class="main_title_txt"><span>미래 모빌리티 분야</span><br/>기술이전 · 거래 플랫폼</h2>
+						<p class="main_sub_txt">기술분야 별, 키워드 별로 연구자와 기업수요 정보를 검색,매칭하여 기술이전 및 거래를 이루어 보세요.</p>
 					</div>
-					<div style="width:50%; min-height:300px; border:1px solid black; background-color:silver;">
-						<a href="/techtalk/searchBusiness.do" style="font-size:30px;">수요기업검색</a>
+					<div class="main_btn_wrap">
+						<a href= "/techtalk/searchResearcher.do" class="main_btn">
+							<span class="main_btn_obj mbo_01">연구자검색 이미지</span>
+							<span class="main_btn_title">연구자검색 </span>
+						</a>
+						<a href="/techtalk/searchBusiness.do" class="main_btn">
+							<span class="main_btn_obj mbo_02">수요기업검색 이미지</span>
+							<span class="main_btn_title">수요기업검색 </span>
+						</a>
 					</div>
 				</div>
 				
-				<div>
+				<!-- <div>
 				<input type="text" id="id" name="id" value="" />
 				<br/>
 				<a href=javascript:void(0); onclick="test();"  >버튼</a>
-				</div>
+				</div> 
 				
 				
 				<div>
 				<textarea id="result" name="result" value=""></textarea>
-				</div>
+				</div>-->
 				<!-- //page_content e:  -->
 			</div>
 		</div>
