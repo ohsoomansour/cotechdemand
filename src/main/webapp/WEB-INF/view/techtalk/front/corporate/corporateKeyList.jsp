@@ -34,7 +34,7 @@ function moveDetail(corporate_no, tech_class_nm){
 
 //키워드분야 클릭
 function keywordClick(){
- 	var url = "/techtalk/doKeywordResult.do";
+	var url = "/techtalk/doCoKeywordResult.do";
  	var form = $('#frm')[0];
  	console.log(form);
 	var data = new FormData(form);
@@ -53,34 +53,26 @@ function keywordClick(){
 				ahtml +="<caption class='caption_hide'>연구자 리스트</caption>"
 				ahtml +="<colgroup>"
 				ahtml +="<col style='width:5%' />"
-				ahtml +="<col style='width:10%' />"
 				ahtml +="<col style='width:20%' />"
-				ahtml +="<col style='width:15%' />"
-				ahtml +="<col style='width:15%' />"
 				ahtml +="<col style='width:15%' />"
 				ahtml +="<col style='width:15%' />"
 				ahtml +="</colgroup>"
 				ahtml +="<thead>"
 				ahtml +="<tr>"
 				ahtml +="<th>번호</th>"
-				ahtml +="<th>연구자명</th>"
-				ahtml +="<th>출원인</th>"
-				ahtml +="<th>기술분류1</th>"
-				ahtml +="<th>기술분류2</th>"
-				ahtml +="<th>기술분류3</th>"
+				ahtml +="<th>기술명</th>"
+				ahtml +="<th>최근 업데이트 날짜</th>"
 				ahtml +="<th>키워드</th>"
 				ahtml +="<tr>"
 				ahtml +="</thead>"
 				ahtml +="<tbody>"
 				for(var i=0; i<res.data.length;i++){
 				ahtml +="<tr>"
-					ahtml +=	"<td >"+res.data[i].research_seqno+"</td>"
-					/* ahtml +=	"<a href="javascript:void(0);" onclick="researchDetail(res.data[i].research_seqno)" title="연구자res.data[i].research_seqno 상세보기">"res.data[i].research_seqno"</a>" */
-					ahtml +=	"<td >"+res.data[i].re_nm+"</td>"
-					ahtml +=	"<td >"+res.data[i].re_belong+"</td>"
-					ahtml +=	"<td >"+res.data[i].tech_nm1+"</td>"
-					ahtml +=	"<td >"+res.data[i].tech_nm2+"</td>"
-					ahtml +=	"<td >"+res.data[i].tech_nm3+"</td>"
+					ahtml +=	"<td >"+res.data[i].corporate_no+"</td>"
+					ahtml +=	"<td >"
+					ahtml +=	"<a href="javascript:void(0);" onclick="researchDetail(res.data[i].corporate_no)" title="res.data[i].research_seqno ">"res.data[i].research_seqno"</a>"
+					ahtml +=	"</td >"
+					ahtml +=	"<td >"+res.data[i].co_update_dt+"</td>"
 					ahtml +=	"<td >"+res.data[i].keyword+"</td>"
 				ahtml +="<tr>"
 				}
@@ -138,7 +130,7 @@ function keywordClick(){
 							<caption class="caption_hide">연구자 리스트</caption>
 							<colgroup>
 								<col style="width:5%" />
-								<col style="width:10%" />
+								<col style="width:20%" />
 								<col style="width:15%" />
 								<col style="width:15%" />
 							</colgroup>

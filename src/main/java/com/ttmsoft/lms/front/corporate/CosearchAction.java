@@ -96,14 +96,14 @@ public class CosearchAction extends BaseAct{
 	 * @Explain  : 
 	 *
 	 */
-	/*@RequestMapping (value = "/doKeywordResult.do")
-	public ModelAndView doGetKeyword(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
+	@RequestMapping (value = "/doCoKeywordResult.do")
+	public ModelAndView doGetCoKeyword(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView mav = new ModelAndView("jsonView");
 		
 		try {
 			System.out.println("paraMap:" + paraMap);
 			
-			List<DataMap> data = cosearchService.doGetKeywordList(paraMap);
+			List<DataMap> data = cosearchService.doGetCosearchKeywordList(paraMap);
 			mav.addObject("data", data);
 			
 		} catch (Exception e) {
@@ -112,6 +112,6 @@ public class CosearchAction extends BaseAct{
 		}
 	
 		return mav;
-	}*/
+	}
 	
 }

@@ -47,7 +47,7 @@ $('#stdClassSrch').click(function() {
 
 //키워드분야 클릭
 function keywordClick(){
- 	var url = "/techtalk/doKeywordResult.do";
+ 	var url = "/techtalk/doCoKeywordResult.do";
  	var form = $('#frm')[0];
  	console.log(form);
 	var data = new FormData(form);
