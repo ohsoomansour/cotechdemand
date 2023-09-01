@@ -90,14 +90,37 @@
 								<li><span class="at_title">팩스</span>02-6405-3277</li>
 							</ul>
 				
+<<<<<<< HEAD
+							<span class="txt_addr">대표전화 : 02-6405-3271 F.02-6405-3277<br/>
+							(우) 06234 서울특별시 강남구 테헤란로10길 18, 6층</span>
+=======
+>>>>>>> refs/remotes/origin/develop
 						
 						</div>
+<<<<<<< HEAD
+						<small class="txt_copyright">COPYRIGHT(C) 2023. ALL RIGHT RESERVED.</small>
+=======
 						<p class="tx">주식회사 티비즈의 특허 전문가와 워트인텔리전스가 함께  만들었습니다.</p>
 						<small class="txt_copyright">Copyright©2023 TBIZ All Right Reserved.</small>
 						
+>>>>>>> refs/remotes/origin/develop
 					</div>
+<<<<<<< HEAD
+					<div class="wa_banner">
+						<a title="새창" href="http://www.wa.or.kr/board/list.asp?BoardID=0006" target="_blank">
+							<img class="wa" alt="(사)한국장애인단체총연합회 한국웹접근성인증평가원 웹 접근성 우수사이트 인증마크(WA인증마크)" 
+							 src="${pageContext.request.contextPath}/css/images/common/wa_mark.png" width="120px" height="84px" /> 
+						</a>
+					</div>
+                        <div class="relation_svc">
+	                        <strong class="tit_relation"><a href="javascript:void(0);" class="link_tit" aria-haspopup="true" aria-expanded="false" title="Family Site">Family Site<span class="icon ico_arr"></span></a></strong>
+	                        <ul class="list_relation">
+	                             <li><a href="https://www.keywert.com/" target="_blank" class="link_relation" title="Keywert">Keywart</a></li>
+	                        </ul>
+                    </div>
+=======
                         
+>>>>>>> refs/remotes/origin/develop
                 </div>
             </div>
         </footer>
-		<!-- //compaVcCFooter e:  -->
