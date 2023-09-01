@@ -2482,7 +2482,7 @@
 		<!-- 2023-08-29  유지민 -->
 		/*
 			SQL ID : SubjectFrontSQL.doGetKeywordList
-			키워드 정보 연구원 가져오기
+			키워드 연구원 정보 가져오기
 		*/
 		<![CDATA[
 			SELECT RESEARCH_SEQNO, RE_INTRO_FIELD, RE_BELONG ,RE_POSITION ,RE_NM ,RE_TEL ,RE_EMAIL ,EXCEL_YN ,TECH_NM1, TECH_NM2, TECH_NM3, KEYWORD
@@ -2499,7 +2499,7 @@
 		<!-- 2023-08-29  유지민 -->
 		/*
 			SQL ID : SubjectFrontSQL.doGetKeywordCount
-			키워드 정보 연구원 수 가져오기
+			키워드 연구원 카운트 가져오기
 		*/
 		<![CDATA[
 			SELECT COUNT(*)
@@ -2510,5 +2510,37 @@
 		</if>
 		ORDER BY APLICAT_DATE DESC
 		LIMIT 5;
+	</select>
+	
+	<select id="SubjectFrontSQL.doGetCosearchKeywordList" parameterType="dataMap" resultType="dataMap">
+		<!-- 2023-08-29  유지민 -->
+		/*
+			SQL ID : SubjectFrontSQL.doGetCosearchKeywordList
+			키워드 기업 정보 가져오기
+		*/
+		<![CDATA[
+			SELECT CORPORATE_NO, TECH_CLASS_NM, CO_BELONG ,CO_POSITION ,CO_NM ,CO_TEL ,CO_EMAIL ,TECH_NM1, TECH_NM2, TECH_NM3, KEYWORD, CO_UPDATE_DT
+			FROM TBCORPORATE 
+		]]>
+		<if test="keyword != ''">
+			WHERE KEYWORD = #{keyword}
+		</if>
+		ORDER BY CO_UPDATE_DT DESC
+	</select>
+	
+	<select id="SubjectFrontSQL.doGetCorporateKeywordList" parameterType="dataMap" resultType="dataMap">
+		<!-- 2023-08-29  유지민 -->
+		/*
+			SQL ID : SubjectFrontSQL.doGetCorporateKeywordList
+			키워드 기업수요 정보 가져오기
+		*/
+		<![CDATA[
+			SELECT CORPORATE_NO, CO_BELONG ,CO_POSITION ,CO_NM ,CO_TEL ,CO_EMAIL ,TECH_NM1, TECH_NM2, TECH_NM3, KEYWORD, CO_UPDATE_DT, TECH_CLASS_NM
+			FROM TBCORPORATE 
+		]]>
+		<if test="keyword != ''">
+			WHERE KEYWORD = #{keyword}
+		</if>
+		ORDER BY CO_UPDATE_DT DESC
 	</select>
 </mapper>	
