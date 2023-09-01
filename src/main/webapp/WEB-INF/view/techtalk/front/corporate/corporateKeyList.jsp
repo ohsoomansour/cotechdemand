@@ -133,7 +133,7 @@ function corporateDetail(corporate_no, tech_class_nm){
 					</div>	
 					<div class="subject_corp">
 						<h3 class="tbl_ttc">
-							연구자 목록 
+							연구자 목록  
 						</h3>
 					</div>			
 				<!-- page_content s:  -->
