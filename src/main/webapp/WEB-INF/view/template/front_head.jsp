@@ -30,8 +30,10 @@
 			<!-- //user_info e:  -->
 		</div>
 		
-		<!-- 서브페이지일때만 노출되도록 변경해주세요 -->
-		<%-- <div class="box_info">
+
+		<!-- 메인페이지일때만 안나오게 변경 -->
+		<c:if test="${not empty navi.one}">
+			<div class="box_info">
 			<div class="inner_info">
 				<strong class="screen_out">페이지 네비게이션</strong>
 				<ul class="info_path">
@@ -60,7 +62,9 @@
 					</li>
 				</ul>
 			</div>
-		</div> --%>
-		<!-- 서브페이지일때만 노출되도록 변경해주세요 -->
+		</div>
+		</c:if>
+		
+		<!-- 메인페이지일때만 안나오게 변경 -->
 	</div>
 </header>

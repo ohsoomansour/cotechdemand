@@ -10,7 +10,7 @@
 	long tstamp =  date.getTime();
 %>
 
-<script src="${pageContext.request.contextPath}/plugins/icheck/icheck.min.js"></script>
+<%-- <script src="${pageContext.request.contextPath}/plugins/icheck/icheck.min.js"></script> --%>
 <script src="/js/lms/control/LocalStorageCtrl.js?ts=<%=tstamp%>"></script>
 
 <script>
@@ -102,12 +102,12 @@ $(document).ready(function() {
 		e.preventDefault();
 		LoginCtrl.doLogin();
 	});
-
+/* 
 	$('input').iCheck({
 		checkboxClass: 'icheckbox_square-blue',
 		radioClass: 'iradio_square-blue',
 		increaseArea: '20%' // optional 
-	});
+	}); */
 	
 	$('#buttonFindId').click(function() {
 		var $href = $(this).attr('href');
@@ -469,7 +469,7 @@ function moveBoard(board_seq){
         <div class="compaLginBg"></div>
 		<div class="compaLginCont">
                <div class="compaLginHeader">
-                   <h1 class="login_logo"><img src="${pageContext.request.contextPath}/css/images/common/login_logo.png" alt="바우처사업관리시스템"></h1>
+                   <h1 class="login_logo"><img src="${pageContext.request.contextPath}/css/images/common/logo_header.png" alt="TECHTALK"></h1>
                </div>
                <div class="compaLginBox">
                    <div class="login_form_box">
@@ -488,43 +488,26 @@ function moveBoard(board_seq){
                                    <label><input type="password" class="form-control" id="pw" name="pw" placeholder="비밀번호를 입력해주세요." title="비밀번호" ></label>
                                </div>
                            </div>
-                           <a href="#layer2" class="btn_file_pw" id="buttonFindId" title="아이디 찾기">아이디 찾기</a>
-                           <a href="#layer3" class="btn_file_pw" id="buttonFindPw" title="패스워드 찾기">패스워드 찾기</a>
+                           <div class="login_util">
+                           		<div class="lu_left">
+                           			<div class="box_checkinp">
+					            		<input type="checkbox" class="inp_check" name="checkbox" id="c4"  title="아이디 기억하기">
+					            		<label for="c4" class="lab_check">
+					            			<span class="icon ico_check"></span>아이디 기억하기
+					            		</label>
+					                </div>
+                           		</div>
+                           		<div class="lu_right">
+	                           		<a href="#layer2" class="btn_file_pw" id="buttonFindId" title="아이디 찾기">아이디 찾기</a>
+	                           		<a href="#layer3" class="btn_file_pw" id="buttonFindPw" title="패스워드 찾기">패스워드 찾기</a>
+                           		</div>
+                           </div>
+                           
                            <button type="button" class="btn_login"  id="btnLogin" title="로그인">로그인</button>
                            <div class="join_ad_box">
                                <span>아직 계정이 없으신가요?</span> <a href="javascript:void(0);" onclick="memberJoin();" title="회원가입">회원가입</a>
                            </div>
                        </form>
-                       </div>
-                   </div>
-                   <div class="vis_not_box">
-                       <div class="vis">
-                           <div class="vis_text">
-                               <p><strong>기업 간 네트워크 강화</strong></p>
-                               <p><strong>연구개발서비스 시장 확대</strong></p>
-                               <p><strong>바우처사업관리시스템이 함께합니다.</strong></p>
-                           </div>
-                       </div>
-                       <div class="login_notice_box wrap_support">
-	 					   <div class="wrap_btn _center" style="float: right">
-								<p class="more_right"><a href="javascript:void(0);" onclick="moveBoard('100');" class="btn_step" title="공지사항 더보기">더보기<span class="icon ico_go"></span></a></p> 
-						   </div>
-                           <ul class="list_question">
-								<c:choose>
-									<c:when test="${ not empty notice }">
-			 							<c:forEach var="notice" items="${ notice }" end="4">
-											<li><a href="javascript:void(0);" onClick="moveDetail('${ notice.bitem_seq }');return false"  class="link_txt" target="_blank" title="공지사항보기">
-											<c:if test="${ notice.new_mark eq 'Y' }"><span class="red">[NEW]&nbsp;</span></c:if>
-											${ notice.bitem_title }</a><span class="link_date">${ notice.regdtm }</span></li>
-										</c:forEach>
-									</c:when>
-									<c:otherwise>
-										<li style="text-align: center; font-size: 16px">
-											작성된 공지사항이 없습니다.
-										</li>
-									</c:otherwise>
-								</c:choose>                                           
-                           </ul>
                        </div>
                    </div>
                </div>
@@ -637,39 +620,31 @@ function moveBoard(board_seq){
 		    	</div>
 			</div>	
 		<!-- compaVcFooter s:  -->
-           <footer id="compaVcFoot" class="foot_cv">
-               <div class="wrap_copyright">
-                   <div class="inner_copyright">
+          <footer id="compaVcFoot" class="foot_cv">
+            <div class="wrap_copyright">
+            	<div class="ckwrap">
+	            	<div class="inner_ckwrap">
+	            		<a href="/techtalk/terms.do" class="txt_addr" title="이용약관">이용약관</a> 
+						<a href="/techtalk/policy.do" class="txt_addr"  title="개인정보처리방침">개인정보처리방침</a>
+						<div class="relation_svc">
+	                        <strong class="tit_relation"><a href="javascript:void(0);" class="link_tit" aria-haspopup="true" aria-expanded="false" title="Family Site">관련사이트<span class="icon ico_arr"></span></a></strong>
+	                        <ul class="list_relation">
+	                            <li><a href="www.keywert.com" target="_blank" class="link_relation" title="키워드 링크 새창열림">키워드 링크</a></li>
+	                        </ul>
+	                   	</div>
+	            	</div>
+            	</div>
+                <div class="inner_copyright">
 					<div class="foot_logo">
-						<a href="javascript:void(0);"><img src="${pageContext.request.contextPath}/css/images/common/footer_logo.png" alt="바우처사업관리시스템"></a>
+						<div style="display:inline-block">
+						<span><img src="${pageContext.request.contextPath}/css/images/common/footer_logo.png" alt="바우처사업관리시스템"></span>
+						</div>
 					</div>
-                       <div class="info_copyright">
-							<div class="info_addr">
-								<span class="txt_addr">대표전화 : 02-736-9037 F.02-736-9799<br/>
-								(우) 03737 서울특별시 서대문구 충정로 13(충정로3가) 삼창빌딩 7층, 10층</span>
-							</div>
-							<small class="txt_copyright">COPYRIGHT(C) 2021. ALL RIGHT RESERVED.</small>
-						</div>
-						<div class="wa_banner">
-							<a title="새창" href="http://www.wa.or.kr/board/list.asp?BoardID=0006" target="_blank">
-								<img class="wa" alt="(사)한국장애인단체총연합회 한국웹접근성인증평가원 웹 접근성 우수사이트 인증마크(WA인증마크)" 
-								 src="${pageContext.request.contextPath}/css/images/common/wa_mark.png" width="120px" height="84px" /> 
-							</a>
-						</div>
-                           <div class="relation_svc">
-                           <strong class="tit_relation"><a href="javascript:void(0);" class="link_tit" aria-haspopup="true" aria-expanded="false">Family Site<span class="icon ico_arr"></span></a></strong>
-                           <ul class="list_relation">
-                               <li><a href="https://compa.re.kr" target="_blank" class="link_relation" title="새 창 열림 과학기술일자리진흥원 링크">과학기술일자리진흥원</a></li>
-                            <li><a href="https://rnd.compa.re.kr" target="_blank" class="link_relation" title="새 창 열림 미래기술마당 링크">미래기술마당</a></li>
-                           </ul>
-                       </div>
-                   </div>
-               </div>
-               <div class="dim-layer-common alertCls">
+					<div class="dim-layer-common alertCls">
 					    <div class="dimBgg"></div>
 					    <div id="layer99" class="pop-layer" style="height:220px">
 					        <div class="pop-container">
-					        <div class="pop-title"><h3>알림</h3><button class="btn-layerClose" title="팝업닫기"><span class="icon ico_close">팝업닫기</span></button></div>
+					        <div class="pop-title"><h3>알림</h3></div>
 					            <div id="tap1_1" style="display: block">
 									<div class="table2 mTop5">
 										<div class="line form-inline alignCenter">
@@ -679,7 +654,7 @@ function moveBoard(board_seq){
 										</div>
 										<div class="tbl_public" >
 											<div style="text-align:center;margin-top:20px;">
-							                	<button type="button" class="btn_step" id="cancelAlert" name="btnCancel" title="팝업닫기">닫기</button>
+							                	<button type="button" class="btn_step" id="cancelAlert" name="btnCancel" title="닫기">닫기</button>
 						                	</div>
 						                </div>
 									</div>
@@ -687,7 +662,25 @@ function moveBoard(board_seq){
 					        </div>
 				    	</div>
 					</div>
-           </footer>
+                    <div class="info_copyright">
+						<div class="info_addr">
+							<ul>
+								<li><span class="at_title">주소</span>서울특별시 강남구 테헤란로 10길 18, 6층 (역삼동, 하나빌딩)</li>
+								<li><span class="at_title">이메일</span>tbiz@tbizip.com</li>
+								<li><span class="at_title">전화</span>02-6405-3271</li>
+								<li><span class="at_title">팩스</span>02-6405-3277</li>
+							</ul>
+				
+						
+						</div>
+						<p class="tx">주식회사 티비즈의 특허 전문가와 워트인텔리전스가 함께  만들었습니다.</p>
+						<small class="txt_copyright">Copyright©2023 TBIZ All Right Reserved.</small>
+						
+					</div>
+                        
+                </div>
+            </div>
+        </footer>
 		<!-- //compaVcCFooter e:  -->
 	</div>
 
