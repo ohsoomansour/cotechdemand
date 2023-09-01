@@ -6,44 +6,31 @@
 <script>
 
 $(document).ready(function(){
-	setTimeout(function(){
-		$('#sc_keywd').focus();
-	}, 500);	
+
 });
 
-function testInputClick(){
-	var url = "/techtalk/researchListCheck.do";
-	var form = $('#frm')[0];
-	var data = new FormData(form);
-	$.ajax({
-		url : url,
-       type: "post",
-       processData: false,
-       contentType: false,
-       data: data,
-       dataType: "json",
-       success : function(res){
-          /*console.log(res);
-          console.log(res.dataMapList);
-          console.log(res.dataMapList[0]);
-          $('#result').append(res.dataMapList[0].member_seqno);*/
-       },
-       error : function(){
-    	alert('실패했습니다.');    
-       },
-       complete : function(){
+//기업 상세보기
+function moveDetail(corporate_no, tech_class_nm){
+	var frm = document.createElement('form'); 
+	frm.name = 'frm3'; 
+	frm.method = 'post'; 
+	frm.action = '/front/viewBoardItem.do'; 
 
-       }
-	});  
-	
+	var input1 = document.createElement('input'); 
+	var input2 = document.createElement('input'); 
+
+	input1.setAttribute("type", "hidden"); 
+	input1.setAttribute("name", "corporate_no"); 
+	input1.setAttribute("value", "corporate_no"); 
+	input2.setAttribute("type", "hidden"); 
+	input2.setAttribute("name", "tech_class_nm"); 
+	input2.setAttribute("value", "tech_class_nm"); 
+
+	frm.appendChild(input1); 
+	frm.appendChild(input2); 
+
+	document.body.appendChild(frm); 
 }
-
-//기술분야 분류 검색
-$('#stdClassSrch').click(function() {
-	var $href = $(this).attr('href');
-	var op = $(this);
-    layer_popup($href, op);
-});
 
 //키워드분야 클릭
 function keywordClick(){
@@ -112,16 +99,8 @@ function keywordClick(){
        }
 	});
 }
-
-function researchDetail(research_seqno){
-	$('#research_seqno').val(research_seqno);
-}
-    
 </script>
-<form action="/techtalk/researchDetail.do" id="frm2" name="frm2" method="post">
-	<input type="hidden" id="research_seqno" name="research_seqno" value=""/>
-</form>
-<form id="frm" name="frm" action ="/techtalk/doKeywordResult.do" method="post" >
+<form id="frm" name="frm" action ="/techtalk/doCoKeywordResult.do" method="post" >
 <div id="compaVcContent" class="cont_cv">
 	<div id="mArticle" class="assig_app">
 		<h2 class="screen_out">본문영역</h2>
@@ -134,10 +113,8 @@ function researchDetail(research_seqno){
 				<a href="/techtalk/businessTechList.do" title="기업수요 검색 버튼">기업수요 검색</a>
             </div>    
             
-            <a href="/techtalk/reTechList.do" id="techFieldTab" >기술분야</a>
-            <a href="/techtalk/reKeyList.do" id="keyFieldTab" >키워드분야</a>
-            
-            <!-- <a href="javascript:void(0);" onClick="keywordClick();" class="btn_step" title="검색">검색</a> -->
+            <a href="/techtalk/coTechList.do" id="techFieldTab" >기술분야</a>
+            <a href="/techtalk/coKeyList.do" id="keyFieldTab" >키워드분야</a>
             
             <div class="area_cont">
 					<div class="search_box">
@@ -146,16 +123,13 @@ function researchDetail(research_seqno){
 								<input type="text" class="b_name" id="keyword" name="keyword" placeholder="키워드를 입력하세요." value="" title="검색어"/>
 							</div>
 							<div class="btn_wrap">
-								<!-- <button type="submit" class="btn_step" onclick="keywordClick();">
-									<span>검색</span>
-								</button> -->
 								<a href="javascript:void(0);" onClick="keywordClick();">검색</a>
 							</div>
 						</div>
 					</div>	
 					<div class="subject_corp">
 						<h3 class="tbl_ttc">
-							연구자 목록 
+							기업수요 목록 
 						</h3>
 					</div>			
 				<!-- page_content s:  -->
@@ -165,20 +139,14 @@ function researchDetail(research_seqno){
 							<colgroup>
 								<col style="width:5%" />
 								<col style="width:10%" />
-								<col style="width:20%" />
-								<col style="width:15%" />
-								<col style="width:15%" />
 								<col style="width:15%" />
 								<col style="width:15%" />
 							</colgroup>
 							<thead>
 								<tr>
 									<th>번호</th>
-									<th>연구자명</th>
-									<th>출원인</th>	
-									<th>기술분류1</th>
-									<th>기술분류2</th>
-									<th>기술분류3</th>
+									<th>기술명</th>
+									<th>최근 업데이트 날짜</th>
 									<th>키워드</th>
 								</tr>
 							</thead>
@@ -187,13 +155,11 @@ function researchDetail(research_seqno){
 								<c:when test="${ not empty data }">
 									<c:forEach var="data" items="${ data }">
 										<tr>
-											<td>${ data.research_seqno }</td>
-											<%-- <a href="javascript:void(0);" onclick="researchDetail('${data.research_seqno}')" title="연구자${data.re_nm }상세보기">${ data.re_nm }</a> --%> 
-											<td>${ data.re_nm }</td>
-											<td>${ data.re_belong }</td>
-											<td>${ data.tech_nm1 }</td>			
-											<td>${ data.tech_nm2 }</td>			
-											<td>${ data.tech_nm3 }</td>			
+											<td>${ data.corporate_no }</td>
+											<td>
+												<a href="javascript:void(0);" onClick="moveDetail('${ data.corporate_no }','${ data.tech_class_nm }');return false" onkeypress="this.onclick;" title="상세보기">${ data.tech_class_nm }</a>
+											</td>
+											<td>${ data.co_update_dt }</td>			
 											<td>${ data.keyword }</td>			
 										</tr>
 									</c:forEach>
