@@ -297,6 +297,143 @@ public class CommonUtil {
 	      return result;
 	}
 	
+	/**
+	 * TLO 이메일 전송
+	 */
+	public int doTloMailSender(DataMap paraMap)throws MailSendException,SMTPSenderFailedException{
+		int result = 0;
+		String charSet = "UTF-8" ;
+	      try {
+	         //메일 환경 변수 설정입니다.
+	    	  Properties props = new Properties();
+		         
+	         //mail 수신자 ID, PW 설정
+	         props.setProperty("id", "jimin16y@gmail.com");
+	         props.setProperty("pw", "7985tkfkd!!");
+	         
+	         //메일 프로토콜
+	         props.setProperty("mail.transport.protocol", "smtp");
+	         
+	         //메일 호스트 주소를 설정합니다.
+	         props.setProperty("mail.host", "192.68.1.34");
+	         
+	         // ID, Password 설정이 필요합니다.
+	         props.put("mail.smtp.auth", "true");
+	         
+	         // port는 465입니다.
+	         props.put("mail.smtp.port", "25");
+	         //props.put("mail.smtp.ssl.enable", "true");
+	         
+	         // id와 pw를 설정하고 session을 생성합니다.
+	         Session session = Session.getInstance(props, new Authenticator() {
+	            protected PasswordAuthentication getPasswordAuthentication() {
+	               return new PasswordAuthentication(props.getProperty("id"), props.getProperty("pw"));
+	            }
+	         });
+
+	         // 디버그 모드입니다.
+	         //session.setDebug(true);
+	         // 메일 메시지를 만들기 위한 클래스를 생성합니다.
+	         String fromId = "jimin16y@gmail.com";
+	         //String fromName = "과학기술일자리진흥원";
+	         
+	         MimeMessage message = new MimeMessage(session);
+	         
+	         // 송신자 설정
+	         message.setFrom(getAddress(fromId));
+	         //message.setFrom(fromId );
+	         
+	         // 수신자 설정
+	         //message.setRecipient(Message.RecipientType.TO, new InternetAddress(paraMap.get("user_email").toString()));
+	         message.setRecipient(Message.RecipientType.TO, new InternetAddress("lovewndn@naver.com"));
+	                  
+	         // 메일 제목을 설정합니다.
+	         message.setSubject(paraMap.getstr("subject"),charSet);
+
+	         // 메일 내용을 설정을 위한 클래스를 설정합니다.
+	         message.setContent(new MimeMultipart());
+	         // 메일 내용을 위한 Multipart클래스를 받아온다. (위 new MimeMultipart()로 넣은 클래스입니다.)
+	         Multipart mp = (Multipart) message.getContent();
+	         System.out.println("paraMap:"+paraMap);
+	         // html 형식으로 본문을 작성해서 바운더리에 넣습니다.
+	         String mailBody = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\r\n" + 
+	         		"<html xmlns=\"http://www.w3.org/1999/xhtml\">\r\n" + 
+	         		"<head>\r\n" + 
+	         		"   <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\r\n" + 
+	         		"   <title>TLO 기술이전 문의</title>\r\n" + 
+	         		"   <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\r\n" + 
+	         		"  </head>\r\n" + 
+	         		"  <body style=\"padding: 0;margin: 0;\">\r\n" + 
+	         		"   <!-- OUTERMOST CONTAINER TABLE -->\r\n" + 
+	         		"   <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" id=\"bodyTable\">\r\n" + 
+	         		"     <tr>\r\n" + 
+	         		"      <td>\r\n" + 
+	         		"        <!-- 600px - 800px CONTENTS CONTAINER TABLE -->\r\n" + 
+	         		"        <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"700\" height=\"700\" style=\"background: rgb(201 201 201)\">\r\n" + 
+	         		"         <tr>\r\n" + 
+	         		"           <td>\r\n" + 
+	         		"            <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"700\" height=\"700\">\r\n" + 
+	         		"               <tr>\r\n" + 
+	         		"                  <td style=\"vertical-align: top;\">\r\n" + 
+	         		"                     <table style=\"background: #fff; border-radius: 10px; height:680px; width:680px; margin:10px\">\r\n" + 
+	         		"                        <tr>\r\n" + 
+	         		"                           <td style=\"vertical-align: top;\">\r\n" + 
+	         		"                              <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"width: 100%;\">\r\n" + 
+	         		"                                 <tr>\r\n" + 
+	         		"                                    <td style='text-align:left;font-family:Noto Sans KR,\"Noto Sans KR\", -apple-system, helvetica, \"Apple SD Gothic Neo\", sans-serif;font-size:18px; color:#000; padding: 20px  ;'>\r\n" + 
+	         		"										<p style=\"border-bottom: 1px solid #565656;padding-bottom: 15px;\">"+paraMap.getstr("subject")+"</p>\r\n" + 
+	         		"									</td>   \r\n" + 
+	         		"                                 </tr>\r\n" + 
+	         		"                                 <tr>\r\n" + 
+	         		"                                    <td style='text-align:left;font-family:Noto Sans KR,\"Noto Sans KR\", -apple-system, helvetica, \"Apple SD Gothic Neo\", sans-serif;font-size:16px; padding: 0px 20px 40px;'>\r\n" + 
+	         		"                                       "+paraMap.getstr("text")+"\r\n" + 
+	         		"                                    </td>\r\n" + 
+	         		"                                 </tr>\r\n" + 
+	         		"                                 <tr>\r\n" + 
+	         		"                                    <td style='text-align:center;font-family:\"Noto Sans KR-Regular\",Noto Sans KR,\"Noto Sans KR\", -apple-system, helvetica, \"Apple SD Gothic Neo\", sans-serif;font-size:12px; color:#5c5c5c;    padding: 20px;'>\r\n" + 
+	         		"                                       \r\n" + 
+	         		"                                       <div style=\" border-radius: 10px; background: #e9e9e9; padding:20px\">\r\n" + 
+	         		"                                          <p style=\"margin:0 0 5px\">본 메일은 회신되지 않는 발신전용 메일입니다.</p>\r\n" + 
+	         		"                                          <p style=\"margin:0 0 5px\">과학기술일자리진흥원: 서울특별시 서대문구 충정로13(충정로3가) 삼창빌딩 7층, 10층</p>\r\n" + 
+	         		"                                          <p style=\"margin:0 0 5px\">\r\n" + 
+	         		"                                             <a href=\"http://rndvoucher.compa.re.kr/\" style=\"text-decoration: none;\">바우처사업관리시스템 <strong>SITE</strong> 바로가기</a>\r\n" + 
+	         		"                                          </p>\r\n" + 
+	         		"                                       </div>   \r\n" + 
+	         		"                                    </td>\r\n" + 
+	         		"                                 </tr>\r\n" + 
+	         		"                              </table>\r\n" + 
+	         		"                           </td>\r\n" + 
+	         		"                        </tr>\r\n" + 
+	         		"                     </table>\r\n" + 
+	         		"                  </td>\r\n" + 
+	         		"               </tr>\r\n" + 
+	         		"            </table>\r\n" + 
+	         		"           </td>\r\n" + 
+	         		"           <td></td>\r\n" + 
+	         		"         </tr>\r\n" + 
+	         		"        </table>\r\n" + 
+	         		"  \r\n" + 
+	         		"      </td>\r\n" + 
+	         		"     </tr>\r\n" + 
+	         		"   </table>\r\n" + 
+	         		"  </body>\r\n" + 
+	         		"</html>";
+	         
+	         mp.addBodyPart(getContents(mailBody));;
+	         
+	         // 메일을 보냅니다.
+	         Transport.send(message);
+	         result=1001;//메일전송성공시
+
+	      } catch (Throwable e) {
+	         result=2002;//메일전송실패시
+	         System.out.println("메일전송오류났어요");
+	         //e.printStackTrace();
+	         return result;
+	      }
+	      return result;
+	}
+	
 	// 이미지를 로컬로 부터 읽어와서 BodyPart 클래스로 만든다. (바운더리 변환)
 	   private BodyPart getImage(String filename, String contextId) throws MessagingException {
 	      //파일을 읽어와서 BodyPart 클래스로 받는다.
