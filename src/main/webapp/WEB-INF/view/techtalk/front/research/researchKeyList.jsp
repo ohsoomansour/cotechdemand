@@ -11,32 +11,6 @@ $(document).ready(function(){
 	}, 500);	
 });
 
-function testInputClick(){
-	var url = "/techtalk/researchListCheck.do";
-	var form = $('#frm')[0];
-	var data = new FormData(form);
-	$.ajax({
-		url : url,
-       type: "post",
-       processData: false,
-       contentType: false,
-       data: data,
-       dataType: "json",
-       success : function(res){
-          /*console.log(res);
-          console.log(res.dataMapList);
-          console.log(res.dataMapList[0]);
-          $('#result').append(res.dataMapList[0].member_seqno);*/
-       },
-       error : function(){
-    	alert('실패했습니다.');    
-       },
-       complete : function(){
-
-       }
-	});  
-	
-}
 
 //기술분야 분류 검색
 $('#stdClassSrch').click(function() {
@@ -46,10 +20,9 @@ $('#stdClassSrch').click(function() {
 });
 
 //키워드분야 클릭
-function keywordClick(){
- 	var url = "/techtalk/doCoKeywordResult.do";
+function keywordClick(research_no, research_seqno, keyword){
+ 	var url = "/techtalk/doKeywordResult.do";
  	var form = $('#frm')[0];
- 	console.log(form);
 	var data = new FormData(form);
 	$.ajax({
 		url : url,
@@ -88,8 +61,9 @@ function keywordClick(){
 				for(var i=0; i<res.data.length;i++){
 				ahtml +="<tr>"
 					ahtml +=	"<td >"+res.data[i].research_seqno+"</td>"
-					/* ahtml +=	"<a href="javascript:void(0);" onclick="researchDetail(res.data[i].research_seqno)" title="연구자res.data[i].research_seqno 상세보기">"res.data[i].research_seqno"</a>" */
-					ahtml +=	"<td >"+res.data[i].re_nm+"</td>"
+					ahtml +=	"<td >"
+					ahtml +=	"<a href=javascript:void(0); onclick=researchDetail("+res.data[i].research_no+","+res.data[i].research_seqno+","+res.data[i].keyword+")>"+res.data[i].re_nm +"</a>"
+					ahtml +=	"</td>"
 					ahtml +=	"<td >"+res.data[i].re_belong+"</td>"
 					ahtml +=	"<td >"+res.data[i].tech_nm1+"</td>"
 					ahtml +=	"<td >"+res.data[i].tech_nm2+"</td>"
@@ -113,14 +87,39 @@ function keywordClick(){
 	});
 }
 
-function researchDetail(research_seqno){
-	$('#research_seqno').val(research_seqno);
+//연구자 상세보기 화면
+function researchDetail(research_no, research_seqno, keyword){
+	var frm = document.createElement('form'); 
+
+	frm.name = 'frm3'; 
+	frm.method = 'post'; 
+	frm.action = '/techtalk/viewResearchDetail.do'; 
+
+	var input1 = document.createElement('input'); 
+	var input2 = document.createElement('input'); 
+	var input3 = document.createElement('input'); 
+
+	input1.setAttribute("type", "hidden"); 
+	input1.setAttribute("name", "research_no"); 
+	input1.setAttribute("value", research_no); 
+	input2.setAttribute("type", "hidden"); 
+	input2.setAttribute("name", "research_seqno"); 
+	input2.setAttribute("value", research_seqno); 
+	input3.setAttribute("type", "hidden"); 
+	input3.setAttribute("name", "keyword"); 
+	input3.setAttribute("value", keyword); 
+
+	frm.appendChild(input1); 
+	frm.appendChild(input2); 
+	frm.appendChild(input3); 
+	
+	document.body.appendChild(frm); 
+	frm.submit();
+	
 }
     
 </script>
-<form action="/techtalk/researchDetail.do" id="frm2" name="frm2" method="post">
-	<input type="hidden" id="research_seqno" name="research_seqno" value=""/>
-</form>
+
 <form id="frm" name="frm" action ="/techtalk/doKeywordResult.do" method="post" >
 <div id="compaVcContent" class="cont_cv">
 	<div id="mArticle" class="assig_app">
@@ -128,14 +127,14 @@ function researchDetail(research_seqno){
 		<div class="wrap_cont">
             <!-- page_title s:  -->
 			<div class="area_tit">
-				<a href="/techtalk/reTechList.do" title="연구자검색">연구자검색</a>
+				<a href="/techtalk/researchTechList.do" title="연구자검색">연구자검색</a>
 			</div>	
 			<div class="area_tit">
-				<a href="/techtalk/businessTechList.do" title="기업수요 검색 버튼">기업수요 검색</a>
+				<a href="/techtalk/businessList.do" title="기업수요 검색 버튼">기업수요 검색</a>
             </div>    
             
-            <a href="/techtalk/reTechList.do" id="techFieldTab" >기술분야</a>
-            <a href="/techtalk/reKeyList.do" id="keyFieldTab" >키워드분야</a>
+            <a href="/techtalk/researchTechList.do" id="techFieldTab" >기술분야</a>
+            <a href="/techtalk/researchKeyList.do" id="keyFieldTab" >키워드분야</a>
             
             <!-- <a href="javascript:void(0);" onClick="keywordClick();" class="btn_step" title="검색">검색</a> -->
             
@@ -188,8 +187,10 @@ function researchDetail(research_seqno){
 									<c:forEach var="data" items="${ data }">
 										<tr>
 											<td>${ data.research_seqno }</td>
-											<%-- <a href="javascript:void(0);" onclick="researchDetail('${data.research_seqno}')" title="연구자${data.re_nm }상세보기">${ data.re_nm }</a> --%> 
-											<td>${ data.re_nm }</td>
+											<td>
+												<a href="javascript:void(0);" onclick="researchDetail('${data.research_no}','${data.research_seqno}','${data.keyword}')" title="연구자${data.re_nm }상세보기">${ data.re_nm }</a> 
+											</td>
+											<%-- <td>${ data.re_nm }</td> --%>
 											<td>${ data.re_belong }</td>
 											<td>${ data.tech_nm1 }</td>			
 											<td>${ data.tech_nm2 }</td>			
