@@ -41,6 +41,18 @@
 		
         <footer id="compaVcFoot" class="foot_cv">
             <div class="wrap_copyright">
+            	<div class="ckwrap">
+	            	<div class="inner_ckwrap">
+	            		<a href="/techtalk/terms.do" class="txt_addr" title="이용약관">이용약관</a> 
+						<a href="/techtalk/policy.do" class="txt_addr"  title="개인정보처리방침">개인정보처리방침</a>
+						<div class="relation_svc">
+	                        <strong class="tit_relation"><a href="javascript:void(0);" class="link_tit" aria-haspopup="true" aria-expanded="false" title="Family Site">관련사이트<span class="icon ico_arr"></span></a></strong>
+	                        <ul class="list_relation">
+	                            <li><a href="www.keywert.com" target="_blank" class="link_relation" title="키워드 링크 새창열림">키워드 링크</a></li>
+	                        </ul>
+	                   	</div>
+	            	</div>
+            	</div>
                 <div class="inner_copyright">
 					<div class="foot_logo">
 						<div style="display:inline-block">
@@ -71,28 +83,20 @@
 					</div>
                     <div class="info_copyright">
 						<div class="info_addr">
-							<span class="txt_addr"><a href="/techtalk/terms.do" class="txt_addr" style="width:80px;display:contents;" title="이용약관">이용약관</a> 
-							<a href="/techtalk/policy.do" class="txt_addr" style="width:200px;display:contents;" title="개인정보처리방침">개인정보처리방침</a></span>
+							<ul>
+								<li><span class="at_title">주소</span>서울특별시 강남구 테헤란로 10길 18, 6층 (역삼동, 하나빌딩)</li>
+								<li><span class="at_title">이메일</span>tbiz@tbizip.com</li>
+								<li><span class="at_title">전화</span>02-6405-3271</li>
+								<li><span class="at_title">팩스</span>02-6405-3277</li>
+							</ul>
 				
-							<span class="txt_addr">대표전화 : 02-736-9037 F.02-736-9799<br/>
-							(우) 03737 서울특별시 서대문구 충정로 13(충정로3가) 삼창빌딩 7층, 10층</span>
 						
 						</div>
-						<small class="txt_copyright">COPYRIGHT(C) 2021. ALL RIGHT RESERVED.</small>
+						<p class="tx">주식회사 티비즈의 특허 전문가와 워트인텔리전스가 함께  만들었습니다.</p>
+						<small class="txt_copyright">Copyright©2023 TBIZ All Right Reserved.</small>
+						
 					</div>
-					<div class="wa_banner">
-						<a title="새창" href="http://www.wa.or.kr/board/list.asp?BoardID=0006" target="_blank">
-							<img class="wa" alt="(사)한국장애인단체총연합회 한국웹접근성인증평가원 웹 접근성 우수사이트 인증마크(WA인증마크)" 
-							 src="${pageContext.request.contextPath}/css/images/common/wa_mark.png" width="120px" height="84px" /> 
-						</a>
-					</div>
-                        <div class="relation_svc">
-	                        <strong class="tit_relation"><a href="javascript:void(0);" class="link_tit" aria-haspopup="true" aria-expanded="false" title="Family Site">Family Site<span class="icon ico_arr"></span></a></strong>
-	                        <ul class="list_relation">
-	                            <li><a href="https://compa.re.kr" target="_blank" class="link_relation" title="과학기술일자리진흥원">과학기술일자리진흥원</a></li>
-	                            <li><a href="https://rnd.compa.re.kr" target="_blank" class="link_relation" title="미래기술마당">미래기술마당</a></li>
-	                        </ul>
-                    </div>
+                        
                 </div>
             </div>
         </footer>

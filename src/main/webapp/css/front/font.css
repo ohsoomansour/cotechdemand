@@ -36,3 +36,10 @@
     url(../../font/notokr-bold.eot?#iefix) format('embedded-opentype'),
     url(../../font/notokr-bold.woff) format('woff');
 }
+
+/* Tenada */
+@font-face{
+	font-family:'Tenada';
+	font-weight: 600;
+	src: url("../../font/Tenada.woff2") format('woff');
+}
