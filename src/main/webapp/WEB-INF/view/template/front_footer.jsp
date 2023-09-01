@@ -95,4 +95,3 @@
                 </div>
             </div>
         </footer>
-		<!-- //compaVcCFooter e:  -->
