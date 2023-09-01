@@ -74,11 +74,11 @@
 							<span class="txt_addr"><a href="/techtalk/terms.do" class="txt_addr" style="width:80px;display:contents;" title="이용약관">이용약관</a> 
 							<a href="/techtalk/policy.do" class="txt_addr" style="width:200px;display:contents;" title="개인정보처리방침">개인정보처리방침</a></span>
 				
-							<span class="txt_addr">대표전화 : 02-736-9037 F.02-736-9799<br/>
-							(우) 03737 서울특별시 서대문구 충정로 13(충정로3가) 삼창빌딩 7층, 10층</span>
+							<span class="txt_addr">대표전화 : 02-6405-3271 F.02-6405-3277<br/>
+							(우) 06234 서울특별시 강남구 테헤란로10길 18, 6층</span>
 						
 						</div>
-						<small class="txt_copyright">COPYRIGHT(C) 2021. ALL RIGHT RESERVED.</small>
+						<small class="txt_copyright">COPYRIGHT(C) 2023. ALL RIGHT RESERVED.</small>
 					</div>
 					<div class="wa_banner">
 						<a title="새창" href="http://www.wa.or.kr/board/list.asp?BoardID=0006" target="_blank">
@@ -89,8 +89,7 @@
                         <div class="relation_svc">
 	                        <strong class="tit_relation"><a href="javascript:void(0);" class="link_tit" aria-haspopup="true" aria-expanded="false" title="Family Site">Family Site<span class="icon ico_arr"></span></a></strong>
 	                        <ul class="list_relation">
-	                            <li><a href="https://compa.re.kr" target="_blank" class="link_relation" title="과학기술일자리진흥원">과학기술일자리진흥원</a></li>
-	                            <li><a href="https://rnd.compa.re.kr" target="_blank" class="link_relation" title="미래기술마당">미래기술마당</a></li>
+	                             <li><a href="https://www.keywert.com/" target="_blank" class="link_relation" title="Keywert">Keywart</a></li>
 	                        </ul>
                     </div>
                 </div>
