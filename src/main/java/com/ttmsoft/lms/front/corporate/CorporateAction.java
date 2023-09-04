@@ -154,4 +154,36 @@ public class CorporateAction extends BaseAct{
 		return mav;
 	}
 	
+	/**
+	 *
+	 * @Author   : jmyoo
+	 * @Date	 : 2023. 9. 1. 
+	 * @Parm	 : DataMap
+	 * @Return   : ModelAndView
+	 * @Function : 연구자 상세 페이지
+	 * @Explain  : 
+	 *
+	 */	
+	@RequestMapping (value = "/viewCorprateDetail.do", method = RequestMethod.POST)
+	public ModelAndView doViewResearchDetail(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request) {
+		ModelAndView mav = new ModelAndView("/techtalk/front/corporate/viewCoDetail.front");						
+		mav.addObject("paraMap", paraMap);	
+		
+		try {						
+			System.out.println("paraMap:"+paraMap);
+			// 기업수요 정보	
+			DataMap data = this.corporateService.doViewCorporateDetail(paraMap);
+			mav.addObject("data", data);
+			DataMap navi = new DataMap();
+			navi.put("one", "기업수요 검색");
+			navi.put("two", "키워드 정보");
+			mav.addObject("navi",navi);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ModelAndView("error");
+		}		
+
+		return mav;
+	}
+	
 }
