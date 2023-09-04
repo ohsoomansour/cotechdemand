@@ -42,8 +42,8 @@ public class CorporateService extends BaseSvc<DataMap>{
 	}
 	
 	//기업수요 상세보기
-	public DataMap doViewResearchDetail (DataMap paraMap) {
-		return this.dao.selectQuery("SubjectFrontSQL.doViewResearchDetail", paraMap);
+	public DataMap doViewCorporateDetail (DataMap paraMap) {
+		return this.dao.selectQuery("SubjectFrontSQL.doViewCorporateDetail", paraMap);
 	}
 	
 }
