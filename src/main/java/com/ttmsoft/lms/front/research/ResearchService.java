@@ -12,22 +12,11 @@ import com.ttmsoft.toaf.object.DataMap;
 @Service
 @Transactional(value = "postgresqlTransactionManager", propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 public class ResearchService extends BaseSvc<DataMap>{
-
-	//연구자 검색 기술분류 코드(대분류)
-	public List<DataMap> doGetStdMainCodeInfo(DataMap paraMap) {
-		List<DataMap> result = this.dao.dolistQuery("CodeSQL.doGetStdCodeInfo", paraMap);
-		return result;
-	}
 	
-	//연구자 검색 기술분류 코드(중분류)
-	public List<DataMap> doGetStdMiddleCodeInfo(DataMap paraMap) {
-		List<DataMap> result = this.dao.dolistQuery("CodeSQL.doGetStdCodeInfo", paraMap);
+	//연구자 검색 기술분류 코드
+	public List<DataMap> doResearchCountSubCode(DataMap paraMap) {
+		List<DataMap> result = this.dao.dolistQuery("CodeSQL.doResearchCountSubCode", paraMap);
 		return result;
-	}
-	
-	//연구자 검색 기술분류 카운트
-	public int doResearchCountSubCode(DataMap paraMap) {
-		return this.dao.countQuery("CodeSQL.doResearchCountSubCode", paraMap);
 	}
 	
 	//키워드검색 리스트 조회
@@ -61,6 +50,12 @@ public class ResearchService extends BaseSvc<DataMap>{
 	//특허리스트
 	public List<DataMap> doPatentList(DataMap paraMap) {
 		List<DataMap> result = this.dao.dolistQuery("SubjectFrontSQL.doPatentList", paraMap);
+		return result;
+	}
+	
+	//기술분야 검색 연구자 목록
+	public List<DataMap> doGetResearchList(DataMap paraMap) {
+		List<DataMap> result = this.dao.dolistQuery("SubjectFrontSQL.doGetResearchList", paraMap);
 		return result;
 	}
 }
