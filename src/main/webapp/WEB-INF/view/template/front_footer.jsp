@@ -89,23 +89,9 @@
 								<li><span class="at_title">전화</span>02-6405-3271</li>
 								<li><span class="at_title">팩스</span>02-6405-3277</li>
 							</ul>
-				
-<<<<<<< HEAD
-							<span class="txt_addr">대표전화 : 02-6405-3271 F.02-6405-3277<br/>
-							(우) 06234 서울특별시 강남구 테헤란로10길 18, 6층</span>
-=======
->>>>>>> refs/remotes/origin/develop
-						
-						</div>
-<<<<<<< HEAD
-						<small class="txt_copyright">COPYRIGHT(C) 2023. ALL RIGHT RESERVED.</small>
-=======
 						<p class="tx">주식회사 티비즈의 특허 전문가와 워트인텔리전스가 함께  만들었습니다.</p>
 						<small class="txt_copyright">Copyright©2023 TBIZ All Right Reserved.</small>
-						
->>>>>>> refs/remotes/origin/develop
 					</div>
-<<<<<<< HEAD
 					<div class="wa_banner">
 						<a title="새창" href="http://www.wa.or.kr/board/list.asp?BoardID=0006" target="_blank">
 							<img class="wa" alt="(사)한국장애인단체총연합회 한국웹접근성인증평가원 웹 접근성 우수사이트 인증마크(WA인증마크)" 
