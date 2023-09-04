@@ -45,14 +45,14 @@ var LoginCtrl = {
 					var gourl = $.trim($("#gourl").val());
 					//alert("로그인 되었습니다.");
 					//location.href = "/admin/mainView.do";
-					location.href = "/front/mainView.do";
+					location.href = "/techtalk/mainView.do";
 					//parent.location.reload();
 					//parent.$('#dialog').dialog('destroy');			
 				}
 				else {
 					var msg = resp.result_mesg;
-					alert_popup(msg,"/front/login.do");
-					//location.href = "/front/login.do";
+					alert_popup(msg,"/techtalk/login.do");
+					//location.href = "/tecktalk/login.do";
 				}
 			},
 			error : function(result) {
@@ -175,7 +175,7 @@ function fncFindId() {
 	if(!isBlank('이메일', '#email_ID')){
 		$.ajax({
 			type : 'POST',
-			url : '/front/findId.do',
+			url : '/tecktalk/findId.do',
 			data : {
 				biz_regno : bizNo_ID,
 				user_email : email_ID

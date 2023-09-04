@@ -130,7 +130,7 @@
 	</insert>
 	
 	<insert id="Member_v_SQL.doInsertMember" parameterType="dataMap">
-		<!-- 2021-04-21 추정완 -->
+		<!-- 2023-09-04 추정완 -->
 		/*
 			SQL ID : Member_v_SQL.doInsertMember
 			회원가입 - 사용자
@@ -138,77 +138,57 @@
 		<![CDATA[
 			INSERT INTO TBLMEMBER
 			(
-				MEMBER_SEQNO,
-				BIZ_SEQNO,
-				MEMBER_TYPE,
-				MEMBER_AUTH,
 				ID,
 				PW,
+				MEMBER_TYPE,
 				USER_NAME,
-				USER_TEL_NO,
 				USER_EMAIL,
 				USER_MOBILE_NO,
-				USER_FAX_NO,
 				USER_DEPART,
 				USER_RANK,
+				BIZ_TEL_NO,
+				BIZ_EMAIL,
+				BIZ_NAME,
 				PW_TEMP_FLAG,
 				PW_INVALID_COUNT,
 				PW_NEXT_CHANGE_DATE,
-				VERI_IDENTITY_FLAG,
-				VERI_IDENTITY_DATE,
-				VERI_MOBILENO_FLAG,
-				VERI_MOBILENO_DATE,
-				VERI_EMAIL_FLAG,
-				VERI_EMAIL_DATE,
-				AGREE_PP_FLAG,
-				AGREE_TC_FLAG,
-				AGREE_3RD_FLAG,
+				AGREE_FLAG,
+				AGREE_FLAG_DATE,
+				REGIST_ID,
 				REGIST_DATE,
-				UNREGIST_DATE,
+				DELETE_DATE,
+				DELETE_FLAG,
 				INSERT_ID,
-				INSERT_IP,
 				INSERT_DATE,
 				UPDATE_ID,
-				UPDATE_IP,
-				UPDATE_DATE,
-				DELETE_FLAG
+				UPDATE_DATE
 			)
 			VALUES
 			(
-				#{member_seqno},
-				#{biz_seqno},
-				'P',
-				#{member_auth},
 				#{id},
 				#{pw},
+				#{member_type},
 				#{user_name},
-				#{user_tel_no},
 				#{user_email},
 				#{user_mobile_no},
-				#{user_fax_no},
 				#{user_depart},
 				#{user_rank},
-				'Y',
-				0,
-				NOW(),
+				#{biz_tel_no},
+				#{biz_email},
+				#{biz_name},
 				'N',
+				'5',
+				'1999-01-01'::timestamp,
+				#{agree_flag},
 				NOW(),
+				#{id},
+				NOW(),
+				'2999-12-31'::timestamp,
 				'N',
+				#{id},
 				NOW(),
-				'N',
-				NOW(),
-				'Y',
-				'Y',
-				'Y',
-				NOW(),
-				NOW(),
-				NULL,
-				#{insert_ip},
-				NOW(),
-				NULL,
-				#{update_ip},
-				NOW(),
-				'N'
+				#{id},
+				NOW()
 			)
 		]]>
 	</insert>
