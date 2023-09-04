@@ -48,9 +48,9 @@
 					<button id="loginButton" onclick="doLogin();" title="로그인버튼"><span class="user_name">로그인</span></button>
 				</c:if>
 				<c:if test="${not empty member_seqno && member_type =='R'}">
-					<button id="loginButton" onclick="doJoin();" title="매칭정보조회"><span class="user_name">매칭 정보 조회</span></button>
-					<button id="loginButton" onclick="doLogin();" title="연구자"><span class="user_name">연구자</span></button>
-					<p>${user_name }(${id })</p>
+					<button id="loginButton" onclick="doJoin();" title="매칭정보조회" class="user_info_n1 bell_on"><!-- 클래스  bell_on:노란종 ,  bell_off: 클래스 회색종 --><span class="icon_bell"></span><span class="user_name">매칭 정보 조회</span></button>
+					<button id="loginButton" onclick="doLogin();" title="연구자" class="user_info_n1"><span class="user_name">연구자</span></button>
+					<button title="user_name"><span class="user_name">${user_name }(${id })</span></button>
 					<button id="loginButton" onclick="doLogin();" title="로그인버튼"><span class="user_name">로그아웃</span></button>
 				</c:if>
 			</div>
