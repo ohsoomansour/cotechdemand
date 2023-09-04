@@ -2543,4 +2543,20 @@
 		</if>
 		ORDER BY CO_UPDATE_DT DESC
 	</select>
+	
+	<select id="SubjectFrontSQL.doViewCorporateDetail" parameterType="dataMap" resultType="dataMap">
+		<!-- 2023-08-29  유지민 -->
+		/*
+			SQL ID : SubjectFrontSQL.doViewCorporateDetail
+			기업수요 정보 상세
+		*/
+		<![CDATA[
+			SELECT CORPORATE_NO, CO_BELONG ,CO_POSITION ,CO_NM ,CO_TEL ,CO_EMAIL ,TECH_NM1, TECH_NM2, TECH_NM3, KEYWORD, CO_UPDATE_DT, TECH_CLASS_NM, CORPORATE_PROBLE, RESEARCH_INFRA, INVEST
+			FROM TBCORPORATE 
+		]]>
+		<if test="corporate_no != ''">
+			WHERE CORPORATE_NO = #{corporate_no}::INT
+		</if>
+		ORDER BY CO_UPDATE_DT DESC
+	</select>
 </mapper>	
