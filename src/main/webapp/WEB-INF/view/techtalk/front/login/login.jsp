@@ -63,6 +63,33 @@ var LoginCtrl = {
 	},
 };
 
+//쿠키 값 가져오는 함수
+function getCookie(name) {
+    var value = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+    return value? value[2] : null;
+}
+
+function setCookie(){
+	var id = $("#id").val();
+	console.log("id값나옴?"+id);
+	$.ajax({
+		type : 'POST',
+		url : '/techtalk/createCookie.do',
+		data : {
+			id : id,
+		},
+		dataType : 'json',
+		success : function(res) {
+			console.log(res);
+		},
+		error : function() {
+		},
+		complete : function() {
+		}
+	})
+}
+
+
 function doLogout() {
 	var strLogoutUrl = "/techtalk/logoutx.do";
 
@@ -85,6 +112,16 @@ function doLogout() {
 
 
 $(document).ready(function() {
+	var rememberId = getCookie("rememberId");
+	if(rememberId !=null){
+		$('#rememberId').prop('checked', true);
+	  $('#id').val(rememberId);
+	}
+	
+	$("#rememberId").click(function(e) {
+		e.preventDefault();
+		setCookie();
+	});
 	//doLogout();
 	$("#id").keyup(function(e){
 		if(e.keyCode == 13){
@@ -491,8 +528,8 @@ function moveBoard(board_seq){
                            <div class="login_util">
                            		<div class="lu_left">
                            			<div class="box_checkinp">
-					            		<input type="checkbox" class="inp_check" name="checkbox" id="c4"  title="아이디 기억하기">
-					            		<label for="c4" class="lab_check">
+					            		<input type="checkbox" class="inp_check" name="rememberId" id="rememberId"  title="아이디 기억하기">
+					            		<label for="rememberId" class="lab_check">
 					            			<span class="icon ico_check"></span>아이디 기억하기
 					            		</label>
 					                </div>

@@ -80,7 +80,7 @@ html { height:100% }
 .list_lang li { float:left; margin-left:15px } 
 .list_lang li .link_lang { font-size:14px; color:#666 } 
 .list_lang li.on .link_lang, .list_lang li .link_lang:hover, .list_lang li .link_lang:focus { color:#1e1e1e; font-family:'NotoSans Regular','Malgun Gothic','맑은 고딕','Apple SD Gothic Neo','돋움',dotum, sans-serif; text-decoration:none } 
-.user_info { float: right; margin-top: 33px; position:relative } 
+.user_info { float: right; margin-top: 33px; position:relative; display:flex;} 
 .user_info button,.user_info a { height: 40px; line-height: 40px; border-radius: 20px; background: #fff; color: #00902f; font-size: 16px; display: block; padding:0 20px } 
 .user_info a:hover { text-decoration: none; } 
 .icon_user { width: 20px; height: 20px; vertical-align: middle; } 
@@ -91,7 +91,7 @@ html { height:100% }
 .list_lang li { float:left; margin-left:15px } 
 .list_lang li .link_lang { font-size:14px; color:#666 } 
 .list_lang li.on .link_lang, .list_lang li .link_lang:hover, .list_lang li .link_lang:focus { color:#1e1e1e; font-family:'NotoSans Regular','Malgun Gothic','맑은 고딕','Apple SD Gothic Neo','돋움',dotum, sans-serif; text-decoration:none } 
-.user_info { float: right; margin-top: 33px; position:relative } 
+.user_info { float: right; margin-top: 33px; position:relative ; display:flex;} 
 .user_info button,.user_info a {height: 40px;line-height: 40px;border-radius: 20px;background: #fff;color: #0060b0;font-size: 16px;display: inline-block;padding:0 20px; margin-left:10px} 
 .user_info a:hover { text-decoration: none; } 
 .icon_user { width: 20px; height: 20px; vertical-align: middle; } 

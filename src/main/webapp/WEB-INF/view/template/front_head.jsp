@@ -4,22 +4,20 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
 <script>
-		//로그인
-    function doLogin(){
-				location.href = "/techtalk/login.do";
+		//링크태우기
+    function doHref(href){
+				location.href = href
     }
-    function doJoin(){
-		location.href = "/techtalk/memberJoinFormPage.do";
-		}
+    //로그아웃
     function doLogout() {
     	$.ajax({
-    		url : "/front/logoutx.do",
+    		url : "/techtalk/logoutx.do",
     		type : "POST",
     		dataType : "json",
     		success : function(resp) {
     			if (resp.result_code == "0") {
     				//alert('로그아웃 되었습니다.')
-    				location.href = "/front/login.do";
+    				location.href = "/techtalk/login.do";
     			}
     			else {
     				alert_popup(resp.result_mesg);
@@ -44,14 +42,14 @@
 			
 			<div class="user_info">
 				<c:if test="${empty member_seqno}">
-					<button id="loginButton" onclick="doJoin();" title="회원가입버튼"><span class="user_name">회원가입</span></button>
-					<button id="loginButton" onclick="doLogin();" title="로그인버튼"><span class="user_name">로그인</span></button>
+					<button id="loginButton" onclick="doHref(/techtalk/memberJoinFormPage.do);" title="회원가입버튼"><span class="user_name">회원가입</span></button>
+					<button id="loginButton" onclick="doHref('/techtalk/login.do');" title="로그인버튼"><span class="user_name">로그인</span></button>
 				</c:if>
 				<c:if test="${not empty member_seqno && member_type =='R'}">
-					<button id="loginButton" onclick="doJoin();" title="매칭정보조회"><span class="user_name">매칭 정보 조회</span></button>
-					<button id="loginButton" onclick="doLogin();" title="연구자"><span class="user_name">연구자</span></button>
+					<button id="loginButton" onclick="javscript:void();" title="매칭정보조회"><span class="user_name">매칭 정보 조회</span></button>
+					<button id="loginButton" onclick="javscript:void();" title="연구자"><span class="user_name">연구자</span></button>
 					<p>${user_name }(${id })</p>
-					<button id="loginButton" onclick="doLogin();" title="로그인버튼"><span class="user_name">로그아웃</span></button>
+					<button id="loginButton" onclick="doLogout();" title="로그인버튼"><span class="user_name">로그아웃</span></button>
 				</c:if>
 			</div>
 			<!-- //user_info e:  -->
