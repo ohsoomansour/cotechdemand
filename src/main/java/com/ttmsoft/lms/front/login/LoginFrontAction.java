@@ -112,7 +112,6 @@ public class LoginFrontAction extends BaseAct{
 					this.addFrontSessionLoginInfo(session, userMap);
 					paraMap.put("userid", String.valueOf(userMap.get("id")));
 					paraMap.put("userno", String.valueOf(userMap.get("member_seqno")));
-					paraMap.put("siteid", siteid);
 					
 					this.appendSessionInfo(paraMap, request);					// 유저 세션 정보 기록
 					this.loginFrontService.doUpdateInvalidCountReset(paraMap);	// 로그인 성공 시 비밀번호 오류 횟수 초기화
@@ -374,10 +373,17 @@ public class LoginFrontAction extends BaseAct{
 	 */
 	private void addFrontSessionLoginInfo (HttpSession session, DataMap userMap) {		
 		session.setAttribute("member_seqno", userMap.get("member_seqno").toString());
+		session.setAttribute("member_type", userMap.get("member_type").toString());
 		session.setAttribute("id", userMap.get("id").toString());
-		session.setAttribute("pw", userMap.get("pw").toString());
 		session.setAttribute("user_name", userMap.get("user_name").toString());
 		session.setAttribute("user_email", userMap.get("user_email").toString());
+		session.setAttribute("user_depart", userMap.get("user_depart").toString());
+		session.setAttribute("user_rank", userMap.get("user_rank").toString());
+		session.setAttribute("pw_temp_flag", userMap.get("pw_temp_flag").toString());
+		session.setAttribute("pw_next_change_date", userMap.get("pw_next_change_date").toString());
+		session.setAttribute("agree_flag", userMap.get("agree_flag").toString());
+		session.setAttribute("delete_flag", userMap.get("delete_flag").toString());
+		
 	}
 	
 	/**

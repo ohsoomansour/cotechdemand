@@ -201,8 +201,8 @@ public class MemberFrontAction extends BaseAct {
 	
 	/**
 	 *
-	 * @Author   : jwchoo
-	 * @Date	 : 2021. 4. 19. 
+	 * @Author   : psm
+	 * @Date	 : 2023. 9. 19. 
 	 * @Parm	 : DataMap
 	 * @Return   : ModelAndView
 	 * @Function : 회원가입
@@ -221,12 +221,13 @@ public class MemberFrontAction extends BaseAct {
 
 			String pw = paraMap.get("pw").toString();
 			paraMap.put("pw", AES256Util.strEncode(pw));
-			String text = "귀하께서는 "+month+"월"+day+"일 </br>바우처사업관리시스템의  회원으로 가입되셨습니다.<br/><br/><br/> ";
+			String text = "귀하께서는 "+month+"월"+day+"일 </br>TECHTALK  회원으로 가입되셨습니다.<br/><br/><br/> ";
 					text +="아이디 : "+ paraMap.getstr("id");
-			paraMap.put("subject", "[바우처사업관리시스템] 회원가입을 환영합니다.");
+			paraMap.put("subject", "[TECHTALK] 회원가입을 환영합니다.");
 			paraMap.put("text", text);
 			String user_email = paraMap.getstr("user_email1")+"@"+paraMap.getstr("user_email2");
 			paraMap.put("user_email", user_email);
+			paraMap.put("pw", AES256Util.strEncode(pw));
 			//CommonUtil.doMailSender(paraMap);
 			
 			/*
@@ -241,13 +242,15 @@ public class MemberFrontAction extends BaseAct {
 			
 			System.out.println(AES256Util.strEncode(pw));
 			
-			paraMap.put("pw", AES256Util.strEncode(pw));
+			
 			*/
 			
 			//DB 셋팅 후 회원 INSERT 관련 코드 입력필요
 			this.memberFrontService.doInsertMember(paraMap);
-			String notice_title = "바우처사업관리시스템에  회원으로 가입되셨습니다.";
-			paraMap.put("notice_title", notice_title);
+			/*
+			 * String notice_title = "바우처사업관리시스템에  회원으로 가입되셨습니다.";
+			 * paraMap.put("notice_title", notice_title);
+			 */
 			//this.memberFrontService.doSMSMember(paraMap);
 		} catch (Exception e) {
 			e.printStackTrace();
