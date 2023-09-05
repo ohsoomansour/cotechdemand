@@ -2559,4 +2559,23 @@
 		</if>
 		ORDER BY CO_UPDATE_DT DESC
 	</select>
+	
+	<select id="doGetResearchList" parameterType="dataMap" resultType="dataMap">
+		<!-- 2023-09-4  유지민 -->
+		/*
+			SQL ID : SubjectFrontSQL.doGetResearchList
+			기술분야 연구자 목록
+		*/
+		<![CDATA[
+			SELECT  RESEARCH_SEQNO, RE_INTRO_FIELD, RE_BELONG ,RE_POSITION ,RE_NM ,RE_TEL ,RE_EMAIL ,EXCEL_YN ,TECH_NM1, TECH_NM2, TECH_NM3, KEYWORD, RESEARCH_NO
+			FROM TBRESEARCH 
+		]]>
+		<if test="tech_code1 != ''">
+			WHERE TECH_CODE1 = #{tech_code1}
+		</if>
+		<if test="tech_code2 != ''">
+			WHERE TECH_CODE2 = #{tech_code2}
+		</if>
+		ORDER BY APLICAT_DATE DESC
+	</select>
 </mapper>	
