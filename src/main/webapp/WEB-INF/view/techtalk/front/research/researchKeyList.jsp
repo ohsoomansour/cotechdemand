@@ -135,8 +135,8 @@ function researchDetail(research_no, research_seqno, keyword){
 			<div class="sch_ctgr_list">
 				<div class="sch_block_scroll">
 					<ul class="sch_list_wrap sch_block_wrap" >
-						<li><a href="/techtalk/researchTechList.do" class="sch_list_btn " title="기술분야" data-d-ategory="">기술분야</a></li>
-						<li><a href="/techtalk/researchKeyList.do" class="sch_list_btn last active" title="키워드검색" data-d-ategory="도서">키워드검색</a></li>
+						<li><a href="/techtalk/reTechList.do" class="sch_list_btn " title="기술분야" data-d-ategory="">기술분야</a></li>
+						<li><a href="/techtalk/reKeyList.do" class="sch_list_btn last active" title="키워드검색" data-d-ategory="도서">키워드검색</a></li>
 					</ul>
 				</div>
 			</div>

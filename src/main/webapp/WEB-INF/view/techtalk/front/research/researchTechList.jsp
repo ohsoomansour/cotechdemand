@@ -276,16 +276,23 @@ function researchDetail(research_no, research_seqno, keyword){
 	<div id="mArticle" class="assig_app">
 		<h2 class="screen_out">본문영역</h2>
 		<div class="wrap_cont">
+			<div class="sch_ctgr_wrap">
+					<ul class="sch_ctgr_link">
+						<li class="sch_ctgr_item item_type active"><a href="/techtalk/reTechList.do">연구자 검색<span class="ir_text check-text">(선택됨)</span></a></li>
+						<li class="sch_ctgr_item item_author"><a href="/techtalk/businessList.do">기업수요 검색</a></li>
+					</ul>
+				</div>       
+				<div class="sch_ctgr_list">
+					<div class="sch_block_scroll">
+						<ul class="sch_list_wrap sch_block_wrap" >
+							<li><a href="/techtalk/reTechList.do" class="sch_list_btn last active" title="기술분야" data-d-ategory="">기술분야</a></li>
+							<li><a href="/techtalk/reKeyList.do" class="sch_list_btn " title="키워드검색" data-d-ategory="도서">키워드검색</a></li>
+						</ul>
+					</div>
+				</div> 
             <!-- page_title s:  -->
-			<div class="area_tit">
-				<a href="/techtalk/reTechList.do" title="연구자검색">연구자검색</a>
-			</div>	
-			<div class="area_tit">
-				<a href="/techtalk/businessList.do" title="기업수요 검색 버튼">기업수요 검색</a>
-            </div>    
-            
-            <a href="/techtalk/reTechList.do" id="techFieldTab" >기술분야</a>
-            <a href="/techtalk/reKeyList.do" id="keyFieldTab" >키워드분야</a>
+			
+
             
             <div class="area_cont">
             	<div class="form-inline pop-search-box" id="codeBox">
