@@ -42,7 +42,7 @@
 			
 			<div class="user_info">
 				<c:if test="${empty member_seqno}">
-					<button id="loginButton" onclick="doHref(/techtalk/memberJoinFormPage.do);" title="회원가입버튼"><span class="user_name">회원가입</span></button>
+					<button id="loginButton" onclick="doHref('/techtalk/memberJoinFormPage.do');" title="회원가입버튼"><span class="user_name">회원가입</span></button>
 					<button id="loginButton" onclick="doHref('/techtalk/login.do');" title="로그인버튼"><span class="user_name">로그인</span></button>
 				</c:if>
 				<c:if test="${not empty member_seqno && member_type =='R'}">
