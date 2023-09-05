@@ -988,3 +988,67 @@ input:focus,a:focus {
 .sch_block_wrap .sch_list_btn.active:after{
 	display:none;
 }
+
+.search_box_inner{
+	display:flex;
+}
+.search_box_inner .search_keyword_box{
+	flex:1
+}
+
+.list_panel{
+	margin-top:20px
+}
+.cont_list {
+    border-top: solid 1px #000;
+    border-bottom: solid 1px #000;
+}
+.cont_list .row {
+    border-top: solid 1px #e8e8e8;
+    padding: 20px 10px 17px 10px;
+    min-height: 60px;
+}
+.cont_list .row .row_txt_tit {
+    font-size: 18px;
+    color: #000;
+    font-weight: 600;
+    margin: 0;
+    line-height: 26px;
+}
+.txt_grey {
+    color: #7c7c7c;
+}
+.re_beloong{
+	margin-left:20px;
+	font-size:16px
+}
+
+.cont_list .row:hover,.cont_list .row:focus {
+    background-color: #f9f9f9;
+}
+.step_tech{
+	margin-top:10px
+}
+
+.step_tech li{
+	display:inline-block;
+	margin-left:8px
+}
+.step_tech li:first-child{
+	margin-left:0px
+}
+.step_tech li:after {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 11px;
+    background: url(../../images/front/common/step_arrow.png) no-repeat center left;
+    background-size: 6px 11px;
+    vertical-align: middle;
+    margin-left: 10px;
+    margin-top:-2px
+}
+
+.step_tech li:last-child:after {
+    display: none;
+}
