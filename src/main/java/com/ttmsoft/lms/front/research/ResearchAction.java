@@ -1,10 +1,12 @@
 package com.ttmsoft.lms.front.research;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -13,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.ttmsoft.lms.cmm.seq.SeqService;
-import com.ttmsoft.lms.front.member.MemberFrontService;
 import com.ttmsoft.toaf.basemvc.BaseAct;
 import com.ttmsoft.toaf.object.DataMap;
 
@@ -44,18 +45,61 @@ public class ResearchAction extends BaseAct{
 		navi.put("one", "연구자 검색");
 		navi.put("two", "기술분야 검색");
 		mav.addObject("navi",navi);
+		paraMap.get("parent_code_key");
 		try {
-			paraMap.put("depth", '1');
-			List<DataMap> stdCode = researchService.doGetStdMainCodeInfo(paraMap);
+			paraMap.put("parent_depth", '1');
+			paraMap.put("depth", '2');
+			List<DataMap> stdCode = researchService.doResearchCountSubCode(paraMap);
 			mav.addObject("stdMainCode", stdCode);
+			mav.addObject("data", this.researchService.doGetResearchList(paraMap));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ModelAndView("error");
 		}	
-		
 		return mav;
-		
-				
+	}
+	
+	/**
+	 *
+	 * @Author   : jmyoo
+	 * @Date	 : 2023. 9. 3. 
+	 * @Parm	 : DataMap
+	 * @Return   : ModelAndView
+	 * @Function : 기술 분류값 가져오기
+	 * @Explain  : 
+	 *
+	 */
+	@RequestMapping (value = "/doClickCodeResult.do")
+	public ModelAndView doClickCodeResult(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
+		ModelAndView mav = new ModelAndView("jsonView");
+		System.out.println("paraMap : " + paraMap);
+
+		try {
+			paraMap.put("parent_depth", paraMap.get("parent_depth"));
+			paraMap.put("depth", paraMap.get("code_depth"));
+			if(paraMap.get("parent_depth").equals("3")) {
+				System.out.println("소분류");
+		        int size = 2;
+		        String code_key_change = StringUtils.leftPad(String.valueOf(paraMap.get("code_key")), size, '0');
+		        System.out.println(code_key_change);
+				paraMap.put("parent_code_key", code_key_change);
+				paraMap.put("tech_code2", code_key_change);
+			}else {
+				System.out.println("중분류");
+				paraMap.put("parent_code_key", paraMap.get("code_key"));
+				paraMap.put("tech_code1", paraMap.get("code_key"));
+			}
+			System.out.println("paraMap2 : " + paraMap);
+			List<DataMap> stdCode = researchService.doResearchCountSubCode(paraMap);
+			mav.addObject("stdMainCode", stdCode);
+			mav.addObject("data", this.researchService.doGetResearchList(paraMap));
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ModelAndView("error");
+		}
+	
+		return mav;
 	}
 	
 	/**
@@ -108,7 +152,7 @@ public class ResearchAction extends BaseAct{
 	 * @Explain  : 
 	 *
 	 */
-	@RequestMapping (value = "/doGetStdCodeInfoTest.do")
+	/*@RequestMapping (value = "/doGetStdCodeInfoTest.do")
 	public ModelAndView doGetStdCodeInfo(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView mav = new ModelAndView("jsonView");
 		System.out.println("paraMap : " + paraMap.toString());
@@ -135,7 +179,7 @@ public class ResearchAction extends BaseAct{
 		}
 	
 		return mav;
-	}
+	}*/
 	
 	/**
 	 *

@@ -585,4 +585,34 @@
 		</if>
 		ORDER BY CODE_KEY ASC
 	</select>
+	
+	<select id="CodeSQL.doResearchCountSubCode" resultType="dataMap">
+		<!-- 2021-07-05  유지민 -->
+		/*
+			SQL ID : CodeSQL.doResearchCountSubCode
+			표준산업분류코드 대분류
+		*/
+		<![CDATA[
+		
+		SELECT
+		    *,
+		    (
+		        SELECT COUNT(*)
+		        FROM tbiz.TBLCOMM_STD_CLS
+		 ]]>
+		 <if test="depth != ''">
+		        WHERE CODE_DEPTH = #{depth}::INT
+		        AND parent_code_key = tsc.code_key 
+		 </if>
+		 <![CDATA[
+		    ) AS count_result
+		FROM
+		    tbiz.TBLCOMM_STD_CLS tsc
+		WHERE CODE_DEPTH = #{parent_depth}::INT
+		]]>
+		<if test="parent_code_key != ''">
+			AND PARENT_CODE_KEY = #{parent_code_key}
+		</if>
+			ORDER BY CODE_KEY ASC
+	</select>
 </mapper>
