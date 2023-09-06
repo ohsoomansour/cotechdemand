@@ -127,7 +127,7 @@ function researchDetail(research_no, research_seqno, keyword){
 		<div class="wrap_cont">
 			<div class="sch_ctgr_wrap">
 				<ul class="sch_ctgr_link">
-					<li class="sch_ctgr_item item_type active"><a href="/techtalk/researchTechList.do">연구자 검색<span class="ir_text check-text">(선택됨)</span></a></li>
+					<li class="sch_ctgr_item item_type active"><a href="/techtalk/reList.do">연구자 검색<span class="ir_text check-text">(선택됨)</span></a></li>
 					<li class="sch_ctgr_item item_author"><a href="/techtalk/businessList.do">기업수요 검색</a></li>
 				</ul>
 			</div>
@@ -175,7 +175,7 @@ function researchDetail(research_no, research_seqno, keyword){
 									<c:forEach var="data" items="${ data }">
 										<div class="row">
 											<span class="row_txt_num blind">${ data.research_seqno }</span>
-											<span class="txt_left row_txt_tit"><a href="javascript:void(0);" onclick="researchDetail('${data.research_no}','${data.research_seqno}','${data.keyword}')" title="연구자${data.re_nm }상세보기">${ data.re_nm } 연구자</a> </span>
+											<span class="txt_left row_txt_tit"><a href="javascript:void(0);" onclick="researchDetail('${data.research_no}','${data.research_seqno}','${data.keyword}')" title="연구자${data.research_nm }상세보기">${ data.research_nm } 연구자</a> </span>
 											<span class="re_beloong">${ data.re_belong }</span>
 											<ul class="step_tech">
 												<li><span class="mr txt_grey tech_nm ">${ data.tech_nm1 }</span></li>
