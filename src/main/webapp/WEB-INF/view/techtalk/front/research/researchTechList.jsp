@@ -44,14 +44,25 @@ function clickCode(code_key,parent_depth,name_path){
        success : function(res){
     	   var split_code = res.stdMainCode[0].name_path.split("^");
     	   
+    	   $('.code_step_box').show();
+    	   
            if(parent_depth == "2"){
+        	   $('#cs_step2').html('');
+        	   $('#cs_step3').html('');
     	   var ahtml= "";
-    	  	 	ahtml +=split_code[0]
-    	  	 	ahtml += "&nbsp;"
-				ahtml +="<div class='form-inline pop-search-box' id='codeBox'>"
-				ahtml +="중분류"
-				ahtml +="<div>"
-				for(var i=0; i<res.stdMainCode.length;i++){
+    			ahtml +='		<ul>                                                                                                               ';
+    			for(var i=0; i<res.stdMainCode.length;i++){
+	    			ahtml +='<li>                                                                                                       ';
+	    			ahtml +="<a href=javascript:void(0); onclick=clickCode("+res.stdMainCode[i].code_key+","+res.stdMainCode[i].code_depth+","+"'"+res.stdMainCode[i].name_path+"'"+")>"+res.stdMainCode[i].code_name +"</a>"
+			        ahtml +='<span class="num">'+res.stdMainCode[i].count_result+'</span>                                                                             ';
+			        ahtml +='</li>                                                                                                      ';
+    			}
+		        ahtml +='    		                                                                                                               ';
+	            ahtml +='		</ul>                                                                                                              ';
+
+			
+			
+				/* for(var i=0; i<res.stdMainCode.length;i++){
 					ahtml +="<div>"
 					ahtml +="<a href=javascript:void(0); onclick=clickCode("+res.stdMainCode[i].code_key+","+res.stdMainCode[i].code_depth+","+"'"+res.stdMainCode[i].name_path+"'"+")>"+res.stdMainCode[i].code_name +"</a>"
 					ahtml +="</div>"
@@ -65,15 +76,15 @@ function clickCode(code_key,parent_depth,name_path){
 					ahtml +=res.stdMainCode[i].count_result
 					ahtml +="</div>"
 				}
-				ahtml +="</div>"
-				ahtml +="</div>"
-				$('#codeBox').empty();
-	    		$('#codeBox').append(ahtml);
+				ahtml +="</div>" */
+				$('#cs_step1').html('<span>'+split_code[0]+'</span>');
+				$('#md_class').empty();
+	    		$('#md_class').append(ahtml);
 	    		console.log(res.data.length);
 	    		var ahtml= "";
 					ahtml +="<div class='cont_list'>"
 	   				if(res.data.length == null){
-	   					ahtml +='<div class="row"><div class="empty_data"><p>연구자가 없습니다.</p></div></div>';
+	   					ahtml +="<td colspan='6'>연구자가 없습니다.</td>"
 	   	   	   		}else{   	   	   	   		
    					for(var i=0; i<res.data.length;i++){
    					ahtml +="<div class='row'>"
@@ -85,7 +96,9 @@ function clickCode(code_key,parent_depth,name_path){
    						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].tech_nm1+"</span></li>"
    						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].tech_nm2+"</span></li>"
    						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].tech_nm3+"</span></li></ul>"
-   						ahtml +="<span class='mr txt_grey keyword'  >"+res.data[i].keyword+"</span>"
+   						ahtml +="<ul class='tag_box'>"
+   						ahtml +="<li>"+res.data[i].keyword+"</li>"
+   						ahtml +="</ul>"
    						ahtml +="</div>"	
 
    					}
@@ -96,29 +109,29 @@ function clickCode(code_key,parent_depth,name_path){
 	   	   		}
 	    		
            }else if(parent_depth == "3"){
+        	   $('#cs_step3').html('');
         	   var ahtml= "";
-   	  	 	ahtml +=split_code[0]
-   	  	 	ahtml += "&nbsp; > "
-   	  	 	ahtml +=split_code[1]
-				ahtml +="<div class='form-inline pop-search-box' id='codeBox'>"
-				ahtml +="소분류"
-				ahtml +="<div>"
+   	  	 	/* ahtml +=split_code[0]
+	   	  	 	ahtml += "&nbsp; > "
+	   	  	 	ahtml +=split_code[1]
+	   	  		ahtml +=split_code[0] */
+				ahtml +='		<ul>                                                                                                               ';
 				for(var i=0; i<res.stdMainCode.length;i++){
-					ahtml +="<div>"
-					ahtml +="<a href=javascript:void(0); onclick=clickCode("+res.stdMainCode[i].code_key+","+res.stdMainCode[i].code_depth+","+"'"+res.stdMainCode[i].name_path+"'"+")>"+res.stdMainCode[i].code_name +"</a>"
-					ahtml +="</div>"
+	    			ahtml +='<li>                                                                                                       ';
+	    			ahtml +="<a href=javascript:void(0); onclick=clickCode("+res.stdMainCode[i].code_key+","+res.stdMainCode[i].code_depth+","+"'"+res.stdMainCode[i].name_path+"'"+")>"+res.stdMainCode[i].code_name +"</a>"
+	
+			        ahtml +='</li>                                                                                                      ';
 				}
-				ahtml +="</div>"
-				ahtml +="<br/>"
-				ahtml +="</div>"
-				ahtml +="</div>"
-				$('#codeBox').empty();
-	    		$('#codeBox').append(ahtml);
+		        ahtml +='    		                                                                                                               ';
+	            ahtml +='		</ul>                                                                                                              ';
+				$('#cs_step2').html('<span>'+split_code[1]+'</span>');
+				$('#s_class').empty();
+	    		$('#s_class').append(ahtml);
 	    		
 	    		var ahtml= "";
 					ahtml +="<div class='cont_list'>"
 	   				if(res.data == null){
-	   					ahtml +='<div class="row"><div class="empty_data"><p>연구자가 없습니다.</p></div></div>';
+	   					ahtml +="<td colspan='6'>연구자가 없습니다.</td>"
 	   	   	   		}else{   	   	   	   		
    					for(var i=0; i<res.data.length;i++){
    					ahtml +="<div class='row'>"
@@ -130,7 +143,9 @@ function clickCode(code_key,parent_depth,name_path){
    						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].tech_nm1+"</span></li>"
    						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].tech_nm2+"</span></li>"
    						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].tech_nm3+"</span></li></ul>"
-   						ahtml +="<span class='mr txt_grey keyword'  >"+res.data[i].keyword+"</span>"
+   						ahtml +="<ul class='tag_box'>"
+ 	   					ahtml +="<li>"+res.data[i].keyword+"</li>"
+ 	   					ahtml +="</ul>"
    						ahtml +="</div>"	
 
    					}
@@ -142,7 +157,7 @@ function clickCode(code_key,parent_depth,name_path){
 		    		
            }else if(parent_depth =="4"){
         	   var ahtml= "";
-        	   ahtml +=split_code[0]
+        	   /* ahtml +=split_code[0]
    	    		ahtml += "&nbsp; > "
    	    		ahtml +=split_code[1]
    	    		ahtml += "&nbsp; > "
@@ -151,14 +166,15 @@ function clickCode(code_key,parent_depth,name_path){
    					ahtml +="<div>"
    					ahtml +="</div>"
    					ahtml +="<br/>"
-   					ahtml +="</div>"
-   					$('#codeBox').empty();
-   		    		$('#codeBox').append(ahtml);
+   					ahtml +="</div>" */
+   					$('#cs_step3').html('<span>'+split_code[2]+'</span>');
+   					/* $('#codeBox').empty(); 
+   		    		$('#codeBox').append(ahtml);*/
     		   
    		    		var ahtml= "";
    					ahtml +="<div class='cont_list'>"
    	   				if(res.data == null){
-   	   					ahtml +='<div class="row"><div class="empty_data"><p>연구자가 없습니다.</p></div></div>';
+   	   					ahtml +="<td colspan='6'>연구자가 없습니다.</td>"
    	   	   	   		}else{   	   	   	   		
 	   					for(var i=0; i<res.data.length;i++){
 	   					ahtml +="<div class='row'>"
@@ -170,7 +186,7 @@ function clickCode(code_key,parent_depth,name_path){
 	   						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].tech_nm1+"</span></li>"
 	   						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].tech_nm2+"</span></li>"
 	   						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].tech_nm3+"</span></li></ul>"
-	   						ahtml +="<span class='mr txt_grey keyword'  >"+res.data[i].keyword+"</span>"
+	   						ahtml +="<ul class='tag_box'><li>"+res.data[i].keyword+"</li></ul>";
 	   						ahtml +="</div>"	
 	
 	   					}
@@ -249,24 +265,44 @@ function researchDetail(research_no, research_seqno, keyword){
 
             
             <div class="area_cont">
-            	<div class="form-inline pop-search-box" id="codeBox">
-            		대분류
-            		<div>
-	            		<c:forEach var ="item" items="${ stdMainCode }" >
-	            			<div>
-	            				<a href="javascript:void(0);" onclick="clickCode('${item.code_key}', '${item.code_depth}', '${item.name_path}');return false">${item.code_name }</a>
-	            			</div>
-	            		</c:forEach>
+            	
+            	
+            	<div class="search_box" id="codeBox">
+            		<p class="p_t"><strong>기술 분야별</strong>로 <strong>주요 연구자</strong>를 찾아보세요.</p>
+            		<div class="code_step_box">
+	            		<ul>
+	            			<li id="cs_step1" class="cs_step_btn"></li>
+	            			<li id="cs_step2" class="cs_step_btn"></li>
+	            			<li id="cs_step3" class="cs_step_btn"></li>
+	            		</ul>
+	            	</div>
+            		<div class="t_box">
+            			<dl>
+            				<dt>대분류</dt>
+            				<dd id="m_class">
+            					<ul>
+				            		<c:forEach var ="item" items="${ stdMainCode }" >
+				            			<li>
+				            				<a href="javascript:void(0);" onclick="clickCode('${item.code_key}', '${item.code_depth}', '${item.name_path}');return false">${item.code_name } </a>
+				            				<span class="num"><c:out value="${item.count_result}"></c:out></span>
+				            			</li>
+				            		</c:forEach>
+			            		</ul>
+            				</dd>
+            			</dl>
+            			<dl>
+            				<dt>중분류</dt>
+            				<dd id="md_class">
+            				</dd>
+            			</dl>
+            			<dl>
+            				<dt>소분류</dt>
+            				<dd id="s_class">
+            				</dd>
+            			</dl>
             		</div>
-            		<br/>
-            		세분류
-            		<div>
-            			<c:forEach var ="item" items="${ stdMainCode }" >
-	            			<div>
-	            				<c:out value="${item.count_result}"></c:out>
-	            			</div>
-	            		</c:forEach>
-            		</div>
+            		
+            		
 				</div>
             	
             	<div class="subject_corp">
@@ -290,16 +326,15 @@ function researchDetail(research_no, research_seqno, keyword){
 												<li><span class="mr txt_grey tech_nm ">${ data.tech_nm3 }</span></li>
 												
 											</ul>
-												<span class="mr txt_grey keyword ">${ data.keyword }</span>
+											<ul class="tag_box">
+			                                    <li>${ data.keyword }</li>
+			                                </ul>
+												
 										</div>
 									</c:forEach>
 								</c:when>
 								<c:otherwise>
-									<div class="row">
-                                        <div class="empty_data">
-                                            <p>연구자가 없습니다.</p>
-                                        </div>
-                                    </div>
+									<td colspan="6">연구자가 없습니다.</td>
 								</c:otherwise>
 							</c:choose>
 						</div>
