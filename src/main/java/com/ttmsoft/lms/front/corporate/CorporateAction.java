@@ -37,7 +37,7 @@ public class CorporateAction extends BaseAct{
 	 * @Explain  : 
 	 *
 	 */
-	/*@RequestMapping (value="/CoTechList.do", method = RequestMethod.GET)
+	@RequestMapping (value="/coTechList.do", method = RequestMethod.GET)
 	public ModelAndView researchTechList (@ModelAttribute ("paraMap") DataMap paraMap) {
 		ModelAndView mav = new ModelAndView("/techtalk/front/corporate/corporateTechList.front");
 		DataMap navi = new DataMap();
@@ -45,18 +45,47 @@ public class CorporateAction extends BaseAct{
 		navi.put("two", "기술분야 검색");
 		mav.addObject("navi",navi);
 		try {
-			paraMap.put("depth", '1');
-			List<DataMap> stdCode = corporateService.doGetStdMainCodeInfo(paraMap);
+			paraMap.put("parent_depth", '1');
+			paraMap.put("next_depth", '2');
+			List<DataMap> stdCode = corporateService.doCorprateCountSubCode(paraMap);
 			mav.addObject("stdMainCode", stdCode);
+			mav.addObject("data", this.corporateService.doGetCorporateList(paraMap));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ModelAndView("error");
 		}	
 		
 		return mav;
-		
-				
-	}*/
+	}
+
+	/**
+	 *
+	 * @Author   : jmyoo
+	 * @Date	 : 2023. 8. 29. 
+	 * @Parm	 : DataMap
+	 * @Return   : ModelAndView
+	 * @Function : 기술 분류값 가져오기
+	 * @Explain  : 
+	 *
+	 */
+	@RequestMapping (value = "/doGetCoStdCodeInfoTest.do")
+	public ModelAndView doGetCoStdCodeInfo(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
+		ModelAndView mav = new ModelAndView("jsonView");
+		System.out.println("paraMap : " + paraMap.toString());
+		try {
+			//DB 셋팅 후 사용자 아이디 중복확인 코드 적용 필요
+			if(paraMap.get("gubun").equals("mid")) {
+				paraMap.put("depth", '2');
+			}else if(paraMap.get("gubun").equals("sub")) {
+				paraMap.put("depth", '3');
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ModelAndView("error");
+		}
+	
+		return mav;
+	}
 	
 	/**
 	 *
@@ -84,45 +113,6 @@ public class CorporateAction extends BaseAct{
 		
 		return mav;
 		
-	}
-	
-	/**
-	 *
-	 * @Author   : jmyoo
-	 * @Date	 : 2023. 8. 29. 
-	 * @Parm	 : DataMap
-	 * @Return   : ModelAndView
-	 * @Function : 기술 분류값 가져오기
-	 * @Explain  : 
-	 *
-	 */
-	@RequestMapping (value = "/doGetCoStdCodeInfoTest.do")
-	public ModelAndView doGetCoStdCodeInfo(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
-		ModelAndView mav = new ModelAndView("jsonView");
-		System.out.println("paraMap : " + paraMap.toString());
-		try {
-			//DB 셋팅 후 사용자 아이디 중복확인 코드 적용 필요
-			if(paraMap.get("gubun").equals("mid")) {
-				paraMap.put("depth", '2');
-			}else if(paraMap.get("gubun").equals("sub")) {
-				paraMap.put("depth", '3');
-			}
-			List<DataMap> code = corporateService.doGetStdMiddleCodeInfo(paraMap);
-			// 총 데이터 갯수
-			int totalCount = corporateService.doResearchCountSubCode(paraMap);	
-			if(paraMap.get("gubun").equals("mid")) {
-				mav.addObject("stdCode", code);
-				mav.addObject("totalCount", totalCount);
-			}else if(paraMap.get("gubun").equals("sub")) {
-				mav.addObject("stdCode", totalCount);
-				mav.addObject("totalCount", totalCount);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new ModelAndView("error");
-		}
-	
-		return mav;
 	}
 	
 	/**

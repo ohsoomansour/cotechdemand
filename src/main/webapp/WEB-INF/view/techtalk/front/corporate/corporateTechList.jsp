@@ -271,7 +271,7 @@ function researchDetail(research_no, research_seqno, keyword){
             	
             	<div class="subject_corp">
 						<h3 class="tbl_ttc">
-							연구자 목록 
+							기업수요 목록 
 						</h3>
 				</div>			
 					<!-- page_content s:  -->
@@ -282,7 +282,7 @@ function researchDetail(research_no, research_seqno, keyword){
 									<c:forEach var="data" items="${ data }">
 										<div class="row">
 											<span class="row_txt_num blind">${ data.research_seqno }</span>
-											<span class="txt_left row_txt_tit"><a href="javascript:void(0);" onclick="researchDetail('${data.research_no}','${data.research_seqno}','${data.keyword}')" title="연구자${data.research_nm }상세보기">${ data.research_nm } 연구자</a> </span>
+											<span class="txt_left row_txt_tit"><a href="javascript:void(0);" onclick="researchDetail('${data.research_no}','${data.research_seqno}','${data.keyword}')" title="연구자${data.research_nm }상세보기">${ data.research_nm } </a> </span>
 											<span class="re_beloong">${ data.applicant_nm }</span>
 											<ul class="step_tech">
 												<li><span class="mr txt_grey tech_nm ">${ data.tech_nm1 }</span></li>

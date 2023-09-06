@@ -34,47 +34,27 @@ function keywordClick(research_no, research_seqno, keyword){
        success : function(res){
     	   console.log(res.data)
     	   var ahtml= "";
-    	   
-				ahtml +="<table class='tbl'>"
-				ahtml +="<caption class='caption_hide'>연구자 리스트</caption>"
-				ahtml +="<colgroup>"
-				ahtml +="<col style='width:5%' />"
-				ahtml +="<col style='width:10%' />"
-				ahtml +="<col style='width:20%' />"
-				ahtml +="<col style='width:15%' />"
-				ahtml +="<col style='width:15%' />"
-				ahtml +="<col style='width:15%' />"
-				ahtml +="<col style='width:15%' />"
-				ahtml +="</colgroup>"
-				ahtml +="<thead>"
-				ahtml +="<tr>"
-				ahtml +="<th>번호</th>"
-				ahtml +="<th>연구자명</th>"
-				ahtml +="<th>출원인</th>"
-				ahtml +="<th>기술분류1</th>"
-				ahtml +="<th>기술분류2</th>"
-				ahtml +="<th>기술분류3</th>"
-				ahtml +="<th>키워드</th>"
-				ahtml +="<tr>"
-				ahtml +="</thead>"
-				ahtml +="<tbody>"
-				for(var i=0; i<res.data.length;i++){
-				ahtml +="<tr>"
-					ahtml +=	"<td >"+res.data[i].research_seqno+"</td>"
-					ahtml +=	"<td >"
-					ahtml +=	"<a href=javascript:void(0); onclick=researchDetail("+res.data[i].research_no+","+res.data[i].research_seqno+","+res.data[i].keyword+")>"+res.data[i].re_nm +"</a>"
-					ahtml +=	"</td>"
-					ahtml +=	"<td >"+res.data[i].re_belong+"</td>"
-					ahtml +=	"<td >"+res.data[i].tech_nm1+"</td>"
-					ahtml +=	"<td >"+res.data[i].tech_nm2+"</td>"
-					ahtml +=	"<td >"+res.data[i].tech_nm3+"</td>"
-					ahtml +=	"<td >"+res.data[i].keyword+"</td>"
-				ahtml +="<tr>"
+				ahtml +="<div class='cont_list'>"
+				if(res.data.length == 0){
+					ahtml +="<div class='row'><p style='text-align:center'>연구원이 없습니다.</p></div>"
+				}else{
+					for(var i=0; i<res.data.length;i++){
+					ahtml +="<div class='row'>"
+					ahtml +="<span class='row_txt_num blind'>"+res.data[i].research_seqno+"</span>"
+					ahtml +="<span class='txt_left row_txt_tit'>"
+					ahtml +="<a href=javascript:void(0); onclick=researchDetail("+res.data[i].research_no+","+res.data[i].research_seqno+","+res.data[i].keyword+")>"+res.data[i].research_nm +"연구자</a></span>"
+					ahtml +="<span class='re_beloong'>"+res.data[i].applicant_nm+"</span>"
+					ahtml +="<ul class='step_tech'>"
+					ahtml +="<li><span class='mr txt_grey tech_nm '>"+res.data[i].tech_nm1+"</span></li>"
+					ahtml +="<li><span class='mr txt_grey tech_nm '>"+res.data[i].tech_nm2+"</span></li>"
+					ahtml +="<li><span class='mr txt_grey tech_nm '>"+res.data[i].tech_nm3+"</span></li></ul>"
+					ahtml +="<span class='keyword'>"+res.data[i].keyword+"</span>"
+					ahtml +="</div>"
+					}
 				}
-				ahtml +="</tbody>"
-				ahtml +="</table>"
-				$('.tbl').empty();
-	    		$('.tbl').append(ahtml);
+				ahtml +="</div>"
+				$('.list_panel').empty();
+	    		$('.list_panel').append(ahtml);
     	   
        },
        error : function(){
@@ -117,7 +97,15 @@ function researchDetail(research_no, research_seqno, keyword){
 	frm.submit();
 	
 }
-    
+
+//엔터키 눌렀을때
+function enterKeyClick(e){
+	if(e.keyCode == 13){
+		e.preventDefault();
+		keywordClick();
+		return false;
+	};
+}
 </script>
 
 <form id="frm" name="frm" action ="/techtalk/doKeywordResult.do" method="post" >
@@ -127,8 +115,8 @@ function researchDetail(research_no, research_seqno, keyword){
 		<div class="wrap_cont">
 			<div class="sch_ctgr_wrap">
 				<ul class="sch_ctgr_link">
-					<li class="sch_ctgr_item item_type active"><a href="/techtalk/reList.do">연구자 검색<span class="ir_text check-text">(선택됨)</span></a></li>
-					<li class="sch_ctgr_item item_author"><a href="/techtalk/businessList.do">기업수요 검색</a></li>
+					<li class="sch_ctgr_item item_type active"><a href="/techtalk/reTechList.do">연구자 검색<span class="ir_text check-text">(선택됨)</span></a></li>
+					<li class="sch_ctgr_item item_author"><a href="/techtalk/coTechList.do">기업수요 검색</a></li>
 				</ul>
 			</div>
 			
@@ -143,22 +131,18 @@ function researchDetail(research_no, research_seqno, keyword){
 			
 			
             <!-- page_title s:  -->
-			
-            
-            <!-- <a href="javascript:void(0);" onClick="keywordClick();" class="btn_step" title="검색">검색</a> -->
             
             <div class="area_cont">
 					<div class="search_box">
 						<p class="p_t"><strong>핵심 키워드</strong>를 통해 <strong>주요 연구자</strong>를 찾아보세요.</p>
 						<div class="search_box_inner">
 							<div class="search_keyword_box">
-								<input type="text" class="keyword_input" id="keyword" name="keyword" placeholder="키워드를 입력하세요." value="" title="검색어"/>
+								<input type="text" class="keyword_input" id="keyword" name="keyword" onkeypress="enterKeyClick(event)" placeholder="키워드를 입력하세요." value="" title="검색어"/>
 							</div>
 							<div class="btn_wrap">
 								<button type="button" class="btn_step" onclick="javascript:keywordClick();" title="검색">
 									<span>검색</span>
 								</button>
-								<!-- <a href="javascript:void(0);" onClick="keywordClick();" class="btn_step">검색</a> -->
 							</div>
 						</div>
 					</div>	
@@ -176,18 +160,18 @@ function researchDetail(research_no, research_seqno, keyword){
 										<div class="row">
 											<span class="row_txt_num blind">${ data.research_seqno }</span>
 											<span class="txt_left row_txt_tit"><a href="javascript:void(0);" onclick="researchDetail('${data.research_no}','${data.research_seqno}','${data.keyword}')" title="연구자${data.research_nm }상세보기">${ data.research_nm } 연구자</a> </span>
-											<span class="re_beloong">${ data.re_belong }</span>
+											<span class="re_beloong">${ data.applicant_nm }</span>
 											<ul class="step_tech">
 												<li><span class="mr txt_grey tech_nm ">${ data.tech_nm1 }</span></li>
 												<li><span class="mr txt_grey tech_nm ">${ data.tech_nm2 }</span></li>
 												<li><span class="mr txt_grey tech_nm ">${ data.tech_nm3 }</span></li>
 											</ul>
-											
+											<span class="keyword">${ data.keyword }</span>
 										</div>
 									</c:forEach>
 								</c:when>
 								<c:otherwise>
-									<div class="row"><p style="text-align:center">게시물이 없습니다.</p></div>
+									<div class="row"><p style="text-align:center">연구원이 없습니다.</p></div>
 								</c:otherwise>
 							</c:choose>
 						</div>

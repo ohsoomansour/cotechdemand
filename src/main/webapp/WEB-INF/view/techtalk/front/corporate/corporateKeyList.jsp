@@ -33,37 +33,24 @@ function keywordClick(corporate_no, tech_class_nm){
     	   console.log(res.data)
     	   var ahtml= "";
     	   
-				ahtml +="<table class='tbl'>"
-				ahtml +="<caption class='caption_hide'>연구자 리스트</caption>"
-				ahtml +="<colgroup>"
-				ahtml +="<col style='width:5%' />"
-				ahtml +="<col style='width:20%' />"
-				ahtml +="<col style='width:15%' />"
-				ahtml +="<col style='width:15%' />"
-				ahtml +="</colgroup>"
-				ahtml +="<thead>"
-				ahtml +="<tr>"
-				ahtml +="<th>번호</th>"
-				ahtml +="<th>기술명</th>"
-				ahtml +="<th>업데이트 일자</th>"
-				ahtml +="<th>키워드</th>"
-				ahtml +="<tr>"
-				ahtml +="</thead>"
-				ahtml +="<tbody>"
+			ahtml +="<div class='cont_list'>"
+			if(res.data.length == 0){
+				ahtml +="<div class='row'><p style='text-align:center'>기업수요가 없습니다.</p></div>"
+			}else{
 				for(var i=0; i<res.data.length;i++){
-				ahtml +="<tr>"
-					ahtml +=	"<td >"+res.data[i].corporate_no+"</td>"
-					ahtml +=	"<td >"
-					ahtml +=	"<a href=javascript:void(0); onclick=corporateDetail("+res.data[i].corporate_no+","+res.data[i].tech_class_nm+")>"+res.data[i].tech_class_nm +"</a>"
-					ahtml +=	"</td>"
-					ahtml +=	"<td >"+res.data[i].co_update_dt+"</td>"
-					ahtml +=	"<td >"+res.data[i].keyword+"</td>"
-				ahtml +="<tr>"
+				ahtml +="<div class='row'>"
+				ahtml +="<span class='row_txt_num blind'>"+res.data[i].corporate_no+"</span>"
+				ahtml +="<span class='txt_left row_txt_tit'>"
+				ahtml +="<a href=javascript:void(0); onclick=researchDetail("+res.data[i].corporate_no+","+res.data[i].tech_class_nm+")>"+res.data[i].tech_class_nm +"</a></span>"
+				ahtml +="<span class='co_update_dt'>"+res.data[i].co_update_dt+"</span>"
+				ahtml +="<ul class='step_tech'>"
+				ahtml +="<li><span class='mr txt_grey tech_nm '>"+res.data[i].keyword+"</span></li></ul>"
+				ahtml +="</div>"
 				}
-				ahtml +="</tbody>"
-				ahtml +="</table>"
-				$('.tbl').empty();
-	    		$('.tbl').append(ahtml);
+			}
+			ahtml +="</div>"
+			$('.list_panel').empty();
+    		$('.list_panel').append(ahtml);
     	   
        },
        error : function(){
@@ -101,7 +88,15 @@ function corporateDetail(corporate_no, tech_class_nm){
 	frm.submit();
 	
 }
-    
+
+//엔터키 눌렀을때
+function enterKeyClick(e){
+	if(e.keyCode == 13){
+		e.preventDefault();
+		keywordClick();
+		return false;
+	};
+}
 </script>
 
 <form id="frm" name="frm" action ="/techtalk/doCorporateKeywordResult.do" method="post" >
@@ -118,8 +113,8 @@ function corporateDetail(corporate_no, tech_class_nm){
 				<div class="sch_ctgr_list">
 					<div class="sch_block_scroll">
 						<ul class="sch_list_wrap sch_block_wrap" >
-							<li><a href="/techtalk/cosTechList.do" class="sch_list_btn " title="기술분야" data-d-ategory="">기술분야</a></li>
-							<li><a href="/techtalk/cosKeyList.do" class="sch_list_btn last active" title="키워드검색" data-d-ategory="도서">키워드검색</a></li>
+							<li><a href="/techtalk/coTechList.do" class="sch_list_btn " title="기술분야" data-d-ategory="">기술분야</a></li>
+							<li><a href="/techtalk/coKeyList.do" class="sch_list_btn last active" title="키워드검색" data-d-ategory="도서">키워드검색</a></li>
 						</ul>
 					</div>
 				</div>     
@@ -128,7 +123,7 @@ function corporateDetail(corporate_no, tech_class_nm){
 					<div class="search_box">
 						<div class="search_box_inner">
 							<div class="search_keyword_box">
-								<input type="text" class="keyword_input" id="keyword" name="keyword" placeholder="키워드를 입력하세요." value="" title="검색어"/>
+								<input type="text" class="keyword_input" id="keyword" name="keyword" onkeypress="enterKeyClick(event)" placeholder="키워드를 입력하세요." value="" title="검색어"/>
 							</div>
 							<div class="btn_wrap">
 								<button type="button" class="btn_step" onclick="javascript:keywordClick();" title="검색">

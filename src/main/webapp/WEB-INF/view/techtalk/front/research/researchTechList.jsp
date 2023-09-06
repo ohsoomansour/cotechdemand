@@ -105,7 +105,7 @@ function clickCode(code_key,parent_depth,name_path){
 				ahtml +="<div>"
 				for(var i=0; i<res.stdMainCode.length;i++){
 					ahtml +="<div>"
-						ahtml +="<a href=javascript:void(0); onclick=clickCode("+res.stdMainCode[i].code_key+","+res.stdMainCode[i].code_depth+","+"'"+res.stdMainCode[i].name_path+"'"+")>"+res.stdMainCode[i].code_name +"</a>"
+					ahtml +="<a href=javascript:void(0); onclick=clickCode("+res.stdMainCode[i].code_key+","+res.stdMainCode[i].code_depth+","+"'"+res.stdMainCode[i].name_path+"'"+")>"+res.stdMainCode[i].code_name +"</a>"
 					ahtml +="</div>"
 				}
 				ahtml +="</div>"
