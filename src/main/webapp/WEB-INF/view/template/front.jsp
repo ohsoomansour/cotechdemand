@@ -116,13 +116,18 @@
 	<script src="${pageContext.request.contextPath}/plugins/ckeditor/ckeditor.js?v=1" ></script>
 	<!-- MultiFile  -->
 	<script src="${pageContext.request.contextPath}/plugins/multifile-master/jquery.MultiFile.js?v=1"></script>
-	
+	<!-- jqGrid -->
+    <script src="${pageContext.request.contextPath}/plugins/jszip/dist/jszip.min.js?v=1"></script>
+    <script src="${pageContext.request.contextPath}/plugins/jqgrid/jquery.jqgrid.min.js?v=1"></script>
+    <script src="${pageContext.request.contextPath}/plugins/jqgrid/i18n/grid.locale-kr.js?v=1"></script>
+    <link href="${pageContext.request.contextPath}/plugins/jqgrid/ui.jqgrid.css?v=1" rel="stylesheet" type="text/css"/>
 	<!-- 2021-05-18 추가 -->
 	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/front/common.css?v=1">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/front/font.css?v=1">
 	
 	<!-- common.js -->
 	<script src="/js/lms/common.js?v=1"></script>
+	<link href="${pageContext.request.contextPath}/css/admin/common.css?v=1" rel="stylesheet">
 	
 	
 	<!-- daum address api -->
