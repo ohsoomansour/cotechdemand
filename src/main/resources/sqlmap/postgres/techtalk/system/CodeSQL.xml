@@ -590,7 +590,7 @@
 		<!-- 2021-07-05  유지민 -->
 		/*
 			SQL ID : CodeSQL.doResearchCountSubCode
-			표준산업분류코드 대분류
+			기술분류 코드
 		*/
 		<![CDATA[
 		
@@ -598,20 +598,23 @@
 		    *,
 		    (
 		        SELECT COUNT(*)
-		        FROM tbiz.TBLCOMM_STD_CLS
+		        FROM tbiz.TBTECH_CODE
 		 ]]>
-		 <if test="depth != ''">
-		        WHERE CODE_DEPTH = #{depth}::INT
+		 <if test="next_depth != ''">
+		        WHERE CODE_DEPTH = #{next_depth}::INT
 		        AND parent_code_key = tsc.code_key 
 		 </if>
 		 <![CDATA[
 		    ) AS count_result
 		FROM
-		    tbiz.TBLCOMM_STD_CLS tsc
+		    tbiz.TBTECH_CODE tsc
 		WHERE CODE_DEPTH = #{parent_depth}::INT
 		]]>
 		<if test="parent_code_key != ''">
 			AND PARENT_CODE_KEY = #{parent_code_key}
+		</if>
+		<if test="code_end == 'end'">
+			AND CODE_KEY = #{code_key}
 		</if>
 			ORDER BY CODE_KEY ASC
 	</select>

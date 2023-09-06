@@ -48,7 +48,7 @@ public class ResearchAction extends BaseAct{
 		paraMap.get("parent_code_key");
 		try {
 			paraMap.put("parent_depth", '1');
-			paraMap.put("depth", '2');
+			paraMap.put("next_depth", '2');
 			List<DataMap> stdCode = researchService.doResearchCountSubCode(paraMap);
 			mav.addObject("stdMainCode", stdCode);
 			mav.addObject("data", this.researchService.doGetResearchList(paraMap));
@@ -73,21 +73,29 @@ public class ResearchAction extends BaseAct{
 	public ModelAndView doClickCodeResult(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView mav = new ModelAndView("jsonView");
 		System.out.println("paraMap : " + paraMap);
-
 		try {
 			paraMap.put("parent_depth", paraMap.get("parent_depth"));
-			paraMap.put("depth", paraMap.get("code_depth"));
+			paraMap.put("next_depth", paraMap.get("next_depth"));
+			String name_path = (String) paraMap.get("name_path");
+			String[] name_path_split = name_path.split("\\^");
 			if(paraMap.get("parent_depth").equals("3")) {
 				System.out.println("소분류");
 		        int size = 2;
 		        String code_key_change = StringUtils.leftPad(String.valueOf(paraMap.get("code_key")), size, '0');
-		        System.out.println(code_key_change);
 				paraMap.put("parent_code_key", code_key_change);
 				paraMap.put("tech_code2", code_key_change);
-			}else {
+				paraMap.put("tech_nm1", name_path_split[0]);
+				paraMap.put("tech_nm2", name_path_split[1]);
+			}else if(paraMap.get("parent_depth").equals("2"))  {
 				System.out.println("중분류");
 				paraMap.put("parent_code_key", paraMap.get("code_key"));
-				paraMap.put("tech_code1", paraMap.get("code_key"));
+				paraMap.put("tech_nm1", name_path_split[0]);
+			}else if(paraMap.get("parent_depth").equals("4"))  {
+				paraMap.put("parent_depth", "3");
+				paraMap.put("code_end", "end");
+				paraMap.put("tech_nm1", name_path_split[0]);
+				paraMap.put("tech_nm2", name_path_split[1]);
+				paraMap.put("tech_nm3", name_path_split[2]);
 			}
 			System.out.println("paraMap2 : " + paraMap);
 			List<DataMap> stdCode = researchService.doResearchCountSubCode(paraMap);

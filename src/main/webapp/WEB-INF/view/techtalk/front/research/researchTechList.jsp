@@ -18,31 +18,32 @@ $('#stdClassSrch').click(function() {
 });
 
 //분류 변경
-function clickCode(code_key,parent_depth){
-	var code_depth = null;
+function clickCode(code_key,parent_depth,name_path){
+	var next_depth = null;
 	var url = "/techtalk/doClickCodeResult.do";
 	if(parent_depth == "1"){
 		parent_depth ="2";
-		code_depth = "3";
+		next_depth = "3";
 	}else if(parent_depth == "2"){
 		parent_depth ="3";
 	}else if(parent_depth == "3"){
 		parent_depth ="4";
 	}
+
 	$.ajax({
 		url : url,
        type: "post",
        data: {
     	   code_key : code_key,
     	   parent_depth : parent_depth,
-    	   code_depth : code_depth
+    	   next_depth : next_depth,
+    	   name_path : name_path
     	   
        },
        dataType: "json",
        success : function(res){
     	   var split_code = res.stdMainCode[0].name_path.split("^");
-    	   console.log(split_code);
-    	   console.log(res.stdMainCode);
+    	   
            if(parent_depth == "2"){
     	   var ahtml= "";
     	  	 	ahtml +=split_code[0]
@@ -52,7 +53,7 @@ function clickCode(code_key,parent_depth){
 				ahtml +="<div>"
 				for(var i=0; i<res.stdMainCode.length;i++){
 					ahtml +="<div>"
-					ahtml +="<a href=javascript:void(0); onclick=clickCode("+res.stdMainCode[i].code_key+","+res.stdMainCode[i].code_depth+")>"+res.stdMainCode[i].code_name +"</a>"
+					ahtml +="<a href=javascript:void(0); onclick=clickCode("+res.stdMainCode[i].code_key+","+res.stdMainCode[i].code_depth+","+"'"+res.stdMainCode[i].name_path+"'"+")>"+res.stdMainCode[i].code_name +"</a>"
 					ahtml +="</div>"
 				}
 				ahtml +="</div>"
@@ -68,165 +69,118 @@ function clickCode(code_key,parent_depth){
 				ahtml +="</div>"
 				$('#codeBox').empty();
 	    		$('#codeBox').append(ahtml);
-	    		
+	    		console.log(res.data.length);
 	    		var ahtml= "";
-				ahtml +="<table class='tbl'>"
-				ahtml +="<caption class='caption_hide'>연구자 리스트</caption>"
-				ahtml +="<colgroup>"
-				ahtml +="<col style='width:5%' />"
-				ahtml +="<col style='width:10%' />"
-				ahtml +="<col style='width:20%' />"
-				ahtml +="<col style='width:15%' />"
-				ahtml +="<col style='width:15%' />"
-				ahtml +="<col style='width:15%' />"
-				ahtml +="<col style='width:15%' />"
-				ahtml +="</colgroup>"
-				ahtml +="<thead>"
-				ahtml +="<tr>"
-				ahtml +="<th>번호</th>"
-				ahtml +="<th>연구자명</th>"
-				ahtml +="<th>출원인</th>"
-				ahtml +="<th>기술분류1</th>"
-				ahtml +="<th>기술분류2</th>"
-				ahtml +="<th>기술분류3</th>"
-				ahtml +="<th>키워드</th>"
-				ahtml +="<tr>"
-				ahtml +="</thead>"
-				ahtml +="<tbody>"
-				for(var i=0; i<res.data.length;i++){
-				ahtml +="<tr>"
-					ahtml +=	"<td >"+res.data[i].research_seqno+"</td>"
-					ahtml +=	"<td >"
-					ahtml +=	"<a href=javascript:void(0); onclick=researchDetail("+res.data[i].research_no+","+res.data[i].research_seqno+","+res.data[i].keyword+")>"+res.data[i].re_nm +"</a>"
-					ahtml +=	"</td>"
-					ahtml +=	"<td >"+res.data[i].re_belong+"</td>"
-					ahtml +=	"<td >"+res.data[i].tech_nm1+"</td>"
-					ahtml +=	"<td >"+res.data[i].tech_nm2+"</td>"
-					ahtml +=	"<td >"+res.data[i].tech_nm3+"</td>"
-					ahtml +=	"<td >"+res.data[i].keyword+"</td>"
-				ahtml +="<tr>"
-				}
-				ahtml +="</tbody>"
-				ahtml +="</table>"
-				$('.tbl').empty();
-	    		$('.tbl').append(ahtml);
+					ahtml +="<div class='cont_list'>"
+	   				if(res.data.length == null){
+	   					ahtml +="<td colspan='6'>연구자가 없습니다.</td>"
+	   	   	   		}else{   	   	   	   		
+   					for(var i=0; i<res.data.length;i++){
+   					ahtml +="<div class='row'>"
+   						ahtml +="<span class='row_txt_num blind'>"+res.data[i].research_seqno+"</span>"
+   						ahtml +="<span class='txt_left row_txt_tit'>"
+   						ahtml +="<a href=javascript:void(0); onclick=researchDetail("+res.data[i].research_no+","+res.data[i].research_seqno+","+res.data[i].keyword+")>"+res.data[i].research_nm +"연구자</a> </span>"
+   						ahtml +="<span class='re_beloong'>"+ res.data[i].applicant_nm+" </span>"
+   						ahtml +="<ul class='step_tech'>"
+   						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].tech_nm1+"</span></li>"
+   						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].tech_nm2+"</span></li>"
+   						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].tech_nm3+"</span></li></ul>"
+   						ahtml +="<span class='mr txt_grey keyword'  >"+res.data[i].keyword+"</span>"
+   						ahtml +="</div>"	
+
+   					}
+   					ahtml +="</div>"
+   					ahtml +="</div>"
+   					$('#tbl').empty();
+   		    		$('#tbl').append(ahtml);
+	   	   		}
 	    		
            }else if(parent_depth == "3"){
-	        	   var ahtml= "";
-	        	   ahtml +=split_code[0]
-	   	    		ahtml += "&nbsp; > "
-	   	    		ahtml +=split_code[1]
-	   	    		ahtml +="<div class='form-inline pop-search-box' id='codeBox'>"
-	   					ahtml +="소분류"
-	   					ahtml +="<div>"
-	   					for(var i=0; i<res.stdMainCode.length;i++){
-	   						ahtml +="<div>"
-	   						ahtml +="<a href=javascript:void(0); onclick=clickCode("+res.stdMainCode[i].code_key+","+res.stdMainCode[i].code_depth+")>"+res.stdMainCode[i].code_name +"</a>"
-	   						ahtml +="</div>"
-	   					}
-	   					ahtml +="</div>"
-	   					ahtml +="<br/>"
-	   					ahtml +="</div>"
-	   					$('#codeBox').empty();
-	   		    		$('#codeBox').append(ahtml);
-        		   
-        		   var ahtml= "";
-    				ahtml +="<table class='tbl'>"
-    				ahtml +="<caption class='caption_hide'>연구자 리스트</caption>"
-    				ahtml +="<colgroup>"
-    				ahtml +="<col style='width:5%' />"
-    				ahtml +="<col style='width:10%' />"
-    				ahtml +="<col style='width:20%' />"
-    				ahtml +="<col style='width:15%' />"
-    				ahtml +="<col style='width:15%' />"
-    				ahtml +="<col style='width:15%' />"
-    				ahtml +="<col style='width:15%' />"
-    				ahtml +="</colgroup>"
-    				ahtml +="<thead>"
-    				ahtml +="<tr>"
-    				ahtml +="<th>번호</th>"
-    				ahtml +="<th>연구자명</th>"
-    				ahtml +="<th>출원인</th>"
-    				ahtml +="<th>기술분류1</th>"
-    				ahtml +="<th>기술분류2</th>"
-    				ahtml +="<th>기술분류3</th>"
-    				ahtml +="<th>키워드</th>"
-    				ahtml +="<tr>"
-    				ahtml +="</thead>"
-    				ahtml +="<tbody>"
-    				for(var i=0; i<res.data.length;i++){
-    				ahtml +="<tr>"
-    					ahtml +=	"<td >"+res.data[i].research_seqno+"</td>"
-    					ahtml +=	"<td >"
-    					ahtml +=	"<a href=javascript:void(0); onclick=researchDetail("+res.data[i].research_no+","+res.data[i].research_seqno+","+res.data[i].keyword+")>"+res.data[i].re_nm +"</a>"
-    					ahtml +=	"</td>"
-    					ahtml +=	"<td >"+res.data[i].re_belong+"</td>"
-    					ahtml +=	"<td >"+res.data[i].tech_nm1+"</td>"
-    					ahtml +=	"<td >"+res.data[i].tech_nm2+"</td>"
-    					ahtml +=	"<td >"+res.data[i].tech_nm3+"</td>"
-    					ahtml +=	"<td >"+res.data[i].keyword+"</td>"
-    				ahtml +="<tr>"
-    				}
-    				ahtml +="</tbody>"
-    				ahtml +="</table>"
-    				$('.tbl').empty();
-    	    		$('.tbl').append(ahtml);
-           }else if(parent_depth == "4"){
-               console.log("여기 떠야지")
-               var ahtml= "";
+        	   var ahtml= "";
+   	  	 	ahtml +=split_code[0]
+   	  	 	ahtml += "&nbsp; > "
+   	  	 	ahtml +=split_code[1]
+				ahtml +="<div class='form-inline pop-search-box' id='codeBox'>"
+				ahtml +="소분류"
+				ahtml +="<div>"
+				for(var i=0; i<res.stdMainCode.length;i++){
+					ahtml +="<div>"
+						ahtml +="<a href=javascript:void(0); onclick=clickCode("+res.stdMainCode[i].code_key+","+res.stdMainCode[i].code_depth+","+"'"+res.stdMainCode[i].name_path+"'"+")>"+res.stdMainCode[i].code_name +"</a>"
+					ahtml +="</div>"
+				}
+				ahtml +="</div>"
+				ahtml +="<br/>"
+				ahtml +="</div>"
+				ahtml +="</div>"
+				$('#codeBox').empty();
+	    		$('#codeBox').append(ahtml);
+	    		
+	    		var ahtml= "";
+					ahtml +="<div class='cont_list'>"
+	   				if(res.data == null){
+	   					ahtml +="<td colspan='6'>연구자가 없습니다.</td>"
+	   	   	   		}else{   	   	   	   		
+   					for(var i=0; i<res.data.length;i++){
+   					ahtml +="<div class='row'>"
+   						ahtml +="<span class='row_txt_num blind'>"+res.data[i].research_seqno+"</span>"
+   						ahtml +="<span class='txt_left row_txt_tit'>"
+   						ahtml +="<a href=javascript:void(0); onclick=researchDetail("+res.data[i].research_no+","+res.data[i].research_seqno+","+res.data[i].keyword+")>"+res.data[i].research_nm +"연구자</a> </span>"
+   						ahtml +="<span class='re_beloong'>"+ res.data[i].applicant_nm+" </span>"
+   						ahtml +="<ul class='step_tech'>"
+   						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].tech_nm1+"</span></li>"
+   						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].tech_nm2+"</span></li>"
+   						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].tech_nm3+"</span></li></ul>"
+   						ahtml +="<span class='mr txt_grey keyword'  >"+res.data[i].keyword+"</span>"
+   						ahtml +="</div>"	
+
+   					}
+   					ahtml +="</div>"
+   					ahtml +="</div>"
+   					$('#tbl').empty();
+   		    		$('#tbl').append(ahtml);
+	   	   		}
+		    		
+           }else if(parent_depth =="4"){
+        	   var ahtml= "";
         	   ahtml +=split_code[0]
    	    		ahtml += "&nbsp; > "
    	    		ahtml +=split_code[1]
    	    		ahtml += "&nbsp; > "
-   	    		ahtml +=split_code[2]
+   	   	    	ahtml +=split_code[2]
    	    		ahtml +="<div class='form-inline pop-search-box' id='codeBox'>"
+   					ahtml +="<div>"
+   					ahtml +="</div>"
    					ahtml +="<br/>"
    					ahtml +="</div>"
    					$('#codeBox').empty();
    		    		$('#codeBox').append(ahtml);
     		   
-    		   var ahtml= "";
-				ahtml +="<table class='tbl'>"
-				ahtml +="<caption class='caption_hide'>연구자 리스트</caption>"
-				ahtml +="<colgroup>"
-				ahtml +="<col style='width:5%' />"
-				ahtml +="<col style='width:10%' />"
-				ahtml +="<col style='width:20%' />"
-				ahtml +="<col style='width:15%' />"
-				ahtml +="<col style='width:15%' />"
-				ahtml +="<col style='width:15%' />"
-				ahtml +="<col style='width:15%' />"
-				ahtml +="</colgroup>"
-				ahtml +="<thead>"
-				ahtml +="<tr>"
-				ahtml +="<th>번호</th>"
-				ahtml +="<th>연구자명</th>"
-				ahtml +="<th>출원인</th>"
-				ahtml +="<th>기술분류1</th>"
-				ahtml +="<th>기술분류2</th>"
-				ahtml +="<th>기술분류3</th>"
-				ahtml +="<th>키워드</th>"
-				ahtml +="<tr>"
-				ahtml +="</thead>"
-				ahtml +="<tbody>"
-				for(var i=0; i<res.data.length;i++){
-				ahtml +="<tr>"
-					ahtml +=	"<td >"+res.data[i].research_seqno+"</td>"
-					ahtml +=	"<td >"
-					ahtml +=	"<a href=javascript:void(0); onclick=researchDetail("+res.data[i].research_no+","+res.data[i].research_seqno+","+res.data[i].keyword+")>"+res.data[i].re_nm +"</a>"
-					ahtml +=	"</td>"
-					ahtml +=	"<td >"+res.data[i].re_belong+"</td>"
-					ahtml +=	"<td >"+res.data[i].tech_nm1+"</td>"
-					ahtml +=	"<td >"+res.data[i].tech_nm2+"</td>"
-					ahtml +=	"<td >"+res.data[i].tech_nm3+"</td>"
-					ahtml +=	"<td >"+res.data[i].keyword+"</td>"
-				ahtml +="<tr>"
-				}
-				ahtml +="</tbody>"
-				ahtml +="</table>"
-				$('.tbl').empty();
-	    		$('.tbl').append(ahtml);
-           }
+   		    		var ahtml= "";
+   					ahtml +="<div class='cont_list'>"
+   	   				if(res.data == null){
+   	   					ahtml +="<td colspan='6'>연구자가 없습니다.</td>"
+   	   	   	   		}else{   	   	   	   		
+	   					for(var i=0; i<res.data.length;i++){
+	   					ahtml +="<div class='row'>"
+	   						ahtml +="<span class='row_txt_num blind'>"+res.data[i].research_seqno+"</span>"
+	   						ahtml +="<span class='txt_left row_txt_tit'>"
+	   						ahtml +="<a href=javascript:void(0); onclick=researchDetail("+res.data[i].research_no+","+res.data[i].research_seqno+","+res.data[i].keyword+")>"+res.data[i].research_nm +"연구자</a> </span>"
+	   						ahtml +="<span class='re_beloong'>"+ res.data[i].applicant_nm+" </span>"
+	   						ahtml +="<ul class='step_tech'>"
+	   						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].tech_nm1+"</span></li>"
+	   						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].tech_nm2+"</span></li>"
+	   						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].tech_nm3+"</span></li></ul>"
+	   						ahtml +="<span class='mr txt_grey keyword'  >"+res.data[i].keyword+"</span>"
+	   						ahtml +="</div>"	
+	
+	   					}
+	   					ahtml +="</div>"
+	   					ahtml +="</div>"
+	   					$('#tbl').empty();
+	   		    		$('#tbl').append(ahtml);
+   	   	   			}
+               }
+           
        },
        error : function(){
     	alert('실패했습니다.');    
@@ -300,7 +254,7 @@ function researchDetail(research_no, research_seqno, keyword){
             		<div>
 	            		<c:forEach var ="item" items="${ stdMainCode }" >
 	            			<div>
-	            				<a href="javascript:void(0);" onclick="clickCode('${item.code_key}', '${item.code_depth}');return false">${item.code_name }</a>
+	            				<a href="javascript:void(0);" onclick="clickCode('${item.code_key}', '${item.code_depth}', '${item.name_path}');return false">${item.code_name }</a>
 	            			</div>
 	            		</c:forEach>
             		</div>
@@ -316,6 +270,37 @@ function researchDetail(research_no, research_seqno, keyword){
 				</div>
             	
             	<div class="subject_corp">
+						<h3 class="tbl_ttc">
+							연구자 목록 
+						</h3>
+				</div>			
+					<!-- page_content s:  -->
+					<div class="list_panel" id="tbl">
+						<div class="cont_list">
+							<c:choose>
+								<c:when test="${ not empty data }">
+									<c:forEach var="data" items="${ data }">
+										<div class="row">
+											<span class="row_txt_num blind">${ data.research_seqno }</span>
+											<span class="txt_left row_txt_tit"><a href="javascript:void(0);" onclick="researchDetail('${data.research_no}','${data.research_seqno}','${data.keyword}')" title="연구자${data.research_nm }상세보기">${ data.research_nm } 연구자</a> </span>
+											<span class="re_beloong">${ data.applicant_nm }</span>
+											<ul class="step_tech">
+												<li><span class="mr txt_grey tech_nm ">${ data.tech_nm1 }</span></li>
+												<li><span class="mr txt_grey tech_nm ">${ data.tech_nm2 }</span></li>
+												<li><span class="mr txt_grey tech_nm ">${ data.tech_nm3 }</span></li>
+												
+											</ul>
+												<span class="mr txt_grey keyword ">${ data.keyword }</span>
+										</div>
+									</c:forEach>
+								</c:when>
+								<c:otherwise>
+									<td colspan="6">연구자가 없습니다.</td>
+								</c:otherwise>
+							</c:choose>
+						</div>
+					</div>
+            	<%-- <div class="subject_corp">
 						<h3 class="tbl_ttc">
 							연구자 목록 
 						</h3>
@@ -351,10 +336,10 @@ function researchDetail(research_no, research_seqno, keyword){
 										<tr>
 											<td>${ data.research_seqno }</td>
 											<td>
-												<a href="javascript:void(0);" onclick="researchDetail('${data.research_no}','${data.research_seqno}','${data.keyword}')" title="연구자${data.re_nm }상세보기">${ data.re_nm }</a> 
+												<a href="javascript:void(0);" onclick="researchDetail('${data.research_no}','${data.research_seqno}','${data.keyword}')" title="연구자${data.research_nm }상세보기">${ data.research_nm }</a> 
 											</td>
-											<%-- <td>${ data.re_nm }</td> --%>
-											<td>${ data.re_belong }</td>
+											<td>${ data.re_nm }</td>
+											<td>${ data.applicant_nm }</td>
 											<td>${ data.tech_nm1 }</td>			
 											<td>${ data.tech_nm2 }</td>			
 											<td>${ data.tech_nm3 }</td>			
@@ -368,7 +353,7 @@ function researchDetail(research_no, research_seqno, keyword){
 							</c:choose>
 							</tbody>
 						</table>
-					</div>
+					</div> --%>
 				<!-- page_content s:  -->
 					<div class="paging_comm">${ sPageInfo }</div>
 				</div>
