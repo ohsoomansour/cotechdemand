@@ -411,34 +411,28 @@
 				ID = #{id}
 		]]>
 	</update>
-	<!--  ㅌ<sql id="confirm_membertype">
-		<if test="sessionid != '' ">
-			
+	<!-- meber_type이 ADMIN인 사람만 업데이트를 할 수 있다. -->
+	<sql id="confirm_membertype">
+		<if test="member_type =='ADMIN'">
+			UPDATE
+				TBLMEMBER 
+			SET
+				AGREE_FLAG = #{mode},
+				AGREE_FLAG_DATE= NOW(),
+				UPDATE_DATE= NOW(),
+				UPDATE_ID = #{sessionid}
+
+			WHERE
+				MEMBER_SEQNO = #{seqno}::INT
        	</if>
 	</sql>
-	 --> 
 	<update id="Member_v_SQL.doUpdateAgreement" parameterType="dataMap">
 		/*
 			SQL ID : Member_v_SQL.doUpdateAgreement
 			회원관리정보 변경 - 사용자정보
 		*/
-		<![CDATA[
-			UPDATE
-				TBLMEMBER T
-			SET
-				T.AGREE_FLAG = #{mode},
-				T.AGREE_FLAG_DATE= NOW(),
-				T.UPDATE_DATE= NOW(),
-				T.UPDATE_ID = #{sessionid}
-
-			WHERE
-				T.MEMBER_SEQNO = #{seqno}::INT
-				AND T.MEMBER_TYPE = 'ADMIN'
-		]]>
-
+		<include refid="confirm_membertype"/>
 	</update>
-	
-	
 	<select id="Member_v_SQL.doMemberBiz" resultType="dataMap">
 		<!-- 2021-04-21 추정완 -->
 		/*

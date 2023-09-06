@@ -137,9 +137,13 @@ public class MemberAction extends BaseAct{
 	public ModelAndView doMovePopMemberAuth(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView mav = new ModelAndView("/techtalk/admin/member/member/adminMemberForm.front_popup");
 		HttpSession session = request.getSession(); //1. 요청 세션을 얻고
-		String id = (String)session.getAttribute("id"); //2. id에 대한 세션값을 얻고
-		paraMap.put("sessionid", id); // 3. 확인사항: ADMIN만 승인완료하면 DB에 membertype을 확인 ? Y/N
-	
+		String sessionId = (String)session.getAttribute("id"); //2. id에 대한 세션값을 얻고
+		String memberType = (String)session.getAttribute("member_type");
+		System.out.println("sessionID:" + sessionId);
+		System.out.println("member_type:" + memberType);
+		
+		paraMap.put("sessionid", sessionId); // 3. 확인사항: ADMIN만 승인완료하면 DB에 membertype을 확인 ? Y/N
+		paraMap.put("member_type", memberType);
 		mav.addObject("mode", paraMap.get("mode"));  
 		mav.addObject("seqno", paraMap.get("seqno"));
 		System.out.println("agreeMemberAuth" + mav); // agreeMemberAuth 넘어오는 값{mode=Y, seqno=4}

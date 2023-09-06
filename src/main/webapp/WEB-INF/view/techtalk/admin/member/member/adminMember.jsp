@@ -69,19 +69,18 @@
                 for (var i = 0; i < ids.length; i++) {
                 
                     var rowData = $('#list').getRowData(ids[i]);  // rowData = [Object, Object]
-                   	console.log("rowData:" + rowData[0]);
 
                     var cl = ids[i];
                     console.log("cl:" + cl); // cl: testdes >> cl:test2 
                     
                     
-                    //------------ 23.09.01 가입승인 ---------------
-                    var btnModifyAuth = "<button id= 'approved_"+rowData.member_seqno+"' class='btn btn-default btn-sm' onclick=" + 'fncAuthView("Y","' + rowData.member_seqno + '")' + ">승인</button>";
+                    //------------ 23.09.01 가입승인 --------------- 멤버타입이 session에서 불러와야됨 
+                   var btnModifyAuth = "<button id= 'approved_"+rowData.member_seqno+"' class='btn btn-default btn-sm' onclick=" + 'fncAuthView("Y","' + rowData.member_seqno + '")' + ">승인</button>";
                     
                     $('#list').setRowData(cl, {
                         button : btnModifyAuth
                     });
-                    beforeLoad(rowData.member_seqno); //로드 되기 전 가입 승인 확인 
+                    beforeLoad(rowData.member_seqno ); //로드 되기 전 가입 승인 확인 
                 }; 
                 
                 /*$('#list').jqGrid( 'setGridWidth', $(".contents").width()-30 );
@@ -119,7 +118,7 @@
 	
 	// 조회 - 2023/09/01 ~  추정 중
 	function fncList() {
-
+	
         $('#list').setGridParam({
         	datatype : 'json',
             postData : {
@@ -164,45 +163,46 @@
 		
 	
 	
-    //가입 승인 필요 
+    //meber_type이 ADMIN일 경우 가입 승인 가능ㅁ
     function fncAuthView(mode, seqno ) {
-   		
-    	$.ajax({
-				type : 'GET',
-				url : '/front/joinAgreementConfirm.do?seqno=' + seqno,
-				dataType : 'json',
-				success : function(data) {
-					console.log(data) //joinApprovedConfirm: {agree_flag: 'Y'}
-					var joinApprovedConfirm = data.joinApprovedConfirm.agree_flag;
-
-					if(joinApprovedConfirm === 'N') {
-						var url = '/front/agreeMemberAuth.do?mode=' + mode + '&seqno=' + seqno  ;
-				    	var config={
-							headers:{
-								"Content-Type":"application/json;charset=utf-8",
-							},
-							method:"PUT"		
-						};
-				    	
-				    	//seqno의해 agree_flag = 'Y'로 변경 (*현재 DB에 기입)
-				    	fetch(url, config);
-				    	refresh(seqno);
+    	var member_type = '<%=(String)session.getAttribute("member_type")%>';
+    	console.log(member_type);
+    	if(member_type === "ADMIN" ){
+	    	$.ajax({
+					type : 'GET',
+					url : '/front/joinAgreementConfirm.do?seqno=' + seqno,
+					dataType : 'json',
+					success : function(data) {
+						console.log(data) //joinApprovedConfirm: {agree_flag: 'Y'}
+						var joinApprovedConfirm = data.joinApprovedConfirm.agree_flag;
+	
+						if(joinApprovedConfirm === 'N') {
+							var url = '/front/agreeMemberAuth.do?mode=' + mode + '&seqno=' + seqno  ;
+					    	var config={
+								headers:{
+									"Content-Type":"application/json;charset=utf-8",
+								},
+								method:"PUT"		
+							};
+					    	
+					    	//seqno의해 agree_flag = 'Y'로 변경 (*현재 DB에 기입)
+					    	fetch(url, config);
+					    	refresh(seqno);
+						}
+					},
+					
+					error : function() {
+						
+					},
+					complete : function() {
+						
 					}
-				},
-				
-				error : function() {
-					
-				},
-				complete : function() {
-					
-				}
-		}); //ajax 끝 
-    	
+			}); //ajax 끝 
+    	}
     }
-    
+    //파라미터를 seqno, member_type를 받아와서 == 'ADMIN'만 변경해줌
     function refresh(seqno){
-    	$('#approved_' + seqno).html("승인완료");	
-    	//$('#approved_' + seqno).hide();
+    		$('#approved_' + seqno).html("승인완료");	
     }
     
 	
