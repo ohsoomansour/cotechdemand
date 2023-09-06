@@ -73,7 +73,7 @@ function clickCode(code_key,parent_depth,name_path){
 	    		var ahtml= "";
 					ahtml +="<div class='cont_list'>"
 	   				if(res.data.length == null){
-	   					ahtml +="<td colspan='6'>연구자가 없습니다.</td>"
+	   					ahtml +='<div class="row"><div class="empty_data"><p>연구자가 없습니다.</p></div></div>';
 	   	   	   		}else{   	   	   	   		
    					for(var i=0; i<res.data.length;i++){
    					ahtml +="<div class='row'>"
@@ -118,7 +118,7 @@ function clickCode(code_key,parent_depth,name_path){
 	    		var ahtml= "";
 					ahtml +="<div class='cont_list'>"
 	   				if(res.data == null){
-	   					ahtml +="<td colspan='6'>연구자가 없습니다.</td>"
+	   					ahtml +='<div class="row"><div class="empty_data"><p>연구자가 없습니다.</p></div></div>';
 	   	   	   		}else{   	   	   	   		
    					for(var i=0; i<res.data.length;i++){
    					ahtml +="<div class='row'>"
@@ -158,7 +158,7 @@ function clickCode(code_key,parent_depth,name_path){
    		    		var ahtml= "";
    					ahtml +="<div class='cont_list'>"
    	   				if(res.data == null){
-   	   					ahtml +="<td colspan='6'>연구자가 없습니다.</td>"
+   	   					ahtml +='<div class="row"><div class="empty_data"><p>연구자가 없습니다.</p></div></div>';
    	   	   	   		}else{   	   	   	   		
 	   					for(var i=0; i<res.data.length;i++){
 	   					ahtml +="<div class='row'>"
@@ -295,7 +295,11 @@ function researchDetail(research_no, research_seqno, keyword){
 									</c:forEach>
 								</c:when>
 								<c:otherwise>
-									<td colspan="6">연구자가 없습니다.</td>
+									<div class="row">
+                                        <div class="empty_data">
+                                            <p>연구자가 없습니다.</p>
+                                        </div>
+                                    </div>
 								</c:otherwise>
 							</c:choose>
 						</div>
