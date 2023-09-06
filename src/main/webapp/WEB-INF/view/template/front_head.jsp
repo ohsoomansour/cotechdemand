@@ -4,7 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
 <script>
-		//링크태우기
+		//링크태우기 23.09.06 박성민
     function doHref(href){
 				location.href = href
     }

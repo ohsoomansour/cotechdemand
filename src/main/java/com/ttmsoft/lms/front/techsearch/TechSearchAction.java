@@ -78,4 +78,24 @@ public class TechSearchAction extends BaseAct {
 		mav.addObject("navi",navi);
 		return mav;
 	}
+	/**
+	 *
+	 * @Author   : psm
+	 * @Date	 : 2023. 9. 6.
+	 * @Parm	 : DataMap
+0	 * @Return   : ModelAndView
+	 * @Function : 매칭된 기업수요 목록 페이지
+	 * @Explain  : 
+	 *
+	 */
+	@RequestMapping ("/matchBusinessList.do")
+	public ModelAndView doMatchBusinessList (@ModelAttribute("paraMap")DataMap paraMap,HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+		
+		ModelAndView mav = new ModelAndView("/techtalk/front/techsearch/matchBusinessList.front");
+		DataMap navi = new DataMap();
+		navi.put("one", "메인");
+		navi.put("two", "매칭된 기업수요 목록 페이지");
+		mav.addObject("navi",navi);
+		return mav;
+	}
 }

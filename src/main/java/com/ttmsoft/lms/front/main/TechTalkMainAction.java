@@ -49,7 +49,8 @@ public class TechTalkMainAction extends BaseAct {
 	 */
 	@RequestMapping ("/mainView.do")
 	public ModelAndView doMainView (@ModelAttribute("paraMap")DataMap paraMap,HttpServletRequest request, HttpServletResponse response, HttpSession session) {
-		
+		String member = (String) session.getAttribute("biz_name");
+		System.out.println(member+"어케나오니");
 		ModelAndView mav = new ModelAndView("/techtalk/front/main/main.front");
 		return mav;
 	}
