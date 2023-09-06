@@ -43,7 +43,7 @@ function test(){
 						<p class="main_sub_txt">기술분야 별, 키워드 별로 연구자와 기업수요 정보를 검색,매칭하여 기술이전 및 거래를 이루어 보세요.</p>
 					</div>
 					<div class="main_btn_wrap">
-						<a href= "/techtalk/searchResearcher.do" class="main_btn">
+						<a href= "/techtalk/reTechList.do" class="main_btn">
 							<span class="main_btn_obj mbo_01">연구자검색 이미지</span>
 							<span class="main_btn_title">연구자검색 </span>
 						</a>

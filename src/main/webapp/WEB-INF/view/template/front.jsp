@@ -50,7 +50,7 @@
 	        }
 
 	        //페이지 헤더 타이틀
-	        var baseTitle = "과학기술일자리진흥원 바우처사업관리시스템";
+	        var baseTitle = "TECHTALK";
 	        var checkTitleH2 = $('.area_tit').has('h2').length;
 	        var checkTitleH3 = $('.area_tit').has('h3').length;
 	        var headTitleH2 = $('.area_tit h2').text();

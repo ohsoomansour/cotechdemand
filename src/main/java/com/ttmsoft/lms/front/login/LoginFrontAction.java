@@ -1,5 +1,6 @@
 package com.ttmsoft.lms.front.login;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -53,6 +54,7 @@ public class LoginFrontAction extends BaseAct{
 	public ModelAndView doFormLogin (@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpSession session) {
 		String sessionKey = request.getSession().getId();
 		paraMap.put("sesskey", sessionKey);
+		
 		ModelAndView mav = new ModelAndView("/techtalk/front/login/login.login");
 		
 		paraMap.put("board_seq", 100);			
@@ -71,7 +73,7 @@ public class LoginFrontAction extends BaseAct{
 	 *
 	 */
 	@RequestMapping (value = "/loginx.do", method = RequestMethod.POST)
-	public ModelAndView doFrontLogin (@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request) {
+	public ModelAndView doFrontLogin (@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request,HttpServletResponse response) {
 		ModelAndView mav = new ModelAndView("jsonView");
 		// 예외상황에 대한 기본 오류 정보 선언
 		String error_code = "1";
@@ -112,11 +114,13 @@ public class LoginFrontAction extends BaseAct{
 					this.addFrontSessionLoginInfo(session, userMap);
 					paraMap.put("userid", String.valueOf(userMap.get("id")));
 					paraMap.put("userno", String.valueOf(userMap.get("member_seqno")));
-					paraMap.put("siteid", siteid);
 					
 					this.appendSessionInfo(paraMap, request);					// 유저 세션 정보 기록
 					this.loginFrontService.doUpdateInvalidCountReset(paraMap);	// 로그인 성공 시 비밀번호 오류 횟수 초기화
 					mav.addObject("result_code", "0");
+					Cookie cookie = new Cookie("rememberId", String.join(",", paraMap.getstr("id")));
+		            cookie.setMaxAge(30*24*60*60); // 쿠키의 유효 시간 (초)
+		            response.addCookie(cookie);
 				}
 			}
 //			String [] rolelist = userMap.get("roles").toString().split(",");		
@@ -364,6 +368,35 @@ public class LoginFrontAction extends BaseAct{
 	
 	/**
 	 *
+	 * @Author   : psm
+	 * @Date	 : 2023. 9. 4.
+	 * @Parm	 : DataMap
+	 * @Return   : 1 or 0
+	 * @Function : 쿠키에 아이디값 저장하기
+	 * @Explain  : 
+	 *
+	 */
+	public int createCookie(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
+		int result = 0;
+		try {
+		String id = paraMap.getstr("id");
+		Cookie cookie = new Cookie("id",id);
+		cookie.setDomain("cookieId");
+		cookie.setPath("/");
+		// 1달간 저장
+		cookie.setMaxAge(60*60^24*30);
+		cookie.setSecure(true);
+		response.addCookie(cookie);
+		}catch(Exception e) {
+			result=1;
+		}
+		return result;
+	}
+	
+	
+	
+	/**
+	 *
 	 * @Author   : choi
 	 * @Date	 : 2020. 3. 18.
 	 * @Parm	 : DataMap
@@ -374,10 +407,18 @@ public class LoginFrontAction extends BaseAct{
 	 */
 	private void addFrontSessionLoginInfo (HttpSession session, DataMap userMap) {		
 		session.setAttribute("member_seqno", userMap.get("member_seqno").toString());
+		session.setAttribute("member_type", userMap.get("member_type").toString());
 		session.setAttribute("id", userMap.get("id").toString());
-		session.setAttribute("pw", userMap.get("pw").toString());
 		session.setAttribute("user_name", userMap.get("user_name").toString());
 		session.setAttribute("user_email", userMap.get("user_email").toString());
+		session.setAttribute("user_depart", userMap.get("user_depart").toString());
+		session.setAttribute("user_rank", userMap.get("user_rank").toString());
+		session.setAttribute("pw_temp_flag", userMap.get("pw_temp_flag").toString());
+		session.setAttribute("pw_next_change_date", userMap.get("pw_next_change_date").toString());
+		session.setAttribute("agree_flag", userMap.get("agree_flag").toString());
+		session.setAttribute("delete_flag", userMap.get("delete_flag").toString());
+		session.setAttribute("biz_name", userMap.get("biz_name").toString());
+		
 	}
 	
 	/**

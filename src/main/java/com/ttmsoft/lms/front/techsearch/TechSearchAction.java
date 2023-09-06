@@ -51,6 +51,10 @@ public class TechSearchAction extends BaseAct {
 	public ModelAndView doSearchResearcherView (@ModelAttribute("paraMap")DataMap paraMap,HttpServletRequest request, HttpServletResponse response, HttpSession session) {
 		
 		ModelAndView mav = new ModelAndView("/techtalk/front/techsearch/searchResearcher.front");
+		DataMap navi = new DataMap();
+		navi.put("one", "메인");
+		navi.put("two", "연구자 검색");
+		mav.addObject("navi",navi);
 		return mav;
 	}
 	
@@ -68,6 +72,10 @@ public class TechSearchAction extends BaseAct {
 	public ModelAndView doSearchBusinessView (@ModelAttribute("paraMap")DataMap paraMap,HttpServletRequest request, HttpServletResponse response, HttpSession session) {
 		
 		ModelAndView mav = new ModelAndView("/techtalk/front/techsearch/searchBusiness.front");
+		DataMap navi = new DataMap();
+		navi.put("one", "메인");
+		navi.put("two", "기업수요 검색");
+		mav.addObject("navi",navi);
 		return mav;
 	}
 }

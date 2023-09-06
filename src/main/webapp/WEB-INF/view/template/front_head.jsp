@@ -4,12 +4,28 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
 <script>
-    function doLogin(){
-				location.href = "/techtalk/login.do";
+		//링크태우기
+    function doHref(href){
+				location.href = href
     }
-    function doJoin(){
-		location.href = "/techtalk/memberJoinFormPage.do";
-}
+    //로그아웃
+    function doLogout() {
+    	$.ajax({
+    		url : "/techtalk/logoutx.do",
+    		type : "POST",
+    		dataType : "json",
+    		success : function(resp) {
+    			if (resp.result_code == "0") {
+    				//alert('로그아웃 되었습니다.')
+    				location.href = "/techtalk/login.do";
+    			}
+    			else {
+    				alert_popup(resp.result_mesg);
+    			}
+    		}
+    	});
+    	return false;
+    };
 </script>
 <div id="skip_navigation">
 	<a href="#compaVcGnb" class="skip_navi sn_sub" title="주메뉴 바로가기">주메뉴 바로가기</a>
@@ -25,7 +41,16 @@
 			</h1>
 			
 			<div class="user_info">
-				<button id="loginButton" onclick="doJoin();" title="회원가입버튼"><span class="user_name">회원가입</span></button><button id="loginButton" onclick="doLogin();" title="로그인버튼"><span class="user_name">로그인</span></button>
+				<c:if test="${empty member_seqno}">
+					<button id="loginButton" onclick="doHref('/techtalk/memberJoinFormPage.do');" title="회원가입버튼"><span class="user_name">회원가입</span></button>
+					<button id="loginButton" onclick="doHref('/techtalk/login.do');" title="로그인버튼"><span class="user_name">로그인</span></button>
+				</c:if>
+				<c:if test="${not empty member_seqno && member_type =='R'}">
+					<button id="loginButton" onclick="javscript:void();" title="매칭정보조회" class="user_info_n1 bell_on"><!-- <---- 클래스  bell_on:노란종 ,  bell_off: 클래스 회색종 --><span class="icon_bell"></span><span class="user_name">매칭 정보 조회</span></button>
+					<button id="loginButton" onclick="javscript:void();" title="연구자"  class="user_info_n1"><span class="user_name">연구자</span></button>
+					<button title="user_name"><span class="user_name">${user_name }(${id })</span></button>
+					<button id="loginButton" onclick="doLogout();" title="로그인버튼"><span class="user_name">로그아웃</span></button>
+				</c:if>
 			</div>
 			<!-- //user_info e:  -->
 		</div>

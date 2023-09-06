@@ -125,30 +125,40 @@ function researchDetail(research_no, research_seqno, keyword){
 	<div id="mArticle" class="assig_app">
 		<h2 class="screen_out">본문영역</h2>
 		<div class="wrap_cont">
+			<div class="sch_ctgr_wrap">
+				<ul class="sch_ctgr_link">
+					<li class="sch_ctgr_item item_type active"><a href="/techtalk/researchTechList.do">연구자 검색<span class="ir_text check-text">(선택됨)</span></a></li>
+					<li class="sch_ctgr_item item_author"><a href="/techtalk/businessList.do">기업수요 검색</a></li>
+				</ul>
+			</div>
+			
+			<div class="sch_ctgr_list">
+				<div class="sch_block_scroll">
+					<ul class="sch_list_wrap sch_block_wrap" >
+						<li><a href="/techtalk/researchTechList.do" class="sch_list_btn " title="기술분야" data-d-ategory="">기술분야</a></li>
+						<li><a href="/techtalk/researchKeyList.do" class="sch_list_btn last active" title="키워드검색" data-d-ategory="도서">키워드검색</a></li>
+					</ul>
+				</div>
+			</div>
+			
+			
             <!-- page_title s:  -->
-			<div class="area_tit">
-				<a href="/techtalk/researchTechList.do" title="연구자검색">연구자검색</a>
-			</div>	
-			<div class="area_tit">
-				<a href="/techtalk/businessList.do" title="기업수요 검색 버튼">기업수요 검색</a>
-            </div>    
-            
-            <a href="/techtalk/researchTechList.do" id="techFieldTab" >기술분야</a>
-            <a href="/techtalk/researchKeyList.do" id="keyFieldTab" >키워드분야</a>
+			
             
             <!-- <a href="javascript:void(0);" onClick="keywordClick();" class="btn_step" title="검색">검색</a> -->
             
             <div class="area_cont">
 					<div class="search_box">
+						<p class="p_t"><strong>핵심 키워드</strong>를 통해 <strong>주요 연구자</strong>를 찾아보세요.</p>
 						<div class="search_box_inner">
-							<div class="search_cu_box">
-								<input type="text" class="b_name" id="keyword" name="keyword" placeholder="키워드를 입력하세요." value="" title="검색어"/>
+							<div class="search_keyword_box">
+								<input type="text" class="keyword_input" id="keyword" name="keyword" placeholder="키워드를 입력하세요." value="" title="검색어"/>
 							</div>
 							<div class="btn_wrap">
-								<!-- <button type="submit" class="btn_step" onclick="keywordClick();">
+								<button type="button" class="btn_step" onclick="javascript:keywordClick();" title="검색">
 									<span>검색</span>
-								</button> -->
-								<a href="javascript:void(0);" onClick="keywordClick();">검색</a>
+								</button>
+								<!-- <a href="javascript:void(0);" onClick="keywordClick();" class="btn_step">검색</a> -->
 							</div>
 						</div>
 					</div>	
@@ -157,8 +167,33 @@ function researchDetail(research_no, research_seqno, keyword){
 							연구자 목록 
 						</h3>
 					</div>			
-				<!-- page_content s:  -->
-					<div class="tbl_comm tbl_public">
+					<!-- page_content s:  -->
+					<div class="list_panel">
+						<div class="cont_list">
+							<c:choose>
+								<c:when test="${ not empty data }">
+									<c:forEach var="data" items="${ data }">
+										<div class="row">
+											<span class="row_txt_num blind">${ data.research_seqno }</span>
+											<span class="txt_left row_txt_tit"><a href="javascript:void(0);" onclick="researchDetail('${data.research_no}','${data.research_seqno}','${data.keyword}')" title="연구자${data.re_nm }상세보기">${ data.re_nm } 연구자</a> </span>
+											<span class="re_beloong">${ data.re_belong }</span>
+											<ul class="step_tech">
+												<li><span class="mr txt_grey tech_nm ">${ data.tech_nm1 }</span></li>
+												<li><span class="mr txt_grey tech_nm ">${ data.tech_nm2 }</span></li>
+												<li><span class="mr txt_grey tech_nm ">${ data.tech_nm3 }</span></li>
+											</ul>
+											
+										</div>
+									</c:forEach>
+								</c:when>
+								<c:otherwise>
+									<td colspan="6">작성된 게시물이 없습니다.</td>
+								</c:otherwise>
+							</c:choose>
+						</div>
+					</div>
+				
+					<%-- <div class="tbl_comm tbl_public">
 						<table class="tbl">
 							<caption class="caption_hide">연구자 리스트</caption>
 							<colgroup>
@@ -190,7 +225,7 @@ function researchDetail(research_no, research_seqno, keyword){
 											<td>
 												<a href="javascript:void(0);" onclick="researchDetail('${data.research_no}','${data.research_seqno}','${data.keyword}')" title="연구자${data.re_nm }상세보기">${ data.re_nm }</a> 
 											</td>
-											<%-- <td>${ data.re_nm }</td> --%>
+											<td>${ data.re_nm }</td>
 											<td>${ data.re_belong }</td>
 											<td>${ data.tech_nm1 }</td>			
 											<td>${ data.tech_nm2 }</td>			
@@ -205,12 +240,10 @@ function researchDetail(research_no, research_seqno, keyword){
 							</c:choose>
 							</tbody>
 						</table>
-					</div>
+					</div> --%>
 					<div class="paging_comm">${ sPageInfo }</div>
 				</div>
-            
 			</div>
-			<!-- //page_title e:  -->
 			<!-- page_content s:  -->
 			<!-- //page_content e:  -->
 		</div>

@@ -54,7 +54,7 @@ function keywordClick(corporate_no, tech_class_nm){
 				ahtml +="<tr>"
 					ahtml +=	"<td >"+res.data[i].corporate_no+"</td>"
 					ahtml +=	"<td >"
-					ahtml +=	"<a href=javascript:void(0); onclick=researchDetail("+res.data[i].corporate_no+","+res.data[i].tech_class_nm+")>"+res.data[i].tech_class_nm +"</a>"
+					ahtml +=	"<a href=javascript:void(0); onclick=corporateDetail("+res.data[i].corporate_no+","+res.data[i].tech_class_nm+")>"+res.data[i].tech_class_nm +"</a>"
 					ahtml +=	"</td>"
 					ahtml +=	"<td >"+res.data[i].co_update_dt+"</td>"
 					ahtml +=	"<td >"+res.data[i].keyword+"</td>"
@@ -77,30 +77,25 @@ function keywordClick(corporate_no, tech_class_nm){
 }
 
 //연구자 상세보기 화면
-function researchDetail(research_no, research_seqno, keyword){
+function corporateDetail(corporate_no, tech_class_nm){
 	var frm = document.createElement('form'); 
 
 	frm.name = 'frm3'; 
 	frm.method = 'post'; 
-	frm.action = '/techtalk/viewResearchDetail.do'; 
+	frm.action = '/techtalk/viewCorprateDetail.do'; 
 
 	var input1 = document.createElement('input'); 
 	var input2 = document.createElement('input'); 
-	var input3 = document.createElement('input'); 
 
 	input1.setAttribute("type", "hidden"); 
-	input1.setAttribute("name", "research_no"); 
-	input1.setAttribute("value", research_no); 
+	input1.setAttribute("name", "corporate_no"); 
+	input1.setAttribute("value", corporate_no); 
 	input2.setAttribute("type", "hidden"); 
-	input2.setAttribute("name", "research_seqno"); 
-	input2.setAttribute("value", research_seqno); 
-	input3.setAttribute("type", "hidden"); 
-	input3.setAttribute("name", "keyword"); 
-	input3.setAttribute("value", keyword); 
+	input2.setAttribute("name", "tech_class_nm"); 
+	input2.setAttribute("value", tech_class_nm); 
 
 	frm.appendChild(input1); 
 	frm.appendChild(input2); 
-	frm.appendChild(input3); 
 	
 	document.body.appendChild(frm); 
 	frm.submit();
@@ -109,7 +104,7 @@ function researchDetail(research_no, research_seqno, keyword){
     
 </script>
 
-<form id="frm" name="frm" action ="/techtalk/doKeywordResult.do" method="post" >
+<form id="frm" name="frm" action ="/techtalk/doCorporateKeywordResult.do" method="post" >
 <div id="compaVcContent" class="cont_cv">
 	<div id="mArticle" class="assig_app">
 		<h2 class="screen_out">본문영역</h2>
@@ -122,10 +117,8 @@ function researchDetail(research_no, research_seqno, keyword){
 				<a href="/techtalk/businessList.do" title="기업수요 검색 버튼">기업수요 검색</a>
             </div>    
             
-            <a href="/techtalk/researchTechList.do" id="techFieldTab" >기술분야</a>
-            <a href="/techtalk/researchKeyList.do" id="keyFieldTab" >키워드분야</a>
-            
-            <!-- <a href="javascript:void(0);" onClick="keywordClick();" class="btn_step" title="검색">검색</a> -->
+            <a href="/techtalk/coList.do" id="techFieldTab" >기술분야</a>
+            <a href="/techtalk/coList.do" id="keyFieldTab" >키워드분야</a>
             
             <div class="area_cont">
 					<div class="search_box">
@@ -134,16 +127,13 @@ function researchDetail(research_no, research_seqno, keyword){
 								<input type="text" class="b_name" id="keyword" name="keyword" placeholder="키워드를 입력하세요." value="" title="검색어"/>
 							</div>
 							<div class="btn_wrap">
-								<!-- <button type="submit" class="btn_step" onclick="keywordClick();">
-									<span>검색</span>
-								</button> -->
 								<a href="javascript:void(0);" onClick="keywordClick();">검색</a>
 							</div>
 						</div>
 					</div>	
 					<div class="subject_corp">
 						<h3 class="tbl_ttc">
-							연구자 목록 
+							연구자 목록  
 						</h3>
 					</div>			
 				<!-- page_content s:  -->
@@ -171,7 +161,7 @@ function researchDetail(research_no, research_seqno, keyword){
 										<tr>
 											<td>${ data.corporate_no }</td>
 											<td>
-												<a href="javascript:void(0);" onclick="researchDetail('${data.corporate_no}','${data.corporate_no}'" title="연구자${data.tech_class_nm }상세보기">${ data.tech_class_nm }</a> 
+												<a href="javascript:void(0);" onclick="corporateDetail('${data.corporate_no}','${data.tech_class_nm}')" title="연구자${data.tech_class_nm }상세보기">${ data.tech_class_nm }</a> 
 											</td>
 											<td>${ data.co_update_dt }</td>			
 											<td>${ data.keyword }</td>			

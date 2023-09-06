@@ -28,27 +28,16 @@ public class MemberFrontService extends BaseSvc<DataMap>{
 	}
 	/* 회원가입 -> 회원가입 - 2021/04/21 추정완*/
 	public void doInsertMember(DataMap paraMap) {
-		String telNo = paraMap.get("tel_no1").toString() 
-				+ "-" + paraMap.get("tel_no2").toString() 
-				+ "-" + paraMap.get("tel_no3").toString();
-		String mobileNo = paraMap.get("user_mobile_no1").toString() 
-				+ "-" + paraMap.get("user_mobile_no2").toString() 
-				+ "-" + paraMap.get("user_mobile_no3").toString();
 		String userEmail = paraMap.get("user_email1").toString() 
 				+ "@" + paraMap.get("user_email2").toString() ;
+		String bizEmail = paraMap.getstr("biz_email1").toString()
+				+ "@ " + paraMap.getstr("biz_email2").toString();
 		
-		paraMap.put("tel_no", telNo);
-		paraMap.put("user_tel_no", telNo);
-		paraMap.put("user_mobile_no", mobileNo);
 		paraMap.put("user_email", userEmail);
+		paraMap.put("biz_email", bizEmail);
 		
 		System.out.println(paraMap);
 		
-		paraMap.put("seq_tblnm", "TBLBUSINESS");
-		paraMap.put("biz_seqno", seqService.doAddAndGetSeq(paraMap));
-		this.dao.insertQuery("Member_v_SQL.doInsertBusiness", paraMap);
-		paraMap.put("seq_tblnm", "TBLMEMBER");
-		paraMap.put("member_seqno", seqService.doAddAndGetSeq(paraMap));
 		this.dao.insertQuery("Member_v_SQL.doInsertMember", paraMap);
 	}
 	
