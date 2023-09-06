@@ -232,15 +232,15 @@ function researchDetail(research_no, research_seqno, keyword){
 		<div class="wrap_cont">
 			<div class="sch_ctgr_wrap">
 					<ul class="sch_ctgr_link">
-						<li class="sch_ctgr_item item_type active"><a href="/techtalk/reTechList.do">연구자 검색<span class="ir_text check-text">(선택됨)</span></a></li>
-						<li class="sch_ctgr_item item_author"><a href="/techtalk/coTechList.do">기업수요 검색</a></li>
+						<li class="sch_ctgr_item item_author"><a href="/techtalk/reTechList.do">연구자 검색<span class="ir_text check-text">(선택됨)</span></a></li>
+						<li class="sch_ctgr_item item_type active"><a href="/techtalk/coTechList.do">기업수요 검색</a></li>
 					</ul>
 				</div>       
 				<div class="sch_ctgr_list">
 					<div class="sch_block_scroll">
 						<ul class="sch_list_wrap sch_block_wrap" >
-							<li><a href="/techtalk/reTechList.do" class="sch_list_btn last active" title="기술분야" data-d-ategory="">기술분야</a></li>
-							<li><a href="/techtalk/reKeyList.do" class="sch_list_btn " title="키워드검색" data-d-ategory="도서">키워드검색</a></li>
+							<li><a href="/techtalk/coTechList.do" class="sch_list_btn last active" title="기술분야" data-d-ategory="">기술분야</a></li>
+							<li><a href="/techtalk/coKeyList.do" class="sch_list_btn " title="키워드검색" data-d-ategory="도서">키워드검색</a></li>
 						</ul>
 					</div>
 				</div> 

@@ -112,14 +112,14 @@ function corporateDetail(corporate_no, tech_class_nm){
 			<div class="sch_ctgr_wrap">
 					<ul class="sch_ctgr_link">
 						<li class="sch_ctgr_item item_author"><a href="/techtalk/reTechList.do">연구자 검색<span class="ir_text check-text">(선택됨)</span></a></li>
-						<li class="sch_ctgr_item item_type active"><a href="/techtalk/businessList.do">기업수요 검색</a></li>
+						<li class="sch_ctgr_item item_type active"><a href="/techtalk/coTechList.do">기업수요 검색</a></li>
 					</ul>
 				</div>       
 				<div class="sch_ctgr_list">
 					<div class="sch_block_scroll">
 						<ul class="sch_list_wrap sch_block_wrap" >
-							<li><a href="/techtalk/researchTechList.do" class="sch_list_btn " title="기술분야" data-d-ategory="">기술분야</a></li>
-							<li><a href="/techtalk/researchKeyList.do" class="sch_list_btn last active" title="키워드검색" data-d-ategory="도서">키워드검색</a></li>
+							<li><a href="/techtalk/cosTechList.do" class="sch_list_btn " title="기술분야" data-d-ategory="">기술분야</a></li>
+							<li><a href="/techtalk/cosKeyList.do" class="sch_list_btn last active" title="키워드검색" data-d-ategory="도서">키워드검색</a></li>
 						</ul>
 					</div>
 				</div>     
