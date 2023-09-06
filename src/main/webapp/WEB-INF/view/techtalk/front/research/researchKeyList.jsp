@@ -187,7 +187,7 @@ function researchDetail(research_no, research_seqno, keyword){
 									</c:forEach>
 								</c:when>
 								<c:otherwise>
-									<td colspan="6">작성된 게시물이 없습니다.</td>
+									<div class="row"><p style="text-align:center">게시물이 없습니다.</p></div>
 								</c:otherwise>
 							</c:choose>
 						</div>
