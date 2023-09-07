@@ -116,6 +116,7 @@ function enterKeyClick(e){
 				<!-- page_title s:  -->            
             <div class="area_cont">
 					<div class="search_box">
+						<p class="p_t"><strong>핵심 키워드</strong>를 통해 <strong>주요 연구자</strong>를 찾아보세요.</p>
 						<div class="search_box_inner">
 							<div class="search_keyword_box">
 								<input type="text" class="keyword_input" id="keyword" name="keyword" onkeypress="enterKeyClick(event)" placeholder="키워드를 입력하세요." value="" title="검색어"/>
