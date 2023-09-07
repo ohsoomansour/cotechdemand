@@ -76,12 +76,8 @@ public class ResearchAction extends BaseAct{
 		try {
 			String name_path = (String) paraMap.get("name_path");
 			String[] name_path_split = name_path.split("\\^");
-			if(paraMap.get("parent_depth").equals("1")) {
-				paraMap.put("parent_depth", "2");
-				paraMap.put("next_depth", "3");
-			}
 			
-			else if(paraMap.get("parent_depth").equals("3")) {
+			if(paraMap.get("parent_depth").equals("3")) {
 				System.out.println("소분류");
 		        int size = 2;
 		        String code_key_change = StringUtils.leftPad(String.valueOf(paraMap.get("code_key")), size, '0');
