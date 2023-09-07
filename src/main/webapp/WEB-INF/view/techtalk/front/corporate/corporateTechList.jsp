@@ -19,8 +19,9 @@ $('#stdClassSrch').click(function() {
 
 //분류 변경
 function clickCode(code_key,parent_depth,name_path){
+	name_path = decodeURIComponent(name_path);
 	var next_depth = null;
-	var url = "/techtalk/doClickCodeResult.do";
+	var url = "/techtalk/doGetCoStdCodeInfoTest.do";
 	if(parent_depth == "1"){
 		parent_depth ="2";
 		next_depth = "3";
@@ -44,48 +45,53 @@ function clickCode(code_key,parent_depth,name_path){
        success : function(res){
     	   var split_code = res.stdMainCode[0].name_path.split("^");
     	   
+    	   $('.code_step_box').show();
+    	   
            if(parent_depth == "2"){
+        	   $('#cs_step2').html('');
+        	   $('#cs_step3').html('');
     	   var ahtml= "";
-    	  	 	ahtml +=split_code[0]
-    	  	 	ahtml += "&nbsp;"
-				ahtml +="<div class='form-inline pop-search-box' id='codeBox'>"
-				ahtml +="중분류"
-				ahtml +="<div>"
-				for(var i=0; i<res.stdMainCode.length;i++){
-					ahtml +="<div>"
-					ahtml +="<a href=javascript:void(0); onclick=clickCode("+res.stdMainCode[i].code_key+","+res.stdMainCode[i].code_depth+","+"'"+res.stdMainCode[i].name_path+"'"+")>"+res.stdMainCode[i].code_name +"</a>"
-					ahtml +="</div>"
-				}
-				ahtml +="</div>"
-				ahtml +="<br/>"
-				ahtml +="세분류"
-				ahtml +="<div>"
-				for(var i=0; i<res.stdMainCode.length;i++){
-					ahtml +="<div>"
-					ahtml +=res.stdMainCode[i].count_result
-					ahtml +="</div>"
-				}
-				ahtml +="</div>"
-				ahtml +="</div>"
-				$('#codeBox').empty();
-	    		$('#codeBox').append(ahtml);
-	    		console.log(res.data.length);
+    			ahtml +='		<ul> ';
+    			for(var i=0; i<res.stdMainCode.length;i++){
+    				var tempData = encodeURIComponent(res.stdMainCode[i].name_path);
+	    			ahtml +='<li>  ';
+	    			ahtml +="<a href=javascript:void(0); onclick=clickCode("+res.stdMainCode[i].code_key+","+res.stdMainCode[i].code_depth+","+"'"+tempData+"'"+")>"+res.stdMainCode[i].code_name +"</a>"
+			        ahtml +='<span class="num">'+res.stdMainCode[i].count_result+'</span>';
+			        ahtml +='</li>';
+    			}
+		        ahtml +='   ';
+	            ahtml +='		</ul> ';
+
+				$('#cs_step1').html('<span>'+split_code[0]+'</span>');
+				$('#md_class').empty();
+	    		$('#md_class').append(ahtml);
+	    		
 	    		var ahtml= "";
 					ahtml +="<div class='cont_list'>"
-	   				if(res.data.length == null){
-	   					ahtml +="<td colspan='6'>연구자가 없습니다.</td>"
+	   				if(res.data == null){
+	   					ahtml +='<div class="row"><div class="empty_data"><p>기업수요가 없습니다.</p></div></div>';
 	   	   	   		}else{   	   	   	   		
    					for(var i=0; i<res.data.length;i++){
    					ahtml +="<div class='row'>"
-   						ahtml +="<span class='row_txt_num blind'>"+res.data[i].research_seqno+"</span>"
+   						ahtml +="<span class='row_txt_num blind'>"+res.data[i].corporate_no+"</span>"
    						ahtml +="<span class='txt_left row_txt_tit'>"
-   						ahtml +="<a href=javascript:void(0); onclick=researchDetail("+res.data[i].research_no+","+res.data[i].research_seqno+","+res.data[i].keyword+")>"+res.data[i].research_nm +"연구자</a> </span>"
-   						ahtml +="<span class='re_beloong'>"+ res.data[i].applicant_nm+" </span>"
+   						ahtml +="<a href=javascript:void(0); onclick=corporateDetail("+res.data[i].corporate_no+")>"+res.data[i].tech_class_nm +"</a> </span>"
+   						if(typeof res.data[i].co_update_dt == "undefined" || res.data[i].co_update_dt == null || res.data[i].co_update_dt == ""){
+   							ahtml +="<span class='re_beloong'>최근 업데이트 일자 : </span>"
+   	   					}else{
+   	   						ahtml +="<span class='re_beloong'>최근 업데이트 일자 : "+ res.data[i].co_update_dt+" </span>"
+   	   					}
    						ahtml +="<ul class='step_tech'>"
    						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].tech_nm1+"</span></li>"
    						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].tech_nm2+"</span></li>"
    						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].tech_nm3+"</span></li></ul>"
-   						ahtml +="<span class='mr txt_grey keyword'  >"+res.data[i].keyword+"</span>"
+   						ahtml +="<ul class='tag_box'>"
+   						if(typeof res.data[i].keyword == "undefined" || res.data[i].keyword == null || res.data[i].keyword == ""){
+   							ahtml +="<li></li>"
+   	   					}else{
+   							ahtml +="<li>"+res.data[i].keyword+"</li>"
+   	   					}
+   						ahtml +="</ul>"
    						ahtml +="</div>"	
 
    					}
@@ -96,41 +102,53 @@ function clickCode(code_key,parent_depth,name_path){
 	   	   		}
 	    		
            }else if(parent_depth == "3"){
+        	   $('#cs_step3').html('');
         	   var ahtml= "";
-   	  	 	ahtml +=split_code[0]
-   	  	 	ahtml += "&nbsp; > "
-   	  	 	ahtml +=split_code[1]
-				ahtml +="<div class='form-inline pop-search-box' id='codeBox'>"
-				ahtml +="소분류"
-				ahtml +="<div>"
+   	  	 	/* ahtml +=split_code[0]
+	   	  	 	ahtml += "&nbsp; > "
+	   	  	 	ahtml +=split_code[1]
+	   	  		ahtml +=split_code[0] */
+				ahtml +='		<ul>                                                                                                               ';
 				for(var i=0; i<res.stdMainCode.length;i++){
-					ahtml +="<div>"
-						ahtml +="<a href=javascript:void(0); onclick=clickCode("+res.stdMainCode[i].code_key+","+res.stdMainCode[i].code_depth+","+"'"+res.stdMainCode[i].name_path+"'"+")>"+res.stdMainCode[i].code_name +"</a>"
-					ahtml +="</div>"
+					var tempData = encodeURIComponent(res.stdMainCode[i].name_path);
+	    			ahtml +='<li>                                                                                                       ';
+	    			ahtml +="<a href=javascript:void(0); onclick=clickCode("+res.stdMainCode[i].code_key+","+res.stdMainCode[i].code_depth+","+"'"+tempData+"'"+")>"+res.stdMainCode[i].code_name +"</a>"
+	
+			        ahtml +='</li>                                                                                                      ';
 				}
-				ahtml +="</div>"
-				ahtml +="<br/>"
-				ahtml +="</div>"
-				ahtml +="</div>"
-				$('#codeBox').empty();
-	    		$('#codeBox').append(ahtml);
-	    		
+		        ahtml +='    		                                                                                                               ';
+	            ahtml +='		</ul>                                                                                                              ';
+				$('#cs_step2').html('<span>'+split_code[1]+'</span>');
+				$('#s_class').empty();
+	    		$('#s_class').append(ahtml);
+	    		console.log(res.data.length);
+	    		console.log(typeof(res.data));
 	    		var ahtml= "";
 					ahtml +="<div class='cont_list'>"
-	   				if(res.data == null){
-	   					ahtml +="<td colspan='6'>연구자가 없습니다.</td>"
+	   				if(res.data.length == 0 ){
+	   					ahtml +='<div class="row"><div class="empty_data"><p>기업수요가 없습니다.</p></div></div>';
 	   	   	   		}else{   	   	   	   		
    					for(var i=0; i<res.data.length;i++){
    					ahtml +="<div class='row'>"
-   						ahtml +="<span class='row_txt_num blind'>"+res.data[i].research_seqno+"</span>"
+   						ahtml +="<span class='row_txt_num blind'>"+res.data[i].corporate_no+"</span>"
    						ahtml +="<span class='txt_left row_txt_tit'>"
-   						ahtml +="<a href=javascript:void(0); onclick=researchDetail("+res.data[i].research_no+","+res.data[i].research_seqno+","+res.data[i].keyword+")>"+res.data[i].research_nm +"연구자</a> </span>"
-   						ahtml +="<span class='re_beloong'>"+ res.data[i].applicant_nm+" </span>"
+   						ahtml +="<a href=javascript:void(0); onclick=corporateDetail("+res.data[i].corporate_no+")>"+res.data[i].tech_class_nm +"</a> </span>"
+   						if(typeof res.data[i].co_update_dt == "undefined" || res.data[i].co_update_dt == null || res.data[i].co_update_dt == ""){
+   							ahtml +="<span class='re_beloong'>최근 업데이트 일자 : </span>"
+   	   					}else{
+   	   						ahtml +="<span class='re_beloong'>최근 업데이트 일자 : "+ res.data[i].co_update_dt+" </span>"
+   	   					}
    						ahtml +="<ul class='step_tech'>"
    						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].tech_nm1+"</span></li>"
    						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].tech_nm2+"</span></li>"
    						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].tech_nm3+"</span></li></ul>"
-   						ahtml +="<span class='mr txt_grey keyword'  >"+res.data[i].keyword+"</span>"
+   						ahtml +="<ul class='tag_box'>"
+   						if(typeof res.data[i].keyword == "undefined" || res.data[i].keyword == null || res.data[i].keyword == ""){
+   	   						ahtml +="<li></li>"
+   	   	   				}else{
+   	   						ahtml +="<li>"+res.data[i].keyword+"</li>"
+   	   	   				}
+ 	   					ahtml +="</ul>"
    						ahtml +="</div>"	
 
    					}
@@ -139,10 +157,13 @@ function clickCode(code_key,parent_depth,name_path){
    					$('#tbl').empty();
    		    		$('#tbl').append(ahtml);
 	   	   		}
-		    		
+					ahtml +="</div>"
+	   				ahtml +="</div>"
+	   				$('#tbl').empty();
+	   		    	$('#tbl').append(ahtml);
            }else if(parent_depth =="4"){
         	   var ahtml= "";
-        	   ahtml +=split_code[0]
+        	   /* ahtml +=split_code[0]
    	    		ahtml += "&nbsp; > "
    	    		ahtml +=split_code[1]
    	    		ahtml += "&nbsp; > "
@@ -151,26 +172,37 @@ function clickCode(code_key,parent_depth,name_path){
    					ahtml +="<div>"
    					ahtml +="</div>"
    					ahtml +="<br/>"
-   					ahtml +="</div>"
-   					$('#codeBox').empty();
-   		    		$('#codeBox').append(ahtml);
+   					ahtml +="</div>" */
+   					$('#cs_step3').html('<span>'+split_code[2]+'</span>');
+   					/* $('#codeBox').empty(); 
+   		    		$('#codeBox').append(ahtml);*/
     		   
    		    		var ahtml= "";
    					ahtml +="<div class='cont_list'>"
-   	   				if(res.data == null){
-   	   					ahtml +="<td colspan='6'>연구자가 없습니다.</td>"
-   	   	   	   		}else{   	   	   	   		
+   					if(res.data.length == 0 ){
+   		   				ahtml +='<div class="row"><div class="empty_data"><p>기업수요가 없습니다.</p></div></div>';
+   		   	   	   	}else{  	   	   	   		
 	   					for(var i=0; i<res.data.length;i++){
 	   					ahtml +="<div class='row'>"
-	   						ahtml +="<span class='row_txt_num blind'>"+res.data[i].research_seqno+"</span>"
+	   						ahtml +="<span class='row_txt_num blind'>"+res.data[i].corporate_no+"</span>"
 	   						ahtml +="<span class='txt_left row_txt_tit'>"
-	   						ahtml +="<a href=javascript:void(0); onclick=researchDetail("+res.data[i].research_no+","+res.data[i].research_seqno+","+res.data[i].keyword+")>"+res.data[i].research_nm +"연구자</a> </span>"
-	   						ahtml +="<span class='re_beloong'>"+ res.data[i].applicant_nm+" </span>"
+	   						ahtml +="<a href=javascript:void(0); onclick=corporateDetail("+res.data[i].corporate_no+")>"+res.data[i].tech_class_nm +"</a> </span>"
+	   						if(typeof res.data[i].co_update_dt == "undefined" || res.data[i].co_update_dt == null || res.data[i].co_update_dt == ""){
+	   							ahtml +="<span class='re_beloong'>최근 업데이트 일자 : </span>"
+	   	   					}else{
+	   	   						ahtml +="<span class='re_beloong'>최근 업데이트 일자 : "+ res.data[i].co_update_dt+" </span>"
+	   	   					}
 	   						ahtml +="<ul class='step_tech'>"
 	   						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].tech_nm1+"</span></li>"
 	   						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].tech_nm2+"</span></li>"
 	   						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].tech_nm3+"</span></li></ul>"
-	   						ahtml +="<span class='mr txt_grey keyword'  >"+res.data[i].keyword+"</span>"
+	   						ahtml +="<ul class='tag_box'>"
+	   	   					if(typeof res.data[i].keyword == "undefined" || res.data[i].keyword == null || res.data[i].keyword == ""){
+	   	   	   					ahtml +="<li></li>"
+	   	   	   	   			}else{
+	   	   	   					ahtml +="<li>"+res.data[i].keyword+"</li>"
+	   	   	   	   			}
+	   	 	   				ahtml +="</ul>"
 	   						ahtml +="</div>"	
 	
 	   					}
@@ -179,8 +211,11 @@ function clickCode(code_key,parent_depth,name_path){
 	   					$('#tbl').empty();
 	   		    		$('#tbl').append(ahtml);
    	   	   			}
+   					ahtml +="</div>"
+	   				ahtml +="</div>"
+	   				$('#tbl').empty();
+	   		    	$('#tbl').append(ahtml);
                }
-           
        },
        error : function(){
     	alert('실패했습니다.');    
@@ -193,30 +228,20 @@ function clickCode(code_key,parent_depth,name_path){
 }
 
 //연구자 상세보기 화면
-function researchDetail(research_no, research_seqno, keyword){
+function corporateDetail(corporate_no){
 	var frm = document.createElement('form'); 
 
 	frm.name = 'frm3'; 
 	frm.method = 'post'; 
-	frm.action = '/techtalk/viewResearchDetail.do'; 
+	frm.action = '/techtalk/viewCorprateDetail.do'; 
 
 	var input1 = document.createElement('input'); 
-	var input2 = document.createElement('input'); 
-	var input3 = document.createElement('input'); 
 
 	input1.setAttribute("type", "hidden"); 
-	input1.setAttribute("name", "research_no"); 
-	input1.setAttribute("value", research_no); 
-	input2.setAttribute("type", "hidden"); 
-	input2.setAttribute("name", "research_seqno"); 
-	input2.setAttribute("value", research_seqno); 
-	input3.setAttribute("type", "hidden"); 
-	input3.setAttribute("name", "keyword"); 
-	input3.setAttribute("value", keyword); 
+	input1.setAttribute("name", "corporate_no"); 
+	input1.setAttribute("value", corporate_no); 
 
 	frm.appendChild(input1); 
-	frm.appendChild(input2); 
-	frm.appendChild(input3); 
 	
 	document.body.appendChild(frm); 
 	frm.submit();
@@ -232,8 +257,8 @@ function researchDetail(research_no, research_seqno, keyword){
 		<div class="wrap_cont">
 			<div class="sch_ctgr_wrap">
 					<ul class="sch_ctgr_link">
-						<li class="sch_ctgr_item item_author"><a href="/techtalk/reTechList.do">연구자 검색<span class="ir_text check-text">(선택됨)</span></a></li>
-						<li class="sch_ctgr_item item_type active"><a href="/techtalk/coTechList.do">기업수요 검색</a></li>
+						<li class="sch_ctgr_item item_author"><a href="/techtalk/reTechList.do">연구자 검색</a></li>
+						<li class="sch_ctgr_item item_type active"><a href="/techtalk/coTechList.do">기업수요 검색<span class="ir_text check-text">(선택됨)</span></a></li>
 					</ul>
 				</div>       
 				<div class="sch_ctgr_list">
@@ -249,24 +274,44 @@ function researchDetail(research_no, research_seqno, keyword){
 
             
             <div class="area_cont">
-            	<div class="form-inline pop-search-box" id="codeBox">
-            		대분류
-            		<div>
-	            		<c:forEach var ="item" items="${ stdMainCode }" >
-	            			<div>
-	            				<a href="javascript:void(0);" onclick="clickCode('${item.code_key}', '${item.code_depth}', '${item.name_path}');return false">${item.code_name }</a>
-	            			</div>
-	            		</c:forEach>
+            	
+            	
+            	<div class="search_box" id="codeBox">
+            		<p class="p_t"><strong>기술 분야별</strong>로 <strong>연관 기업 수요</strong>를 찾아보세요.</p>
+            		<div class="code_step_box">
+	            		<ul>
+	            			<li id="cs_step1" class="cs_step_btn"></li>
+	            			<li id="cs_step2" class="cs_step_btn"></li>
+	            			<li id="cs_step3" class="cs_step_btn"></li>
+	            		</ul>
+	            	</div>
+            		<div class="t_box">
+            			<dl>
+            				<dt>대분류</dt>
+            				<dd id="m_class">
+            					<ul>
+				            		<c:forEach var ="item" items="${ stdMainCode }" >
+				            			<li>
+				            				<a href="javascript:void(0);" onclick="clickCode('${item.code_key}', '${item.code_depth}', '${item.name_path}');return false">${item.code_name } </a>
+				            				<span class="num"><c:out value="${item.count_result}"></c:out></span>
+				            			</li>
+				            		</c:forEach>
+			            		</ul>
+            				</dd>
+            			</dl>
+            			<dl>
+            				<dt>중분류</dt>
+            				<dd id="md_class">
+            				</dd>
+            			</dl>
+            			<dl>
+            				<dt>소분류</dt>
+            				<dd id="s_class">
+            				</dd>
+            			</dl>
             		</div>
-            		<br/>
-            		세분류
-            		<div>
-            			<c:forEach var ="item" items="${ stdMainCode }" >
-	            			<div>
-	            				<c:out value="${item.count_result}"></c:out>
-	            			</div>
-	            		</c:forEach>
-            		</div>
+            		
+            		
 				</div>
             	
             	<div class="subject_corp">
@@ -281,16 +326,19 @@ function researchDetail(research_no, research_seqno, keyword){
 								<c:when test="${ not empty data }">
 									<c:forEach var="data" items="${ data }">
 										<div class="row">
-											<span class="row_txt_num blind">${ data.research_seqno }</span>
-											<span class="txt_left row_txt_tit"><a href="javascript:void(0);" onclick="researchDetail('${data.research_no}','${data.research_seqno}','${data.keyword}')" title="연구자${data.research_nm }상세보기">${ data.research_nm } </a> </span>
-											<span class="re_beloong">${ data.applicant_nm }</span>
+											<span class="row_txt_num blind">${ data.corporate_no }</span>
+											<span class="txt_left row_txt_tit"><a href="javascript:void(0);" onclick="corporateDetail('${data.corporate_no}')" title="기술명${data.tech_class_nm }상세보기">${ data.tech_class_nm }</a> </span>
+											<span class="re_beloong">최근 업데이트 일자 : ${ data.co_update_dt }</span>
 											<ul class="step_tech">
 												<li><span class="mr txt_grey tech_nm ">${ data.tech_nm1 }</span></li>
 												<li><span class="mr txt_grey tech_nm ">${ data.tech_nm2 }</span></li>
 												<li><span class="mr txt_grey tech_nm ">${ data.tech_nm3 }</span></li>
 												
 											</ul>
-												<span class="mr txt_grey keyword ">${ data.keyword }</span>
+											<ul class="tag_box">
+			                                    <li>${ data.keyword }</li>
+			                                </ul>
+												
 										</div>
 									</c:forEach>
 								</c:when>
@@ -300,60 +348,6 @@ function researchDetail(research_no, research_seqno, keyword){
 							</c:choose>
 						</div>
 					</div>
-            	<%-- <div class="subject_corp">
-						<h3 class="tbl_ttc">
-							연구자 목록 
-						</h3>
-					</div>			
-				<!-- page_content s:  -->
-					<div class="tbl_comm tbl_public">
-						<table class="tbl">
-							<caption class="caption_hide">연구자 리스트</caption>
-							<colgroup>
-								<col style="width:5%" />
-								<col style="width:10%" />
-								<col style="width:20%" />
-								<col style="width:15%" />
-								<col style="width:15%" />
-								<col style="width:15%" />
-								<col style="width:15%" />
-							</colgroup>
-							<thead>
-								<tr>
-									<th>번호</th>
-									<th>연구자명</th>
-									<th>출원인</th>	
-									<th>기술분류1</th>
-									<th>기술분류2</th>
-									<th>기술분류3</th>
-									<th>키워드</th>
-								</tr>
-							</thead>
-							<tbody>
-							<c:choose>
-								<c:when test="${ not empty data }">
-									<c:forEach var="data" items="${ data }">
-										<tr>
-											<td>${ data.research_seqno }</td>
-											<td>
-												<a href="javascript:void(0);" onclick="researchDetail('${data.research_no}','${data.research_seqno}','${data.keyword}')" title="연구자${data.research_nm }상세보기">${ data.research_nm }</a> 
-											</td>
-											<td>${ data.re_nm }</td>
-											<td>${ data.applicant_nm }</td>
-											<td>${ data.tech_nm1 }</td>			
-											<td>${ data.tech_nm2 }</td>			
-											<td>${ data.tech_nm3 }</td>			
-											<td>${ data.keyword }</td>			
-										</tr>
-									</c:forEach>
-								</c:when>
-								<c:otherwise>
-									<td colspan="6">작성된 게시물이 없습니다.</td>
-								</c:otherwise>
-							</c:choose>
-							</tbody>
-						</table>
-					</div> --%>
 				<!-- page_content s:  -->
 					<div class="paging_comm">${ sPageInfo }</div>
 				</div>

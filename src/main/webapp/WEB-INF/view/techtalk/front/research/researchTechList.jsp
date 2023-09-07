@@ -83,7 +83,7 @@ function clickCode(code_key,parent_depth,name_path){
 	    		console.log(res.data.length);
 	    		var ahtml= "";
 					ahtml +="<div class='cont_list'>"
-	   				if(res.data == null){
+					if(res.data.length == 0 ){
 	   					ahtml +='<div class="row"><div class="empty_data"><p>연구자가 없습니다.</p></div></div>';
 	   	   	   		}else{   	   	   	   		
    					for(var i=0; i<res.data.length;i++){
@@ -115,7 +115,11 @@ function clickCode(code_key,parent_depth,name_path){
    					$('#tbl').empty();
    		    		$('#tbl').append(ahtml);
 	   	   		}
-	    		
+					ahtml +="</div>"
+	   				ahtml +="</div>"
+	   				$('#tbl').empty();
+	   		    	$('#tbl').append(ahtml);
+	   		    	
            }else if(parent_depth == "3"){
         	   $('#cs_step3').html('');
         	   var ahtml= "";
@@ -139,7 +143,7 @@ function clickCode(code_key,parent_depth,name_path){
 	    		
 	    		var ahtml= "";
 					ahtml +="<div class='cont_list'>"
-	   				if(res.data == null){
+					if(res.data.length == 0 ){
 	   					ahtml +='<div class="row"><div class="empty_data"><p>연구자가 없습니다.</p></div></div>';
 	   	   	   		}else{   	   	   	   		
    					for(var i=0; i<res.data.length;i++){
@@ -171,7 +175,11 @@ function clickCode(code_key,parent_depth,name_path){
    					$('#tbl').empty();
    		    		$('#tbl').append(ahtml);
 	   	   		}
-		    		
+					ahtml +="</div>"
+	   				ahtml +="</div>"
+	   				$('#tbl').empty();
+	   		    	$('#tbl').append(ahtml);
+	   		    	
            }else if(parent_depth =="4"){
         	   var ahtml= "";
         	   /* ahtml +=split_code[0]
@@ -190,7 +198,7 @@ function clickCode(code_key,parent_depth,name_path){
     		   
    		    		var ahtml= "";
    					ahtml +="<div class='cont_list'>"
-   	   				if(res.data == null){
+   					if(res.data.length == 0 ){
    	   					ahtml +='<div class="row"><div class="empty_data"><p>연구자가 없습니다.</p></div></div>';
    	   	   	   		}else{   	   	   	   		
 	   					for(var i=0; i<res.data.length;i++){
@@ -222,6 +230,10 @@ function clickCode(code_key,parent_depth,name_path){
 	   					$('#tbl').empty();
 	   		    		$('#tbl').append(ahtml);
    	   	   			}
+   					ahtml +="</div>"
+   					ahtml +="</div>"
+   					$('#tbl').empty();
+   		    		$('#tbl').append(ahtml);
                }
            
        },

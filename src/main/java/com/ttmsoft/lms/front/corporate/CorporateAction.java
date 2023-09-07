@@ -5,6 +5,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -14,6 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.ttmsoft.lms.cmm.seq.SeqService;
 import com.ttmsoft.lms.front.member.MemberFrontService;
+import com.ttmsoft.lms.front.research.ResearchService;
 import com.ttmsoft.toaf.basemvc.BaseAct;
 import com.ttmsoft.toaf.object.DataMap;
 
@@ -23,6 +25,9 @@ public class CorporateAction extends BaseAct{
 
 	@Autowired
 	private CorporateService corporateService;
+	
+	@Autowired
+	private ResearchService researchService;
 	
 	@Autowired
 	private SeqService	seqService;
@@ -71,14 +76,34 @@ public class CorporateAction extends BaseAct{
 	@RequestMapping (value = "/doGetCoStdCodeInfoTest.do")
 	public ModelAndView doGetCoStdCodeInfo(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView mav = new ModelAndView("jsonView");
-		System.out.println("paraMap : " + paraMap.toString());
+		System.out.println("paraMap : " + paraMap);
 		try {
-			//DB 셋팅 후 사용자 아이디 중복확인 코드 적용 필요
-			if(paraMap.get("gubun").equals("mid")) {
-				paraMap.put("depth", '2');
-			}else if(paraMap.get("gubun").equals("sub")) {
-				paraMap.put("depth", '3');
+			String name_path = (String) paraMap.get("name_path");
+			String[] name_path_split = name_path.split("\\^");
+			
+			if(paraMap.get("parent_depth").equals("3")) {
+				System.out.println("소분류");
+		        int size = 2;
+		        String code_key_change = StringUtils.leftPad(String.valueOf(paraMap.get("code_key")), size, '0');
+				paraMap.put("parent_code_key", code_key_change);
+				paraMap.put("tech_code2", code_key_change);
+				paraMap.put("tech_nm1", name_path_split[0]);
+				paraMap.put("tech_nm2", name_path_split[1]);
+			}else if(paraMap.get("parent_depth").equals("2"))  {
+				System.out.println("중분류");
+				paraMap.put("parent_code_key", paraMap.get("code_key"));
+				paraMap.put("tech_nm1", name_path_split[0]);
+			}else if(paraMap.get("parent_depth").equals("4"))  {
+				paraMap.put("parent_depth", "3");
+				paraMap.put("code_end", "end");
+				paraMap.put("tech_nm1", name_path_split[0]);
+				paraMap.put("tech_nm2", name_path_split[1]);
+				paraMap.put("tech_nm3", name_path_split[2]);
 			}
+			System.out.println("paraMap2 : " + paraMap);
+			List<DataMap> stdCode = researchService.doResearchCountSubCode(paraMap);
+			mav.addObject("stdMainCode", stdCode);
+			mav.addObject("data", this.corporateService.doGetCorporateList(paraMap));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ModelAndView("error");
