@@ -108,4 +108,8 @@ public class MemberFrontService extends BaseSvc<DataMap>{
 		int result = this.dao.insertQuery("MessageSQL.insertSmsMessage", paraMap);
 		return result;
 	}
+	public List<DataMap> doAutoSearchBusiness(DataMap paraMap) {
+		
+		return this.dao.dolistQuery("Member_v_SQL.doAutoSearchBusiness", paraMap);
+	}
 }

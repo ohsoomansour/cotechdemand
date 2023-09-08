@@ -3,17 +3,45 @@
 <%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<style>
+.ui-autocomplete {
+  max-height: 200px;
+  overflow-y: auto;
+  /* prevent horizontal scrollbar */
+  overflow-x: hidden;
+  height: auto;
+}
+.ui-menu-item div.ui-state-hover,
+.ui-menu-item div.ui-state-active {
+  color: #ffffff;
+  text-decoration: none;
+  background-color: #f6B664;
+  border-radius: 0px;
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  background-image: none;
+  border:none;
+}
+</style>
 <script>
+var searchSource = ['엽기떡볶이', '신전떡볶이', '걸작떡볶이', '신당동떡볶이']; // 배열 생성
 	$(document).on('ready', function() {
 		setTimeout(function() {
 			$('#member_type').focus();
 		}, 500);
+		
 
 	});
 	var idCheck = false; //아이디 중복검사 체크
 	var pwCheck = false; //패스워드 중복검사 체크
 	
 	$(document).ready(
+			
+
+			
 			function() {
 				//아이디 중복체크 클릭
 				$('#btnIdCheck').click(function() {
@@ -25,28 +53,117 @@
 					fncDoubleCheck("BR");
 				});
 
-				//회원가입
-				$('#btnSubmit').click(function() {
-					fncMemberJoin();
-				});
-
 				//이메일 확인 이동
 				$('#btnEmailCheck').click(function() {
 					fncCheckEmail();
 				});
+				 // input필드에 자동완성 기능을 걸어준다
+				$("#bizName").autocomplete({
+			    source: function (request, response) {
+				    var data = $('#bizName').val();
+			        $.ajax({
+			            url: "/techtalk/autoSearchBusiness.do",
+			            type: "POST",
+			            dataType: "json",
+			            data: { applicant_nm: request.term },
+			            success: function (data) {
+			                response(
+			                    $.map(data.result, function (item) {
+				                    console.log("어케나옴"+JSON.stringify(item));
+			                        return {
+			                            label: item.applicant_nm+'label',
+			                            value: item.applicant_nm,
+			                            idx: item.applicant_nm+'idx',
+			                        }
+			                    })
+			                )
+			            }
+			        })
+			    },
+			    focus: function (event, ui) {
+			        return false;
+			    },
+			    select: function (event, ui) {
+			    	console.log(ui.item.idx)
+			    },
+			    delay: 500,
+			    autoFocus: true
+			});
 
 			});
+
+	
+	//[회원가입] - 기업명 자동검색 -> 2023/09/06 - 박성민
+	function autoComplete(){
+		var data = $('#bizName').val();
+		console.log("입력값");
+		$.ajax({
+			type : 'POST',
+			url : '/techtalk/autoSearchBusiness.do',
+			data : {
+				applicant_nm : data
+			},
+			dataType : 'json',
+			success : function(data) {
+				console.log("dd"+JSON.stringify(data.result));
+             $.map(data.result, function(item) {
+                 console.log("어케나옴:+"+JSON.stringify(item.applicant_nm))
+                 return {
+                     label : item.applicant_nm + 'label',
+                     value : item.applicant_nm,
+                     test : item.applicant_nm + 'test'
+                 }
+             })
+					},
+			select : function(event, ui) {
+	            console.log(ui);
+	            console.log(ui.item.label);
+	            console.log(ui.item.value);
+	            console.log(ui.item.test);
+       },
+       focus : function(event, ui) {
+           return false;
+       },
+       minLength : 1,
+       autoFocus : true,
+       classes : {
+           'ui-autocomplete': 'highlight'
+       },
+       delay : 500,
+       position : { my : 'right top', at : 'right bottom' },
+       close : function(event) {
+           console.log(event);
+       }
+		});
+
+	}
+	
 	//회원가입 -> 2023/09/03 - 박성민
 	function fncMemberJoin(){
+		//개인정보 유효성 검사
+		if(!isBlank('아이디', '#id'))
 		if(!idCheck){
-			alert_popup_focus('id중복체크를 해주세요', '#id');
+			alert_popup_focus('아이디 중복확인을 해주세요.',"#id");
+			return false;
 			}
-		if(!pwCheck){
-			alert_popup_focus('비밀번호 일치여부를 확인해주세요.', '#pw');
-		}
+		if(!isBlank('비밀번호', '#pw'))
+		if(!isBlank('비밀번호 확인', '#passWordCk'))
+		if(!isBlank('이름', '#userName'))
+		if(!isBlank('개인이메일', '#userEmail1'))
+		if(!isBlank('개인이메일 도메인', '#userEmail2'))
+		if(!isBlank('휴대전화번호', '#userMobileNo'))
+		if(!isBlank('회사명', '#bizName'))
+		if(!isBlank('부서명', '#userDepart'))
+		if(!isBlank('직급', '#userRank'))
+		if(!isBlank('업무용이메일', '#bizEmail1'))
+		if(!isBlank('업무용이메일도메인', '#bizEmail2'))
+		if(!isBlank('회사용직통전화번호', '#bizTelNo'))
+
 		var url = "/techtalk/memberJoin.do"
 		var form = $('#frm')[0];
 		var data = new FormData(form);
+		console.log("이게왜 ? + " + idCheck + " pw + " + pwCheck)
+		/*
 			$.ajax({
 			       url : url,
 			       type: "post",
@@ -63,7 +180,7 @@
 			       complete : function(){
 			       }
 			});
-		
+		*/
 		}
 
 	//[회원가입] - 아이디 및 사업자등록번호 중복확인 -> 2021/04/16 - 추정완
@@ -102,42 +219,6 @@
 						idCheck = true;
 					}
 
-				},
-				error : function() {
-
-				},
-				complete : function() {
-
-				}
-			});
-		} else {
-			var bizRegno = $('#bizRegno').val();
-			console.log('bizRegno : ' + bizRegno);
-			if (bizRegno == '' || bizRegno == null) {
-				alert_popup_focus('사업자등록번호를 입력 후 중복여부 버튼을 클릭해주세요.', '#bizRegno');
-				return false;
-			}
-			$.ajax({
-				type : 'POST',
-				url : '/techtalk/memberDoubleCheck.do',
-				data : {
-					gubun : gubun,
-					biz_regno : bizRegno
-				},
-				dataType : 'json',
-				success : function(transport) {
-					var bizRegnoCount = transport.bizRegnoCount;
-					if (bizRegnoCount == '1') {
-						alert_popup_focus('중복된 사업자등록번호 입니다. 다시 확인해주세요.',
-								'#bizRegno');
-						bizRegnoCheck = false;
-						return false;
-					} else {
-						alert_popup_focus('사용 가능한 사업자등록번호 입니다.',
-								'#btnBizRegnoCheck');
-						bizRegnoCheck = true;
-						fncBizInsert();
-					}
 				},
 				error : function() {
 
@@ -194,7 +275,6 @@
 	function changeText(text, id){
 		$(id).empty();
 		$(id).html(text);
-		console.log("여기는?")
 		}
 </script>
 <!-- compaVcContent s:  -->
@@ -230,7 +310,7 @@
 							<thead></thead>
 							<tbody class="view">
 								<tr>
-									<th scope="col">기업유형 <span class="red">*</span></th>
+									<th scope="col">회원유형 <span class="red">*</span></th>
 									<td class="ta_left">
 										<div class="form-inline">
 											<div class="box_radioinp">
@@ -355,7 +435,7 @@
 									<th scope="col">회사명 <span class="red">*</span></th>
 									<td class="ta_left">
 										<div class="form-inline">
-											<input type="text" class="form-control form_com_name"
+											<input type="text" 
 												id="bizName" name="biz_name" title="회사명">
 										</div>
 									</td>

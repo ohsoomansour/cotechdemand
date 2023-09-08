@@ -321,4 +321,20 @@
 			where A.trans_number = #{bizRegno}
 		]]>
 	</select>
+	
+	<select id="Member_v_SQL.doAutoSearchBusiness" resultType="dataMap" parameterType="dataMap">
+		<!-- 2021-04-21 추정완 -->
+		/*
+			SQL ID : Member_v_SQL.doAutoSearchBusiness
+			회사명 자동검색
+		*/
+		<![CDATA[
+			select t.applicant_nm 
+			from tbiz.tbresearch t 
+			where t.applicant_nm like '%${applicant_nm}%'
+			group by t.applicant_nm ;
+		]]>
+	</select>
+	
+	
 </mapper>

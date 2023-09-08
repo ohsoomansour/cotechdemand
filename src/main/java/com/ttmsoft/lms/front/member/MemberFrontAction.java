@@ -496,4 +496,103 @@ public class MemberFrontAction extends BaseAct {
 	
 		return mav;
 	}
+	
+	/**
+	 *
+	 * @Author   : psm
+	 * @Date	 : 2023. 9. 6. 
+	 * @Parm	 : DataMap
+	 * @Return   : ModelAndView
+	 * @Function : 회사 자동검색
+	 * @Explain  : 
+	 *
+	 */
+	@RequestMapping (value = "/autoSearchBusiness.do")
+	public ModelAndView doAutoSearchBusiness(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+		ModelAndView mav = new ModelAndView("jsonView");
+		System.out.println("check paraMap"+paraMap);
+		List<DataMap> result = memberFrontService.doAutoSearchBusiness(paraMap);
+		mav.addObject("result", result);
+		return mav;
+	}
+	
+	/**
+	 *
+	 * @Author   : psm
+	 * @Date	 : 2023. 9. 8. 
+	 * @Parm	 : DataMap
+	 * @Return   : ModelAndView
+	 * @Function : 임시페이지
+	 * @Explain  : 
+	 *
+	 */
+	@RequestMapping (value = "/tempPage1.do")
+	public ModelAndView doTempPage1(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
+		ModelAndView mav = new ModelAndView("/techtalk/front/member/tempPage1.front");
+		DataMap navi = new DataMap();
+		navi.put("one", "메인");
+		navi.put("two", "임시페이지");
+		mav.addObject("navi",navi);
+		try {
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ModelAndView("error");
+		}	
+	
+		return mav;
+	}
+	
+	/**
+	 *
+	 * @Author   : psm
+	 * @Date	 : 2023. 9. 8. 
+	 * @Parm	 : DataMap
+	 * @Return   : ModelAndView
+	 * @Function : 임시페이지2
+	 * @Explain  : 
+	 *
+	 */
+	@RequestMapping (value = "/tempPage2.do")
+	public ModelAndView doTempPage2(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
+		ModelAndView mav = new ModelAndView("/techtalk/front/member/tempPage2.front");
+		DataMap navi = new DataMap();
+		navi.put("one", "메인");
+		navi.put("two", "임시페이지2");
+		mav.addObject("navi",navi);
+		try {
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ModelAndView("error");
+		}	
+	
+		return mav;
+	}
+	/**
+	 *
+	 * @Author   : psm
+	 * @Date	 : 2023. 9. 8. 
+	 * @Parm	 : DataMap
+	 * @Return   : ModelAndView
+	 * @Function : 임시페이지3
+	 * @Explain  : 
+	 *
+	 */
+	@RequestMapping (value = "/tempPage3.do")
+	public ModelAndView doTempPage3(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
+		ModelAndView mav = new ModelAndView("/techtalk/front/member/tempPage3.front");
+		DataMap navi = new DataMap();
+		navi.put("one", "메인");
+		navi.put("two", "임시페이지2");
+		mav.addObject("navi",navi);
+		try {
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ModelAndView("error");
+		}	
+	
+		return mav;
+	}
 }
