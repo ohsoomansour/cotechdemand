@@ -1,7 +1,94 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="Member_v_SQL">
+	<!--  2023.9.2 TBIZ search -->
+	<sql id="search">
+		<if test="division_type == 'all' and division_value != ''">
+       		AND (T.ID LIKE '%' || #{division_value} || '%'
+       		OR T.USER_NAME LIKE '%' || #{division_value} || '%'
+       		OR T.USER_MOBILE_NO LIKE '%' || #{division_value} || '%')
+       	</if>
+		<if test="division_type == 'userId' and division_value != ''">
+       		AND T.ID LIKE '%' || #{division_value} || '%'
+       	</if>
+       	<if test="division_type == 'userNm' and division_value != ''">
+       		AND T.USER_NAME LIKE '%' || #{division_value} || '%'
+       	</if>
+       	<if test="division_type == 'mPhone' and division_value != ''">
+       		AND T.USER_MOBILE_NO LIKE '%' || #{division_value} || '%'
+       	</if>
+       	<!-- 가이드 신청  -->
+       	<if test="agree_value != null and agree_value != ''">
+         	AND T.AGREE_FLAG = #{agree_value}
+         </if>
 
+         <if test="strdate != null and strdate != ''">
+       		<![CDATA[
+       			AND TO_CHAR(T.regist_date,'YYYYMMDDHH24MISS') >= #{strdate} 
+       		]]>
+         </if>
+         <if test="enddate != null and enddate != ''">
+         	<![CDATA[
+         		AND TO_CHAR(T.regist_date,'YYYYMMDDHH24MISS') <= #{enddate} 
+         	]]>
+         </if>	 	
+         
+	</sql>
+	<select id="Member_v_SQL.doCountVMember" resultType="int">
+
+		/*
+			SQL ID : Member_v_SQL.doCountVMember 
+			사용자 인원수
+		*/
+		<![CDATA[
+			SELECT
+				COUNT(*)
+			FROM
+				TBLMEMBER T
+		]]>
+		<include refid="search"/>
+	</select>	
+ 
+	<select id="Member_v_SQL.GetMembersInfoData" resultType="dataMap" parameterType="dataMap">	
+		/*
+			SQL ID : Member_v_SQL.GetMembersInfoData
+			사용자 조회 리스트 -  확인 중 ... 
+		*/
+		<![CDATA[
+			SELECT AA.*	
+			FROM(
+				SELECT
+					ROW_NUMBER() OVER(ORDER BY REGIST_DATE DESC) AS RNUM,
+					T.MEMBER_SEQNO,
+					T.REGIST_DATE,
+					T.MEMBER_TYPE,
+					T.ID,
+					T.USER_NAME,
+					T.USER_EMAIL,
+					T.USER_MOBILE_NO,
+					T.BIZ_NAME,
+					T.BIZ_EMAIL,
+					T.BIZ_TEL_NO,
+					T.AGREE_FLAG
+					
+				FROM 
+					TBLMEMBER T
+				WHERE 
+					T.MEMBER_TYPE = 'R'
+					or T.MEMBER_TYPE = 'B'
+					or T.MEMBER_TYPE = 'TLO'
+					or T.MEMBER_TYPE = 'ADMIN'
+					and T.delete_flag = 'N'
+		]]>	
+		<include refid="search"/>
+		<![CDATA[
+			) AA
+			WHERE 
+				AA.RNUM BETWEEN (#{page}::INT -1) * (#{rows}::INT) + 1 AND #{page}::INT * #{rows}::INT
+        ]]>	
+	</select>
+
+	
 	<select id="Member_v_SQL.doCountMemberId" resultType="int">
 		<!-- 2021-04-21 추정완 -->
 		/*
@@ -34,6 +121,23 @@
 				
 		]]>
 	</select>
+	<select id="Member_v_SQL.getJoinApprovedFlag" parameterType="dataMap" resultType="dataMap">
+		<!-- 2021-04-21 추정완 -->
+		/*
+			SQL ID : Member_v_SQL.getJoinApprovedFlag
+			가입승인 확인
+		*/
+		<![CDATA[
+			SELECT
+				agree_flag
+			FROM
+				TBLMEMBER
+			WHERE
+				member_seqno = #{seqno}::INT
+				
+		]]>
+	</select>
+	
 	
 	<insert id="Member_v_SQL.doInsertBusiness" parameterType="dataMap">
 		<!-- 2021-04-21 추정완 -->
@@ -223,6 +327,8 @@
 		]]>
 	</select>
 	
+	
+	
 	<update id="Member_v_SQL.doUpdatePw" parameterType="dataMap">
 		<!-- 2021-04-21 추정완 -->
 		/*
@@ -281,7 +387,7 @@
 				BIZ_SEQNO = #{biz_seqno}::INT
 		]]>
 	</update>
-	
+
 	<update id="Member_v_SQL.doUpdateMember" parameterType="dataMap">
 		<!-- 2021-04-21 추정완 -->
 		/*
@@ -305,7 +411,28 @@
 				ID = #{id}
 		]]>
 	</update>
-	
+	<!-- meber_type이 ADMIN인 사람만 업데이트를 할 수 있다. -->
+	<sql id="confirm_membertype">
+		<if test="member_type =='ADMIN'">
+			UPDATE
+				TBLMEMBER 
+			SET
+				AGREE_FLAG = #{mode},
+				AGREE_FLAG_DATE= NOW(),
+				UPDATE_DATE= NOW(),
+				UPDATE_ID = #{sessionid}
+
+			WHERE
+				MEMBER_SEQNO = #{seqno}::INT
+       	</if>
+	</sql>
+	<update id="Member_v_SQL.doUpdateAgreement" parameterType="dataMap">
+		/*
+			SQL ID : Member_v_SQL.doUpdateAgreement
+			회원관리정보 변경 - 사용자정보
+		*/
+		<include refid="confirm_membertype"/>
+	</update>
 	<select id="Member_v_SQL.doMemberBiz" resultType="dataMap">
 		<!-- 2021-04-21 추정완 -->
 		/*

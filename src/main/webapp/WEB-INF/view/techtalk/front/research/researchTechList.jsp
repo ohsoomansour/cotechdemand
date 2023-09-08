@@ -19,6 +19,7 @@ $('#stdClassSrch').click(function() {
 
 //분류 변경
 function clickCode(code_key,parent_depth,name_path){
+	name_path = decodeURIComponent(name_path);
 	var next_depth = null;
 	var url = "/techtalk/doClickCodeResult.do";
 	if(parent_depth == "1"){
@@ -50,18 +51,17 @@ function clickCode(code_key,parent_depth,name_path){
         	   $('#cs_step2').html('');
         	   $('#cs_step3').html('');
     	   var ahtml= "";
-    			ahtml +='		<ul>                                                                                                               ';
+    			ahtml +='		<ul> ';
     			for(var i=0; i<res.stdMainCode.length;i++){
-	    			ahtml +='<li>                                                                                                       ';
-	    			ahtml +="<a href=javascript:void(0); onclick=clickCode("+res.stdMainCode[i].code_key+","+res.stdMainCode[i].code_depth+","+"'"+res.stdMainCode[i].name_path+"'"+")>"+res.stdMainCode[i].code_name +"</a>"
-			        ahtml +='<span class="num">'+res.stdMainCode[i].count_result+'</span>                                                                             ';
-			        ahtml +='</li>                                                                                                      ';
+    				var tempData = encodeURIComponent(res.stdMainCode[i].name_path);
+	    			ahtml +='<li>  ';
+	    			ahtml +="<a href=javascript:void(0); onclick=clickCode("+res.stdMainCode[i].code_key+","+res.stdMainCode[i].code_depth+","+"'"+tempData+"'"+")>"+res.stdMainCode[i].code_name +"</a>"
+			        ahtml +='<span class="num">'+res.stdMainCode[i].count_result+'</span>';
+			        ahtml +='</li>';
     			}
-		        ahtml +='    		                                                                                                               ';
-	            ahtml +='		</ul>                                                                                                              ';
+		        ahtml +='   ';
+	            ahtml +='		</ul> ';
 
-			
-			
 				/* for(var i=0; i<res.stdMainCode.length;i++){
 					ahtml +="<div>"
 					ahtml +="<a href=javascript:void(0); onclick=clickCode("+res.stdMainCode[i].code_key+","+res.stdMainCode[i].code_depth+","+"'"+res.stdMainCode[i].name_path+"'"+")>"+res.stdMainCode[i].code_name +"</a>"
@@ -83,21 +83,30 @@ function clickCode(code_key,parent_depth,name_path){
 	    		console.log(res.data.length);
 	    		var ahtml= "";
 					ahtml +="<div class='cont_list'>"
-	   				if(res.data.length == null){
-	   					ahtml +="<td colspan='6'>연구자가 없습니다.</td>"
+					if(res.data.length == 0 ){
+	   					ahtml +='<div class="row"><div class="empty_data"><p>연구자가 없습니다.</p></div></div>';
 	   	   	   		}else{   	   	   	   		
    					for(var i=0; i<res.data.length;i++){
+   					var tempKeyword = encodeURIComponent(res.data[i].keyword);
    					ahtml +="<div class='row'>"
    						ahtml +="<span class='row_txt_num blind'>"+res.data[i].research_seqno+"</span>"
    						ahtml +="<span class='txt_left row_txt_tit'>"
-   						ahtml +="<a href=javascript:void(0); onclick=researchDetail("+res.data[i].research_no+","+res.data[i].research_seqno+","+res.data[i].keyword+")>"+res.data[i].research_nm +"연구자</a> </span>"
-   						ahtml +="<span class='re_beloong'>"+ res.data[i].applicant_nm+" </span>"
+   						ahtml +="<a href=javascript:void(0); onclick=researchDetail("+res.data[i].research_seqno+","+"'"+tempKeyword+"'"+")>"+res.data[i].research_nm +"연구자</a> </span>"
+   						if(typeof res.data[i].applicant_nm == "undefined" || res.data[i].applicant_nm == null || res.data[i].applicant_nm == ""){
+   							ahtml +="<span class='re_beloong'></span>"
+   	   					}else{
+   	   						ahtml +="<span class='re_beloong'>"+ res.data[i].applicant_nm+" </span>"
+   	   					}
    						ahtml +="<ul class='step_tech'>"
    						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].tech_nm1+"</span></li>"
    						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].tech_nm2+"</span></li>"
    						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].tech_nm3+"</span></li></ul>"
    						ahtml +="<ul class='tag_box'>"
-   						ahtml +="<li>"+res.data[i].keyword+"</li>"
+   						if(typeof res.data[i].keyword == "undefined" || res.data[i].keyword == null || res.data[i].keyword == ""){
+   							ahtml +="<li></li>"
+   	   					}else{
+   							ahtml +="<li>"+res.data[i].keyword+"</li>"
+   	   					}
    						ahtml +="</ul>"
    						ahtml +="</div>"	
 
@@ -107,7 +116,11 @@ function clickCode(code_key,parent_depth,name_path){
    					$('#tbl').empty();
    		    		$('#tbl').append(ahtml);
 	   	   		}
-	    		
+					ahtml +="</div>"
+	   				ahtml +="</div>"
+	   				$('#tbl').empty();
+	   		    	$('#tbl').append(ahtml);
+	   		    	
            }else if(parent_depth == "3"){
         	   $('#cs_step3').html('');
         	   var ahtml= "";
@@ -117,8 +130,9 @@ function clickCode(code_key,parent_depth,name_path){
 	   	  		ahtml +=split_code[0] */
 				ahtml +='		<ul>                                                                                                               ';
 				for(var i=0; i<res.stdMainCode.length;i++){
+					var tempData = encodeURIComponent(res.stdMainCode[i].name_path);
 	    			ahtml +='<li>                                                                                                       ';
-	    			ahtml +="<a href=javascript:void(0); onclick=clickCode("+res.stdMainCode[i].code_key+","+res.stdMainCode[i].code_depth+","+"'"+res.stdMainCode[i].name_path+"'"+")>"+res.stdMainCode[i].code_name +"</a>"
+	    			ahtml +="<a href=javascript:void(0); onclick=clickCode("+res.stdMainCode[i].code_key+","+res.stdMainCode[i].code_depth+","+"'"+tempData+"'"+")>"+res.stdMainCode[i].code_name +"</a>"
 	
 			        ahtml +='</li>                                                                                                      ';
 				}
@@ -130,21 +144,30 @@ function clickCode(code_key,parent_depth,name_path){
 	    		
 	    		var ahtml= "";
 					ahtml +="<div class='cont_list'>"
-	   				if(res.data == null){
-	   					ahtml +="<td colspan='6'>연구자가 없습니다.</td>"
+					if(res.data.length == 0 ){
+	   					ahtml +='<div class="row"><div class="empty_data"><p>연구자가 없습니다.</p></div></div>';
 	   	   	   		}else{   	   	   	   		
    					for(var i=0; i<res.data.length;i++){
+   					var tempKeyword = encodeURIComponent(res.data[i].keyword);
    					ahtml +="<div class='row'>"
    						ahtml +="<span class='row_txt_num blind'>"+res.data[i].research_seqno+"</span>"
    						ahtml +="<span class='txt_left row_txt_tit'>"
-   						ahtml +="<a href=javascript:void(0); onclick=researchDetail("+res.data[i].research_no+","+res.data[i].research_seqno+","+res.data[i].keyword+")>"+res.data[i].research_nm +"연구자</a> </span>"
-   						ahtml +="<span class='re_beloong'>"+ res.data[i].applicant_nm+" </span>"
+   						ahtml +="<a href=javascript:void(0); onclick=researchDetail("+res.data[i].research_seqno+","+"'"+tempKeyword+"'"+")>"+res.data[i].research_nm +"연구자</a> </span>"
+   						if(typeof res.data[i].applicant_nm == "undefined" || res.data[i].applicant_nm == null || res.data[i].applicant_nm == ""){
+   							ahtml +="<span class='re_beloong'></span>"
+   	   					}else{
+   	   						ahtml +="<span class='re_beloong'>"+ res.data[i].applicant_nm+" </span>"
+   	   					}
    						ahtml +="<ul class='step_tech'>"
    						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].tech_nm1+"</span></li>"
    						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].tech_nm2+"</span></li>"
    						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].tech_nm3+"</span></li></ul>"
    						ahtml +="<ul class='tag_box'>"
- 	   					ahtml +="<li>"+res.data[i].keyword+"</li>"
+   						if(typeof res.data[i].keyword == "undefined" || res.data[i].keyword == null || res.data[i].keyword == ""){
+   	   						ahtml +="<li></li>"
+   	   	   				}else{
+   	   						ahtml +="<li>"+res.data[i].keyword+"</li>"
+   	   	   				}
  	   					ahtml +="</ul>"
    						ahtml +="</div>"	
 
@@ -154,7 +177,11 @@ function clickCode(code_key,parent_depth,name_path){
    					$('#tbl').empty();
    		    		$('#tbl').append(ahtml);
 	   	   		}
-		    		
+					ahtml +="</div>"
+	   				ahtml +="</div>"
+	   				$('#tbl').empty();
+	   		    	$('#tbl').append(ahtml);
+	   		    	
            }else if(parent_depth =="4"){
         	   var ahtml= "";
         	   /* ahtml +=split_code[0]
@@ -173,20 +200,31 @@ function clickCode(code_key,parent_depth,name_path){
     		   
    		    		var ahtml= "";
    					ahtml +="<div class='cont_list'>"
-   	   				if(res.data == null){
-   	   					ahtml +="<td colspan='6'>연구자가 없습니다.</td>"
+   					if(res.data.length == 0 ){
+   	   					ahtml +='<div class="row"><div class="empty_data"><p>연구자가 없습니다.</p></div></div>';
    	   	   	   		}else{   	   	   	   		
 	   					for(var i=0; i<res.data.length;i++){
+	   					var tempKeyword = encodeURIComponent(res.data[i].keyword);
 	   					ahtml +="<div class='row'>"
 	   						ahtml +="<span class='row_txt_num blind'>"+res.data[i].research_seqno+"</span>"
 	   						ahtml +="<span class='txt_left row_txt_tit'>"
-	   						ahtml +="<a href=javascript:void(0); onclick=researchDetail("+res.data[i].research_no+","+res.data[i].research_seqno+","+res.data[i].keyword+")>"+res.data[i].research_nm +"연구자</a> </span>"
-	   						ahtml +="<span class='re_beloong'>"+ res.data[i].applicant_nm+" </span>"
+	   						ahtml +="<a href=javascript:void(0); onclick=researchDetail("+res.data[i].research_seqno+","+"'"+tempKeyword+"'"+")>"+res.data[i].research_nm +"연구자</a> </span>"
+	   						if(typeof res.data[i].applicant_nm == "undefined" || res.data[i].applicant_nm == null || res.data[i].applicant_nm == ""){
+	   							ahtml +="<span class='re_beloong'></span>"
+	   	   					}else{
+	   	   						ahtml +="<span class='re_beloong'>"+ res.data[i].applicant_nm+" </span>"
+	   	   					}
 	   						ahtml +="<ul class='step_tech'>"
 	   						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].tech_nm1+"</span></li>"
 	   						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].tech_nm2+"</span></li>"
 	   						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].tech_nm3+"</span></li></ul>"
-	   						ahtml +="<ul class='tag_box'><li>"+res.data[i].keyword+"</li></ul>";
+	   						ahtml +="<ul class='tag_box'>"
+	   	   					if(typeof res.data[i].keyword == "undefined" || res.data[i].keyword == null || res.data[i].keyword == ""){
+	   	   	   					ahtml +="<li></li>"
+	   	   	   	   			}else{
+	   	   	   					ahtml +="<li>"+res.data[i].keyword+"</li>"
+	   	   	   	   			}
+	   	 	   				ahtml +="</ul>"
 	   						ahtml +="</div>"	
 	
 	   					}
@@ -195,6 +233,10 @@ function clickCode(code_key,parent_depth,name_path){
 	   					$('#tbl').empty();
 	   		    		$('#tbl').append(ahtml);
    	   	   			}
+   					ahtml +="</div>"
+   					ahtml +="</div>"
+   					$('#tbl').empty();
+   		    		$('#tbl').append(ahtml);
                }
            
        },
@@ -209,30 +251,26 @@ function clickCode(code_key,parent_depth,name_path){
 }
 
 //연구자 상세보기 화면
-function researchDetail(research_no, research_seqno, keyword){
+function researchDetail(research_seqno, keyword){
 	var frm = document.createElement('form'); 
-
+	keyword = decodeURIComponent(keyword);
+	
 	frm.name = 'frm3'; 
 	frm.method = 'post'; 
 	frm.action = '/techtalk/viewResearchDetail.do'; 
 
 	var input1 = document.createElement('input'); 
 	var input2 = document.createElement('input'); 
-	var input3 = document.createElement('input'); 
 
 	input1.setAttribute("type", "hidden"); 
-	input1.setAttribute("name", "research_no"); 
-	input1.setAttribute("value", research_no); 
+	input1.setAttribute("name", "research_seqno"); 
+	input1.setAttribute("value", research_seqno); 
 	input2.setAttribute("type", "hidden"); 
-	input2.setAttribute("name", "research_seqno"); 
-	input2.setAttribute("value", research_seqno); 
-	input3.setAttribute("type", "hidden"); 
-	input3.setAttribute("name", "keyword"); 
-	input3.setAttribute("value", keyword); 
+	input2.setAttribute("name", "keyword"); 
+	input2.setAttribute("value", keyword); 
 
 	frm.appendChild(input1); 
 	frm.appendChild(input2); 
-	frm.appendChild(input3); 
 	
 	document.body.appendChild(frm); 
 	frm.submit();
@@ -318,7 +356,7 @@ function researchDetail(research_no, research_seqno, keyword){
 									<c:forEach var="data" items="${ data }">
 										<div class="row">
 											<span class="row_txt_num blind">${ data.research_seqno }</span>
-											<span class="txt_left row_txt_tit"><a href="javascript:void(0);" onclick="researchDetail('${data.research_no}','${data.research_seqno}','${data.keyword}')" title="연구자${data.research_nm }상세보기">${ data.research_nm } 연구자</a> </span>
+											<span class="txt_left row_txt_tit"><a href="javascript:void(0);" onclick="researchDetail('${data.research_seqno}', '${data.keyword}')" title="연구자${data.research_nm }상세보기">${ data.research_nm } 연구자</a> </span>
 											<span class="re_beloong">${ data.applicant_nm }</span>
 											<ul class="step_tech">
 												<li><span class="mr txt_grey tech_nm ">${ data.tech_nm1 }</span></li>

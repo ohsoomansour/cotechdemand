@@ -2592,4 +2592,83 @@
 		ORDER BY CO_UPDATE_DT DESC
 		LIMIT 5;
 	</select>
+	
+	<select id="SubjectFrontSQL.doViewResearchDetail" resultType="dataMap">
+		<!-- 2023-08-29  유지민 -->
+		/*
+			SQL ID : SubjectFrontSQL.doViewResearchDetail
+			연구원 정보 상세보기
+		*/
+		<![CDATA[
+			SELECT RESEARCH_SEQNO, RE_INTRO_FIELD, RE_BELONG ,RE_POSITION ,RE_NM ,RE_TEL ,RE_EMAIL ,EXCEL_YN ,
+			TECH_NM1, TECH_NM2, TECH_NM3, KEYWORD, RE_INTRO_FIELD, RESEARCH_NO, APPLICANT_NM, RESEARCH_NM
+			
+			FROM TBRESEARCH 
+		]]>
+		<if test="research_seqno != ''">
+			WHERE RESEARCH_SEQNO = #{research_seqno}::INT
+		</if>
+		
+	</select>
+	
+	<select id="SubjectFrontSQL.doViewResearchProject" parameterType="dataMap" resultType="dataMap">
+		<!-- 2023-08-29  유지민 -->
+		/*
+			SQL ID : SubjectFrontSQL.doViewResearchProject
+			연구원 국과 과제 수행 이력
+		*/
+		<![CDATA[
+			SELECT RE_PROJECT_NM, RE_INSTITU_NM, RE_START_DATE, RE_END_DATE
+			
+			FROM TBRESEARCH 
+		]]>
+		<if test="research_seqno != ''">
+			WHERE RESEARCH_SEQNO = #{research_seqno}::INT
+		</if>
+		ORDER BY RE_START_DATE DESC
+	</select>
+	
+	<select id="SubjectFrontSQL.doSimilarResearchList" parameterType="dataMap" resultType="dataMap">
+		<!-- 2023-08-29  유지민 -->
+		/*
+			SQL ID : SubjectFrontSQL.doSimilarResearchList
+			유사분야 연구자 리스트
+		*/
+		<![CDATA[
+			SELECT DISTINCT RESEARCH_NO, RESEARCH_NM, KEYWORD, TECH_NM1, TECH_NM2, TECH_NM3, APPLICANT_NM, APPLICANT_DATE
+			
+			FROM TBRESEARCH 
+		]]>
+		<if test="research_seqno != ''">
+			WHERE NOT RESEARCH_SEQNO IN (#{research_seqno}::INT)
+		</if>
+		<if test="keyword_split1 != ''">
+			AND KEYWORD LIKE '%' || #{keyword_split1} || '%'
+		</if>
+		<if test="keyword_split2 != ''">
+			AND KEYWORD LIKE '%' || #{keyword_split2} || '%'
+		</if>
+		<if test="keyword_split3 != ''">
+			AND KEYWORD LIKE '%' || #{keyword_split3} || '%'
+		</if>
+ 		 ORDER BY APPLICANT_DATE DESC
+ 		 LIMIT 3;
+	</select>
+	
+	<select id="SubjectFrontSQL.doPatentList" resultType="dataMap">
+		<!-- 2023-08-29  유지민 -->
+		/*
+			SQL ID : SubjectFrontSQL.doPatentList
+			연구자 특허리스트
+		*/
+		<![CDATA[
+			SELECT INVENT_NM, APPLICANT_NO, APPLICANT_NM
+			
+			FROM TBRESEARCH 
+		]]>
+		<if test="research_seqno != ''">
+			WHERE RESEARCH_SEQNO = #{research_seqno}::INT
+		</if>
+		ORDER BY APPLICANT_DATE DESC
+	</select>
 </mapper>	

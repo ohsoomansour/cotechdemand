@@ -17,6 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.ttmsoft.lms.cmm.seq.SeqService;
 import com.ttmsoft.toaf.basemvc.BaseAct;
 import com.ttmsoft.toaf.object.DataMap;
+import com.ttmsoft.toaf.util.CommonUtil;
 
 @Controller
 @RequestMapping("/techtalk")
@@ -27,6 +28,9 @@ public class ResearchAction extends BaseAct{
 	
 	@Autowired
 	private SeqService	seqService;
+	
+	@Autowired
+	private CommonUtil CommonUtil;
 	
 	/**
 	 *
@@ -74,10 +78,9 @@ public class ResearchAction extends BaseAct{
 		ModelAndView mav = new ModelAndView("jsonView");
 		System.out.println("paraMap : " + paraMap);
 		try {
-			paraMap.put("parent_depth", paraMap.get("parent_depth"));
-			paraMap.put("next_depth", paraMap.get("next_depth"));
 			String name_path = (String) paraMap.get("name_path");
 			String[] name_path_split = name_path.split("\\^");
+			
 			if(paraMap.get("parent_depth").equals("3")) {
 				System.out.println("소분류");
 		        int size = 2;
@@ -140,55 +143,6 @@ public class ResearchAction extends BaseAct{
 				
 	}
 	
-	/*@RequestMapping ("/researchListCheck.do")
-	public ModelAndView testInput(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response ) {
-		ModelAndView mav = new ModelAndView("jsonView");
-		
-		List<DataMap> result = researchService.doListCheck(paraMap);
-		
-		mav.addObject(result);
-		return mav;
-	}*/
-	
-	/**
-	 *
-	 * @Author   : jmyoo
-	 * @Date	 : 2023. 8. 29. 
-	 * @Parm	 : DataMap
-	 * @Return   : ModelAndView
-	 * @Function : 기술 분류값 가져오기
-	 * @Explain  : 
-	 *
-	 */
-	/*@RequestMapping (value = "/doGetStdCodeInfoTest.do")
-	public ModelAndView doGetStdCodeInfo(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
-		ModelAndView mav = new ModelAndView("jsonView");
-		System.out.println("paraMap : " + paraMap.toString());
-		try {
-			//DB 셋팅 후 사용자 아이디 중복확인 코드 적용 필요
-			if(paraMap.get("gubun").equals("mid")) {
-				paraMap.put("depth", '2');
-			}else if(paraMap.get("gubun").equals("sub")) {
-				paraMap.put("depth", '3');
-			}
-			List<DataMap> code = researchService.doGetStdMiddleCodeInfo(paraMap);
-			// 총 데이터 갯수
-			int totalCount = researchService.doResearchCountSubCode(paraMap);	
-			if(paraMap.get("gubun").equals("mid")) {
-				mav.addObject("stdCode", code);
-				mav.addObject("totalCount", totalCount);
-			}else if(paraMap.get("gubun").equals("sub")) {
-				mav.addObject("stdCode", totalCount);
-				mav.addObject("totalCount", totalCount);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new ModelAndView("error");
-		}
-	
-		return mav;
-	}*/
-	
 	/**
 	 *
 	 * @Author   : jmyoo
@@ -218,4 +172,74 @@ public class ResearchAction extends BaseAct{
 		return mav;
 	}
 	
+	/**
+	 *
+	 * @Author   : jmyoo
+	 * @Date	 : 2023. 8. 30. 
+	 * @Parm	 : DataMap
+	 * @Return   : ModelAndView
+	 * @Function : 연구자 상세 페이지
+	 * @Explain  : 
+	 *
+	 */	
+	@RequestMapping (value = "/viewResearchDetail.do", method = RequestMethod.POST)
+	public ModelAndView doViewResearchDetail(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request) {
+		ModelAndView mav = new ModelAndView("/techtalk/front/research/viewReDetail.front");						
+		mav.addObject("paraMap", paraMap);	
+		
+		try {						
+			System.out.println("paraMap:"+paraMap);
+			// 연구자 정보	
+			DataMap data = this.researchService.doViewResearchDetail(paraMap);
+			mav.addObject("data", data);
+			// 국가 과제 수행 이력
+			mav.addObject("proData", this.researchService.doViewResearchProject(paraMap));
+			if(paraMap.get("keyword") != null && paraMap.get("keyword") != "") {
+				String keyword = (String) paraMap.get("keyword");
+				String[] keyword_split = keyword.split(",");
+				paraMap.put("keyword_split1", keyword_split[0]);
+				paraMap.put("keyword_split2", keyword_split[1]);
+				paraMap.put("keyword_split3", keyword_split[2]);
+				
+			}
+			// 유사분야 연구자
+			mav.addObject("similData", this.researchService.doSimilarResearchList(paraMap));
+			// 특허리스트
+			mav.addObject("patentData", this.researchService.doPatentList(paraMap));
+			DataMap navi = new DataMap();
+			navi.put("one", "연구자 검색");
+			navi.put("two", "연구자 정보");
+			mav.addObject("navi",navi);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ModelAndView("error");
+		}		
+
+		return mav;
+	}	
+	
+	/**
+	 *
+	 * @Author   : jmyoo
+	 * @Date	 : 2023. 8. 31. 
+	 * @Parm	 : DataMap
+	 * @Return   : ModelAndView
+	 * @Function : 기술이전 문의 메일
+	 * @Explain  : 
+	 *
+	 */	
+	@RequestMapping (value = "/sendTechInquiry.do", method = RequestMethod.POST)
+	public ModelAndView doSendTechInquiry(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request) {
+		ModelAndView mav = new ModelAndView("jsonView");						
+		mav.addObject("paraMap", paraMap);	
+		
+		try {						
+			CommonUtil.doTloMailSender(paraMap);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ModelAndView("error");
+		}		
+
+		return mav;
+	}
 }
