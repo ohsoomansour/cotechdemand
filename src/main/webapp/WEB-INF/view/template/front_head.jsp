@@ -4,6 +4,13 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
 <script>
+
+$(document).ready(function(){
+	$("#my-page-btn").click(function(){
+		$(".my-dropdown").toggleClass('on')
+	})
+});
+
 		//링크태우기 23.09.06 박성민
     function doHref(href){
 				location.href = href

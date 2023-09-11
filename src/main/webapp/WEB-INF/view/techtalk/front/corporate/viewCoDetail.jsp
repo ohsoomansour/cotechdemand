@@ -20,9 +20,12 @@ $(document).ready(function() {
 			<!-- page_title s:  -->
 			<div class="area_tit">
 				<h3 class="tit_corp">기업수요 상세정보</h3>
+				<div class="right">
+					<p>최근 업데이트 일자 :<strong> <c:out value="${data.co_update_dt }"  escapeXml="false"/></strong></p>
+					<a href="javascript:window.history.back();" class="btn_back">뒤로가기</a>
+				</div>
 			</div>
-			<a href="javascript:window.history.back();">뒤로가기</a>
-			<h5>최근 업데이트 일자</h5> <c:out value="${data.co_update_dt }"  escapeXml="false"/>
+			
 			<!-- //page_title e:  -->
 			<!-- page_content s:  -->
 			<div class="area_cont">

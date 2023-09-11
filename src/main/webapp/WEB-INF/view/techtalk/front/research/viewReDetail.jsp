@@ -142,7 +142,7 @@ console.log(list);
 		ahtml +="<table class='tbl'>"
 			ahtml +="<caption class='caption_hide'>특허리스트</caption>"
 			ahtml +="<colgroup>"
-			ahtml +="<col ' />"
+			ahtml +="<col style='width:60%'/>"
 			ahtml +="<col  />"
 			ahtml +="<col  />"
 			ahtml +="</colgroup>"
@@ -245,8 +245,10 @@ function techInquiry(){
 			<!-- page_title s:  -->
 			<div class="area_tit">
 				<h3 class="tit_corp">연구자 상세정보</h3>
+				<div class="right">
+					<a href="javascript:window.history.back();" class="btn_back">뒤로가기</a>
+				</div>
 			</div>
-			<a href="javascript:window.history.back();">뒤로가기</a>
 			<!-- //page_title e:  -->
 			<!-- page_content s:  -->
 			<div class="area_cont">
@@ -321,8 +323,8 @@ function techInquiry(){
 						</c:choose>
 						</tbody>
 					</table>
-					<a href="javascript:void(0);" onclick="moreProContens();" id="moreProButton" title="더보기">더보기</a>
-					<a href="javascript:void(0);" onclick="lessProContens();" id="lessProButton" title="줄이기">줄이기</a>
+					<a href="javascript:void(0);" onclick="moreProContens();" id="moreProButton" title="더보기" class="btn-more">+ 더보기</a>
+					<a href="javascript:void(0);" onclick="lessProContens();" id="lessProButton" title="줄이기" class="btn-more">- 줄이기</a>
 				</div>
 			</div>
 			
@@ -330,33 +332,89 @@ function techInquiry(){
 				<div class="subject_corp">
 					<h4>연구 히스토리</h4>
 				</div>
+				<div class="tbl_comm tbl_public history_tbl_wrap">
+					<table class="tbl history_tbl">
+						<caption class="caption_hide">연구 히스토리</caption>
+						<colgroup>
+							<col>
+							<col>
+							<col>
+							<col>
+							<col>
+							<col>
+						</colgroup>
+						<thead>
+							<tr>
+								<th>2018년 </th>
+								<th>2019년</th>
+								<th>2020년</th>
+								<th>2021년</th>
+								<th>2022년</th>
+								<th>2023년</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td colspan="6">{키워드}, {키워드}, {키워드}</td>
+							</tr>
+							<tr>
+								<td></td>
+								<td colspan="5">{키워드}, {키워드}, {키워드}</td>
+							</tr>
+							<tr>
+								<td></td>
+								<td></td>
+								<td colspan="4">{키워드}, {키워드}, {키워드}</td>
+							</tr>
+							<tr>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td colspan="3">{키워드}, {키워드}, {키워드}</td>
+							</tr>
+							<tr>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td colspan="2">{키워드}, {키워드}, {키워드}</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
 			</div>
 			
 			<div class="area_cont area_cont2">
 				<div class="subject_corp">
 					<h4>유사분야 연구자</h4>
 				</div>
-				<c:choose>
-					<c:when test="${not empty similData }">
-					<c:forEach var="similData" items="${similData}" end="2">
-						<div class="notice_box">
-							<div class="notice_top_area">
-								<h3 class="tit_corp"><c:out value="${ similData. research_nm }"  escapeXml="false"/></h3>
-							</div>
-							<ul class="list_question">
-							<li><c:out value="${ similData. applicat_nm }"  escapeXml="false"/></li>
-							<li><c:out value="${ similData. keyword }"  escapeXml="false"/></li>
-							<li><c:out value="${ similData. tech_nm1 }"  escapeXml="false"/></li>
-							<li><c:out value="${ similData. tech_nm2 }"  escapeXml="false"/></li>
-							<li><c:out value="${ similData. tech_nm3 }"  escapeXml="false"/></li>
-							</ul>
-						</div>
-					</c:forEach>
-					</c:when>
-					<c:otherwise>
-						유사분야 연구자가 확인되지 않았습니다.
-					</c:otherwise>
-				</c:choose>
+				<div class="cont_list2">
+					<div class="row col-box col3">
+					<c:choose>
+						<c:when test="${not empty similData }">
+						<c:forEach var="similData" items="${similData}" end="2">
+							<div class="col">
+		                         <span class="row_txt_num blind">1</span>
+		                         <span class="txt_left row_txt_tit">${ similData. research_nm } 연구자</span>
+		                         <span class="re_beloong">${ similData. applicat_nm }</span>
+		                         <ul class="tag_box">
+		                             <li>${ similData. keyword }</li>
+		                         </ul>
+		                         <ul class="step_tech">
+		                             <li><span class="mr txt_grey tech_nm ">${ similData. tech_nm1 }</span></li>
+		                             <li><span class="mr txt_grey tech_nm ">${ similData. tech_nm2 }</span></li>
+		                             <li><span class="mr txt_grey tech_nm ">${ similData. tech_nm3 }</span></li>
+		                         </ul>
+		                     </div>
+						</c:forEach>
+						</c:when>
+						<c:otherwise>
+							유사분야 연구자가 확인되지 않았습니다.
+						</c:otherwise>
+					</c:choose>
+					</div>
+				</div>
+				
 			</div>
 			
 			<div class="area_cont area_cont2">
@@ -367,7 +425,7 @@ function techInquiry(){
 					<table class="tbl" id="tbl3">
 						<caption class="caption_hide">특허리스트</caption>
 						<colgroup>
-							<col>
+							<col style='width:60%'/>
 							<col>
 							<col>
 						</colgroup>
@@ -395,10 +453,13 @@ function techInquiry(){
 						</c:choose>
 						</tbody>
 					</table>
-					<a href="javascript:void(0);" onclick="morePatentContens();" id="morePatentButton" title="더보기">더보기</a>
-					<a href="javascript:void(0);" onclick="lessPatentContens();" id="lessPatentButton" title="줄이기">줄이기</a>
+					<a href="javascript:void(0);" onclick="morePatentContens();" id="morePatentButton" class="btn-more">+ 더보기</a>
+					<a href="javascript:void(0);" onclick="lessPatentContens();" id="lessPatentButton"  class="btn-more">- 줄이기</a>
 				</div>
-				<a href="javascript:void(0);" onclick="techInquiry();" id="techInquiryButton" title="기술이전 문의하기">기술이전 문의하기</a>
+				<div class="wrap_btn _center">
+                    <a href="javascript:void(0);" onclick="techInquiry();" id="techInquiryButton" title="기술이전 문의하기" class="btn_appl">기술이전 문의하기</a>
+                </div>
+				
 			</div>
 			
 			<div class="area_cont area_cont2">
@@ -441,7 +502,6 @@ function techInquiry(){
 								</td>
 							</tr>
 						</tbody>
-						<tfoot></tfoot>
 					</table>
 				</div>
 			</div>
