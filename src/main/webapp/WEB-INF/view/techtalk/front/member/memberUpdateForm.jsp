@@ -138,32 +138,16 @@ var searchSource = ['엽기떡볶이', '신전떡볶이', '걸작떡볶이', '�
 
 	}
 	
-	//회원가입 -> 2023/09/03 - 박성민
-	function fncMemberJoin(){
+	//회원가입 -> 2023/09/08 - 박성민
+	function fncMemberUpdate(){
 		//개인정보 유효성 검사
-		if(!isBlank('아이디', '#id'))
-		if(!idCheck){
-			alert_popup_focus('아이디 중복확인을 해주세요.',"#id");
-			return false;
-			}
-		if(!isBlank('비밀번호', '#pw'))
-		if(!isBlank('비밀번호 확인', '#passWordCk'))
-		if(!isBlank('이름', '#userName'))
-		if(!isBlank('개인이메일', '#userEmail1'))
-		if(!isBlank('개인이메일 도메인', '#userEmail2'))
-		if(!isBlank('휴대전화번호', '#userMobileNo'))
-		if(!isBlank('회사명', '#bizName'))
-		if(!isBlank('부서명', '#userDepart'))
-		if(!isBlank('직급', '#userRank'))
-		if(!isBlank('업무용이메일', '#bizEmail1'))
-		if(!isBlank('업무용이메일도메인', '#bizEmail2'))
-		if(!isBlank('회사용직통전화번호', '#bizTelNo'))
-
-		var url = "/techtalk/memberJoin.do"
+		
+		var url = "/techtalk/updateMember.do"
 		var form = $('#frm')[0];
 		var data = new FormData(form);
 		console.log("이게왜 ? + " + idCheck + " pw + " + pwCheck)
-		/*
+		console.log("데이터확인" +JSON.stringify(data));
+		
 			$.ajax({
 			       url : url,
 			       type: "post",
@@ -172,15 +156,20 @@ var searchSource = ['엽기떡볶이', '신전떡볶이', '걸작떡볶이', '�
 			       data: data,
 			       dataType: "json",
 			       success : function(res){
-				    	alert("성공") 
+				       if(res.result == 1){
+				    	   alert("회원정보가 변경되었습니다.");
+				    	   location.reload();
+					       }else{
+				    	   alert('회원정보 수정에 실패하였습니다. 관리자에게 문의해주세요.');
+						     }
 			       },
-			       error : function(){
-			    	alert('게시판 등록에 실패했습니다.');    
+			       error : function(res){
+			    	alert('통신에 실패하였습니다. 관리자에게 문의해주세요.');    
 			       },
 			       complete : function(){
 			       }
 			});
-		*/
+		
 		}
 
 	//[회원가입] - 아이디 및 사업자등록번호 중복확인 -> 2021/04/16 - 추정완
@@ -310,24 +299,10 @@ var searchSource = ['엽기떡볶이', '신전떡볶이', '걸작떡볶이', '�
 							<thead></thead>
 							<tbody class="view">
 								<tr>
-									<th scope="col">회원유형 <span class="red">*</span></th>
+									<th scope="col">회원종류 <span class="red">*</span></th>
 									<td class="ta_left">
 										<div class="form-inline">
-											<div class="box_radioinp">
-												<input type="radio" class="inp_radio" name="member_type"
-													id="R" value="R" title="연구자" checked /><label for="R"
-													class="lab_radio"><span class="icon ico_radio"></span>연구자</label>
-											</div>
-											<div class="box_radioinp">
-												<input type="radio" class="inp_radio" name="member_type"
-													id="B" value="B" title="기업" /><label for="B"
-													class="lab_radio"><span class="icon ico_radio"></span>기업</label>
-											</div>
-											<div class="box_radioinp">
-												<input type="radio" class="inp_radio" name="member_type"
-													id="TLO" value="TLO" title="TLO" /><label for="TLO"
-													class="lab_radio"><span class="icon ico_radio"></span>TLO</label>
-											</div>
+											<p>${userInfo.member_type }</p>
 										</div>
 									</td>
 								</tr>
@@ -337,34 +312,7 @@ var searchSource = ['엽기떡볶이', '신전떡볶이', '걸작떡볶이', '�
 										<div class="form-inline">
 											<input type="text" class="form-control form_id" id="id"
 												name="id"
-												onkeyup="this.value=this.value.replace(/[\ㄱ-ㅎㅏ-ㅣ가-힣]/g, '');"
-												title="아이디"> <a href="javascript:void;"
-												class="btn_step2" title="중복확인" id="btnIdCheck">중복확인</a> <span
-												style="margin-left: 10px;">8~20자 이내의 영문자(대,소) / 숫자 /
-												특수문자(.,_,-,@)만 입력가능합니다. </span>
-										</div>
-										<div>
-											<p id="idCheck" />
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<th scope="col">비밀번호 <span class="red">*</span></th>
-									<td class="ta_left">
-										<div class="form-inline">
-											<input type="password" class="form-control form_pw" id="pw"
-												name="pw" title="비밀번호"> <span
-												style="margin-left: 125px;">8~20자 이내의 영문자(대,소) / 숫자 /
-												특수문자만 입력가능합니다.</span>
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<th scope="col">비밀번호 확인 <span class="red">*</span></th>
-									<td class="ta_left">
-										<div class="form-inline">
-											<input type="password" class="form-control form_pw"
-												id="passWordCk" name="passWordCk" title="비밀번호 확인">
+												title="아이디" value="${userInfo.id}"> 
 										</div>
 									</td>
 								</tr>
@@ -373,7 +321,7 @@ var searchSource = ['엽기떡볶이', '신전떡볶이', '걸작떡볶이', '�
 									<td class="ta_left">
 										<div class="form-inline">
 											<input type="text" class="form-control form_man_name"
-												id="userName" name="user_name" maxlength="20" title="이름">
+												id="userName" name="user_name" maxlength="20" title="이름" value=${userInfo.user_name }>
 										</div>
 									</td>
 								</tr>
@@ -382,21 +330,9 @@ var searchSource = ['엽기떡볶이', '신전떡볶이', '걸작떡볶이', '�
 									<td class="ta_left">
 										<div class="form-inline">
 											<input type="text" class="form-control form_email1"
-												id="userEmail1" name="user_email1"
+												id="userEmail" name="user_email"
 												onkeyup="this.value=this.value.replace(/[\ㄱ-ㅎㅏ-ㅣ가-힣]/g, '');"
-												maxlength="30" title="담당자 이메일아이디">@ <input
-												type="text" class="form-control form_email2" id="userEmail2"
-												name="user_email2"
-												onkeyup="this.value=this.value.replace(/[\ㄱ-ㅎㅏ-ㅣ가-힣]/g, '');"
-												maxlength="30" title="담당자 이메일 도메인 직접입력"> <select
-												class="form-control form_email3" id="userEmail3"
-												name="user_email3" onChange="fncChangeEmail(this);"
-												title="담당자 이메일주소3">
-												<option title="직접입력">직접입력</option>
-												<option title="네이버">naver.com</option>
-												<option title="G메일">gmail.com</option>
-												<option title="다음">daum.net</option>
-											</select>
+												maxlength="30" title="담당자 이메일아이디" value="${userInfo.user_email }">
 										</div>
 									</td>
 								</tr>
@@ -407,7 +343,7 @@ var searchSource = ['엽기떡볶이', '신전떡볶이', '걸작떡볶이', '�
 											<input type="text" 
 												onKeyup="this.value=this.value.replace(/[^0-9]/g,'');"
 												class="form-control form_man_name" id="userMobileNo"
-												name="user_mobile_no" title="휴대전화">
+												name="user_mobile_no" title="휴대전화" value="${userInfo.user_mobile_no }">
 										</div>
 									</td>
 								</tr>
@@ -436,7 +372,7 @@ var searchSource = ['엽기떡볶이', '신전떡볶이', '걸작떡볶이', '�
 									<td class="ta_left">
 										<div class="form-inline">
 											<input type="text" 
-												id="bizName" name="biz_name" title="회사명">
+												id="bizName" name="biz_name" title="회사명" value=${userInfo.biz_name }>
 										</div>
 									</td>
 								</tr>
@@ -446,7 +382,7 @@ var searchSource = ['엽기떡볶이', '신전떡볶이', '걸작떡볶이', '�
 										<div class="form-inline">
 											<input type="text" class="form-control form_dept"
 												id="userDepart" name="user_depart" maxlength="50"
-												title="담당자 부서">
+												title="담당자 부서" value=${userInfo.user_depart }>
 										</div>
 									</td>
 								</tr>
@@ -455,7 +391,7 @@ var searchSource = ['엽기떡볶이', '신전떡볶이', '걸작떡볶이', '�
 									<td class="ta_left">
 										<div class="form-inline">
 											<input type="text" class="form-control form_spot"
-												id="userRank" name="user_rank" maxlength="20" title="담당자 직위">
+												id="userRank" name="user_rank" maxlength="20" title="담당자 직위" value=${userInfo.user_rank }>
 										</div>
 									</td>
 								</tr>
@@ -464,21 +400,9 @@ var searchSource = ['엽기떡볶이', '신전떡볶이', '걸작떡볶이', '�
 									<td class="ta_left">
 										<div class="form-inline">
 											<input type="text" class="form-control form_email1"
-												id="bizEmail1" name="biz_email1"
+												id="bizEmail" name="biz_email"
 												onkeyup="this.value=this.value.replace(/[\ㄱ-ㅎㅏ-ㅣ가-힣]/g, '');"
-												maxlength="30" title="담당자 이메일아이디">@ <input
-												type="text" class="form-control form_email2" id="bizEmail2"
-												name="biz_email2"
-												onkeyup="this.value=this.value.replace(/[\ㄱ-ㅎㅏ-ㅣ가-힣]/g, '');"
-												maxlength="30" title="담당자 이메일 도메인 직접입력"> <select
-												class="form-control form_email3" id="bizEmail3"
-												name="biz_email3" onChange="fncChangeEmail(this);"
-												title="담당자 이메일주소3">
-												<option title="직접입력">직접입력</option>
-												<option title="네이버">naver.com</option>
-												<option title="G메일">gmail.com</option>
-												<option title="다음">daum.net</option>
-											</select>
+												maxlength="30" title="담당자 이메일아이디" value=${userInfo.biz_email }>
 										</div>
 									</td>
 								</tr>
@@ -489,7 +413,7 @@ var searchSource = ['엽기떡볶이', '신전떡볶이', '걸작떡볶이', '�
 											<input type="text"
 												onKeyup="this.value=this.value.replace(/[^0-9]/g,'');"
 												class="form-control form_man_name" id="bizTelNo" name="biz_tel_no"
-												title="회사용직통전화번호">
+												title="회사용직통전화번호" value=${userInfo.biz_tel_no }>
 										</div>
 									</td>
 								</tr>
@@ -501,8 +425,7 @@ var searchSource = ['엽기떡볶이', '신전떡볶이', '걸작떡볶이', '�
 			</form>
 			<div class="wrap_btn _center">
 				<a href="javascript:history.back();" class="btn_cancel" title="취소">취소</a>
-				<a href="javascript:fncMemberJoin();" class="btn_confirm"title="회원가입">회원가입 </a> 
-				<a href="javascript:fncSetData();"class="btn_confirm">데이터입력 </a>
+				<a href="javascript:fncMemberUpdate();" class="btn_confirm"title="회원가입">수정하기 </a> 
 			</div>
 			<!-- //page_content e:  -->
 		</div>

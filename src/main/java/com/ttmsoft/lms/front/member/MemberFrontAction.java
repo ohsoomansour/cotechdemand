@@ -261,11 +261,11 @@ public class MemberFrontAction extends BaseAct {
 	
 	/**
 	 *
-	 * @Author   : jwchoo
-	 * @Date	 : 2021. 4. 22. 
+	 * @Author   : psm
+	 * @Date	 : 2023. 9. 8. 
 	 * @Parm	 : DataMap
 	 * @Return   : ModelAndView
-	 * @Function : 수요기업/공급기업 회원정보관리
+	 * @Function : 회원정보관리
 	 * @Explain  : 
 	 *
 	 */
@@ -276,8 +276,6 @@ public class MemberFrontAction extends BaseAct {
 			paraMap.put("member_seqno", session.getAttribute("member_seqno"));
 			mav.addObject("userInfo", memberFrontService.doGetMemberInfo(paraMap));
 			paraMap.put("depth","1");
-			List<DataMap> stdCode = memberFrontService.doGetStdMainCodeInfo(paraMap);
-			mav.addObject("stdMainCode", stdCode);
 			DataMap navi = new DataMap();
 			navi.put("one", "메인");
 			navi.put("two", "회원정보관리");
@@ -380,20 +378,22 @@ public class MemberFrontAction extends BaseAct {
 	
 	/**
 	 *
-	 * @Author   : jwchoo
-	 * @Date	 : 2021. 4. 22. 
+	 * @Author   : psm
+	 * @Date	 : 2023. 9. 08. 
 	 * @Parm	 : DataMap
 	 * @Return   : ModelAndView
-	 * @Function : 수요기업/공급기업  회원정보관리 - 비밀번호 변경 확인
+	 * @Function : 마이페이지 정보 변경
 	 * @Explain  : 
 	 *
 	 */
-	@RequestMapping (value = "/updatePrivacy.do")
-	public ModelAndView doUpdatePrivacy(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+	@RequestMapping (value = "/updateMember.do")
+	public ModelAndView doUpdateMember(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
 		ModelAndView mav = new ModelAndView("jsonView");
 		try {
+			paraMap.put("member_seqno", session.getAttribute("member_seqno"));
 			System.out.println("paraMap : " + paraMap.toString());
-			memberFrontService.doUpdatePrivacy(paraMap);
+			int result = memberFrontService.doUpdateMember(paraMap);
+			mav.addObject("result", result);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ModelAndView("error");

@@ -42,32 +42,23 @@ public class MemberFrontService extends BaseSvc<DataMap>{
 	}
 	
 	/* ----[회원정보관리 SQL]----*/
-	/* 회원정보관리 -> 회원 정보 조회 - 2021/04/22 추정완*/
+	/* 회원정보관리 -> 회원 정보 조회 - 2023/09/08 박성민*/
 	public DataMap doGetMemberInfo(DataMap paraMap) {
-		return this.dao.selectQuery("Member_v_SQL.doGetMemberInfo", paraMap);
+		DataMap result =this.dao.selectQuery("Member_v_SQL.doGetMemberInfo", paraMap);
+		if(result.getstr("member_type").equals("R")) {
+			result.put("member_type","연구자");
+		}else if(result.getstr("member_type").equals("B")) {
+			result.put("member_type","기업");
+		}
+		return  result;
 	}
 	/* 회원정보관리 -> 비밀번호변경 - 2021/04/22 추정완*/
 	public void doUpdatePw(DataMap paraMap) {
 		this.dao.updateQuery("Member_v_SQL.doUpdatePw", paraMap);
 	}
 	/* 회원정보관리 -> 회원정보변경/사업자정보 - 20201/04/22 추정완*/
-	public void doUpdatePrivacy(DataMap paraMap) {
-		String telNo = paraMap.get("tel_no1").toString() 
-				+ "-" + paraMap.get("tel_no2").toString() 
-				+ "-" + paraMap.get("tel_no3").toString();
-		String mobileNo = paraMap.get("user_mobile_no1").toString() 
-				+ "-" + paraMap.get("user_mobile_no2").toString() 
-				+ "-" + paraMap.get("user_mobile_no3").toString();
-		String userEmail = paraMap.get("user_email1").toString() 
-				+ "@" + paraMap.get("user_email2").toString() ;
-		
-		paraMap.put("tel_no", telNo);
-		paraMap.put("user_tel_no", telNo);
-		paraMap.put("user_mobile_no", mobileNo);
-		paraMap.put("user_email", userEmail);
-		
-		this.dao.updateQuery("Member_v_SQL.doUpdateBusiness", paraMap);
-		this.dao.updateQuery("Member_v_SQL.doUpdateMember", paraMap);
+	public int doUpdateMember(DataMap paraMap) {
+		return this.dao.updateQuery("Member_v_SQL.doUpdateMember", paraMap);
 	}
 	
 	public List<DataMap> doGetStdMainCodeInfo(DataMap paraMap) {
