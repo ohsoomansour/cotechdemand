@@ -63,14 +63,19 @@ function moreProContens(){
 			ahtml +="<tr>"
 			ahtml +="</thead>"
 			ahtml +="<tbody>"
-		for(var i=0; i<list.length;i++){
-		ahtml +="<tr>"
-			ahtml +=	"<td class='ta_left'>"+list[i].re_project_nm+"</td>"
-			ahtml +=	"<td >"+list[i].re_institu_nm+"</td>"
-			ahtml +=	"<td >"+list[i].re_start_date+" ~ "
-			ahtml +=	list[i].re_end_date+"</td>"
-		ahtml +="<tr>"
-		}
+			if(list[0].re_project_nm != '' && list[0].re_project_nm != 0){
+					
+				for(var i=0; i<list.length;i++){
+				ahtml +="<tr>"
+					ahtml +=	"<td class='ta_left'>"+list[i].re_project_nm+"</td>"
+					ahtml +=	"<td >"+list[i].re_institu_nm+"</td>"
+					ahtml +=	"<td >"+list[i].re_start_date+" ~ "
+					ahtml +=	list[i].re_end_date+"</td>"
+				ahtml +="<tr>"
+				}
+			}else{
+				ahtml +=	"<td colspan='3'>국가 과제 수행 이력이 확인되지 않았습니다.</td>"
+			}
 	   ahtml +="</tbody>"
 		ahtml +="</table>"
 		$('#tbl2').empty();
@@ -110,14 +115,19 @@ function lessProContens(){
 			ahtml +="<tr>"
 			ahtml +="</thead>"
 			ahtml +="<tbody>"
-		for(var i=0; i<5; i++){
-		ahtml +="<tr>"
-			ahtml +=	"<td class='ta_left'>"+list[i].re_project_nm+"</td>"
-			ahtml +=	"<td >"+list[i].re_institu_nm+"</td>"
-			ahtml +=	"<td >"+list[i].re_start_date+" ~ "
-			ahtml +=	list[i].re_end_date+"</td>"
-		ahtml +="<tr>"
-		}
+			if(list[0].re_project_nm != '' && list[0].re_project_nm != 0){
+				for(var i=0; i<5; i++){
+					ahtml +="<tr>"
+						ahtml +=	"<td class='ta_left'>"+list[i].re_project_nm+"</td>"
+						ahtml +=	"<td >"+list[i].re_institu_nm+"</td>"
+						ahtml +=	"<td >"+list[i].re_start_date+" ~ "
+						ahtml +=	list[i].re_end_date+"</td>"
+					ahtml +="<tr>"
+					}
+			}else{
+				ahtml +=	"<td colspan='3'>국가 과제 수행 이력이 확인되지 않았습니다.</td>"
+			}
+		
 	   ahtml +="</tbody>"
 		ahtml +="</table>"
 		$('#tbl2').empty();
@@ -154,13 +164,18 @@ console.log(list);
 			ahtml +="<tr>"
 			ahtml +="</thead>"
 			ahtml +="<tbody>"
-		for(var i=0; i<list.length;i++){
-		ahtml +="<tr>"
-			ahtml +=	"<td class='ta_left'>"+list[i].invent_nm+"</td>"
-			ahtml +=	"<td >"+list[i].applicant_no+"</td>"
-			ahtml +=	"<td >"+list[i].applicant_nm+"</td>"
-		ahtml +="<tr>"
-		}
+			if(list[0].invent_nm != '' && list[0].invent_nm != 0){
+				for(var i=0; i<list.length;i++){
+					ahtml +="<tr>"
+						ahtml +=	"<td class='ta_left'>"+list[i].invent_nm+"</td>"
+						ahtml +=	"<td >"+list[i].applicant_no+"</td>"
+						ahtml +=	"<td >"+list[i].applicant_nm+"</td>"
+					ahtml +="<tr>"
+				}
+			}else{
+				ahtml +=	"<td colspan='3'>국가 과제 수행 이력이 확인되지 않았습니다.</td>"
+			}
+		
 	   ahtml +="</tbody>"
 		ahtml +="</table>"
 		$('#tbl3').empty();
@@ -199,13 +214,18 @@ function lessPatentContens(){
 			ahtml +="<tr>"
 			ahtml +="</thead>"
 			ahtml +="<tbody>"
-		for(var i=0; i<5; i++){
-		ahtml +="<tr>"
-			ahtml +=	"<td class='ta_left'>"+list[i].invent_nm+"</td>"
-			ahtml +=	"<td >"+list[i].applicant_no+"</td>"
-			ahtml +=	"<td >"+list[i].applicant_nm+"</td>"
-		ahtml +="<tr>"
-		}
+			if(list[0].invent_nm != '' && list[0].invent_nm != 0){
+				for(var i=0; i<5; i++){
+					ahtml +="<tr>"
+						ahtml +=	"<td class='ta_left'>"+list[i].invent_nm+"</td>"
+						ahtml +=	"<td >"+list[i].applicant_no+"</td>"
+						ahtml +=	"<td >"+list[i].applicant_nm+"</td>"
+					ahtml +="<tr>"
+				}
+			}else{
+				ahtml +=	"<td colspan='3'>국가 과제 수행 이력이 확인되지 않았습니다.</td>"
+			}
+		
 	   ahtml +="</tbody>"
 		ahtml +="</table>"
 		$('#tbl3').empty();
@@ -308,7 +328,7 @@ function techInquiry(){
 						</thead>
 						<tbody>
 						<c:choose>
-							<c:when test="${not empty proData }">
+							<c:when test="${not empty proData[0].re_project_nm }">
 							<c:forEach var="projectData" items="${proData}" end="4">
 								<tr>
 									<td class="ta_left">${projectData.re_project_nm}</td>
@@ -333,55 +353,33 @@ function techInquiry(){
 					<h4>연구 히스토리</h4>
 				</div>
 				<div class="tbl_comm tbl_public history_tbl_wrap">
-					<table class="tbl history_tbl">
+					<table class="tbl history_tbl" id="tbl2">
 						<caption class="caption_hide">연구 히스토리</caption>
-						<colgroup>
-							<col>
-							<col>
-							<col>
-							<col>
-							<col>
-							<col>
-						</colgroup>
-						<thead>
-							<tr>
-								<th>2018년 </th>
-								<th>2019년</th>
-								<th>2020년</th>
-								<th>2021년</th>
-								<th>2022년</th>
-								<th>2023년</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td colspan="6">{키워드}, {키워드}, {키워드}</td>
-							</tr>
-							<tr>
-								<td></td>
-								<td colspan="5">{키워드}, {키워드}, {키워드}</td>
-							</tr>
-							<tr>
-								<td></td>
-								<td></td>
-								<td colspan="4">{키워드}, {키워드}, {키워드}</td>
-							</tr>
-							<tr>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td colspan="3">{키워드}, {키워드}, {키워드}</td>
-							</tr>
-							<tr>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td colspan="2">{키워드}, {키워드}, {키워드}</td>
-							</tr>
+						<c:choose>
+							<c:when test="${not empty dataHis[0].ex_assignm_no }">
+								<c:forEach var="listHis" items="${dataHis}">
+								<colgroup>
+									<col>
+								</colgroup>
+									<thead>
+										<tr>
+										<c:set var="his_date" value="${listHis.ex_re_start_date}" />
+											<th>${fn:substring(his_date,0,4)}</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>${listHis.keyword}</td>
+										</tr>
+									</c:forEach>
+							</c:when>
+							<c:otherwise>
+								등록된 연구 히스토리가 없습니다.
+							</c:otherwise>
+						</c:choose>
 						</tbody>
 					</table>
-				</div>
+					</div>
 			</div>
 			
 			<div class="area_cont area_cont2">
@@ -414,7 +412,6 @@ function techInquiry(){
 					</c:choose>
 					</div>
 				</div>
-				
 			</div>
 			
 			<div class="area_cont area_cont2">
@@ -438,7 +435,7 @@ function techInquiry(){
 						</thead>
 						<tbody>
 						<c:choose>
-							<c:when test="${not empty patentData }">
+							<c:when test="${not empty patentData[0].invent_nm }">
 							<c:forEach var="patentData" items="${patentData}" end="4">
 								<tr>
 									<td class="ta_left">${patentData.invent_nm}</td>

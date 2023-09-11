@@ -2628,6 +2628,23 @@
 		ORDER BY RE_START_DATE DESC
 	</select>
 	
+	<select id="SubjectFrontSQL.doViewResearchHistory" parameterType="dataMap" resultType="dataMap">
+	<!-- 2023-08-29  유지민 -->
+		/*
+			SQL ID : SubjectFrontSQL.doViewResearchHistory
+			연구히스토리 리스트
+		*/
+		SELECT *,(		
+		SELECT EX_ASSIGNM_NO 
+		FROM TBIZ.TBEXCEL_RESEARCH T
+		GROUP BY EX_ASSIGNM_NO) AS EX_ASSIGNM_NO
+		FROM TBIZ.TBEXCEL_RESEARCH TR2 
+		INNER JOIN TBIZ.TBRESEARCH T ON TR2.EX_ASSIGNM_NO = T.ASSIGNM_NO
+		<if test="research_seqno != ''">
+		WHERE T.RESEARCH_SEQNO = #{research_seqno}::INT
+		</if>
+	</select>
+	
 	<select id="SubjectFrontSQL.doSimilarResearchList" parameterType="dataMap" resultType="dataMap">
 		<!-- 2023-08-29  유지민 -->
 		/*
@@ -2642,15 +2659,23 @@
 		<if test="research_seqno != ''">
 			WHERE NOT RESEARCH_SEQNO IN (#{research_seqno}::INT)
 		</if>
-		<if test="keyword_split1 != ''">
-			AND KEYWORD LIKE '%' || #{keyword_split1} || '%'
-		</if>
-		<if test="keyword_split2 != ''">
-			AND KEYWORD LIKE '%' || #{keyword_split2} || '%'
-		</if>
-		<if test="keyword_split3 != ''">
-			AND KEYWORD LIKE '%' || #{keyword_split3} || '%'
-		</if>
+		<choose>
+			<when test="keyword_split1 != ''">
+				<if test="keyword_split1 != ''">
+					AND KEYWORD LIKE '%' || #{keyword_split1} || '%'
+				</if>
+				<if test="keyword_split2 != ''">
+					AND KEYWORD LIKE '%' || #{keyword_split2} || '%'
+				</if>
+				<if test="keyword_split3 != ''">
+					AND KEYWORD LIKE '%' || #{keyword_split3} || '%'
+				</if>
+			</when>
+			<otherwise>
+				AND KEYWORD = #{keyword}
+			</otherwise>
+		</choose>
+		
  		 ORDER BY APPLICANT_DATE DESC
  		 LIMIT 3;
 	</select>

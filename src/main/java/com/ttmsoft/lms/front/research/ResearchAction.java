@@ -194,7 +194,8 @@ public class ResearchAction extends BaseAct{
 			mav.addObject("data", data);
 			// 국가 과제 수행 이력
 			mav.addObject("proData", this.researchService.doViewResearchProject(paraMap));
-			if(paraMap.get("keyword") != null && paraMap.get("keyword") != "") {
+			if(paraMap.get("keyword") != null && paraMap.get("keyword") != "" && paraMap.get("keyword") != "") {
+				System.out.println("????????????");
 				String keyword = (String) paraMap.get("keyword");
 				String[] keyword_split = keyword.split(",");
 				paraMap.put("keyword_split1", keyword_split[0]);
@@ -202,6 +203,8 @@ public class ResearchAction extends BaseAct{
 				paraMap.put("keyword_split3", keyword_split[2]);
 				
 			}
+			//연구히스토리
+			mav.addObject("dataHis", this.researchService.doViewResearchHistory(paraMap));
 			// 유사분야 연구자
 			mav.addObject("similData", this.researchService.doSimilarResearchList(paraMap));
 			// 특허리스트

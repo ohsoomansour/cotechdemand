@@ -41,6 +41,38 @@ public class ResearchService extends BaseSvc<DataMap>{
 		return result;
 	}
 	
+	//연구히스토리
+	public List<DataMap> doViewResearchHistory(DataMap paraMap) {
+		
+		List<DataMap> result = this.dao.dolistQuery("SubjectFrontSQL.doViewResearchHistory", paraMap);
+		/*String start_date = null;
+		String ex_start_date;
+		String originalText;
+		DataMap dataMap = new DataMap();
+
+		// 문자열 자르기
+		int startIndex;
+		int endIndex; // 자를 글자의 끝 인덱스
+		String slicedText; // 자른 문자열
+
+		for(int i = 0; i < result.size(); i++) {
+			System.out.println("result:"+result.get(i));
+			start_date = (String) result.get(i).get("ex_re_start_date");
+			System.out.println("start_date:"+start_date);*/
+			/*dataMap.put("start_date", start_date);
+			originalText = dataMap.getstr("start_date"); 
+			startIndex = 0;
+			endIndex = 4;
+			slicedText = originalText.substring(startIndex, endIndex);*/ 
+			/*ex_start_date = start_date.substring(0, 4);
+			System.out.println("ex_start_date:"+ex_start_date);
+			dataMap.put("ex_start_date", ex_start_date);
+		}
+		result.add(dataMap);
+		System.out.println("result:"+result);*/
+		return result;
+	}
+	
 	//유사분야 연구자
 	public List<DataMap> doSimilarResearchList(DataMap paraMap) {
 		List<DataMap> result = this.dao.dolistQuery("SubjectFrontSQL.doSimilarResearchList", paraMap);
