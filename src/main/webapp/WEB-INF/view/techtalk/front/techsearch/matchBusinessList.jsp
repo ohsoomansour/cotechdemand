@@ -28,7 +28,6 @@ $(document).ready(function(){
 		</div>
 							
 			<div class="area_cont">
-			
 				<!-- 매칭된 기업수요 목록 //start -->
 				<div class="list_panel">
                     <div class="cont_list">
