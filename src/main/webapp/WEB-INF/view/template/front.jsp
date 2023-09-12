@@ -127,7 +127,7 @@
 	
 	<!-- common.js -->
 	<script src="/js/lms/common.js?v=1"></script>
-	<link href="${pageContext.request.contextPath}/css/admin/common.css?v=1" rel="stylesheet">
+	<%-- <link href="${pageContext.request.contextPath}/css/admin/common.css?v=1" rel="stylesheet"> --%>
 	
 	
 	<!-- daum address api -->
