@@ -79,7 +79,8 @@
 								<li><span class="mr txt_grey tech_nm ">소재</span></li>
 							</ul>
 							<ul class="tag_box">
-                                   <li></li>
+                                 <li>#키워드</li>
+                                 <li>#키워드</li>
                             </ul>
 						</div>
 						<div class="row">
@@ -95,7 +96,8 @@
 								<li><span class="mr txt_grey tech_nm ">소재</span></li>
 							</ul>
 							<ul class="tag_box">
-                                   <li></li>
+                                 <li>#키워드</li>
+                                 <li>#키워드</li>
                             </ul>
 						</div>
 					</div>
