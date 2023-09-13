@@ -47,7 +47,7 @@ function test(){
 							<span class="main_btn_obj mbo_01">연구자검색 이미지</span>
 							<span class="main_btn_title">연구자검색 </span>
 						</a>
-						<a href="/techtalk/searchBusiness.do" class="main_btn">
+						<a href="/techtalk/coTechList.do" class="main_btn">
 							<span class="main_btn_obj mbo_02">수요기업검색 이미지</span>
 							<span class="main_btn_title">수요기업검색 </span>
 						</a>
