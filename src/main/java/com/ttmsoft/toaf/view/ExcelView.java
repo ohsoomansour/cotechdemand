@@ -13,9 +13,11 @@ import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Color;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
@@ -70,7 +72,7 @@ public class ExcelView extends AbstractXlsView {
 		hdr_css.setFillPattern	(FillPatternType.THIN_VERT_BANDS);
 		hdr_css.setAlignment	(HorizontalAlignment.CENTER);		
 		hdr_css.setFont			(dat_fnt);
-		hdr_css.setFillForegroundColor(HSSFColor.GREY_25_PERCENT.index);
+		hdr_css.setFillForegroundColor(HSSFColorPredefined.GREY_25_PERCENT.getIndex());
 		
 		dat_css.setBorderTop	(BorderStyle.THIN);
 		dat_css.setBorderBottom	(BorderStyle.THIN);
