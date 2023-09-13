@@ -23,8 +23,8 @@ spring:
       suffix: .jsp
   servlet:
     multipart:
-      max-file-size: 10MB
-      max-request-size: 10MB
+      max-file-size: 100MB
+      max-request-size: 100MB
 #  mail:
 #    host: smtp.gmail.com
 #    port: 587
@@ -71,8 +71,8 @@ spring:
       suffix: .jsp
   servlet:
     multipart:
-      max-file-size: 10MB
-      max-request-size: 10MB
+      max-file-size: 100MB
+      max-request-size: 100MB
 #  mail:
 #    host: smtp.gmail.com
 #    port: 587
@@ -120,8 +120,8 @@ spring:
       suffix: .jsp
   servlet:
     multipart:
-      max-file-size: 10MB
-      max-request-size: 10MB
+      max-file-size: 100MB
+      max-request-size: 100MB
   mail:
     host: 192.68.1.34
     port: 25
