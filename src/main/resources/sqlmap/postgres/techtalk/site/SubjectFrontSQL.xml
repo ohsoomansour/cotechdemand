@@ -2703,10 +2703,106 @@
 			SQL ID : SubjectFrontSQL.doGetMatchRList
 			매칭된 기업수요 목록
 		*/
-		SELECT * 
-		FROM tbiz.tblmember tm
+		
+		select tm.*, tr.*, td.*,tt.*,  td.member_seqno as demand_seqno
+		, tr.keyword as Rkwd
+		, td.keyword as Bkwd
+		, td.update_date as rupdate
+		, ( select code_name from tbiz.tbtech_code D where D.code_key = tr.tech_code1) as Rcode_name1
+		, ( select code_name from tbiz.tbtech_code D where D.code_key = tr.tech_code2) as Rcode_name2
+		, ( select code_name from tbiz.tbtech_code D where D.code_key = tr.tech_code3) as Rcode_name3
+		, ( select code_name from tbiz.tbtech_code D where D.code_key = td.tech_code1) as Bcode_name1
+		, ( select code_name from tbiz.tbtech_code D where D.code_key = td.tech_code2) as Bcode_name2
+		, ( select code_name from tbiz.tbtech_code D where D.code_key = td.tech_code3) as Bcode_name3
+		from tbiz.tblmember tm 
 		inner join tbiz.tblresearcher tr on tm.member_seqno = tr.member_seqno 
-		WHERE tm.MEMBER_TYPE = #{member_type}
-		AND tm.MEMBER_SEQNO = #{member_seqno}::INT
+		inner join tbiz.tblresearch_temp tt on tr.researcher_seqno = tt.research_seqno 
+		inner join tbiz.tbldemand td on (
+		                           (case when td.tech_code1 like tr.tech_code1 then 1 else 0 end +
+		                            case when td.tech_code2 like tr.tech_code2 then 1 else 0 end +
+		                            case when td.tech_code3 like tr.tech_code3 then 1 else 0 end) >=2
+		                           )
+		where tm.MEMBER_SEQNO=#{member_seqno}::INT
+		AND (
+		    (SELECT COUNT(*) FROM unnest(string_to_array(td.keyword, ',')) AS keyword_list
+		     WHERE keyword_list = ANY(string_to_array(tr.keyword, ','))) >= 2
+		);
+	</select>
+	
+	<select id="SubjectFrontSQL.doGetMatchBList" parameterType="dataMap" resultType="dataMap">
+		<!-- 2023-09-13  유지민 -->
+		/*
+			SQL ID : SubjectFrontSQL.doGetMatchBList
+			매칭된 연구자 목록
+		*/
+		select tm.*, tr.*, td.*,tt.*,  td.member_seqno as demand_seqno
+		, tr.keyword as Rkwd
+		, td.keyword as Bkwd
+		, td.update_date as rupdate
+		, ( select code_name from tbiz.tbtech_code D where D.code_key = tr.tech_code1) as Rcode_name1
+		, ( select code_name from tbiz.tbtech_code D where D.code_key = tr.tech_code2) as Rcode_name2
+		, ( select code_name from tbiz.tbtech_code D where D.code_key = tr.tech_code3) as Rcode_name3
+		, ( select code_name from tbiz.tbtech_code D where D.code_key = td.tech_code1) as Bcode_name1
+		, ( select code_name from tbiz.tbtech_code D where D.code_key = td.tech_code2) as Bcode_name2
+		, ( select code_name from tbiz.tbtech_code D where D.code_key = td.tech_code3) as Bcode_name3
+		from tbiz.tblmember tm 
+		inner join tbiz.tbldemand td on tm.member_seqno = td.member_seqno 
+		inner join tbiz.tblresearcher tr on (
+		                           (case when td.tech_code1 like tr.tech_code1 then 1 else 0 end +
+		                            case when td.tech_code2 like tr.tech_code2 then 1 else 0 end +
+		                            case when td.tech_code3 like tr.tech_code3 then 1 else 0 end) >=2
+		                           )
+		inner join tbiz.tblresearch_temp tt on tr.researcher_seqno = tt.research_seqno 
+		where tm.MEMBER_SEQNO=#{member_seqno}::INT
+		AND (
+		    (SELECT COUNT(*) FROM unnest(string_to_array(td.keyword, ',')) AS keyword_list
+		     WHERE keyword_list = ANY(string_to_array(tr.keyword, ','))) >= 2
+		);
+	</select>
+	
+	<select id="SubjectFrontSQL.doGetMatchTLOList" parameterType="dataMap" resultType="dataMap">
+		<!-- 2023-09-13  유지민 -->
+		/*
+			SQL ID : SubjectFrontSQL.doGetMatchTLOList
+			매칭된 연구자-기업수요 목록
+		*/
+		select tm.*, tr.*, td.*,  td.member_seqno as demand_no
+		, tr.keyword as Rkwd
+		, td.keyword as Bkwd
+		, td.update_date as rupdate
+		, tr.member_seqno as resear_no
+		, ( select code_name from tbiz.tbtech_code D where D.code_key = tr.tech_code1) as Rcode_name1
+		, ( select code_name from tbiz.tbtech_code D where D.code_key = tr.tech_code2) as Rcode_name2
+		, ( select code_name from tbiz.tbtech_code D where D.code_key = tr.tech_code3) as Rcode_name3
+		, ( select code_name from tbiz.tbtech_code D where D.code_key = td.tech_code1) as Bcode_name1
+		, ( select code_name from tbiz.tbtech_code D where D.code_key = td.tech_code2) as Bcode_name2
+		, ( select code_name from tbiz.tbtech_code D where D.code_key = td.tech_code3) as Bcode_name3
+		from tbiz.tblmember tm 
+		inner join tbiz.tblresearcher tr on tm.member_seqno = tr.member_seqno 
+		inner join tbiz.tblresearch_temp tt on tr.researcher_seqno = tt.research_seqno 
+		inner join tbiz.tbldemand td on (
+		                           (case when td.tech_code1 like tr.tech_code1 then 1 else 0 end +
+		                            case when td.tech_code2 like tr.tech_code2 then 1 else 0 end +
+		                            case when td.tech_code3 like tr.tech_code3 then 1 else 0 end) >=2
+		                           )
+		where tm.biz_name=#{biz_name}
+		AND (
+		    (SELECT COUNT(*) FROM unnest(string_to_array(td.keyword, ',')) AS keyword_list
+		     WHERE keyword_list = ANY(string_to_array(tr.keyword, ','))) >= 2
+		);
+
+	</select>
+	
+	<select id="SubjectFrontSQL.doGetHistoryList" parameterType="dataMap" resultType="dataMap">
+		<!-- 2023-09-13  유지민 -->
+		/*
+			SQL ID : SubjectFrontSQL.doGetHistoryList
+			매칭 이력 보기
+		*/
+		select *
+		from tbiz.tblmember t 
+		inner join tbiz.tbldemand t2 on t.member_seqno = t2.member_seqno 
+		where t.member_seqno = #{demand_seqno}::INT
+
 	</select>
 </mapper>	

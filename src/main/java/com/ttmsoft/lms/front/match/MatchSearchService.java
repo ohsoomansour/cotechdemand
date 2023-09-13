@@ -31,5 +31,11 @@ public class MatchSearchService extends BaseSvc<DataMap> {
 		List<DataMap> result = this.dao.dolistQuery("SubjectFrontSQL.doGetMatchTLOList", paraMap);
 		return result;
 	}
+	
+	//매칭 이력보기
+	public List<DataMap> doGetHistoryList(DataMap paraMap) {
+		List<DataMap> result = this.dao.dolistQuery("SubjectFrontSQL.doGetHistoryList", paraMap);
+		return result;
+	}
 }
 
