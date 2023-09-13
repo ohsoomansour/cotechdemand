@@ -67,9 +67,11 @@ function historyClick(demand_no, resear_no){
 			                    					<span class="txt_left row_txt_tit">${ dataR.researcher_nm} 연구자 </span>
 					                                <span class="re_beloong">${dataR.applicant_nm }</span>
 					                                <ul class="tag_box">
-					                                    <li>#${ dataR.rkwd}</li>
-					                                    <li>#고령운전자</li>
-					                                    <li>#안전</li>
+						                                <c:set var="originalString" value="${dataR.rkwd}" />
+														<c:set var="splitArray" value="${fn:split(originalString, ',')}" />
+														<c:forEach var="item" items="${splitArray}">
+														    <li>#<c:out value="${item}" /></li>
+														</c:forEach>
 					                                </ul>
 					                                <ul class="step_tech">
 					                                    <li><span class="mr txt_grey tech_nm ">${ dataR.rcode_name1}</span></li>
@@ -83,9 +85,11 @@ function historyClick(demand_no, resear_no){
 					                                <span class="txt_left row_txt_tit txt_line txt_ellip "><!-- 말줄임표 없애는 스타일 txt_ellip 클래스 제거 -->${ dataR.tech_nm}</span>
 					                                <span class="update_date">최근 업데이트 일자 : ${ dataR.rupdate}</span>
 					                                <ul class="tag_box">
-					                                    <li>#${ dataR.bkwd}</li>
-					                                    <li>#고령운전자</li>
-					                                    <li>#안전</li>
+					                                    <c:set var="originalString" value="${dataR.bkwd}" />
+														<c:set var="splitArray" value="${fn:split(originalString, ',')}" />
+														<c:forEach var="item" items="${splitArray}">
+														    <li>#<c:out value="${item}" /></li>
+														</c:forEach>
 					                                </ul>
 					                                <ul class="step_tech">
 					                                    <li><span class="mr txt_grey tech_nm ">${ dataR.bcode_name1}</span></li>
@@ -135,9 +139,11 @@ function historyClick(demand_no, resear_no){
 					                                <span class="txt_left row_txt_tit txt_line txt_ellip "><!-- 말줄임표 없애는 스타일 txt_ellip 클래스 제거 -->${ dataB.tech_nm}</span>
 					                                <span class="update_date">최근 업데이트 일자 : ${ dataB.rupdate}</span>
 							                        <ul class="tag_box">
-														<li>#${ dataB.bkwd}</li>
-														<li>#고령운전자</li>
-														<li>#안전</li>
+														<c:set var="originalString" value="${dataB.bkwd}" />
+														<c:set var="splitArray" value="${fn:split(originalString, ',')}" />
+														<c:forEach var="item" items="${splitArray}">
+														    <li>#<c:out value="${item}" /></li>
+														</c:forEach>
 													</ul>
 							                        <ul class="step_tech">
 							                        	<li><span class="mr txt_grey tech_nm ">${ dataB.bcode_name1}</span></li>
@@ -151,9 +157,11 @@ function historyClick(demand_no, resear_no){
 					                                <span class="txt_left row_txt_tit">${ dataB.researcher_nm} 연구자 </span>
 					                                <span class="re_beloong">${dataB.applicant_nm }</span>
 					                                <ul class="tag_box">
-					                                    <li>#${ dataB.rkwd}</li>
-					                                    <li>#고령운전자</li>
-					                                    <li>#안전</li>
+					                                    <c:set var="originalString" value="${dataB.rkwd}" />
+														<c:set var="splitArray" value="${fn:split(originalString, ',')}" />
+														<c:forEach var="item" items="${splitArray}">
+														    <li>#<c:out value="${item}" /></li>
+														</c:forEach>
 					                                </ul>
 					                                <ul class="step_tech">
 					                                    <li><span class="mr txt_grey tech_nm ">${ dataB.rcode_name1}</span></li>
@@ -202,9 +210,11 @@ function historyClick(demand_no, resear_no){
 					                                <span class="txt_left row_txt_tit txt_line txt_ellip "><!-- 말줄임표 없애는 스타일 txt_ellip 클래스 제거 -->${ dataTLO.tech_nm}</span>
 					                                <span class="update_date">최근 업데이트 일자 : ${ dataTLO.rupdate}</span>
 					                                <ul class="tag_box">
-					                                    <li>${ dataTLO.bkwd}</li>
-					                                    <li>#고령운전자</li>
-					                                    <li>#안전</li>
+					                                    <c:set var="originalString" value="${dataTLO.bkwd}" />
+														<c:set var="splitArray" value="${fn:split(originalString, ',')}" />
+														<c:forEach var="item" items="${splitArray}">
+														    <li>#<c:out value="${item}" /></li>
+														</c:forEach>
 					                                </ul>
 					                                <ul class="step_tech">
 					                                    <li><span class="mr txt_grey tech_nm ">${ dataTLO.bcode_name1}</span></li>
@@ -219,9 +229,11 @@ function historyClick(demand_no, resear_no){
 					                                <span class="txt_left row_txt_tit">${ dataTLO.researcher_nm} 연구자 </span>
 					                                <span class="re_beloong">${ dataTLO.applicant_nm}</span>
 					                                <ul class="tag_box">
-					                                    <li>${ dataTLO.rkwd}</li>
-					                                    <li>#고령운전자</li>
-					                                    <li>#안전</li>
+					                                    <c:set var="originalString" value="${dataTLO.rkwd}" />
+														<c:set var="splitArray" value="${fn:split(originalString, ',')}" />
+														<c:forEach var="item" items="${splitArray}">
+														    <li>#<c:out value="${item}" /></li>
+														</c:forEach>
 					                                </ul>
 					                                <ul class="step_tech">
 					                                    <li><span class="mr txt_grey tech_nm ">${ dataTLO.rcode_name1}</span></li>
