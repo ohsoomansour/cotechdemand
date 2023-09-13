@@ -55,7 +55,7 @@ public class LoginFrontAction extends BaseAct{
 		String sessionKey = request.getSession().getId();
 		paraMap.put("sesskey", sessionKey);
 		
-		ModelAndView mav = new ModelAndView("/techtalk/front/login/login.login");
+		ModelAndView mav = new ModelAndView("/techtalk/front/login/login.front");
 		
 		paraMap.put("board_seq", 100);			
 		
