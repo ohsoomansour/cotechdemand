@@ -2696,4 +2696,17 @@
 		</if>
 		ORDER BY APPLICANT_DATE DESC
 	</select>
+	
+	<select id="SubjectFrontSQL.doGetMatchRList" parameterType="dataMap" resultType="dataMap">
+		<!-- 2023-09-13  유지민 -->
+		/*
+			SQL ID : SubjectFrontSQL.doGetMatchRList
+			매칭된 기업수요 목록
+		*/
+		SELECT * 
+		FROM tbiz.tblmember tm
+		inner join tbiz.tblresearcher tr on tm.member_seqno = tr.member_seqno 
+		WHERE tm.MEMBER_TYPE = #{member_type}
+		AND tm.MEMBER_SEQNO = #{member_seqno}::INT
+	</select>
 </mapper>	
