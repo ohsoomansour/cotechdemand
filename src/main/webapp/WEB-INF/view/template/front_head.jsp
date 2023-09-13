@@ -66,7 +66,7 @@ $(document).ready(function(){
 					<button id="loginButton" onclick="doLogout();" title="로그인버튼"><span class="user_name">로그아웃</span></button>
 				</c:if>
 				<c:if test="${not empty member_seqno && member_type =='B'}">
-					<button id="loginButton" onclick="javscript:void();" title="매칭정보조회" class="user_info_n1 bell_on"><!-- <---- 클래스  bell_on:노란종 ,  bell_off: 클래스 회색종 --><span class="icon_bell"></span><span class="user_name">매칭 정보 조회</span></button>
+					<button id="loginButton" onclick="javscript:dohref('/techtalk/matchList.do');" title="매칭정보조회" class="user_info_n1 bell_on"><!-- <---- 클래스  bell_on:노란종 ,  bell_off: 클래스 회색종 --><span class="icon_bell"></span><span class="user_name">매칭 정보 조회</span></button>
 					<button id="loginButton" onclick="javscript:void();" title="기업"  class="user_info_n1"><span class="user_name">기업</span></button>
 					<div class="my-dropdown">
 						<button title="user_name" id="my-page-btn" ><span class="user_name">${user_name }(${id })</span></button>
@@ -79,7 +79,7 @@ $(document).ready(function(){
 					<button id="loginButton" onclick="doLogout();" title="로그인버튼"><span class="user_name">로그아웃</span></button>
 				</c:if>
 				<c:if test="${not empty member_seqno && member_type =='TLO'}">
-					<button id="loginButton" onclick="javscript:void();" title="매칭정보조회" class="user_info_n1 bell_on"><!-- <---- 클래스  bell_on:노란종 ,  bell_off: 클래스 회색종 --><span class="icon_bell"></span><span class="user_name">매칭 정보 조회</span></button>
+					<button id="loginButton" onclick="javscript:doHref('/techtalk/matchList.do');" title="매칭정보조회" class="user_info_n1 bell_on"><!-- <---- 클래스  bell_on:노란종 ,  bell_off: 클래스 회색종 --><span class="icon_bell"></span><span class="user_name">매칭 정보 조회</span></button>
 					<button id="loginButton" onclick="javscript:void();" title="TLO"  class="user_info_n1"><span class="user_name">TLO</span></button>
 					<div class="my-dropdown">
 						<button title="user_name" id="my-page-btn" ><span class="user_name">${user_name }(${id })</span></button>
@@ -94,7 +94,7 @@ $(document).ready(function(){
 					<button id="loginButton" onclick="doLogout();" title="로그인버튼"><span class="user_name">로그아웃</span></button>
 				</c:if>
 				<c:if test="${not empty member_seqno && member_type =='ADMIN'}">
-					<button id="loginButton" onclick="javscript:void();" title="매칭정보조회" class="user_info_n1 bell_on"><!-- <---- 클래스  bell_on:노란종 ,  bell_off: 클래스 회색종 --><span class="icon_bell"></span><span class="user_name">매칭 정보 조회</span></button>
+					<button id="loginButton" onclick="javscript:doHref('/techtalk/matchList.do');" title="매칭정보조회" class="user_info_n1 bell_on"><!-- <---- 클래스  bell_on:노란종 ,  bell_off: 클래스 회색종 --><span class="icon_bell"></span><span class="user_name">매칭 정보 조회</span></button>
 					<button id="loginButton" onclick="javscript:void();" title="관리자"  class="user_info_n1"><span class="user_name">관리자</span></button>
 					<div class="my-dropdown">
 						<button title="user_name" id="my-page-btn" ><span class="user_name">${user_name }(${id })</span></button>
