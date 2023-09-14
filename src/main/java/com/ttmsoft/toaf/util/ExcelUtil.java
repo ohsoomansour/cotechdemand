@@ -126,7 +126,14 @@ public class ExcelUtil {
 		
 		switch(cell.getCellType()) {
 		case NUMERIC: 
-			result = cell.getNumericCellValue();
+			double data = cell.getNumericCellValue();
+			
+			// check integer
+			if (Math.floor(data) == data) {
+				result = Double.valueOf(data).longValue();
+			} else {
+				result = data;
+			}
 			break;
 		case BLANK: 
 			break;
