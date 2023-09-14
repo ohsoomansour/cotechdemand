@@ -66,7 +66,7 @@ public class MatchSearchAction extends BaseAct {
 		}else if(paraMap.getstr("member_type").equals("TLO")) {
 			mav.addObject("dataTLO", this.matchSearchService.doGetMatchTLOList(paraMap));
 		}
-		
+		System.out.println("paraMap:"+paraMap);
 		DataMap navi = new DataMap();
 		navi.put("one", "메인");
 		navi.put("two", "매칭 목록 페이지");
@@ -77,10 +77,10 @@ public class MatchSearchAction extends BaseAct {
 	/**
 	 *
 	 * @Author   : jmyoo
-	 * @Date	 : 2023. 8. 29. 
+	 * @Date	 : 2023. 9. 13. 
 	 * @Parm	 : DataMap
 	 * @Return   : ModelAndView
-	 * @Function : 키워드값 가져오기
+	 * @Function : 매칭 이력보기
 	 * @Explain  : 
 	 *
 	 */
