@@ -1,5 +1,6 @@
 package com.ttmsoft.lms.front.match;
 
+import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
@@ -72,4 +73,35 @@ public class MatchSearchAction extends BaseAct {
 		mav.addObject("navi",navi);
 		return mav;
 	}
+	
+	/**
+	 *
+	 * @Author   : jmyoo
+	 * @Date	 : 2023. 8. 29. 
+	 * @Parm	 : DataMap
+	 * @Return   : ModelAndView
+	 * @Function : 키워드값 가져오기
+	 * @Explain  : 
+	 *
+	 */
+	@RequestMapping (value = "/doMatchHistoryList.do")
+	public ModelAndView doGetKeyword(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
+		ModelAndView mav = new ModelAndView("jsonView");
+		
+		try {
+			System.out.println("paraMap:" + paraMap);
+			mav.addObject("data", this.matchSearchService.doGetHistoryList(paraMap));
+			DataMap navi = new DataMap();
+			navi.put("one", "메인");
+			navi.put("two", "매칭 목록 페이지");
+			mav.addObject("navi",navi);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ModelAndView("error");
+		}
+	
+		return mav;
+	}
+	
 }
