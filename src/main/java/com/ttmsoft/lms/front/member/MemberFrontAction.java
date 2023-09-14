@@ -56,38 +56,11 @@ public class MemberFrontAction extends BaseAct {
 	
 	/**
 	 *
-	 * @Author   : hsLee
-	 * @Date	 : 2021. 6. 30. 
+	 * @Author   : psm
+	 * @Date	 : 2023. 9. 13. 
 	 * @Parm	 : DataMap
 	 * @Return   : ModelAndView
-	 * @Function : 사용자 회원가입 동의화면
-	 * @Explain  : 
-	 *
-	 */
-	@RequestMapping (value = "/memberJoinAgreePage.do",  method = RequestMethod.POST)
-	public ModelAndView doMemberJoinAgreePage(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
-		ModelAndView mav = new ModelAndView("/techtalk/front/member/memberJoinAgree.front");
-		DataMap navi = new DataMap();
-		navi.put("one", "메인");
-		navi.put("two", "회원가입");
-		mav.addObject("navi",navi);
-		try {
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new ModelAndView("error");
-		}	
-	
-		return mav;
-	}
-	
-	/**
-	 *
-	 * @Author   : hsLee
-	 * @Date	 : 2021. 6. 30. 
-	 * @Parm	 : DataMap
-	 * @Return   : ModelAndView
-	 * @Function : 사용자 회원가입 정보 입력 화면
+	 * @Function : 사용자 회원가입 화면
 	 * @Explain  : 
 	 *
 	 */
@@ -114,8 +87,8 @@ public class MemberFrontAction extends BaseAct {
 	
 	/**
 	 *
-	 * @Author   : hsLee
-	 * @Date	 : 2021. 6. 30. 
+	 * @Author   : psm
+	 * @Date	 : 2023. 9. 13. 
 	 * @Parm	 : DataMap
 	 * @Return   : ModelAndView
 	 * @Function : 사용자 회원가입 완료 화면
@@ -138,23 +111,54 @@ public class MemberFrontAction extends BaseAct {
 	
 		return mav;
 	}
-	
+
 	/**
 	 *
-	 * @Author   : jwchoo
-	 * @Date	 : 2021. 4. 16. 
+	 * @Author   : psm
+	 * @Date	 : 2023. 9. 12. 
 	 * @Parm	 : DataMap
 	 * @Return   : ModelAndView
-	 * @Function : 사용자 회원가입 화면
+	 * @Function : 사용자 아이디 찾기
 	 * @Explain  : 
 	 *
 	 */
-	@RequestMapping (value = "/memberJoinPage.do")
-	public ModelAndView doMemberJoinPage(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
-		ModelAndView mav = new ModelAndView("/techtalk/front/member/memberJoin.front");
+	@RequestMapping (value = "/findIdPage.do")
+	public ModelAndView doFindUserIdPage(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
+		ModelAndView mav = new ModelAndView("/techtalk/front/member/findIdPage.front");
+		return mav;
+	}
+	/**
+	 *
+	 * @Author   : psm
+	 * @Date	 : 2023. 9. 12. 
+	 * @Parm	 : DataMap
+	 * @Return   : ModelAndView
+	 * @Function : 사용자 패스워드 찾기
+	 * @Explain  : 
+	 *
+	 */
+	@RequestMapping (value = "/findPwdPage.do")
+	public ModelAndView doFindUserPwPage(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
+		ModelAndView mav = new ModelAndView("/techtalk/front/member/findPwdPage.front");
+		return mav;
+	}
+	
+	/**
+	 *
+	 * @Author   : psm
+	 * @Date	 : 2023. 9. 13. 
+	 * @Parm	 : DataMap
+	 * @Return   : ModelAndView
+	 * @Function : id찾기 결과 페이지
+	 * @Explain  : 
+	 *
+	 */
+	@RequestMapping (value = "/completeFindId.do")
+	public ModelAndView doFindUserId(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
+		ModelAndView mav = new ModelAndView("/techtalk/front/member/findIdComplete.front");
 		DataMap navi = new DataMap();
 		navi.put("one", "메인");
-		navi.put("two", "회원가입");
+		navi.put("two", "아이디찾기 결과");
 		mav.addObject("navi",navi);
 		try {
 
@@ -162,35 +166,28 @@ public class MemberFrontAction extends BaseAct {
 			e.printStackTrace();
 			return new ModelAndView("error");
 		}	
+	
 		return mav;
 	}
-	
 	/**
 	 *
-	 * @Author   : jwchoo
-	 * @Date	 : 2021. 4. 19. 
+	 * @Author   : psm
+	 * @Date	 : 2023. 9. 13. 
 	 * @Parm	 : DataMap
 	 * @Return   : ModelAndView
-	 * @Function : 아이디 및 사업자등록번호 중복검사
+	 * @Function : pw찾기 결과 페이지
 	 * @Explain  : 
 	 *
 	 */
-	@RequestMapping (value = "/memberDoubleCheck.do")
-	public ModelAndView doMemberDoubleCheck(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
-		ModelAndView mav = new ModelAndView("jsonView");
-		System.out.println("paraMap : " + paraMap.toString());
+	@RequestMapping (value = "/completeFindPwd.do")
+	public ModelAndView doFindUserPwd(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
+		ModelAndView mav = new ModelAndView("/techtalk/front/member/findPwdComplete.front");
+		DataMap navi = new DataMap();
+		navi.put("one", "메인");
+		navi.put("two", "아이디찾기 결과");
+		mav.addObject("navi",navi);
 		try {
-			//DB 셋팅 후 사용자 아이디 중복확인 코드 적용 필요
-			if(paraMap.get("gubun").equals("ID")) {
-				int memberCount = memberFrontService.doCountMemberId(paraMap);
-				System.out.println("memberCount : " + memberCount);
-				mav.addObject("memberCount", memberCount);
-			}
-			else {
-				int bizRegnoCount = memberFrontService.doCountBizRegno(paraMap);
-				System.out.println("bizRegnoCount : " + bizRegnoCount);
-				mav.addObject("bizRegnoCount", bizRegnoCount);
-			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ModelAndView("error");
@@ -198,66 +195,7 @@ public class MemberFrontAction extends BaseAct {
 	
 		return mav;
 	}
-	
-	/**
-	 *
-	 * @Author   : psm
-	 * @Date	 : 2023. 9. 19. 
-	 * @Parm	 : DataMap
-	 * @Return   : ModelAndView
-	 * @Function : 회원가입
-	 * @Explain  : 
-	 *
-	 */
-	@RequestMapping (value = "/memberJoin.do")
-	public ModelAndView doMemberJoin(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
-		ModelAndView mav = new ModelAndView("jsonView");
-		System.out.println("paraMap : " + paraMap);
-		
-		try {
-			LocalDate now = LocalDate.now();
-			int month = now.getMonthValue();
-			int day = now.getDayOfMonth();
 
-			String pw = paraMap.get("pw").toString();
-			paraMap.put("pw", AES256Util.strEncode(pw));
-			String text = "귀하께서는 "+month+"월"+day+"일 </br>TECHTALK  회원으로 가입되셨습니다.<br/><br/><br/> ";
-					text +="아이디 : "+ paraMap.getstr("id");
-			paraMap.put("subject", "[TECHTALK] 회원가입을 환영합니다.");
-			paraMap.put("text", text);
-			String user_email = paraMap.getstr("user_email1")+"@"+paraMap.getstr("user_email2");
-			paraMap.put("user_email", user_email);
-			paraMap.put("pw", AES256Util.strEncode(pw));
-			//CommonUtil.doMailSender(paraMap);
-			
-			/*
-			String pw = CommonUtil.randomString();
-			System.out.println("pw : " + pw);
-			
-			SimpleMailMessage message = new SimpleMailMessage();
-			message.setTo(paraMap.get("user_email").toString());
-			message.setSubject("임시비밀번호 발급");
-			message.setText("임시비밀번호는 " + pw + "입니다. 임시비밀번호로 로그인 해주세요.");
-			javaMailSender.send(message);
-			
-			System.out.println(AES256Util.strEncode(pw));
-			
-			
-			*/
-			
-			//DB 셋팅 후 회원 INSERT 관련 코드 입력필요
-			this.memberFrontService.doInsertMember(paraMap);
-			/*
-			 * String notice_title = "바우처사업관리시스템에  회원으로 가입되셨습니다.";
-			 * paraMap.put("notice_title", notice_title);
-			 */
-			//this.memberFrontService.doSMSMember(paraMap);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new ModelAndView("error");
-		}
-		return mav;
-	}
 	
 	/**
 	 *
@@ -265,7 +203,7 @@ public class MemberFrontAction extends BaseAct {
 	 * @Date	 : 2023. 9. 8. 
 	 * @Parm	 : DataMap
 	 * @Return   : ModelAndView
-	 * @Function : 회원정보관리
+	 * @Function : 회원정보수정화면
 	 * @Explain  : 
 	 *
 	 */
@@ -288,60 +226,7 @@ public class MemberFrontAction extends BaseAct {
 		return mav;
 	}
 	
-	
-	
-	
-	/**
-	 *
-	 * @Author   : jwchoo
-	 * @Date	 : 2021. 4. 22. 
-	 * @Parm	 : DataMap
-	 * @Return   : ModelAndView
-	 * @Function : 수요기업/공급기업 회원정보관리
-	 * @Explain  : 
-	 *
-	 */
-	@RequestMapping (value = "/memberPrivacyPage.do")
-	public ModelAndView doMemberPrivacyPage(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
-		ModelAndView mav = new ModelAndView("/techtalk/front/member/memberPrivacy.front");
-		try {
-			paraMap.put("member_seqno", session.getAttribute("member_seqno"));
-			mav.addObject("userInfo", memberFrontService.doGetMemberInfo(paraMap));
-			DataMap navi = new DataMap();
-			navi.put("one", "메인");
-			navi.put("two", "회원정보관리");
-			mav.addObject("navi",navi);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new ModelAndView("error");
-		}	
-	
-		return mav;
-	}
-	
-	/**
-	 *
-	 * @Author   : jwchoo
-	 * @Date	 : 2021. 4. 22. 
-	 * @Parm	 : DataMap
-	 * @Return   : ModelAndView
-	 * @Function : 수요기업/공급기업  회원정보관리 - 비밀번호 변경폼
-	 * @Explain  : 
-	 *
-	 */
-	@RequestMapping (value = "/updatePwForm.do")
-	public ModelAndView doUpdatePwForm(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
-		ModelAndView mav = new ModelAndView("/techtalk/front/member/memberPrivacyForm.frontPopup");
-		try {
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new ModelAndView("error");
-		}	
-	
-		return mav;
-	}
-	
+
 	/**
 	 *
 	 * @Author   : jwchoo
@@ -526,12 +411,12 @@ public class MemberFrontAction extends BaseAct {
 	 * @Explain  : 
 	 *
 	 */
-	@RequestMapping (value = "/tempPage1.do")
-	public ModelAndView doTempPage1(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
-		ModelAndView mav = new ModelAndView("/techtalk/front/member/tempPage1.front");
+	@RequestMapping (value = "/researcherList.do")
+	public ModelAndView doresearcherList1(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
+		ModelAndView mav = new ModelAndView("/techtalk/front/research/researcherList.front");
 		DataMap navi = new DataMap();
 		navi.put("one", "메인");
-		navi.put("two", "임시페이지");
+		navi.put("two", "연구자목록");
 		mav.addObject("navi",navi);
 		try {
 
@@ -593,6 +478,101 @@ public class MemberFrontAction extends BaseAct {
 			return new ModelAndView("error");
 		}	
 	
+		return mav;
+	}
+	
+	
+	/**
+	 *
+	 * @Author   : jwchoo
+	 * @Date	 : 2021. 4. 19. 
+	 * @Parm	 : DataMap
+	 * @Return   : ModelAndView
+	 * @Function : 아이디 및 사업자등록번호 중복검사
+	 * @Explain  : 
+	 *
+	 */
+	@RequestMapping (value = "/memberDoubleCheck.do")
+	public ModelAndView doMemberDoubleCheck(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
+		ModelAndView mav = new ModelAndView("jsonView");
+		System.out.println("paraMap : " + paraMap.toString());
+		try {
+			//DB 셋팅 후 사용자 아이디 중복확인 코드 적용 필요
+			if(paraMap.get("gubun").equals("ID")) {
+				int memberCount = memberFrontService.doCountMemberId(paraMap);
+				System.out.println("memberCount : " + memberCount);
+				mav.addObject("memberCount", memberCount);
+			}
+			else {
+				int bizRegnoCount = memberFrontService.doCountBizRegno(paraMap);
+				System.out.println("bizRegnoCount : " + bizRegnoCount);
+				mav.addObject("bizRegnoCount", bizRegnoCount);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ModelAndView("error");
+		}	
+	
+		return mav;
+	}
+	
+	/**
+	 *
+	 * @Author   : psm
+	 * @Date	 : 2023. 9. 19. 
+	 * @Parm	 : DataMap
+	 * @Return   : ModelAndView
+	 * @Function : 회원가입
+	 * @Explain  : 
+	 *
+	 */
+	@RequestMapping (value = "/memberJoin.do")
+	public ModelAndView doMemberJoin(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
+		ModelAndView mav = new ModelAndView("jsonView");
+		System.out.println("paraMap : " + paraMap);
+		
+		try {
+			LocalDate now = LocalDate.now();
+			int month = now.getMonthValue();
+			int day = now.getDayOfMonth();
+
+			String pw = paraMap.get("pw").toString();
+			paraMap.put("pw", AES256Util.strEncode(pw));
+			String text = "귀하께서는 "+month+"월"+day+"일 </br>TECHTALK  회원으로 가입되셨습니다.<br/><br/><br/> ";
+					text +="아이디 : "+ paraMap.getstr("id");
+			paraMap.put("subject", "[TECHTALK] 회원가입을 환영합니다.");
+			paraMap.put("text", text);
+			String user_email = paraMap.getstr("user_email1")+"@"+paraMap.getstr("user_email2");
+			paraMap.put("user_email", user_email);
+			paraMap.put("pw", AES256Util.strEncode(pw));
+			//CommonUtil.doMailSender(paraMap);
+			
+			/*
+			String pw = CommonUtil.randomString();
+			System.out.println("pw : " + pw);
+			
+			SimpleMailMessage message = new SimpleMailMessage();
+			message.setTo(paraMap.get("user_email").toString());
+			message.setSubject("임시비밀번호 발급");
+			message.setText("임시비밀번호는 " + pw + "입니다. 임시비밀번호로 로그인 해주세요.");
+			javaMailSender.send(message);
+			
+			System.out.println(AES256Util.strEncode(pw));
+			
+			
+			*/
+			
+			//DB 셋팅 후 회원 INSERT 관련 코드 입력필요
+			this.memberFrontService.doInsertMember(paraMap);
+			/*
+			 * String notice_title = "바우처사업관리시스템에  회원으로 가입되셨습니다.";
+			 * paraMap.put("notice_title", notice_title);
+			 */
+			//this.memberFrontService.doSMSMember(paraMap);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ModelAndView("error");
+		}
 		return mav;
 	}
 }
