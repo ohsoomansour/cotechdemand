@@ -4,6 +4,15 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
 <script>
+var excel = new Array(); // 엑셀전역변수
+var list = new Array();
+var ex_assignm_no = new Array();
+var ex_keyword = new Array();
+var ex_re_start_date = new Array();
+var ex_re_end_date = new Array();
+var ex_re_institu_nm = new Array();
+var ex_re_project_nm = new Array();
+
 $(document).ready(function() {
 	var startIndex = 1;	// 인덱스 초기값
 	
@@ -224,20 +233,9 @@ function fncChangeStd(obj, gubun){
 	}
 }
 
-//국가 과제 수행 이력 더보기 이벤트
-function moreProContens(){
-	
-	var list = new Array();
-	<c:forEach items="${proData}" var="list">
-		var proItem ={};
-		proItem.re_project_nm = "${list.re_project_nm}";
-		proItem.re_institu_nm = "${list.re_institu_nm}";
-		proItem.re_start_date = "${list.re_start_date}";
-		proItem.re_end_date = "${list.re_end_date}";
-		list.push(proItem);
-	</c:forEach>
-
-	for(var i = 0; i < list.length; i++){
+//과제리스트
+function proContens(length) {
+	for(var i = 0; i < length; i++){
 		var ahtml= "";
 		ahtml +="<table class='tbl'>"
 			ahtml +="<caption class='caption_hide'>국가 과제 수행 이력</caption>"
@@ -250,13 +248,12 @@ function moreProContens(){
 			ahtml +="<tr>"
 			ahtml +="<th>과제명</th>"
 			ahtml +="<th>과제관리기관</th>"
-			ahtml +="<th>연구기관</th>"
+			ahtml +="<th>연구기간</th>"
 			ahtml +="<tr>"
 			ahtml +="</thead>"
 			ahtml +="<tbody>"
 			if(list[0].re_project_nm != '' && list[0].re_project_nm != 0){
-					
-				for(var i=0; i<list.length;i++){
+				for(var i=0; i<length;i++){
 				ahtml +="<tr>"
 					ahtml +=	"<td class='ta_left'>"+list[i].re_project_nm+"</td>"
 					ahtml +=	"<td >"+list[i].re_institu_nm+"</td>"
@@ -272,13 +269,50 @@ function moreProContens(){
 		$('#tbl2').empty();
     	$('#tbl2').append(ahtml);
 	}
-	
+}
+
+//국가 과제 수행 이력 더보기 이벤트
+function moreProContens(){
+	list = new Array();
+
+	if(excel.length != 0) {
+		for(var i = 0; i <excel.result.data.length; i++) {
+	    	var proItem ={};
+			proItem.re_project_nm = excel.result.data[i].ex_re_project_nm;
+			proItem.re_institu_nm = excel.result.data[i].ex_re_institu_nm;
+			proItem.re_start_date = excel.result.data[i].ex_re_start_date;
+			proItem.re_end_date = excel.result.data[i].ex_re_end_date;
+			list.push(proItem);
+	    }
+	}
+
+	<c:forEach items="${proData}" var="list">
+		var proItem ={};
+		proItem.re_project_nm = "${list.re_project_nm}";
+		proItem.re_institu_nm = "${list.re_institu_nm}";
+		proItem.re_start_date = "${list.re_start_date}";
+		proItem.re_end_date = "${list.re_end_date}";
+		list.push(proItem);
+	</c:forEach>
+
+	proContens(list.length);	
 }
 
 //국가 과제 수행 이력 줄이기 이벤트
 function lessProContens(){
+	list = new Array();
 
-	var list = new Array();
+	if(excel.length != 0) {
+		for(var i = 0; i <excel.result.data.length; i++) {
+	    	var proItem ={};
+			proItem.re_project_nm = excel.result.data[i].ex_re_project_nm;
+			proItem.re_institu_nm = excel.result.data[i].ex_re_institu_nm;
+			proItem.re_start_date = excel.result.data[i].ex_re_start_date;
+			proItem.re_end_date = excel.result.data[i].ex_re_end_date;
+			list.push(proItem);
+	    }
+	}
+
 	<c:forEach items="${proData}" var="list">
 		var proItem ={};
 		proItem.re_project_nm = "${list.re_project_nm}";
@@ -288,47 +322,51 @@ function lessProContens(){
 		list.push(proItem);
 	</c:forEach>
 	
-	for(var i = 0; i < 5; i++){
+	proContens(5);
+}
+
+//특허리스트
+function patentContens(length) {
+	for(var i = 0; i < length; i++){
 		var ahtml= "";
 		ahtml +="<table class='tbl'>"
-			ahtml +="<caption class='caption_hide'>국가 과제 수행 이력</caption>"
+			ahtml +="<caption class='caption_hide'>특허리스트</caption>"
 			ahtml +="<colgroup>"
-			ahtml +="<col ' />"
+			ahtml +="<col style='width:60%'/>"
 			ahtml +="<col  />"
 			ahtml +="<col  />"
 			ahtml +="</colgroup>"
 			ahtml +="<thead>"
 			ahtml +="<tr>"
-			ahtml +="<th>과제명</th>"
-			ahtml +="<th>과제관리기관</th>"
-			ahtml +="<th>연구기관</th>"
+			ahtml +="<th>발명의 명칭</th>"
+			ahtml +="<th>출원번호</th>"
+			ahtml +="<th>출원일</th>"
 			ahtml +="<tr>"
 			ahtml +="</thead>"
 			ahtml +="<tbody>"
-			if(list[0].re_project_nm != '' && list[0].re_project_nm != 0){
-				for(var i=0; i<5; i++){
+			if(list[0].invent_nm != '' && list[0].invent_nm != 0){
+				for(var i=0; i<length;i++){
 					ahtml +="<tr>"
-						ahtml +=	"<td class='ta_left'>"+list[i].re_project_nm+"</td>"
-						ahtml +=	"<td >"+list[i].re_institu_nm+"</td>"
-						ahtml +=	"<td >"+list[i].re_start_date+" ~ "
-						ahtml +=	list[i].re_end_date+"</td>"
+						ahtml +=	"<td class='ta_left'><input type='hidden' id='invent_research_seqno' name='invent_research_seqno' title='발명의 명칭' value='"+list[i].research_seqno+"'/><input type='text' id='invent_nm' name='invent_nm' title='발명의 명칭' value='"+list[i].invent_nm+"'/></td>"
+						ahtml +=	"<td class='ta_left'><input type='text' id='applicant_no' name='applicant_no' title='출원번호' value='"+list[i].applicant_no+"'/></td>"
+						ahtml +=	"<td class='ta_left'><input type='text' id='applicant_dt' name='applicant_dt' title='출원일' value='"+list[i].applicant_dt+"'/></td>"
 					ahtml +="<tr>"
-					}
+				}
 			}else{
-				ahtml +=	"<td colspan='3'>국가 과제 수행 이력이 확인되지 않았습니다.</td>"
+				ahtml +=	"<td colspan='3'>특허리스트가 확인되지 않았습니다.</td>"
 			}
 		
 	   ahtml +="</tbody>"
 		ahtml +="</table>"
-		$('#tbl2').empty();
-    	$('#tbl2').append(ahtml);
+		$('#tbl3').empty();
+    	$('#tbl3').append(ahtml);
 	}
 }
 
 //특허리스트 더보기 이벤트
 function morePatentContens(){
+	list = new Array();
 	
-	var list = new Array();
 	<c:forEach items="${invent}" var="list">
 		var item ={};
 		item.research_seqno = "${list.research_seqno}";
@@ -338,47 +376,14 @@ function morePatentContens(){
 		list.push(item);
 	</c:forEach>
 
-	for(var i = 0; i < list.length; i++){
-		var ahtml= "";
-		ahtml +="<table class='tbl'>"
-			ahtml +="<caption class='caption_hide'>특허리스트</caption>"
-			ahtml +="<colgroup>"
-			ahtml +="<col style='width:60%'/>"
-			ahtml +="<col  />"
-			ahtml +="<col  />"
-			ahtml +="</colgroup>"
-			ahtml +="<thead>"
-			ahtml +="<tr>"
-			ahtml +="<th>발명의 명칭</th>"
-			ahtml +="<th>출원번호</th>"
-			ahtml +="<th>출원일</th>"
-			ahtml +="<tr>"
-			ahtml +="</thead>"
-			ahtml +="<tbody>"
-			if(list[0].invent_nm != '' && list[0].invent_nm != 0){
-				for(var i=0; i<list.length;i++){
-					ahtml +="<tr>"
-						ahtml +=	"<td class='ta_left'><input type='hidden' id='invent_research_seqno' name='invent_research_seqno' title='발명의 명칭' value='"+list[i].research_seqno+"'/><input type='text' id='invent_nm' name='invent_nm' title='발명의 명칭' value='"+list[i].invent_nm+"'/></td>"
-						ahtml +=	"<td class='ta_left'><input type='text' id='applicant_no' name='applicant_no' title='출원번호' value='"+list[i].applicant_no+"'/></td>"
-						ahtml +=	"<td class='ta_left'><input type='text' id='applicant_dt' name='applicant_dt' title='출원일' value='"+list[i].applicant_dt+"'/></td>"
-					ahtml +="<tr>"
-				}
-			}else{
-				ahtml +=	"<td colspan='3'>특허리스트가 확인되지 않았습니다.</td>"
-			}
-		
-	   ahtml +="</tbody>"
-		ahtml +="</table>"
-		$('#tbl3').empty();
-    	$('#tbl3').append(ahtml);
-	}
+	patentContens(list.length);
 	
 }
 
 //특허리스트 줄이기 이벤트
 function lessPatentContens(){
-
-	var list = new Array();
+	list = new Array();
+	
 	<c:forEach items="${invent}" var="list">
 		var item ={};
 		item.research_seqno = "${list.research_seqno}";
@@ -388,40 +393,7 @@ function lessPatentContens(){
 		list.push(item);
 	</c:forEach>
 	
-	for(var i = 0; i < 5; i++){
-		var ahtml= "";
-		ahtml +="<table class='tbl'>"
-			ahtml +="<caption class='caption_hide'>특허리스트</caption>"
-			ahtml +="<colgroup>"
-			ahtml +="<col style='width:60%'/>"
-			ahtml +="<col  />"
-			ahtml +="<col  />"
-			ahtml +="</colgroup>"
-			ahtml +="<thead>"
-			ahtml +="<tr>"
-			ahtml +="<th>발명의 명칭</th>"
-			ahtml +="<th>출원번호</th>"
-			ahtml +="<th>출원일</th>"
-			ahtml +="<tr>"
-			ahtml +="</thead>"
-			ahtml +="<tbody>"
-			if(list[0].invent_nm != '' && list[0].invent_nm != 0){
-				for(var i=0; i<5; i++){
-					ahtml +="<tr>"
-						ahtml +=	"<td class='ta_left'><input type='hidden' id='invent_research_seqno' name='invent_research_seqno' title='발명의 명칭' value='"+list[i].research_seqno+"'/><input type='text' id='invent_nm' name='invent_nm' title='발명의 명칭' value='"+list[i].invent_nm+"'/></td>"
-						ahtml +=	"<td class='ta_left'><input type='text' id='applicant_no' name='applicant_no' title='출원번호' value='"+list[i].applicant_no+"'/></td>"
-						ahtml +=	"<td class='ta_left'><input type='text' id='applicant_dt' name='applicant_dt' title='출원일' value='"+list[i].applicant_dt+"'/></td>"
-					ahtml +="<tr>"
-				}
-			}else{
-				ahtml +=	"<td colspan='3'>특허리스트가 확인되지 않았습니다.</td>"
-			}
-		
-	   ahtml +="</tbody>"
-		ahtml +="</table>"
-		$('#tbl3').empty();
-    	$('#tbl3').append(ahtml);
-	}
+	patentContens(5);
 }
 function doUpdate() {
 	// 특허리스트 수정 값
@@ -446,6 +418,38 @@ function doUpdate() {
 	}
 	for(var i=0; i<applicant_dt_ct; i++){                          
 		applicant_dt[i] = $("input[name=applicant_dt]").eq(i).val();
+	}
+
+	//엑셀데이터 수정값
+	var ex_assignm_no = new Array(excel.result.data.length);
+	var ex_re_project_nm = new Array(excel.result.data.length);
+	var ex_re_institu_nm = new Array(excel.result.data.length);
+	var ex_re_start_date = new Array(excel.result.data.length);
+	var ex_re_end_date = new Array(excel.result.data.length);
+	var ex_keyword = new Array(excel.result.data.length);
+	
+	for(var i=0; i<excel.result.data.length; i++) {
+		ex_assignm_no[i] = excel.result.data[i].ex_assignm_no;
+	}
+
+	for(var i=0; i<excel.result.data.length; i++) {
+		ex_re_project_nm[i] = excel.result.data[i].ex_re_project_nm;
+	}
+
+	for(var i=0; i<excel.result.data.length; i++) {
+		ex_re_institu_nm[i] = excel.result.data[i].ex_re_institu_nm;
+	}
+
+	for(var i=0; i<excel.result.data.length; i++) {
+		ex_re_start_date[i] = excel.result.data[i].ex_re_start_date;
+	}
+
+	for(var i=0; i<excel.result.data.length; i++) {
+		ex_re_end_date[i] = excel.result.data[i].ex_re_end_date;
+	}
+
+	for(var i=0; i<excel.result.data.length; i++) {
+		ex_keyword[i] = excel.result.data[i].ex_keyword;
 	}
 
 	$.ajax({
@@ -478,7 +482,15 @@ function doUpdate() {
 			invent_research_seqno : invent_research_seqno,
 			invent_nm : invent_nm,
 			applicant_no : applicant_no,
-			applicant_dt : applicant_dt
+			applicant_dt : applicant_dt,
+
+			//엑셀 데이터
+			ex_assignm_no : ex_assignm_no,
+			ex_re_project_nm : ex_re_project_nm,
+			ex_re_institu_nm : ex_re_institu_nm,
+			ex_re_start_date : ex_re_start_date,
+			ex_re_end_date : ex_re_end_date,
+			ex_keyword : ex_keyword
 		},
 		dataType : 'json',
 		success : function(res) {
@@ -494,15 +506,10 @@ function doUpdate() {
 	});
 }
 function doupdateExcel() {
-	var list = new Array();
-	<c:forEach items="${proData}" var="list">
-		var proItem ={};
-		proItem.re_project_nm = "${list.re_project_nm}";
-		proItem.re_institu_nm = "${list.re_institu_nm}";
-		proItem.re_start_date = "${list.re_start_date}";
-		proItem.re_end_date = "${list.re_end_date}";
-		list.push(proItem);
-	</c:forEach>
+	var history = new Array();
+	var result_history = new Array();
+	var historyList = new Array();
+	list = new Array();
 	
 	var fileupload = $("#excelFile")[0];
 
@@ -523,51 +530,110 @@ function doupdateExcel() {
         contentType: false,
         cache: false,
         timeout: 600000,
-        success: function (data) {
-            console.log(data);
+        success: function (res) {
+        	excel = new Array();
+            excel = res;
             alert("엑셀 데이터를 입력하였습니다.");
-
-            for(var i = 0; i < 5; i++){
-        		var ahtml= "";
-        		ahtml +="<table class='tbl'>"
-        			ahtml +="<caption class='caption_hide'>국가 과제 수행 이력</caption>"
-        			ahtml +="<colgroup>"
-        			ahtml +="<col ' />"
-        			ahtml +="<col  />"
-        			ahtml +="<col  />"
-        			ahtml +="</colgroup>"
-        			ahtml +="<thead>"
-        			ahtml +="<tr>"
-        			ahtml +="<th>과제명</th>"
-        			ahtml +="<th>과제관리기관</th>"
-        			ahtml +="<th>연구기관</th>"
-        			ahtml +="<tr>"
-        			ahtml +="</thead>"
-        			ahtml +="<tbody>"
-        			if(list[0].re_project_nm != '' && list[0].re_project_nm != 0){
-        				ahtml +="<tr>"
-    						ahtml +=	"<td class='ta_left'>test</td>"
-    						ahtml +=	"<td >test</td>"
-    						ahtml +=	"<td > 111 ~ "
-    						ahtml +=	" 111 </td>"
-    					ahtml +="<tr>"
-        				for(var i=0; i<4; i++){
-        					ahtml +="<tr>"
-        						ahtml +=	"<td class='ta_left'>"+list[i].re_project_nm+"</td>"
-        						ahtml +=	"<td >"+list[i].re_institu_nm+"</td>"
-        						ahtml +=	"<td >"+list[i].re_start_date+" ~ "
-        						ahtml +=	list[i].re_end_date+"</td>"
-        					ahtml +="<tr>"
-        					}
-        			}else{
-        				ahtml +=	"<td colspan='3'>국가 과제 수행 이력이 확인되지 않았습니다.</td>"
-        			}
-        		
-        	   ahtml +="</tbody>"
-        	   ahtml +="</table>"
-        	   $('#tbl2').empty();
-               $('#tbl2').append(ahtml);
+           
+            //과제 수행이력 변경
+            for(var i = 0; i <excel.result.data.length; i++) {
+            	var proItem ={};
+        		proItem.re_project_nm = excel.result.data[i].ex_re_project_nm;
+        		proItem.re_institu_nm = excel.result.data[i].ex_re_institu_nm;
+        		proItem.re_start_date = excel.result.data[i].ex_re_start_date;
+        		proItem.re_end_date = excel.result.data[i].ex_re_end_date;
+        		list.push(proItem);
             }
+            
+        	<c:forEach items="${proData}" var="list">
+	    		var proItem ={};
+	    		proItem.re_project_nm = "${list.re_project_nm}";
+	    		proItem.re_institu_nm = "${list.re_institu_nm}";
+	    		proItem.re_start_date = "${list.re_start_date}";
+	    		proItem.re_end_date = "${list.re_end_date}";
+	    		list.push(proItem);
+    		</c:forEach>
+
+    		var pro_count = (list.length > 5) ? 5 : list.length;	//연구히스토리  최대 5개 제한
+    		
+            proContens(pro_count);
+            
+            //연구 히스토리 변경
+            for(var i = 0; i <excel.result.data.length; i++) {
+            	var item ={};
+	    		item.ex_re_start_date = excel.result.data[i].ex_re_start_date;
+	    		item.ex_re_start_date = (item.ex_re_start_date+'').substr(0,4);
+	    		item.ex_keyword = excel.result.data[i].ex_keyword;
+	    		
+	    		history.push(item);	
+            }
+            
+            <c:forEach items="${dataHis}" var="list">
+	    		var item ={};
+	    		item.ex_re_start_date = "${list.re_start_date}";
+	    		item.ex_re_start_date = (item.ex_re_start_date+'').substr(0,4);
+	    		item.ex_keyword = "${list.keyword}";
+	    		
+	    		history.push(item);
+	    	</c:forEach>
+
+	    	let uniqueHis = {};
+	    	uniqueHis.ex_re_start_date = "";
+	    	uniqueHis.ex_keyword = "";
+
+	    	var year = new Array();
+
+	    	history.forEach((element) => {
+	    	    if (!year.includes(element["ex_re_start_date"])) {
+	    	    	uniqueHis.ex_re_start_date = element["ex_re_start_date"];
+	    	    	uniqueHis.ex_keyword = element["ex_keyword"];
+	    	    	year.push(element["ex_re_start_date"]);
+	    	    	result_history.push(element);
+	    	    }
+	    	});
+
+	    	//히스토리 연도별 정렬 
+	    	var tmp = 0;
+	    	var str_tmp = 0;
+	    	for(var i = 0; i < result_history.length; i++) {
+	    		for(var j = i+1; j < result_history.length; j++) { 
+					if(result_history[i]["ex_re_start_date"] > result_history[j]["ex_re_start_date"]) { 
+						tmp = result_history[i]["ex_re_start_date"];
+						str_tmp = result_history[i]["ex_keyword"];
+						result_history[i]["ex_re_start_date"] = result_history[j]["ex_re_start_date"];
+						result_history[i]["ex_keyword"] = result_history[j]["ex_keyword"];
+						result_history[j]["ex_re_start_date"] = tmp;
+						result_history[j]["ex_keyword"] = str_tmp;
+					}
+				}
+		   	} 
+	    	
+	    	for(var i = result_history.length-1; i >= 0; i--) {
+	    		var ahtml = "";
+	            ahtml += "<colgroup>"
+	            	ahtml += "<col>"
+	            		ahtml += "</colgroup>"
+	            			ahtml += "<thead>"
+	            				ahtml += "<tr>"	
+	            					ahtml += "<th style='width: 100%;'>" + result_history[i].ex_re_start_date + "</th>"
+	            					ahtml += "</tr>"
+	            						ahtml += "</thead>"
+	            							ahtml += "<tbody>"
+	            								ahtml += "<tr>"
+	            									ahtml += "<td>" + result_history[i].ex_keyword + "</td>"
+	            									ahtml += "</tr>"
+
+				historyList.push(ahtml);
+		   	}
+			
+			var count = (historyList.length > 5) ? 5 : historyList.length;	//연구히스토리  최대 5개 제한
+
+			$('#tbl_history').empty();
+			
+			for(i=0; i < count; i++) {
+				$('#tbl_history').append(historyList[i]);
+			}
+	
         },
         error: function (e) {
             alert("실패");
@@ -713,7 +779,7 @@ function doupdateExcel() {
 									<tr>
 										<th>과제명</th>
 										<th>과제관리기관</th>
-										<th>연구기관</th>
+										<th>연구기간</th>
 									</tr>
 								</thead>
 								<tbody id="proData" name="proData">
@@ -743,10 +809,10 @@ function doupdateExcel() {
 							<h4>연구 히스토리</h4>
 						</div>
 						<div class="tbl_comm tbl_public history_tbl_wrap">
-							<table class="tbl history_tbl" id="tbl2">
+							<table class="tbl history_tbl" id="tbl_history">
 								<caption class="caption_hide">연구 히스토리</caption>
 								<c:choose>
-									<c:when test="${not empty dataHis[0].re_start_date }">
+									<c:when test="${not empty dataHis[0].his_date}">
 										<c:forEach var="listHis" items="${dataHis}">
 										<colgroup>
 											<col>

@@ -4,6 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
 <script>
+var excel = "";	// 엑셀 데이터 전역변수
 
 $(document).ready(function(){
 	$("#my-page-btn").click(function(){

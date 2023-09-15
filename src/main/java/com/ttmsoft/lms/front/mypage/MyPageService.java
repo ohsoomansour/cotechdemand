@@ -119,4 +119,26 @@ public class MyPageService extends BaseSvc<DataMap>{
 			this.dao.insertQuery("MyPageSQL.doUpdateInvent", paraMap);
 		}
 	}
+	
+	/* 마이페이지 연구자 엑셀 입력 - 2023/09/15 */
+	public void doInsertExcel(DataMap paraMap) {
+		String[] ex_assignm_no =(String[]) paraMap.get("ex_assignm_no");
+		String[] ex_re_project_nm =(String[]) paraMap.get("ex_re_project_nm");
+		String[] ex_re_institu_nm =(String[]) paraMap.get("ex_re_institu_nm");
+		String[] ex_re_start_date =(String[]) paraMap.get("ex_re_start_date");
+		String[] ex_re_end_date =(String[]) paraMap.get("ex_re_end_date");
+		String[] ex_keyword =(String[]) paraMap.get("ex_keyword");
+
+		for(int i=0; i<ex_assignm_no.length; i++) {
+			paraMap.put("ex_assignm_no", ex_assignm_no[i]);
+			paraMap.put("ex_re_project_nm", ex_re_project_nm[i]);
+			paraMap.put("ex_re_institu_nm", ex_re_institu_nm[i]);
+			paraMap.put("ex_re_start_date", ex_re_start_date[i]);
+			paraMap.put("ex_re_end_date", ex_re_end_date[i]);
+			paraMap.put("ex_keyword", ex_keyword[i]);
+			
+			this.dao.insertQuery("MyPageSQL.doInsertExcel", paraMap);
+			this.dao.insertQuery("MyPageSQL.doInsertHistory", paraMap);
+		}
+	}
 }

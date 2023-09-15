@@ -100,15 +100,18 @@
 			SQL ID : MyPageSQL.doGetProject
 			마이페이지 국가 과제 수행이력
 		*/
-		<![CDATA[
-			SELECT RE_PROJECT_NM, RE_INSTITU_NM, RE_START_DATE, RE_END_DATE
-			
-			FROM TBLRESEARCH_TEMP
-		]]>
-		<if test="researcher_seqno != ''">
-			WHERE RESEARCHER_SEQNO = '${researcher_seqno}'
-		</if>
-		ORDER BY RE_START_DATE DESC
+		SELECT DISTINCT ON(ASSIGNM_NO)
+			ASSIGNM_NO, RE_PROJECT_NM, RE_INSTITU_NM, RE_START_DATE, RE_END_DATE
+		FROM(	
+		SELECT ASSIGNM_NO, RE_PROJECT_NM, RE_INSTITU_NM, RE_START_DATE, RE_END_DATE
+		FROM TBLRESEARCH_HISTORY
+		WHERE RESEARCHER_SEQNO = '${researcher_seqno}'
+		UNION ALL
+		SELECT ASSIGNM_NO,RE_PROJECT_NM, RE_INSTITU_NM, RE_START_DATE, RE_END_DATE
+		FROM TBLRESEARCH_TEMP
+		WHERE RESEARCHER_SEQNO = '${researcher_seqno}'
+		) A
+		ORDER BY ASSIGNM_NO DESC
 	</select>
 	
 	<select id="MyPageSQL.doGetHistory" parameterType="dataMap" resultType="dataMap">
@@ -117,11 +120,17 @@
 			연구히스토리 리스트
 		*/
 		SELECT DISTINCT ON(HIS_DATE)
-			SUBSTRING(RE_START_DATE, 0, 5) AS HIS_DATE,
-			RE_START_DATE,
-			KEYWORD
-		FROM TBLRESEARCH_HISTORY WHERE RESEARCHER_SEQNO = '${researcher_seqno}'
-		ORDER BY HIS_DATE DESC
+				SUBSTRING(RE_START_DATE, 0, 5) AS HIS_DATE,
+				RE_START_DATE,
+				KEYWORD
+		FROM (			
+			SELECT RE_START_DATE, KEYWORD
+			FROM TBLRESEARCH_TEMP WHERE RESEARCHER_SEQNO = '${researcher_seqno}'
+			UNION ALL
+			SELECT RE_START_DATE, KEYWORD
+			FROM TBLRESEARCH_HISTORY WHERE RESEARCHER_SEQNO = '${researcher_seqno}'
+		) A
+		ORDER BY HIS_DATE DESC 
 		LIMIT 5
 	</select>
 	
@@ -180,4 +189,50 @@
 			MANAGER_EMAIL = '${mail}'
 		WHERE RESEARCHER_SEQNO= '${researcher_seqno}'	
 	</update>
+	
+	<insert id="MyPageSQL.doInsertExcel" parameterType="dataMap">
+		/*
+			SQL ID : MyPageSQL.doInsertExcel
+			마이페이지 연구자 엑셀 데이터 입력
+		*/	
+			INSERT INTO
+				TBEXCEL_RESEARCH
+			VALUES
+			(
+				'${ex_assignm_no}',
+				'${ex_re_project_nm}',
+				'${ex_re_institu_nm}',
+				'${ex_re_start_date}',
+				'${ex_re_end_date}',
+				'${ex_keyword}'	
+			);
+	</insert>
+	
+	<insert id="MyPageSQL.doInsertHistory" parameterType="dataMap">
+		/*
+			SQL ID : MyPageSQL.doInsertHistory
+			마이페이지 연구자 과제/히스토리 추가
+		*/	
+			INSERT INTO
+				TBLRESEARCH_HISTORY
+			(
+				researcher_seqno,
+				assignm_no,
+				re_project_nm,
+				re_institu_nm,
+				re_start_date,
+				re_end_date,
+				keyword
+			)	
+			VALUES
+			(
+				'${researcher_seqno}',
+				'${ex_assignm_no}',
+				'${ex_re_project_nm}',
+				'${ex_re_institu_nm}',
+				'${ex_re_start_date}',
+				'${ex_re_end_date}',
+				'${ex_keyword}'	
+			);
+	</insert>
 </mapper>

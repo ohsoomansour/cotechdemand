@@ -1,7 +1,10 @@
 package com.ttmsoft.lms.front.mypage;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -12,7 +15,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.ttmsoft.toaf.basemvc.BaseAct;
@@ -182,6 +184,9 @@ public class MyPageAction extends BaseAct {
 			
 			//담당자 정보
 			this.myPageService.doUpdateManager(paraMap);
+			
+			//엑셀 데이터
+			this.myPageService.doInsertExcel(paraMap);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ModelAndView("error");
@@ -206,7 +211,7 @@ public class MyPageAction extends BaseAct {
 		ModelAndView mav = new ModelAndView("jsonView");
 
 		Map<String, Object> result = this.excelUtil.convertExcelToMap(multipartFile);
-		
+
 		mav.addObject("result", result);
 		
 		try {
