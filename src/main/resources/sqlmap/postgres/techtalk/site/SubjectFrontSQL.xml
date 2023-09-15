@@ -2766,7 +2766,7 @@
 			SQL ID : SubjectFrontSQL.doGetMatchTLOList
 			매칭된 연구자-기업수요 목록
 		*/
-		select tm.*, tr.*, td.*,  td.member_seqno as demand_no
+		select DISTINCT tm.*, tr.*, td.*,  td.member_seqno as demand_no
 		, tr.keyword as Rkwd
 		, td.keyword as Bkwd
 		, td.update_date as rupdate
@@ -2777,6 +2777,7 @@
 		, ( select code_name from tbiz.tbtech_code D where D.code_key = td.tech_code1) as Bcode_name1
 		, ( select code_name from tbiz.tbtech_code D where D.code_key = td.tech_code2) as Bcode_name2
 		, ( select code_name from tbiz.tbtech_code D where D.code_key = td.tech_code3) as Bcode_name3
+		, tc.match_no
 		from tbiz.tblmember tm 
 		inner join tbiz.tblresearcher tr on tm.member_seqno = tr.member_seqno 
 		inner join tbiz.tblresearch_temp tt on tr.researcher_seqno = tt.research_seqno 
@@ -2785,6 +2786,8 @@
 		                            case when td.tech_code2 like tr.tech_code2 then 1 else 0 end +
 		                            case when td.tech_code3 like tr.tech_code3 then 1 else 0 end) >=2
 		                           )
+		inner join tbiz.tblmatchlist tc on tr.member_seqno = tc.researcher_seqno 
+		and td.member_seqno = tc.demand_seqno 
 		where tm.biz_name=#{biz_name}
 		AND (
 		    (SELECT COUNT(*) FROM unnest(string_to_array(td.keyword, ',')) AS keyword_list
@@ -2800,9 +2803,17 @@
 			매칭 이력 보기
 		*/
 		select *
-		from tbiz.tblmember t 
-		inner join tbiz.tbldemand t2 on t.member_seqno = t2.member_seqno 
-		where t.member_seqno = #{demand_seqno}::INT
-
+		from tbiz.tblmatchlist   
+		<if test="match_no != ''">
+		where match_no = #{match_no}::INT
+		</if>
+		AND delete_flag = 'N'
+		<if test="researcher_seqno != ''">
+		AND researcher_seqno = #{researcher_seqno}::INT
+		</if>
+		<if test="demand_seqno != ''">
+		AND demand_seqno = #{demand_seqno}::INT
+		</if>
+		ORDER BY match_list_seqno ASC
 	</select>
 </mapper>	
