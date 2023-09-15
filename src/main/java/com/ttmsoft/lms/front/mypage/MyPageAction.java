@@ -173,7 +173,6 @@ public class MyPageAction extends BaseAct {
 	public ModelAndView deUpdateResearcher(@ModelAttribute("paraMap") DataMap paraMap, HttpServletRequest request,
 			HttpServletResponse response) {
 		ModelAndView mav = new ModelAndView("jsonView");
-			System.out.println("수정 여기 : " + paraMap);
 			
 		try {
 			//연구자 정보
