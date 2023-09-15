@@ -7,6 +7,7 @@ server:
   port: 8882
   servlet:
     context-path: /
+  error:    path: /error
     
 --- 
 spring:
