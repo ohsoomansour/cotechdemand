@@ -248,9 +248,9 @@ public class MemberFrontAction extends BaseAct {
 				mav.addObject("result_code", "0");
 			}
 			else {
-				mav.addObject("result_code", "1");
-				paraMap.put("pw", AES256Util.strEncode(paraMap.get("pw_n").toString()));
+				paraMap.put("pw", AES256Util.strEncode(paraMap.get("newPwd").toString()));
 				memberFrontService.doUpdatePw(paraMap);
+				mav.addObject("result_code", "1");
 			}
 			
 		} catch (Exception e) {
@@ -407,7 +407,7 @@ public class MemberFrontAction extends BaseAct {
 	 * @Date	 : 2023. 9. 8. 
 	 * @Parm	 : DataMap
 	 * @Return   : ModelAndView
-	 * @Function : 임시페이지
+	 * @Function : tlo-연구자목록 페이지
 	 * @Explain  : 
 	 *
 	 */
@@ -418,6 +418,36 @@ public class MemberFrontAction extends BaseAct {
 		navi.put("one", "메인");
 		navi.put("two", "연구자목록");
 		mav.addObject("navi",navi);
+		try {
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ModelAndView("error");
+		}	
+	
+		return mav;
+	}
+	
+	/**
+	 *
+	 * @Author   : psm
+	 * @Date	 : 2023. 9. 14. 
+	 * @Parm	 : DataMap
+	 * @Return   : ModelAndView
+	 * @Function : 비밀번호 변경페이지
+	 * @Explain  : 
+	 *
+	 */
+	@RequestMapping (value = "/doChangePwdPage.do")
+	public ModelAndView doChangePwdPage(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response,HttpSession session) {
+		ModelAndView mav = new ModelAndView("/techtalk/front/member/changePwdPage.front");
+		DataMap navi = new DataMap();
+		navi.put("one", "메인");
+		navi.put("two", "비밀번호 변경");
+		mav.addObject("navi",navi);
+		mav.addObject("member_seqno",session.getAttribute("member_seqno"));
+		mav.addObject("id",session.getAttribute("id"));
+		
 		try {
 
 		} catch (Exception e) {

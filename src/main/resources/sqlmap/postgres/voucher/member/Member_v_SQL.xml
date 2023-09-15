@@ -329,6 +329,8 @@
 				MEMBER_SEQNO = #{member_seqno}::INT
 			AND
 				ID = #{id}
+			AND
+				PW = #{pw}
 		]]>
 	</update>
 	

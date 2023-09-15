@@ -59,10 +59,9 @@ $(document).ready(function(){
 						<button title="user_name" id="my-page-btn" ><span class="user_name">${user_name }(${id })</span></button>
 						<div class="my-dropdown-content">
 						    <a href="javascript:doHref('/techtalk/memberUpdatePage.do');">내 정보 관리</a>
-						    <a href="#">비밀번호 변경</a>
+						    <a href="javascript:doHref('/techtalk/doChangePwdPage.do');">비밀번호 변경</a>
 						</div>
 					</div>
-					
 					<button id="loginButton" onclick="doLogout();" title="로그인버튼"><span class="user_name">로그아웃</span></button>
 				</c:if>
 				<c:if test="${not empty member_seqno && member_type =='B'}">
@@ -72,10 +71,9 @@ $(document).ready(function(){
 						<button title="user_name" id="my-page-btn" ><span class="user_name">${user_name }(${id })</span></button>
 						<div class="my-dropdown-content">
 						    <a href="javascript:doHref('/techtalk/memberUpdatePage.do');">내 정보 관리</a>
-						    <a href="#">비밀번호 변경</a>
+						    <a href="javascript:doHref('/techtalk/doChangePwdPage.do');">비밀번호 변경</a>
 						</div>
 					</div>
-					
 					<button id="loginButton" onclick="doLogout();" title="로그인버튼"><span class="user_name">로그아웃</span></button>
 				</c:if>
 				<c:if test="${not empty member_seqno && member_type =='TLO'}">
@@ -85,12 +83,12 @@ $(document).ready(function(){
 						<button title="user_name" id="my-page-btn" ><span class="user_name">${user_name }(${id })</span></button>
 						<div class="my-dropdown-content">
 						    <a href="javascript:doHref('/techtalk/memberUpdatePage.do');">내 정보 관리</a>
+						    <a href="javascript:doHref('/techtalk/doChangePwdPage.do');">비밀번호 변경</a>
 						    <a href="javascript:doHref('/techtalk/researcherList.do');">연구자 목록</a>
 						    <a href="#">기업수요 목록</a>
 						    <a href="#">매칭 목록</a>
 						</div>
 					</div>
-					
 					<button id="loginButton" onclick="doLogout();" title="로그인버튼"><span class="user_name">로그아웃</span></button>
 				</c:if>
 				<c:if test="${not empty member_seqno && member_type =='ADMIN'}">
@@ -105,7 +103,6 @@ $(document).ready(function(){
 						    <a href="#">매칭 목록</a>
 						</div>
 					</div>
-					
 					<button id="loginButton" onclick="doLogout();" title="로그인버튼"><span class="user_name">로그아웃</span></button>
 				</c:if>
 			</div>
