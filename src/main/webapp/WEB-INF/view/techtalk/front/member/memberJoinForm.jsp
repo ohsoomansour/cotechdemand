@@ -60,6 +60,7 @@ var searchSource = ['엽기떡볶이', '신전떡볶이', '걸작떡볶이', '�
 				 // input필드에 자동완성 기능을 걸어준다
 				$("#bizName").autocomplete({
 			    source: function (request, response) {
+			    	console.log(request)
 				    var data = $('#bizName').val();
 			        $.ajax({
 			            url: "/techtalk/autoSearchBusiness.do",
@@ -69,7 +70,7 @@ var searchSource = ['엽기떡볶이', '신전떡볶이', '걸작떡볶이', '�
 			            success: function (data) {
 			                response(
 			                    $.map(data.result, function (item) {
-				                    console.log("어케나옴"+JSON.stringify(item));
+				                    //console.log("어케나옴"+JSON.stringify(item));
 			                        return {
 			                            label: item.applicant_nm+'label',
 			                            value: item.applicant_nm,
@@ -107,7 +108,7 @@ var searchSource = ['엽기떡볶이', '신전떡볶이', '걸작떡볶이', '�
 			success : function(data) {
 				console.log("dd"+JSON.stringify(data.result));
              $.map(data.result, function(item) {
-                 console.log("어케나옴:+"+JSON.stringify(item.applicant_nm))
+                 //console.log("어케나옴:+"+JSON.stringify(item.applicant_nm))
                  return {
                      label : item.applicant_nm + 'label',
                      value : item.applicant_nm,
