@@ -419,39 +419,42 @@ function doUpdate() {
 	for(var i=0; i<applicant_dt_ct; i++){                          
 		applicant_dt[i] = $("input[name=applicant_dt]").eq(i).val();
 	}
-
+	console.log(excel.length);
 	//엑셀데이터 수정값
-	var ex_assignm_no = new Array(excel.result.data.length);
-	var ex_re_project_nm = new Array(excel.result.data.length);
-	var ex_re_institu_nm = new Array(excel.result.data.length);
-	var ex_re_start_date = new Array(excel.result.data.length);
-	var ex_re_end_date = new Array(excel.result.data.length);
-	var ex_keyword = new Array(excel.result.data.length);
+	if(excel.length != 0) {
+		var ex_assignm_no = new Array(excel.result.data.length);
+		var ex_re_project_nm = new Array(excel.result.data.length);
+		var ex_re_institu_nm = new Array(excel.result.data.length);
+		var ex_re_start_date = new Array(excel.result.data.length);
+		var ex_re_end_date = new Array(excel.result.data.length);
+		var ex_keyword = new Array(excel.result.data.length);
+
 	
-	for(var i=0; i<excel.result.data.length; i++) {
-		ex_assignm_no[i] = excel.result.data[i].ex_assignm_no;
+		for(var i=0; i<excel.result.data.length; i++) {
+			ex_assignm_no[i] = excel.result.data[i].ex_assignm_no;
+		}
+	
+		for(var i=0; i<excel.result.data.length; i++) {
+			ex_re_project_nm[i] = excel.result.data[i].ex_re_project_nm;
+		}
+	
+		for(var i=0; i<excel.result.data.length; i++) {
+			ex_re_institu_nm[i] = excel.result.data[i].ex_re_institu_nm;
+		}
+	
+		for(var i=0; i<excel.result.data.length; i++) {
+			ex_re_start_date[i] = excel.result.data[i].ex_re_start_date;
+		}
+	
+		for(var i=0; i<excel.result.data.length; i++) {
+			ex_re_end_date[i] = excel.result.data[i].ex_re_end_date;
+		}
+	
+		for(var i=0; i<excel.result.data.length; i++) {
+			ex_keyword[i] = excel.result.data[i].ex_keyword;
+		}
 	}
-
-	for(var i=0; i<excel.result.data.length; i++) {
-		ex_re_project_nm[i] = excel.result.data[i].ex_re_project_nm;
-	}
-
-	for(var i=0; i<excel.result.data.length; i++) {
-		ex_re_institu_nm[i] = excel.result.data[i].ex_re_institu_nm;
-	}
-
-	for(var i=0; i<excel.result.data.length; i++) {
-		ex_re_start_date[i] = excel.result.data[i].ex_re_start_date;
-	}
-
-	for(var i=0; i<excel.result.data.length; i++) {
-		ex_re_end_date[i] = excel.result.data[i].ex_re_end_date;
-	}
-
-	for(var i=0; i<excel.result.data.length; i++) {
-		ex_keyword[i] = excel.result.data[i].ex_keyword;
-	}
-
+	
 	$.ajax({
 		type : 'POST',
 		url : '/techtalk/doUpdateResearcher.do',
@@ -659,10 +662,10 @@ function doupdateExcel() {
                    	<div class="cont_list">
 						<div class="row col-box col3" onclick="detail();">
 							<c:choose>
-								<c:when test="${not empty data.user_name}">
+								<c:when test="${not empty data.researcher_nm}">
 									<div class="col">
 					               		<span class="row_txt_num blind">1</span>
-					               		<span class="txt_left row_txt_tit">${data.user_name} 연구자</span>
+					               		<span class="txt_left row_txt_tit">${data.researcher_nm} 연구자</span>
 					               		<span class="re_beloong">${data.biz_name}</span>
 					               		<ul class="tag_box">
 					            	   		<li>${data. keyword}</li>
@@ -716,7 +719,7 @@ function doupdateExcel() {
 									<tr>
 										<th scope="col"><label for="re_nm">연구자</label></th>
 										<td class="ta_left">
-											<div class="form-control" style="max-width:100%;max-height:100%"><c:out value="${data.user_name}"  escapeXml="false"/></div>
+											<div class="form-control" style="max-width:100%;max-height:100%"><c:out value="${data.researcher_nm}"  escapeXml="false"/></div>
 										</td>
 										<th scope="" rowspan="3">연구자 소재 및 주요 연구분야</th>
 										<td class="ta_left" rowspan="3">
