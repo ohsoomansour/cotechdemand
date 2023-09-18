@@ -1,10 +1,7 @@
 package com.ttmsoft.lms.front.mypage;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -185,7 +182,10 @@ public class MyPageAction extends BaseAct {
 			this.myPageService.doUpdateManager(paraMap);
 			
 			//엑셀 데이터
-			this.myPageService.doInsertExcel(paraMap);
+			if(!paraMap.get("ex_assignm_no").equals("")) {
+				this.myPageService.doInsertExcel(paraMap);
+			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ModelAndView("error");
@@ -220,6 +220,50 @@ public class MyPageAction extends BaseAct {
 			return new ModelAndView("error");
 		}
 
+		return mav;
+	}
+	
+	/**
+	 *
+	 * @Author : JHSeo
+	 * @Date : 2023. 9. 15.
+	 * @Parm : DataMap
+	 * @Return : ModelAndView
+	 * @Function : 마이페이지 TLO 연구자목록
+	 * @Explain :
+	 *
+	 */
+	@RequestMapping (value = "/tloResearchMyPage.do")
+	public ModelAndView doresearcherList1(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
+		ModelAndView mav = new ModelAndView("/techtalk/front/mypage/tloResearchMyPage.front");
+		DataMap navi = new DataMap();
+		navi.put("one", "메인");
+		navi.put("two", "연구자목록");
+		mav.addObject("navi",navi);
+		try {
+			//기술분류 리스트
+			paraMap.put("depth", '1');
+			mav.addObject("codeList1", this.myPageService.doGetCodeListInfo(paraMap));
+			paraMap.put("depth", '2');
+			mav.addObject("codeList2", this.myPageService.doGetCodeListInfo(paraMap));
+			paraMap.put("depth", '3');
+			mav.addObject("codeList3", this.myPageService.doGetCodeListInfo(paraMap));
+
+			//소속
+			mav.addObject("biz_name", request.getSession().getAttribute("biz_name"));
+			
+			//총 연구자목록 수
+			paraMap.put("biz_name", request.getSession().getAttribute("biz_name"));
+			int totalCount = this.myPageService.doCountResearcherItem(paraMap);
+
+			mav.addObject("totalCount", totalCount);
+			//TLO 연구자 목록
+			mav.addObject("tloResearcherList", this.myPageService.doGetTloResearchList(paraMap));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ModelAndView("error");
+		}	
+	
 		return mav;
 	}
 }

@@ -1,7 +1,5 @@
 package com.ttmsoft.lms.front.mypage;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -140,5 +138,17 @@ public class MyPageService extends BaseSvc<DataMap>{
 			this.dao.insertQuery("MyPageSQL.doInsertExcel", paraMap);
 			this.dao.insertQuery("MyPageSQL.doInsertHistory", paraMap);
 		}
+	}
+	
+	/* 마이페이지 연구자 기술분류 목록 - 2023/09/07 */
+	public int doCountResearcherItem(DataMap paraMap) {
+		int result = this.dao.countQuery("MyPageSQL.doCountResearcherItem", paraMap);
+		return result;
+	}
+	
+	/* 마이페이지 TLO 연구자목록 - 2023/09/15 */
+	public List<DataMap> doGetTloResearchList(DataMap paraMap) {
+		List<DataMap> result = this.dao.dolistQuery("MyPageSQL.doGetTloResearchList", paraMap);
+		return result;
 	}
 }

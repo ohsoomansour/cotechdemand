@@ -9,8 +9,8 @@
 		*/
 		<![CDATA[
 		SELECT 
-			USER_NAME
-			, BIZ_NAME
+			RESEARCHER_NM
+			, A.BIZ_NAME
 			, RE_INTRO_FIELD
 			, KEYWORD
 			, SPLIT_PART(KEYWORD::VARCHAR, ',', 1) AS KEYWORD1
@@ -235,4 +235,38 @@
 				'${ex_keyword}'	
 			);
 	</insert>
+	
+	<select id="MyPageSQL.doCountResearcherItem" resultType="int">
+		/*
+			SQL ID : MyPageSQL.doCountResearcherItem
+			연구자 카운트
+		*/
+		<![CDATA[
+		select COUNT(*) 
+		from tblresearcher tc
+		left outer join tblmember t on tc.member_seqno = t.member_seqno
+		left outer join tblbusiness b on t.biz_name = b.biz_name
+		where b.biz_name = '${biz_name}' AND tc.view_yn = 'Y'
+		]]>
+	</select>
+	
+	<select id="MyPageSQL.doGetTloResearchList" parameterType="dataMap" resultType="dataMap">
+		/*
+			SQL ID: MyPageSQL.doGetTloResearchList
+			TLO 연구자 목록 
+		*/
+		<![CDATA[
+			select researcher_nm
+					, SPLIT_PART(KEYWORD::VARCHAR, ',', 1) AS KEYWORD1
+					, SPLIT_PART(KEYWORD::VARCHAR, ',', 2) AS KEYWORD2
+					, SPLIT_PART(KEYWORD::VARCHAR, ',', 3) AS KEYWORD3
+					, (SELECT CODE_NAME FROM TBTECH_CODE AS AA WHERE AA.CODE_KEY = TECH_CODE1) AS CODE_NAME1
+					, (SELECT CODE_NAME FROM TBTECH_CODE AS AA WHERE AA.CODE_KEY = TECH_CODE2) AS CODE_NAME3
+					, (SELECT CODE_NAME FROM TBTECH_CODE AS AA WHERE AA.CODE_KEY = TECH_CODE3) AS CODE_NAME2
+			from tblresearcher tc
+			left outer join tblmember t on tc.member_seqno = t.member_seqno
+			left outer join tblbusiness b on t.biz_name = b.biz_name
+			where b.biz_name = '${biz_name}' AND tc.view_yn = 'Y'
+		]]>
+	</select>
 </mapper>
