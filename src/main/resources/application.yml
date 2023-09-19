@@ -26,29 +26,29 @@ spring:
     multipart:
       max-file-size: 100MB
       max-request-size: 100MB
-#  mail:
-#    host: smtp.gmail.com
-#    port: 587
-#    username: ttmaiproject@gmail.com
-#    password: xlxldpa!@#
-#    properties:
-#      mail:
-#        smtp:
-#          auth: true
-#          starttls:
-#            enable: true
-
   mail:
-    host: mail.compa.re.kr
-    port: 25
-    username: rndvoucher@compa.re.kr
-    password: qkdncj43@!
+    host: smtp.gmail.com
+    port: 587
+    username: ksnodedev@gmail.com
+    password: zhvevivvganhgvvr
     properties:
       mail:
         smtp:
           auth: true
           starttls:
-            enable: false
+            enable: true
+
+#  mail:
+#    host: mail.compa.re.kr
+#    port: 25
+#    username: rndvoucher@compa.re.kr
+#    password: qkdncj43@!
+#    properties:
+#      mail:
+#        smtp:
+#          auth: true
+#          starttls:
+#            enable: false
   messages:
     encoding: UTF-8
     
@@ -74,29 +74,29 @@ spring:
     multipart:
       max-file-size: 100MB
       max-request-size: 100MB
-#  mail:
-#    host: smtp.gmail.com
-#    port: 587
-#    username: ttmaiproject@gmail.com
-#    password: xlxldpa!@#
-#    properties:
-#      mail:
-#        smtp:
-#          auth: true
-#          starttls:
-#            enable: true
-
   mail:
-    host: mail.compa.re.kr
-    port: 25
-    username: rndvoucher@compa.re.kr
-    password: qkdncj43@!
+    host: smtp.gmail.com
+    port: 587
+    username: ksnodedev@gmail.com
+    password: zhvevivvganhgvvr
     properties:
       mail:
         smtp:
           auth: true
           starttls:
-            enable: false
+            enable: true
+
+#  mail:
+#    host: mail.compa.re.kr
+#    port: 25
+#    username: rndvoucher@compa.re.kr
+#    password: qkdncj43@!
+#    properties:
+#      mail:
+#        smtp:
+#          auth: true
+#          starttls:
+#            enable: false
   messages:
     encoding: UTF-8
      
