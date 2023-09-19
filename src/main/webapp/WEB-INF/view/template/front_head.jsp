@@ -87,7 +87,7 @@ $(document).ready(function(){
 						<div class="my-dropdown-content">
 						    <a href="javascript:doHref('/techtalk/memberUpdatePage.do');">내 정보 관리</a>
 						    <a href="javascript:doHref('/techtalk/doChangePwdPage.do');">비밀번호 변경</a>
-						    <a href="javascript:doHref('/techtalk/researcherList.do');">연구자 목록</a>
+						    <a href="javascript:doHref('/techtalk/tloResearchMyPage.do');">연구자 목록</a>
 						    <a href="#">기업수요 목록</a>
 						    <a href="#">매칭 목록</a>
 						</div>

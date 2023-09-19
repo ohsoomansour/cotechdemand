@@ -140,7 +140,7 @@ public class MyPageService extends BaseSvc<DataMap>{
 		}
 	}
 	
-	/* 마이페이지 연구자 기술분류 목록 - 2023/09/07 */
+	/* 마이페이지 연구자 카운트 - 2023/09/15 */
 	public int doCountResearcherItem(DataMap paraMap) {
 		int result = this.dao.countQuery("MyPageSQL.doCountResearcherItem", paraMap);
 		return result;
@@ -149,6 +149,26 @@ public class MyPageService extends BaseSvc<DataMap>{
 	/* 마이페이지 TLO 연구자목록 - 2023/09/15 */
 	public List<DataMap> doGetTloResearchList(DataMap paraMap) {
 		List<DataMap> result = this.dao.dolistQuery("MyPageSQL.doGetTloResearchList", paraMap);
+		return result;
+	}
+	
+	/* 마이페이지 연구자 특허 수정 - 2023/09/18 */
+	public void doUpdateViewYn(DataMap paraMap) {
+		String[] researcher_seqno =(String[]) paraMap.get("researcher_seqno");
+		String[] view_yn =(String[]) paraMap.get("view_yn");
+	
+		for(int i=0; i<researcher_seqno.length; i++) {
+			paraMap.put("researcher_seqno", researcher_seqno[i]);
+			paraMap.put("view_yn", view_yn[i]);
+			
+			this.dao.insertQuery("MyPageSQL.doUpdateViewYn", paraMap);
+		}
+	}
+	
+	/* 마이페이지 TLO연구자 상세 - 2023/09/05 */
+	public DataMap doGetTloDetail(DataMap paraMap) {
+		System.out.println("!!!");
+		DataMap result = this.dao.selectQuery("MyPageSQL.doGetTloDetail", paraMap);
 		return result;
 	}
 }
