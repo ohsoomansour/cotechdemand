@@ -26,16 +26,14 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailSendException;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
 
 import com.sun.mail.smtp.SMTPSenderFailedException;
+import com.ttmsoft.lms.cmm.properties.MailProperties;
 import com.ttmsoft.toaf.object.DataMap;
 
 @Component
@@ -44,6 +42,9 @@ public class CommonUtil {
 
 	@Autowired
 	private  JavaMailSender javaMailSender;
+	
+	@Autowired
+	private MailProperties mailProperties;
 	
 	/**
 	 * 문자열을 Byte 수 만큼 자르고 "..." 을 붙여 잘린 문자열임을 표시
@@ -169,23 +170,26 @@ public class CommonUtil {
 		String charSet = "UTF-8" ;
 	      try {
 	         //메일 환경 변수 설정입니다.
-	    	  Properties props = new Properties();
+	    	 Properties props = new Properties();
+	    	  
+	    	 props.setProperty("mail.smtp.starttls.enable", "true");
+	    	 props.setProperty("mail.smtp.ssl.protocols", "TLSv1.2");
 		         
 	         //mail 수신자 ID, PW 설정
-	         props.setProperty("id", "rndvoucher@compa.re.kr");
-	         props.setProperty("pw", "qkdncj43@!");
+	         props.setProperty("id", mailProperties.getUsername());
+	         props.setProperty("pw", mailProperties.getPassword());
 	         
 	         //메일 프로토콜
 	         props.setProperty("mail.transport.protocol", "smtp");
 	         
 	         //메일 호스트 주소를 설정합니다.
-	         props.setProperty("mail.host", "192.68.1.34");
+	         props.setProperty("mail.host", mailProperties.getHost());
 	         
 	         // ID, Password 설정이 필요합니다.
 	         props.put("mail.smtp.auth", "true");
 	         
 	         // port는 465입니다.
-	         props.put("mail.smtp.port", "25");
+	         props.put("mail.smtp.port", mailProperties.getPort());
 	         //props.put("mail.smtp.ssl.enable", "true");
 	         
 	         // id와 pw를 설정하고 session을 생성합니다.
@@ -198,7 +202,8 @@ public class CommonUtil {
 	         // 디버그 모드입니다.
 	         //session.setDebug(true);
 	         // 메일 메시지를 만들기 위한 클래스를 생성합니다.
-	         String fromId = "rndvoucher@compa.re.kr";
+	         //String fromId = "rndvoucher@compa.re.kr";
+	         String fromId = mailProperties.getUsername();
 	         //String fromName = "과학기술일자리진흥원";
 	         
 	         MimeMessage message = new MimeMessage(session);
@@ -257,9 +262,9 @@ public class CommonUtil {
 	         		"                                       \r\n" + 
 	         		"                                       <div style=\" border-radius: 10px; background: #e9e9e9; padding:20px\">\r\n" + 
 	         		"                                          <p style=\"margin:0 0 5px\">본 메일은 회신되지 않는 발신전용 메일입니다.</p>\r\n" + 
-	         		"                                          <p style=\"margin:0 0 5px\">과학기술일자리진흥원: 서울특별시 서대문구 충정로13(충정로3가) 삼창빌딩 7층, 10층</p>\r\n" + 
+	         		"                                          <p style=\"margin:0 0 5px\">주식회사 티비즈: 서울특별시 강남구 테헤란로 10길 18, 6층 (역삼동, 하나빌딩)</p>\r\n" + 
 	         		"                                          <p style=\"margin:0 0 5px\">\r\n" + 
-	         		"                                             <a href=\"http://rndvoucher.compa.re.kr/\" style=\"text-decoration: none;\">바우처사업관리시스템 <strong>SITE</strong> 바로가기</a>\r\n" + 
+	         		"                                             <a href=\"http://114.202.2.226:8882\" style=\"text-decoration: none;\">기술이전-거래플랫폼 <strong>SITE</strong> 바로가기</a>\r\n" + 
 	         		"                                          </p>\r\n" + 
 	         		"                                       </div>   \r\n" + 
 	         		"                                    </td>\r\n" + 
@@ -292,6 +297,7 @@ public class CommonUtil {
 	         result=2002;//메일전송실패시
 	         System.out.println("메일전송오류났어요");
 	         //e.printStackTrace();
+	         
 	         return result;
 	      }
 	      return result;
