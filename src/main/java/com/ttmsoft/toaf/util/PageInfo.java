@@ -218,7 +218,7 @@ public class PageInfo {
 			
 			
 			sb.append("<a href='javascript:;' class='btn_paging btn_prev' title='이전 페이지로 이동' > ");
-			sb.append("<span class='icon' onclick='" +  sPageScript + "('" + Integer.toString((iCurGroup * PAGE_GROUP) - PAGE_GROUP) + "'); return false;'>이전 페이지로 이동</span>");
+			sb.append("<span class='icon' onclick='" +  sPageScript + "(" + Integer.toString((iCurGroup * PAGE_GROUP) - PAGE_GROUP) + "); return false;'>이전 페이지로 이동</span>");
 			sb.append("</a>");
 			
 //			sb.append("<li>                                          ");

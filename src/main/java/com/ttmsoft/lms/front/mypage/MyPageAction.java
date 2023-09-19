@@ -17,6 +17,8 @@ import org.springframework.web.servlet.ModelAndView;
 import com.ttmsoft.toaf.basemvc.BaseAct;
 import com.ttmsoft.toaf.object.DataMap;
 import com.ttmsoft.toaf.util.ExcelUtil;
+import com.ttmsoft.toaf.util.PageInfo;
+import com.ttmsoft.toaf.util.StringUtil;
 
 @Controller
 @RequestMapping("/techtalk")
@@ -250,20 +252,120 @@ public class MyPageAction extends BaseAct {
 			mav.addObject("codeList3", this.myPageService.doGetCodeListInfo(paraMap));
 
 			//소속
+			paraMap.put("biz_name", request.getSession().getAttribute("biz_name"));
 			mav.addObject("biz_name", request.getSession().getAttribute("biz_name"));
 			
 			//총 연구자목록 수
-			paraMap.put("biz_name", request.getSession().getAttribute("biz_name"));
 			int totalCount = this.myPageService.doCountResearcherItem(paraMap);
-
 			mav.addObject("totalCount", totalCount);
+			
+			paraMap.put("count", totalCount);
+			// --------------------------------------------------------------------------
+			//현재페이지
+			String page = StringUtil.nchk((String)(paraMap.get("page")),"1");
+			//페이지에 포함되는 레코드 수
+			String rows = StringUtil.nchk((String)(paraMap.get("rows")),"5");
+			//게시물 정렬 위치
+			String sidx = StringUtil.nchk((String)(paraMap.get("sidx")),"1");
+			//게시물 정렬차순
+			String sord = StringUtil.nchk((String)(paraMap.get("sord")),"asc");
+			//페이지 그룹 수
+			int pageGroups = 5;
+			
+			//리스트 유형
+			String list = paraMap.get("list").toString();
+					
+			paraMap.put("page", page);
+			paraMap.put("rows", rows);
+			paraMap.put("sidx", sidx);
+			paraMap.put("sord", sord);
+			paraMap.put("list", list);
+			
+			mav.addObject("sPageInfo",  new PageInfo().makeIndex(
+					Integer.parseInt(page), totalCount, Integer.parseInt(rows), pageGroups, "fncList"
+			));
+			
 			//TLO 연구자 목록
-			mav.addObject("tloResearcherList", this.myPageService.doGetTloResearchList(paraMap));
+			mav.addObject("data", this.myPageService.doGetTloResearchList(paraMap));
+			mav.addObject("paraMap", paraMap);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ModelAndView("error");
 		}	
 	
+		return mav;
+	}
+	
+	/**
+	 *
+	 * @Author : JHSeo
+	 * @Date : 2023. 9. 18.
+	 * @Parm : DataMap
+	 * @Return : ModelAndView
+	 * @Function : 마이페이지 TLO 연구자 목록관리
+	 * @Explain :
+	 *
+	 */
+	@RequestMapping(value = "/doSaveList.do")
+	public ModelAndView doSaveList(@ModelAttribute("paraMap") DataMap paraMap, HttpServletRequest request,
+			HttpServletResponse response) {
+		ModelAndView mav = new ModelAndView("jsonView");
+
+		try {
+			this.myPageService.doUpdateViewYn(paraMap);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ModelAndView("error");
+		}
+
+		return mav;
+	}
+	
+	/**
+	 *
+	 * @Author : JHSeo
+	 * @Date : 2023. 9. 19.
+	 * @Parm : DataMap
+	 * @Return : ModelAndView
+	 * @Function : 마이페이지 TLO 연구자 목록관리
+	 * @Explain :
+	 *
+	 */
+	@RequestMapping(value = "/tloDetail.do")
+	public ModelAndView tloDetail(@ModelAttribute("paraMap") DataMap paraMap, HttpServletRequest request,
+			HttpServletResponse response) {
+		ModelAndView mav = new ModelAndView("jsonView");
+
+		try {
+			System.out.println("상세 !! :" + paraMap);
+			//연구원 정보
+			mav.addObject("data", this.myPageService.doGetTloDetail(paraMap));
+			
+			if(mav.getModel().get("data") != null) {
+				//유사연구자
+				String keyword = this.myPageService.doGetTloDetail(paraMap).getstr("keyword");
+				String[] keyword_split = keyword.split(",");
+				
+				for(int i=0; i < keyword_split.length; i++) {
+					paraMap.put("keyword_split"+(i+1), keyword_split[i].trim());
+				}
+				
+				mav.addObject("similData", this.myPageService.doGetSimilar(paraMap));
+				
+				//국가 과제 수행 이력
+				mav.addObject("proData", this.myPageService.doGetProject(paraMap));
+				
+				//연구히스토리
+				mav.addObject("dataHis", this.myPageService.doGetHistory(paraMap));
+				
+				//특허리스트
+				mav.addObject("invent", this.myPageService.doGetInvent(paraMap));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ModelAndView("error");
+		}
+
 		return mav;
 	}
 }
