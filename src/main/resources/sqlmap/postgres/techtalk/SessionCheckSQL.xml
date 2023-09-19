@@ -105,4 +105,22 @@
 		]]>
 
 	</update>
+	
+	<select id="SessionCheckSql.getMenuList" parameterType="dataMap" resultType="dataMap">
+		/*
+			SQL ID : SessionCheckSql.getMenuList
+						메뉴권한 확인
+		*/
+		<![CDATA[
+		select t.id, t.member_type, t.user_name ,
+		ta.*, t2.*
+		from tblmember t 
+		inner join tblmenu_auth ta on t .member_type = ta.member_type 
+		inner join tblmenu t2 on t2.auth_seqno =#{member_type_no}::INT
+		where t.member_seqno = #{member_seqno}::INT
+		]]>
+
+	</select>
+	
+	
 </mapper>
