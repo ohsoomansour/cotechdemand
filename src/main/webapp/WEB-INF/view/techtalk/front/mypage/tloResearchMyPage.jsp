@@ -44,7 +44,73 @@ $(document).ready(function() {
 		$("#morePatentButton").show();
 		$("#lessPatentButton").hide();
 	});
+	
+	initDatePicker([$('#strDate'), $('#endDate')]);
+	
+	$('#filterBtn').click(function() {
+		var $href = "#filterPop";
+		var cls = "filterPop";
+		var op = $(this);
+	    layer_popup1($href, cls, op);
+	});
+	
 });
+
+function layer_popup1(el, cls, op){
+
+    var $el = $(el);    //레이어의 id를 $el 변수에 저장
+    var $op = $(op);    //레이어의 id를 $el 변수에 저장
+    var isDim = $el.prev().hasClass('dimBg'); //dimmed 레이어를 감지하기 위한 boolean 변수
+
+    isDim ? $("."+cls).fadeIn() : $el.fadeIn();
+    var inputId = $("."+cls).find("input").first().attr('id');
+    setTimeout(function(){
+    	$('#'+inputId).focus();
+        }, 500);
+    
+    var $elWidth = ~~($el.outerWidth()),
+        $elHeight = ~~($el.outerHeight()),
+        docWidth = $(document).width(),
+        docHeight = $(document).height();
+
+    // 화면의 중앙에 레이어를 띄운다.
+    if ($elHeight < docHeight || $elWidth < docWidth) {
+        $el.css({
+            marginTop: -$elHeight /2,
+            marginLeft: -$elWidth/2
+        })
+    } else {
+        $el.css({top: 0, left: 0});
+    }
+
+    //esc키 버튼 입력시 통보 없애기
+    $(document).keydown(function(event) {
+        if ( event.keyCode == 27 || event.which == 27 ) {
+            $('.compaLginCont').find("input, a, button").removeAttr('tabindex');
+            $('#compaVcFoot').find("input, a, button").removeAttr('tabindex');
+        	isDim ? $('.dim-layer').fadeOut() : $el.fadeOut(); // 닫기 버튼을 클릭하면 레이어가 닫힌다.
+        	setTimeout(function(){
+            	$op.focus();
+               }, 500);
+            return false;
+        }
+    });
+	
+    
+    $el.find('#cancelId').click(function(){
+        isDim ? $("."+cls).fadeOut() : $el.fadeOut(); // 닫기 버튼을 클릭하면 레이어가 닫힌다.
+        
+        setTimeout(function(){
+        	$op.focus();
+           }, 500);
+        return false;
+    });
+    
+    
+   
+}
+
+
 //과제리스트
 function proContens(length) {
 	for(var i = 0; i < length; i++){
@@ -531,6 +597,10 @@ function detail(seq) {
 		}
 	});	
 }	
+
+
+
+
 </script>
 <!-- compaVcContent s:  -->
 <form action="#" id="frm" name="frm" method="post">
@@ -560,7 +630,7 @@ function detail(seq) {
 							<div class="list_top_util ">
 								<div class="search_box_inner">
 									<div class="btn_box">
-										<button type="button" class="btn_default" onClick="javascript:filter();" title="필터">
+										<button type="button" class="btn_default"  title="필터" id="filterBtn">
 											<i class="icon_filter"></i>
 											<span>필터</span>
 										</button>
@@ -860,4 +930,142 @@ function detail(seq) {
 			</div>
 		</div>       
     </div>
+</div>
+
+
+<div class="dim-layer filterPop" >
+    <div class="dimBg"></div>
+    <div id="filterPop" class="pop-layer" style="height:420px;width:640px">
+        <div class="pop-container">
+        <div class="pop-title"><h3>필터</h3></div>
+            <div id="tap1_1" style="display: block">
+				<div class="tbl_view tbl_public tr_tran" style="margin-top:0">
+					<table class="tbl">
+						<caption style="position:absolute !important;  width:1px;  height:1px; overflow:hidden; clip:rect(1px, 1px, 1px, 1px);">필터</caption>
+						<colgroup>
+							<col style="width:150px"/><col />
+						</colgroup>
+						<thead></thead>
+						<tbody class="line">
+							<tr>
+								<th scope="col">최근 출원일</th>
+								<td class="left form-inline">
+									<div class="btn_chk div-inline">
+										<input type="checkbox" name="date_all"  id="date_all" value="date_all"> 
+										<label for="date_all" class="option_label">  
+											<span class="inner"><span class="txt_checked">전체</span></span> 
+										</label>
+									</div>
+									<div class="datepicker_wrap">
+										<input type="text" id="strDate" name="strDate" class="form-control">
+										~
+										<input type="text" id="endDate" name="endDate" class="form-control">
+									</div>
+									
+								</td>
+							</tr>
+							<tr>
+								<th scope="col">기술분야</th>
+								<td class="left form-inline">
+									<div class="btn_chk div-inline">
+										<input type="checkbox" name="tech_field"  id="tech_all" value="tech_all"> 
+										<label for="tech_all" class="option_label">  
+											<span class="inner"><span class="txt_checked">전체</span></span> 
+										</label>
+									</div>
+									<div class="btn_chk div-inline">
+										<input type="checkbox" name="tech_field"  id="b1" value="b1"> 
+										<label for="b1" class="option_label">  
+											<span class="inner"><span class="txt_checked">대분류 선택</span></span> 
+										</label>
+									</div>
+									<div class="btn_chk div-inline">
+										<input type="checkbox" name="tech_field"  id="b2" value="b2"> 
+										<label for="b2" class="option_label">  
+											<span class="inner"><span class="txt_checked">중분류 선택</span></span> 
+										</label>
+									</div>
+									<div class="btn_chk div-inline">
+										<input type="checkbox" name="tech_field"  id="b3" value="b3"> 
+										<label for="b3" class="option_label">  
+											<span class="inner"><span class="txt_checked">소분류 선택</span></span> 
+										</label>
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<th scope="col">엑셀데이터 입력 여부</th>
+								<td class="left form-inline">
+									<div class="btn_chk div-inline">
+										<input type="checkbox" name="excel"  id="e_all" value="e_all"> 
+										<label for="e_all" class="option_label">  
+											<span class="inner"><span class="txt_checked">전체</span></span> 
+										</label>
+									</div>
+									<div class="btn_chk div-inline">
+										<input type="checkbox" name="excel"  id="eY" value="Y"> 
+										<label for="eY" class="option_label">  
+											<span class="inner"><span class="txt_checked">Y</span></span> 
+										</label>
+									</div>
+									<div class="btn_chk div-inline">
+										<input type="checkbox" name="excel"  id="eN" value="N"> 
+										<label for="eN" class="option_label">  
+											<span class="inner"><span class="txt_checked">N</span></span> 
+										</label>
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<th scope="col">매칭 여부</th>
+								<td class="left form-inline">
+									<div class="btn_chk div-inline">
+										<input type="checkbox" name="matching"  id="m_all" value="m_all"> 
+										<label for="m_all" class="option_label">  
+											<span class="inner"><span class="txt_checked">전체</span></span> 
+										</label>
+									</div>
+									<div class="btn_chk div-inline">
+										<input type="checkbox" name="matching"  id="mY" value="Y"> 
+										<label for="mY" class="option_label">  
+											<span class="inner"><span class="txt_checked">Y</span></span> 
+										</label>
+									</div>
+									<div class="btn_chk div-inline">
+										<input type="checkbox" name="matching"  id="mN" value="N"> 
+										<label for="mN" class="option_label">  
+											<span class="inner"><span class="txt_checked">N</span></span> 
+										</label>
+									</div>
+								</td>
+							</tr>
+						</tbody>
+						<tfoot></tfoot>
+					</table>
+					<div class="tbl_public" >
+						<div style="text-align:center;margin-top:40px;">
+		                	<button type="button" class="btn_step btn_point_black"  title="확인">확인</button>
+		                	<button type="button" class="btn_cancel" id="cancelId"  name="btnCancel" title="닫기">닫기</button>
+	                	</div>
+	                </div>
+				</div>
+			</div>
+			<div id="tap1_2" style="display: none">
+				<div class="line form-inline alignCenter">
+					<div style="margin-top: 30px">
+						<label>가입하신 아이디는</label>
+						<label id="findId"></label>
+						<label>입니다.</label>
+					</div>
+					<label style="color: red">완전한 아이디 정보는 이메일로 요청 시 확인가능합니다.</label>
+				</div>
+				<div class="tbl_public" style="margin-top:10px" >
+					<div style="text-align:center;margin-top:40px;">
+	                	<button type="button" class="btn_step" id="btnGetId" title="확인">확인</button>
+	                	<button type="button" class="btn_step" id="cancelId2"  name="btnCancel" title="닫기">닫기</button>
+                	</div>
+                </div>
+			</div>
+        </div>
+   	</div>
 </div>
