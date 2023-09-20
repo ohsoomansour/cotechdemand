@@ -176,7 +176,7 @@ public class SessionCheck extends HandlerInterceptorAdapter {
 			}
 		}
 		}catch(Exception e) {
-			
+			e.printStackTrace();
 		}finally {
 			
 		}
