@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -101,37 +102,11 @@ public class MyPageAction extends BaseAct {
 	 * @Date : 2023. 9. 07.
 	 * @Parm : DataMap
 	 * @Return : ModelAndView
-	 * @Function : 마이페이지(연구자) 상세보기
-	 * @Explain :
-	 *
-	 */
-	@RequestMapping(value = "/deGetResearcherDetail.do")
-	public ModelAndView deGetResearcherDetail(@ModelAttribute("paraMap") DataMap paraMap, HttpServletRequest request,
-			HttpServletResponse response) {
-		ModelAndView mav = new ModelAndView("jsonView");
-
-		try {
-			//담당자 정보
-			mav.addObject("manager", this.myPageService.doGetManager(paraMap));
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new ModelAndView("error");
-		}
-		
-		return mav;
-	}
-	
-	/**
-	 *
-	 * @Author : JHSeo
-	 * @Date : 2023. 9. 07.
-	 * @Parm : DataMap
-	 * @Return : ModelAndView
 	 * @Function : 마이페이지(연구자) 상세보기 기술분류목록
 	 * @Explain :
 	 *
 	 */
-	@RequestMapping(value = "/deGetCodeList.do")
+	@RequestMapping(value = "/deGetCodeListX.do")
 	public ModelAndView deGetCodeList(@ModelAttribute("paraMap") DataMap paraMap, HttpServletRequest request,
 			HttpServletResponse response) {
 		ModelAndView mav = new ModelAndView("jsonView");
@@ -168,26 +143,16 @@ public class MyPageAction extends BaseAct {
 	 * @Explain :
 	 *
 	 */
-	@RequestMapping(value = "/doUpdateResearcher.do")
+	@RequestMapping(value = "/doUpdateResearcherX.do")
 	public ModelAndView deUpdateResearcher(@ModelAttribute("paraMap") DataMap paraMap, HttpServletRequest request,
 			HttpServletResponse response) {
 		ModelAndView mav = new ModelAndView("jsonView");
 			
 		try {
 			//연구자 정보
-			this.myPageService.doUpdateResearcher(paraMap);
-			
+			this.myPageService.doUpdateResearcher(paraMap);		
 			//특허리스트
 			this.myPageService.doUpdateInvent(paraMap);
-			
-			//담당자 정보
-			this.myPageService.doUpdateManager(paraMap);
-			
-			//엑셀 데이터
-			if(!paraMap.get("ex_assignm_no").equals("")) {
-				this.myPageService.doInsertExcel(paraMap);
-			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ModelAndView("error");
@@ -202,15 +167,15 @@ public class MyPageAction extends BaseAct {
 	 * @Date : 2023. 9. 13.
 	 * @Parm : DataMap
 	 * @Return : ModelAndView
-	 * @Function : 마이페이지(연구자) 엑셀입력
+	 * @Function : 마이페이지 TLO(연구자) 엑셀입력
 	 * @Explain :
 	 *
 	 */
-	@RequestMapping(value = "/doUpdateExcel.do")
+	@RequestMapping(value = "/doUpdateExcelX.do")
 	public ModelAndView deUpdateExcel(@ModelAttribute("paraMap") DataMap paraMap, HttpServletRequest request,
 			HttpServletResponse response, @RequestParam("file") MultipartFile multipartFile) {
 		ModelAndView mav = new ModelAndView("jsonView");
-
+		
 		Map<String, Object> result = this.excelUtil.convertExcelToMap(multipartFile);
 
 		mav.addObject("result", result);
@@ -238,6 +203,8 @@ public class MyPageAction extends BaseAct {
 	@RequestMapping (value = "/tloResearchMyPage.do")
 	public ModelAndView doresearcherList1(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView mav = new ModelAndView("/techtalk/front/mypage/tloResearchMyPage.front");
+		HttpSession session = request.getSession();
+		
 		DataMap navi = new DataMap();
 		navi.put("one", "메인");
 		navi.put("two", "연구자목록");
@@ -256,7 +223,13 @@ public class MyPageAction extends BaseAct {
 			mav.addObject("biz_name", request.getSession().getAttribute("biz_name"));
 			
 			//총 연구자목록 수
-			int totalCount = this.myPageService.doCountResearcherItem(paraMap);
+			int totalCount = 0;
+			if(session.getAttribute("member_type").toString().equals("TLO")) {
+				totalCount = this.myPageService.doCountResearcherItem(paraMap);
+			} else if(session.getAttribute("member_type").toString().equals("ADMIN")) {
+				totalCount = this.myPageService.doCountAdminResearcherItem(paraMap);
+			}
+			
 			mav.addObject("totalCount", totalCount);
 			
 			paraMap.put("count", totalCount);
@@ -264,7 +237,7 @@ public class MyPageAction extends BaseAct {
 			//현재페이지
 			String page = StringUtil.nchk((String)(paraMap.get("page")),"1");
 			//페이지에 포함되는 레코드 수
-			String rows = StringUtil.nchk((String)(paraMap.get("rows")),"5");
+			String rows = StringUtil.nchk((String)(paraMap.get("rows")),"20");
 			//게시물 정렬 위치
 			String sidx = StringUtil.nchk((String)(paraMap.get("sidx")),"1");
 			//게시물 정렬차순
@@ -286,7 +259,12 @@ public class MyPageAction extends BaseAct {
 			));
 			
 			//TLO 연구자 목록
-			mav.addObject("data", this.myPageService.doGetTloResearchList(paraMap));
+			if(session.getAttribute("member_type").toString().equals("TLO")) {
+				mav.addObject("data", this.myPageService.doGetTloResearchList(paraMap));
+			} else if(session.getAttribute("member_type").toString().equals("ADMIN")) {
+				mav.addObject("data", this.myPageService.doGetAdminResearchList(paraMap));
+			}
+			
 			mav.addObject("paraMap", paraMap);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -306,7 +284,7 @@ public class MyPageAction extends BaseAct {
 	 * @Explain :
 	 *
 	 */
-	@RequestMapping(value = "/doSaveList.do")
+	@RequestMapping(value = "/doSaveListX.do")
 	public ModelAndView doSaveList(@ModelAttribute("paraMap") DataMap paraMap, HttpServletRequest request,
 			HttpServletResponse response) {
 		ModelAndView mav = new ModelAndView("jsonView");
@@ -327,17 +305,16 @@ public class MyPageAction extends BaseAct {
 	 * @Date : 2023. 9. 19.
 	 * @Parm : DataMap
 	 * @Return : ModelAndView
-	 * @Function : 마이페이지 TLO 연구자 목록관리
+	 * @Function : 마이페이지 TLO 연구자 상세보기
 	 * @Explain :
 	 *
 	 */
-	@RequestMapping(value = "/tloDetail.do")
+	@RequestMapping(value = "/tloDetailX.do")
 	public ModelAndView tloDetail(@ModelAttribute("paraMap") DataMap paraMap, HttpServletRequest request,
 			HttpServletResponse response) {
 		ModelAndView mav = new ModelAndView("jsonView");
 
 		try {
-			System.out.println("상세 !! :" + paraMap);
 			//연구원 정보
 			mav.addObject("data", this.myPageService.doGetTloDetail(paraMap));
 			
@@ -366,6 +343,44 @@ public class MyPageAction extends BaseAct {
 			return new ModelAndView("error");
 		}
 
+		return mav;
+	}
+	
+	/**
+	 *
+	 * @Author : JHSeo
+	 * @Date : 2023. 9. 20.
+	 * @Parm : DataMap
+	 * @Return : ModelAndView
+	 * @Function : 마이페이지 TLO(연구자) 수정
+	 * @Explain :
+	 *
+	 */
+	@RequestMapping(value = "/doUpdateTloResearcherX.do")
+	public ModelAndView deUpdateTloResearcher(@ModelAttribute("paraMap") DataMap paraMap, HttpServletRequest request,
+			HttpServletResponse response) {
+		ModelAndView mav = new ModelAndView("jsonView");
+			
+		try {
+			//연구자 정보
+			this.myPageService.doUpdateResearcher(paraMap);
+			
+			//특허리스트
+			this.myPageService.doUpdateInvent(paraMap);
+			
+			//담당자 정보
+			this.myPageService.doUpdateManager(paraMap);
+			
+			//엑셀 데이터
+			if(!paraMap.get("ex_assignm_no").equals("")) {
+				this.myPageService.doInsertExcel(paraMap);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ModelAndView("error");
+		}
+	
 		return mav;
 	}
 }
