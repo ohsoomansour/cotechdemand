@@ -73,8 +73,8 @@ public class ResearchAction extends BaseAct{
 	 * @Explain  : 
 	 *
 	 */
-	@RequestMapping (value = "/doClickCodeResult.do")
-	public ModelAndView doClickCodeResult(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
+	@RequestMapping (value = "/doClickCodeResultX.do")
+	public ModelAndView doClickCodeResultX(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView mav = new ModelAndView("jsonView");
 		System.out.println("paraMap : " + paraMap);
 		try {
@@ -96,6 +96,7 @@ public class ResearchAction extends BaseAct{
 			}else if(paraMap.get("parent_depth").equals("4"))  {
 				paraMap.put("parent_depth", "3");
 				paraMap.put("code_end", "end");
+				paraMap.put("tech_code3", paraMap.get("code_key"));
 				paraMap.put("tech_nm1", name_path_split[0]);
 				paraMap.put("tech_nm2", name_path_split[1]);
 				paraMap.put("tech_nm3", name_path_split[2]);
@@ -131,7 +132,6 @@ public class ResearchAction extends BaseAct{
 		navi.put("two", "키워드 검색");
 		mav.addObject("navi",navi);
 		try {
-			//List<DataMap> keywordList = researchService.doGetKeywordList(paraMap);
 			mav.addObject("data", this.researchService.doGetKeywordList(paraMap));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -153,7 +153,7 @@ public class ResearchAction extends BaseAct{
 	 * @Explain  : 
 	 *
 	 */
-	@RequestMapping (value = "/doKeywordResult.do")
+	@RequestMapping (value = "/doKeywordResultX.do")
 	public ModelAndView doGetKeyword(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView mav = new ModelAndView("jsonView");
 		
@@ -162,7 +162,6 @@ public class ResearchAction extends BaseAct{
 			
 			List<DataMap> data = researchService.doGetKeywordList(paraMap);
 			mav.addObject("data", data);
-			//mav.addObject("data", this.researchService.doGetKeywordList(paraMap));
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -195,7 +194,6 @@ public class ResearchAction extends BaseAct{
 			// 국가 과제 수행 이력
 			mav.addObject("proData", this.researchService.doViewResearchProject(paraMap));
 			if(paraMap.get("keyword") != null && paraMap.get("keyword") != "" && paraMap.get("keyword") != "") {
-				System.out.println("????????????");
 				String keyword = (String) paraMap.get("keyword");
 				String[] keyword_split = keyword.split(",");
 				paraMap.put("keyword_split1", keyword_split[0]);

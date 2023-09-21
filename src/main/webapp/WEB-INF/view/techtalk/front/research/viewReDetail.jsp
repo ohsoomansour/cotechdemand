@@ -284,7 +284,7 @@ function techInquiry(){
 							<tr>
 								<th scope="col"><label for="re_nm">연구자</label></th>
 								<td class="ta_left">
-									<div class="form-control" style="max-width:100%;max-height:100%"> <c:out value="${data.research_nm }"  escapeXml="false"/> </div>
+									<div class="form-control" style="max-width:100%;max-height:100%"> <c:out value="${data.researcher_nm }"  escapeXml="false"/> </div>
 								</td>
 								<th scope="" rowspan="3">연구자 소재 및 주요 연구분야</th>
 								<td class="ta_left" rowspan="3">
@@ -293,7 +293,7 @@ function techInquiry(){
 							</tr>
 							<tr>
 								<th scope="col">기술분류</th>
-								<td class="ta_left">${data.tech_nm1} > ${data.tech_nm2} > ${data.tech_nm3}</td>
+								<td class="ta_left">${data.code_name1} > ${data.code_name2} > ${data.code_name3}</td>
 							</tr>
 							<tr>
 								<th scope="col">키워드</th>
@@ -356,22 +356,22 @@ function techInquiry(){
 					<table class="tbl history_tbl" id="tbl2">
 						<caption class="caption_hide">연구 히스토리</caption>
 						<c:choose>
-							<c:when test="${not empty dataHis[0].ex_assignm_no }">
+							<c:when test="${not empty dataHis[0].his_date}">
 								<c:forEach var="listHis" items="${dataHis}">
-								<colgroup>
-									<col>
-								</colgroup>
-									<thead>
-										<tr>
-										<c:set var="his_date" value="${listHis.ex_re_start_date}" />
-											<th>${fn:substring(his_date,0,4)}</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr>
-											<td>${listHis.keyword}</td>
-										</tr>
-									</c:forEach>
+									<colgroup>
+										<col>
+									</colgroup>
+										<thead>
+											<tr>
+											<c:set var="his_date" value="${listHis.re_start_date}" />
+												<th style="width: 100%;">${fn:substring(his_date,0,4)}</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td>${listHis.keyword}</td>
+											</tr>
+								</c:forEach>
 							</c:when>
 							<c:otherwise>
 								등록된 연구 히스토리가 없습니다.
@@ -458,50 +458,51 @@ function techInquiry(){
                 </div>
 				
 			</div>
-			
-			<div class="area_cont area_cont2">
-				<div class="subject_corp">
-					<h4>담당자 정보</h4>
+			<c:if test="${sessionScope.member_type eq 'TLO'}">
+				<div class="area_cont area_cont2">
+					<div class="subject_corp">
+						<h4>담당자 정보</h4>
+					</div>
+					<div class="tbl_view tbl_public">
+						<table class="tbl">
+							<caption style="position:absolute !important;  width:1px;  height:1px; overflow:hidden; clip:rect(1px, 1px, 1px, 1px);" >담당자 정보</caption>
+							<colgroup>
+								<col style="width: 10%">
+								<col>
+							</colgroup>
+							<thead></thead>
+							<tbody class="view">
+								<tr>
+									<th scope="col"><label for="re_belong">소속</label></th>
+									<td class="ta_left">
+										<div class="form-control" style="max-width:100%;max-height:100%"> <c:out value="${data.manager_demand }"  escapeXml="false"/> </div>
+									</td>
+								</tr>
+								<tr>
+									<th scope="col">직책</th>
+									<td class="ta_left">${data.manager_rank}</td>
+								</tr>
+								<tr>
+									<th scope="col">이름</th>
+									<td class="ta_left">${data.manager_name} </td>
+								</tr>
+								<tr>
+									<th scope="col">연락처</th>
+									<td class="ta_left">
+										<div class="form-control" style="max-width:100%;max-height:100%"><c:out value="${data.manager_mobile_no }"  escapeXml="false"/> </div>
+									</td>
+								</tr>
+								<tr>
+									<th scope="col">이메일</th>
+									<td class="ta_left">
+										<div class="form-control" style="max-width:100%;max-height:100%"><c:out value="${data.manager_email }"  escapeXml="false"/> </div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
 				</div>
-				<div class="tbl_view tbl_public">
-					<table class="tbl">
-						<caption style="position:absolute !important;  width:1px;  height:1px; overflow:hidden; clip:rect(1px, 1px, 1px, 1px);" >담당자 정보</caption>
-						<colgroup>
-							<col style="width: 10%">
-							<col>
-						</colgroup>
-						<thead></thead>
-						<tbody class="view">
-							<tr>
-								<th scope="col"><label for="re_belong">소속</label></th>
-								<td class="ta_left">
-									<div class="form-control" style="max-width:100%;max-height:100%"> <c:out value="${data.re_belong }"  escapeXml="false"/> </div>
-								</td>
-							</tr>
-							<tr>
-								<th scope="col">직책</th>
-								<td class="ta_left">${data.re_position}</td>
-							</tr>
-							<tr>
-								<th scope="col">이름</th>
-								<td class="ta_left">${data.re_nm} </td>
-							</tr>
-							<tr>
-								<th scope="col">연락처</th>
-								<td class="ta_left">
-									<div class="form-control" style="max-width:100%;max-height:100%"><c:out value="${data.re_tel }"  escapeXml="false"/> </div>
-								</td>
-							</tr>
-							<tr>
-								<th scope="col">이메일</th>
-								<td class="ta_left">
-									<div class="form-control" style="max-width:100%;max-height:100%"><c:out value="${data.re_email }"  escapeXml="false"/> </div>
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-			</div>
+			</c:if>
 			<!-- //page_content e:  -->
 		</div>
 	</div>
