@@ -50,8 +50,6 @@ public class SessionCheck extends HandlerInterceptorAdapter {
 
 		try {	
 			logger.info("share session check !!!!" + getSessionValue(request, "member_seqno"));
-			
-			System.out.println("세션만료되면어케되?"+getSessionValue(request, "member_seqno"));
 			// 비로그인 가능 요청인 경우
 			if (this.isNoSessionRequest(request)) {
 				System.out.println("비로그인기능");
@@ -360,12 +358,13 @@ public class SessionCheck extends HandlerInterceptorAdapter {
 		boolean isTerms = url.indexOf("/techtalk/terms.do") != -1;
 		boolean isPolicy = url.indexOf("/techtalk/policy.do") != -1;
 		boolean isNotAjax = url.indexOf("X.do") != -1;
-		 
+		boolean isNotAjaxx = url.indexOf("x.do") != -1;
+		boolean completeFind = url.indexOf("completeFind") != -1;
 			
 
 		return isListBoardItem || isAddBoardItem || isViewBoardItem || isLoginPage || isLogin || 
 				isMemberJoinForm  || isFile || isFindId
-				|| isFindpw || isGetEmailToId || isTerms || isPolicy || isNotAjax;
+				|| isFindpw || isGetEmailToId || isTerms || isPolicy || isNotAjax || completeFind || isNotAjaxx;
 	}
 
 

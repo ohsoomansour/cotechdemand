@@ -18,7 +18,7 @@
 $(document).ready(function() {
 	
 	//doLogout();
-	$("#id").keyup(function(e){
+	$("#user_email2").keyup(function(e){
 		if(e.keyCode == 13){
 			e.preventDefault();
 			LoginCtrl.doLogin();
@@ -26,11 +26,12 @@ $(document).ready(function() {
 	 });
 	
 	$('#btnFindId').click(function() {
-		location.href="/techtalk/completeFindId.do";
+		fncFindId();
+		//location.href="/techtalk/completeFindId.do";
 	});
 });
 
-//[아이디 찾기] - 아이디 찾기 -> 2021/04/19 - 추정완
+//[아이디 찾기] - 아이디 찾기 -> 2023/09/21 - 박성민
 function fncFindId() {
 	var user_name = $('#userName').val();
 	var user_email = $('#userEmail1').val()+"@"+$('#userEmail2').val();
@@ -39,32 +40,30 @@ function fncFindId() {
 	if(!isBlank('이메일도메인', '#userEmail2')){
 		$.ajax({
 			type : 'POST',
-			url : '/tecktalk/findId.do',
+			url : '/techtalk/findIdX.do',
 			data : {
 				user_name : user_name,
 				user_email : user_email
 			},
 			dataType : 'json',
 			success : function(data) {
-				var result_check = data.result_check;
-				if(result_check == '0') {
+				var result_count = data.result_count;
+				if(result_count == '0') {
 					alert_popup_focus('이름 및 이메일을 확인해주세요.',"#userName");
 					return false;
 				}
 				else{
-					var userInfo = data.userInfo;
-					
-					$('#tap1_1').css('display', 'none');
-					$('#tap1_2').css('display', 'block');
-					
-					var memberId = userInfo.id;		//memberid 셋팅필요
-					
-					$('#saveId').val(memberId);
-					$('#saveEmail').val(email_ID);
-					
-					var idLength = memberId.length;
-					memberId = memberId.substr(0, 2) + Array(idLength - 1).join("*");
-					$('#findId').append(memberId);
+					var frm = document.createElement('form'); 
+					frm.name = 'frm'; 
+					frm.method = 'post'; 
+					frm.action = '/techtalk/completeFindId.do'; 
+					var input1 = document.createElement('input'); 
+					input1.setAttribute("type", "hidden"); 
+					input1.setAttribute("name", "id"); 
+					input1.setAttribute("value", data.result.id); 
+					frm.appendChild(input1); 
+					document.body.appendChild(frm); 
+					frm.submit();
 				}
 			},
 			error : function() {
@@ -73,31 +72,8 @@ function fncFindId() {
 			complete : function() {
 				
 			}
-		})
+		});
 	}
-}
-//[아이디 찾기] - 이메일로 완전한 아이디 받기
-function fncGetEmailToId() {
-	var saveId = $('#saveId').val();
-	var saveEmail = $('#saveEmail').val();	
-	
-	$.ajax({
-		type : 'POST',
-		url : '/techtalk/getEmailToId.do',
-		data : {
-			saveId : saveId,
-			saveEmail : saveEmail
-		},
-		dataType : 'json',
-		success : function() {
-			alert_popup('해당 이메일로 전송 완료 되었습니다.');
-		},
-		error : function() {
-			
-		},
-		complete : function() {
-		}
-	})
 }
 </script>
 	<div id="compaLogin">

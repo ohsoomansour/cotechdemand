@@ -17,7 +17,7 @@
 			alert_popup_focus('새 비밀번호와 새비밀번호 확인이 일치하지 않습니다.', '#newPwdChk');
 			return false;
 			}
-		var url = '/techtalk/updatePw.do';
+		var url = '/techtalk/updatePwX.do';
 		var form = $('#frm')[0];
 		var data = new FormData(form);
 		$.ajax({
@@ -30,7 +30,10 @@
 	       success : function(res){
 		       if(res.result==0){
 		    	   alert_popup_focus('현재 비밀번호가 일치하지 않습니다 비밀번호를 확인해 주세요.', '#pwd');
-			       }
+			       }else if(res.result==1){
+				       alert("비밀번호가 변경되었습니다. 다시 로그인 해주세요.");
+				       doLogout();
+				       }
 	    	   
 	       },
 	       error : function(){
