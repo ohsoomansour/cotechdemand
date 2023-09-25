@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -105,9 +106,10 @@ public class MyPageAction extends BaseAct {
 	 */
 	@RequestMapping(value = "/deGetResearcherDetail.do")
 	public ModelAndView deGetResearcherDetail(@ModelAttribute("paraMap") DataMap paraMap, HttpServletRequest request,
-			HttpServletResponse response) {
+			HttpServletResponse response, HttpSession session) {
 		ModelAndView mav = new ModelAndView("jsonView");
-
+		String member_seqno = (String)session.getAttribute("member_seqno");
+		paraMap.put("researcher_seqno", member_seqno);
 		try {
 			//담당자 정보
 			mav.addObject("manager", this.myPageService.doGetManager(paraMap));
