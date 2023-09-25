@@ -59,12 +59,7 @@ public class MyPageService extends BaseSvc<DataMap>{
 		List<DataMap> result = this.dao.dolistQuery("MyPageSQL.doGetExcel", paraMap);
 		return result;
 	}
-	
-	/* 마이페이지 담당자정보 - 2023/09/11 */
-	public DataMap doGetManager(DataMap paraMap) {
-		DataMap result = this.dao.selectQuery("MyPageSQL.doGetManager", paraMap);
-		return result;
-	}
+
 	
 	/* 마이페이지 연구자 수정 - 2023/09/13 */
 	public void doUpdateResearcher(DataMap paraMap) {
@@ -140,7 +135,7 @@ public class MyPageService extends BaseSvc<DataMap>{
 		}
 	}
 	
-	/* 마이페이지 연구자 기술분류 목록 - 2023/09/07 */
+	/* 마이페이지 연구자 카운트 - 2023/09/15 */
 	public int doCountResearcherItem(DataMap paraMap) {
 		int result = this.dao.countQuery("MyPageSQL.doCountResearcherItem", paraMap);
 		return result;
@@ -150,5 +145,79 @@ public class MyPageService extends BaseSvc<DataMap>{
 	public List<DataMap> doGetTloResearchList(DataMap paraMap) {
 		List<DataMap> result = this.dao.dolistQuery("MyPageSQL.doGetTloResearchList", paraMap);
 		return result;
+	}
+	
+	/* 마이페이지 연구자 특허 수정 - 2023/09/18 */
+	public void doUpdateViewYn(DataMap paraMap) {
+		String[] researcher_seqno =(String[]) paraMap.get("researcher_seqno");
+		String[] view_yn =(String[]) paraMap.get("view_yn");
+	
+		for(int i=0; i<researcher_seqno.length; i++) {
+			paraMap.put("researcher_seqno", researcher_seqno[i]);
+			paraMap.put("view_yn", view_yn[i]);
+			
+			this.dao.insertQuery("MyPageSQL.doUpdateViewYn", paraMap);
+		}
+	}
+	
+	/* 마이페이지 TLO연구자 상세 - 2023/09/05 */
+	public DataMap doGetTloDetail(DataMap paraMap) {
+		DataMap result = this.dao.selectQuery("MyPageSQL.doGetTloDetail", paraMap);
+		return result;
+	}
+	
+	/* 마이페이지 연구자 카운트 - 2023/09/15 */
+	public int doCountAdminResearcherItem(DataMap paraMap) {
+		int result = this.dao.countQuery("MyPageSQL.doCountAdminResearcherItem", paraMap);
+		return result;
+	}
+	
+	/* 마이페이지 TLO 연구자목록 - 2023/09/15 */
+	public List<DataMap> doGetAdminResearchList(DataMap paraMap) {
+		List<DataMap> result = this.dao.dolistQuery("MyPageSQL.doGetAdminResearchList", paraMap);
+		return result;
+	}
+	
+	/* 마이페이지 TLO 매칭목록 - 2023/09/21 */
+	public List<DataMap> doGetTloMatchList(DataMap paraMap) {
+		List<DataMap> result = this.dao.dolistQuery("MyPageSQL.doGetTloMatchList", paraMap);
+		return result;
+	}
+	
+	/* 마이페이지 TLO 매칭목록 카운트 - 2023/09/21 */
+	public int doCountTloMatchList(DataMap paraMap) {
+		int result = this.dao.countQuery("MyPageSQL.doCountTloMatchList", paraMap);
+		return result;
+	}
+	
+	/* 마이페이지 TLO 매칭이력 - 2023/09/22 */
+	public List<DataMap> doTloMatchHistoryList(DataMap paraMap) {
+		List<DataMap> result = this.dao.dolistQuery("MyPageSQL.doTloMatchHistoryList", paraMap);
+		return result;
+	}
+	
+	/* 마이페이지 TLO 매칭이력 수정 - 2023/09/18 */
+	public void doSetUpdate(DataMap paraMap) {
+		String[] match_date = (String[]) paraMap.get("match_date");
+		String[] contents = (String[]) paraMap.get("contents");
+		String[] business_nm = (String[]) paraMap.get("business_nm");
+		String[] business_tel = (String[]) paraMap.get("business_tel");
+		String[] business_mail = (String[]) paraMap.get("business_mail");
+		String[] researcher_nm = (String[]) paraMap.get("researcher_nm");
+		String[] researcher_tel = (String[]) paraMap.get("researcher_tel");
+		String[] researcher_mail = (String[]) paraMap.get("researcher_mail");
+	
+		for(int i=0; i<researcher_nm.length; i++) {
+			paraMap.put("match_date", match_date[i]);
+			paraMap.put("contents", contents[i]);
+			paraMap.put("business_nm", business_nm[i]);
+			paraMap.put("business_tel", business_tel[i]);
+			paraMap.put("business_mail", business_mail[i]);
+			paraMap.put("researcher_nm", researcher_nm[i]);
+			paraMap.put("researcher_tel", researcher_tel[i]);
+			paraMap.put("researcher_mail", researcher_mail[i]);
+			
+			this.dao.insertQuery("MyPageSQL.doSetUpdate", paraMap);
+		}
 	}
 }

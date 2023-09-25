@@ -21,7 +21,7 @@ $('#stdClassSrch').click(function() {
 function clickCode(code_key,parent_depth,name_path){
 	name_path = decodeURIComponent(name_path);
 	var next_depth = null;
-	var url = "/techtalk/doGetCoStdCodeInfoTest.do";
+	var url = "/techtalk/doGetCoStdCodeInfoTestX.do";
 	if(parent_depth == "1"){
 		parent_depth ="2";
 		next_depth = "3";
@@ -233,7 +233,7 @@ function corporateDetail(corporate_no){
 
 	frm.name = 'frm3'; 
 	frm.method = 'post'; 
-	frm.action = '/techtalk/viewCorprateDetail.do'; 
+	frm.action = '/techtalk/viewCorprateDetailX.do'; 
 
 	var input1 = document.createElement('input'); 
 

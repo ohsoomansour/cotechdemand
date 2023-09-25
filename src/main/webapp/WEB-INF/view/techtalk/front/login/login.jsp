@@ -162,7 +162,7 @@ function memberJoin() {
                            		</div>
                            		<div class="lu_right">
 	                           		<a href="/techtalk/findIdPage.do" class="btn_file_pw" id="buttonFindId" title="아이디 찾기">아이디 찾기</a>
-	                           		<a href="/techtalk/findPwdPage.do" class="btn_file_pw" id="buttonFindPw" title="패스워드 찾기">패스워드 찾기</a>
+	                           		<a href="/techtalk/findPwdCheckIdPage.do" class="btn_file_pw" id="buttonFindPw" title="패스워드 찾기">패스워드 찾기</a>
                            		</div>
                            </div>
                            
@@ -176,6 +176,69 @@ function memberJoin() {
                </div>
            </div>
 		<!-- //compaVcContent e:  -->
+		<!-- compaVcFooter s:  -->
+          <footer id="compaVcFoot" class="foot_cv">
+            <div class="wrap_copyright">
+            	<div class="ckwrap">
+	            	<div class="inner_ckwrap">
+	            		<a href="/techtalk/terms.do" class="txt_addr" title="이용약관">이용약관</a> 
+						<a href="/techtalk/policy.do" class="txt_addr"  title="개인정보처리방침">개인정보처리방침</a>
+						<div class="relation_svc">
+	                        <strong class="tit_relation"><a href="javascript:void(0);" class="link_tit" aria-haspopup="true" aria-expanded="false" title="Family Site">관련사이트<span class="icon ico_arr"></span></a></strong>
+	                        <ul class="list_relation">
+	                            <li><a href="www.keywert.com" target="_blank" class="link_relation" title="키워드 링크 새창열림">키워드 링크</a></li>
+	                        </ul>
+	                   	</div>
+	            	</div>
+            	</div>
+                <div class="inner_copyright">
+					<div class="foot_logo">
+						<div style="display:inline-block">
+						<span><img src="${pageContext.request.contextPath}/css/images/common/footer_logo.png" alt="바우처사업관리시스템"></span>
+						</div>
+					</div>
+					<div class="dim-layer-common alertCls">
+					    <div class="dimBgg"></div>
+					    <div id="layer99" class="pop-layer" style="height:220px">
+					        <div class="pop-container">
+					        <div class="pop-title"><h3>알림</h3></div>
+					            <div id="tap1_1" style="display: block">
+									<div class="table2 mTop5">
+										<div class="line form-inline alignCenter">
+											<div style="margin-top: 30px">
+												<label id="alertTxt">ㅅㄷㅌㅅ</label>
+											</div>
+										</div>
+										<div class="tbl_public" >
+											<div style="text-align:center;margin-top:20px;">
+							                	<button type="button" class="btn_step" id="cancelAlert" name="btnCancel" title="닫기">닫기</button>
+						                	</div>
+						                </div>
+									</div>
+								</div>
+					        </div>
+				    	</div>
+					</div>
+                    <div class="info_copyright">
+						<div class="info_addr">
+							<ul>
+								<li><span class="at_title">주소</span>서울특별시 강남구 테헤란로 10길 18, 6층 (역삼동, 하나빌딩)</li>
+								<li><span class="at_title">이메일</span>tbiz@tbizip.com</li>
+								<li><span class="at_title">전화</span>02-6405-3271</li>
+								<li><span class="at_title">팩스</span>02-6405-3277</li>
+							</ul>
+				
+						
+						</div>
+						<p class="tx">주식회사 티비즈의 특허 전문가와 워트인텔리전스가 함께  만들었습니다.</p>
+						<small class="txt_copyright">Copyright©2023 TBIZ All Right Reserved.</small>
+						
+					</div>
+                        
+                </div>
+            </div>
+        </footer>
+		<!-- //compaVcCFooter e:  -->
 	</div>
 
 

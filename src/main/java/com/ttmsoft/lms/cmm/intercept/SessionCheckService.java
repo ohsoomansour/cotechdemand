@@ -1,5 +1,7 @@
 package com.ttmsoft.lms.cmm.intercept;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.ttmsoft.toaf.basemvc.BaseSvc;
@@ -53,6 +55,11 @@ public class SessionCheckService extends BaseSvc<DataMap> {
 	public void appendUserSession (DataMap dataMap) {
 		this.dao.updateQuery("SessionCheckSql.modifyUserSessionDisabled", dataMap);
 		this.dao.insertQuery("SessionCheckSql.appendUserSession", dataMap);
+	}
+
+	public List<DataMap> getMenuList(DataMap paraMap) {
+		
+		return dao.dolistQuery("SessionCheckSql.getMenuList", paraMap);
 	}
 
 }

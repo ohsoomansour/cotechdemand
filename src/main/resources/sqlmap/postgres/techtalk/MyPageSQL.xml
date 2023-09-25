@@ -50,17 +50,6 @@
 			ORDER BY CODE_KEY ASC
 	</select>
 	
-	<select id="MyPageSQL.doGetManager" parameterType="dataMap" resultType="dataMap">
-		/*
-			SQL ID: MyPageSQL.doGetManager
-			담당자정보
-		*/
-		<![CDATA[
-		SELECT * FROM TBLMANAGER
-		WHERE RESEARCHER_SEQNO = '${researcher_seqno}'
-		]]>
-	</select>
-
 	<select id="MyPageSQL.doGetSimilar" parameterType="dataMap" resultType="dataMap">
 		/*
 			SQL ID : SubjectFrontSQL.doSimilarResearchList
@@ -147,7 +136,7 @@
 		<if test="researcher_seqno != ''">
 			WHERE RESEARCHER_SEQNO = '${researcher_seqno}'
 		</if>
-		ORDER BY RESEARCH_SEQNO DESC
+		ORDER BY APPLICANT_DATE DESC
 	</select>
 	
 	<update id="MyPageSQL.doUpdateResearcher" parameterType="dataMap">
@@ -174,20 +163,6 @@
 			 APPLICATION_NO = '${applicant_no}',
 			 APPLICANT_DATE = '${applicant_dt}'
 		WHERE RESEARCH_SEQNO= '${research_seqno}'
-	</update>
-	
-	<update id="MyPageSQL.doUpdateManager" parameterType="dataMap">
-		/*
-			SQL ID : MyPageSQL.doUpdateManager
-			마이페이지 연구자 담당자 수정
-		*/
-		UPDATE TBLMANAGER
-		SET MANAGER_DEMAND = '${manager_demand}',
-			MANAGER_RANK = '${manager_rank}',
-			MANAGER_NAME = '${manager_name}',
-			MANAGER_MOBILE_NO = '${tel}',
-			MANAGER_EMAIL = '${mail}'
-		WHERE RESEARCHER_SEQNO= '${researcher_seqno}'	
 	</update>
 	
 	<insert id="MyPageSQL.doInsertExcel" parameterType="dataMap">
@@ -243,11 +218,29 @@
 		*/
 		<![CDATA[
 		select COUNT(*) 
-		from tblresearcher tc
-		left outer join tblmember t on tc.member_seqno = t.member_seqno
-		left outer join tblbusiness b on t.biz_name = b.biz_name
-		where b.biz_name = '${biz_name}' AND tc.view_yn = 'Y'
+		from tblresearcher 
+		where biz_name = '${biz_name}' 
 		]]>
+		<if test="list != 'all'" >
+			AND view_yn = 'Y'
+		</if>
+		<if test="keyword != ''" >
+			AND keyword like CONCAT('%',#{keyword},'%')
+		</if>
+		<if test="strDate != ''" >
+		<![CDATA[	
+			AND '${strDate}' <= applicant_date AND applicant_date <= '${endDate}'
+		]]>		
+		</if>
+		<if test="filterStdClassCd1 != ''" >
+			AND tech_code1 = '${filterStdClassCd1}'
+			</if>
+			<if test="filterStdClassCd2 != ''" >
+			AND tech_code2 = '${filterStdClassCd2}'
+			</if>
+			<if test="filterStdClassCd3 != ''" >
+			AND tech_code3 = '${filterStdClassCd3}'
+			</if>
 	</select>
 	
 	<select id="MyPageSQL.doGetTloResearchList" parameterType="dataMap" resultType="dataMap">
@@ -256,17 +249,380 @@
 			TLO 연구자 목록 
 		*/
 		<![CDATA[
-			select researcher_nm
-					, SPLIT_PART(KEYWORD::VARCHAR, ',', 1) AS KEYWORD1
-					, SPLIT_PART(KEYWORD::VARCHAR, ',', 2) AS KEYWORD2
-					, SPLIT_PART(KEYWORD::VARCHAR, ',', 3) AS KEYWORD3
-					, (SELECT CODE_NAME FROM TBTECH_CODE AS AA WHERE AA.CODE_KEY = TECH_CODE1) AS CODE_NAME1
-					, (SELECT CODE_NAME FROM TBTECH_CODE AS AA WHERE AA.CODE_KEY = TECH_CODE2) AS CODE_NAME3
-					, (SELECT CODE_NAME FROM TBTECH_CODE AS AA WHERE AA.CODE_KEY = TECH_CODE3) AS CODE_NAME2
+			SELECT tc.researcher_seqno
+					,tc.researcher_nm
+					,tc.biz_name
+					, tc.keyword
+					, MAX(applicant_date) as applicant_date
+					, (SELECT CODE_NAME FROM TBTECH_CODE AS AA WHERE AA.CODE_KEY = tc.TECH_CODE1) AS CODE_NAME1
+					, (SELECT CODE_NAME FROM TBTECH_CODE AS AA WHERE AA.CODE_KEY = tc.TECH_CODE2) AS CODE_NAME2
+					, (SELECT CODE_NAME FROM TBTECH_CODE AS AA WHERE AA.CODE_KEY = tc.TECH_CODE3) AS CODE_NAME3
+					, view_yn
 			from tblresearcher tc
-			left outer join tblmember t on tc.member_seqno = t.member_seqno
-			left outer join tblbusiness b on t.biz_name = b.biz_name
-			where b.biz_name = '${biz_name}' AND tc.view_yn = 'Y'
+			inner join tblresearch_temp tp ON tc.researcher_seqno = tp.researcher_seqno
+			where tc.biz_name = '${biz_name}' 
+		]]>	
+			<if test="list != 'all'" >
+				AND tc.view_yn = 'Y'
+			</if>
+			<if test="keyword != ''" >
+			AND tc.keyword like CONCAT('%',#{keyword},'%')
+			</if>
+			<if test="strDate != ''" >
+		<![CDATA[	
+			AND '${strDate}' <= applicant_date AND applicant_date <= '${endDate}'
+		]]>		
+			</if>
+			<if test="filterStdClassCd1 != ''" >
+			AND tc.tech_code1 = '${filterStdClassCd1}'
+			</if>
+			<if test="filterStdClassCd2 != ''" >
+			AND tc.tech_code2 = '${filterStdClassCd2}'
+			</if>
+			<if test="filterStdClassCd3 != ''" >
+			AND tc.tech_code3 = '${filterStdClassCd3}'
+			</if>
+			GROUP BY tc.researcher_seqno
+			ORDER BY applicant_date desc
+			LIMIT ${rows} OFFSET (${page}-1)*5;
+	</select>
+	
+	<update id="MyPageSQL.doUpdateViewYn" parameterType="dataMap">
+		/*
+			SQL ID : MyPageSQL.doUpdateViewYn
+			마이페이지 tlo 연구자 목록관리
+		*/
+			UPDATE TBLRESEARCHER
+			SET VIEW_YN = '${view_yn}'
+			WHERE RESEARCHER_SEQNO= '${researcher_seqno}'
+	</update>
+	
+	<select id="MyPageSQL.doGetTloDetail" parameterType="dataMap" resultType="dataMap">
+		/*
+			SQL ID: MyPageSQL.doGetTloDetail
+			TLO 연구자  상세 
+		*/
+		<![CDATA[
+		SELECT A.RESEARCHER_SEQNO
+				, RESEARCHER_NM
+				, A.BIZ_NAME
+				, RE_INTRO_FIELD
+				, KEYWORD
+				, SPLIT_PART(KEYWORD::VARCHAR, ',', 1) AS KEYWORD1
+				, SPLIT_PART(KEYWORD::VARCHAR, ',', 2) AS KEYWORD2
+				, SPLIT_PART(KEYWORD::VARCHAR, ',', 3) AS KEYWORD3
+				, SPLIT_PART(KEYWORD::VARCHAR, ',', 4) AS KEYWORD4
+				, SPLIT_PART(KEYWORD::VARCHAR, ',', 5) AS KEYWORD5
+				, TECH_CODE1
+				, (SELECT CODE_NAME FROM TBTECH_CODE AS AA WHERE AA.CODE_KEY = TECH_CODE1) AS CODE_NAME1
+				, TECH_CODE2
+				, (SELECT CODE_NAME FROM TBTECH_CODE AS AA WHERE AA.CODE_KEY = TECH_CODE2) AS CODE_NAME2
+				, TECH_CODE3
+				, (SELECT CODE_NAME FROM TBTECH_CODE AS AA WHERE AA.CODE_KEY = TECH_CODE3) AS CODE_NAME3
+				, B.manager_seqno
+				, manager_demand
+				, manager_rank
+				, manager_name
+				, manager_mobile_no
+				, manager_email
+		FROM tblresearcher A
+		LEFT OUTER JOIN tblmanager B ON A.manager_seqno = B.manager_seqno
+		WHERE A.RESEARCHER_SEQNO = '${researcher_seqno}'
 		]]>
 	</select>
+	
+	<update id="MyPageSQL.doUpdateManager" parameterType="dataMap">
+		/*
+			SQL ID : MyPageSQL.doUpdateManager
+			마이페이지 연구자 담당자 수정
+		*/
+		UPDATE tblmanager A
+		SET MANAGER_DEMAND = '${manager_demand}',
+			MANAGER_RANK = '${manager_rank}',
+			MANAGER_NAME = '${manager_name}',
+			MANAGER_MOBILE_NO = '${tel}',
+			MANAGER_EMAIL = '${mail}'
+		FROM
+			tblresearcher B
+		WHERE
+			B.manager_seqno = A.manager_seqno
+		AND B.researcher_seqno = '${researcher_seqno}'
+	</update>
+	
+	<select id="MyPageSQL.doCountAdminResearcherItem" resultType="int">
+		/*
+			SQL ID : MyPageSQL.doCountAdminResearcherItem
+			연구자 카운트
+		*/
+		<![CDATA[
+		select COUNT(*) 
+		from tblresearcher
+		where 1=1
+		]]>
+		<if test="list != 'all'" >
+			AND view_yn = 'Y'
+		</if>
+		<if test="keyword != ''" >
+			AND keyword like CONCAT('%',#{keyword},'%')
+		</if>
+		<if test="strDate != ''" >
+		<![CDATA[	
+			AND '${strDate}' <= applicant_date 
+		]]>		
+		</if>
+		<if test="endDate != ''" >
+		<![CDATA[	
+			AND applicant_date <= '${endDate}'
+		]]>		
+			</if>
+		<if test="filterStdClassCd1 != ''" >
+			AND tech_code1 = '${filterStdClassCd1}'
+			</if>
+			<if test="filterStdClassCd2 != ''" >
+			AND tech_code2 = '${filterStdClassCd2}'
+			</if>
+			<if test="filterStdClassCd3 != ''" >
+			AND tech_code3 = '${filterStdClassCd3}'
+			</if>
+	</select>
+	
+	<select id="MyPageSQL.doGetAdminResearchList" parameterType="dataMap" resultType="dataMap">
+		/*
+			SQL ID: MyPageSQL.doGetAdminResearchList
+			관리자 연구자 목록 
+		*/
+		<![CDATA[
+			SELECT tc.researcher_seqno
+					,tc.researcher_nm
+					,tc.biz_name
+					, tc.keyword
+					, MAX(applicant_date) as applicant_date
+					, (SELECT CODE_NAME FROM TBTECH_CODE AS AA WHERE AA.CODE_KEY = tc.TECH_CODE1) AS CODE_NAME1
+					, (SELECT CODE_NAME FROM TBTECH_CODE AS AA WHERE AA.CODE_KEY = tc.TECH_CODE2) AS CODE_NAME2
+					, (SELECT CODE_NAME FROM TBTECH_CODE AS AA WHERE AA.CODE_KEY = tc.TECH_CODE3) AS CODE_NAME3
+					, view_yn
+			from tblresearcher tc
+			inner join tblresearch_temp tp ON tc.researcher_seqno = tp.researcher_seqno
+		]]>	
+			<if test="list != 'all'" >
+				AND tc.view_yn = 'Y'
+			</if>
+			<if test="keyword != ''" >
+			AND tc.keyword like CONCAT('%',#{keyword},'%')
+			</if>
+			<if test="strDate != ''" >
+		<![CDATA[	
+			AND '${strDate}' <= applicant_date
+		]]>		
+			</if>
+			<if test="endDate != ''" >
+		<![CDATA[	
+			AND applicant_date <= '${endDate}'
+		]]>		
+			</if>
+			<if test="filterStdClassCd1 != ''" >
+			AND tc.tech_code1 = '${filterStdClassCd1}'
+			</if>
+			<if test="filterStdClassCd2 != ''" >
+			AND tc.tech_code2 = '${filterStdClassCd2}'
+			</if>
+			<if test="filterStdClassCd3 != ''" >
+			AND tc.tech_code3 = '${filterStdClassCd3}'
+			</if>
+			GROUP BY tc.researcher_seqno
+			ORDER BY applicant_date desc
+			LIMIT ${rows} OFFSET (${page}-1)*5;
+	</select>
+	
+	<select id="MyPageSQL.doCountTloMatchList" resultType="int">
+		/*
+			SQL ID : MyPageSQL.doCountTloMatchList
+			TLO 매칭목록 카운트
+		*/
+		select COUNT(*)
+		from (
+			select DISTINCT tr.*, td.*,  td.member_seqno as demand_no
+			      , tr.keyword as Rkwd
+			      , td.keyword as Bkwd
+			      , td.update_date as rupdate
+			      , tr.member_seqno as resear_no
+			      , MAX(applicant_date) applicant_date
+			      , ( select code_name from tbiz.tbtech_code D where D.code_key = tr.tech_code1) as Rcode_name1
+			      , ( select code_name from tbiz.tbtech_code D where D.code_key = tr.tech_code2) as Rcode_name2
+			      , ( select code_name from tbiz.tbtech_code D where D.code_key = tr.tech_code3) as Rcode_name3
+			      , ( select code_name from tbiz.tbtech_code D where D.code_key = td.tech_code1) as Bcode_name1
+			      , ( select code_name from tbiz.tbtech_code D where D.code_key = td.tech_code2) as Bcode_name2
+			      , ( select code_name from tbiz.tbtech_code D where D.code_key = td.tech_code3) as Bcode_name3
+			      from tbiz.tblresearcher tr
+			      inner join tbiz.tbldemand td on (
+			                                 (case when td.tech_code1 like tr.tech_code1 then 1 else 0 end +
+			                                  case when td.tech_code2 like tr.tech_code2 then 1 else 0 end +
+			                                  case when td.tech_code3 like tr.tech_code3 then 1 else 0 end) >=2
+			                                 )
+			      inner JOIN tblresearch_temp tp ON tr.researcher_seqno = tp.researcher_seqno                            
+			      LEFT join tbiz.tblmatchlist tc on tr.researcher_seqno = tc.researcher_seqno 
+			      and td.demand_seqno = tc.demand_seqno 
+			      <if test="member_type != 'ADMIN'" >
+			      where tr.biz_name='${biz_name}'
+			      </if>
+			      AND (
+			          (SELECT COUNT(*) FROM unnest(string_to_array(td.keyword, ',')) AS keyword_list
+			           WHERE keyword_list = ANY(string_to_array(tr.keyword, ','))) >= 2
+			      )
+		    <if test="list != 'all'" >
+				AND tr.view_yn = 'Y'
+			</if>
+			<if test="keyword != ''" >
+				AND (tr.keyword like CONCAT('%',#{keyword},'%') OR td.keyword like CONCAT('%',#{keyword},'%'))
+			</if>
+			<if test="strDate != ''" >
+			<![CDATA[	
+				AND '${strDate}' <= update_date
+			]]>		
+			</if>
+			<if test="endDate != ''" >
+			<![CDATA[	
+				AND update_date <= '${endDate}'
+			]]>		
+			</if>
+			<if test="strDate2 != ''" >
+			<![CDATA[	
+				AND '${strDate2}' <= applicant_date
+			]]>		
+			</if>
+			<if test="endDate2 != ''" >
+			<![CDATA[	
+				AND applicant_date <= '${endDate2}'
+			]]>		
+			</if>
+			<if test="filterStdClassCd1 != ''" >
+				AND (tr.tech_code1 = '${filterStdClassCd1}' OR td.tech_code1 = '${filterStdClassCd1}')
+			</if>
+			<if test="filterStdClassCd2 != ''" >
+				AND (tr.tech_code2 = '${filterStdClassCd2}' OR td.tech_code2 = '${filterStdClassCd2}')
+			</if>
+			<if test="filterStdClassCd3 != ''" >
+				AND (tr.tech_code3 = '${filterStdClassCd3}' OR td.tech_code3 = '${filterStdClassCd3}')
+			</if>
+			GROUP BY tr.researcher_seqno , td.demand_seqno , tc.match_no
+		) CT		
+	</select>
+	
+	<select id="MyPageSQL.doGetTloMatchList" parameterType="dataMap" resultType="dataMap">
+		/*
+			SQL ID : MyPageSQL.doGetTloMatchList
+			TLO 매칭목록
+		*/
+		select DISTINCT tr.*, td.*,  td.member_seqno as demand_no
+		      , tr.keyword as Rkwd
+		      , td.keyword as Bkwd
+		      , td.update_date as rupdate
+		      , tr.member_seqno as resear_no
+		      , MAX(applicant_date) applicant_date
+		      , ( select code_name from tbiz.tbtech_code D where D.code_key = tr.tech_code1) as Rcode_name1
+		      , ( select code_name from tbiz.tbtech_code D where D.code_key = tr.tech_code2) as Rcode_name2
+		      , ( select code_name from tbiz.tbtech_code D where D.code_key = tr.tech_code3) as Rcode_name3
+		      , ( select code_name from tbiz.tbtech_code D where D.code_key = td.tech_code1) as Bcode_name1
+		      , ( select code_name from tbiz.tbtech_code D where D.code_key = td.tech_code2) as Bcode_name2
+		      , ( select code_name from tbiz.tbtech_code D where D.code_key = td.tech_code3) as Bcode_name3
+		      from tbiz.tblresearcher tr
+		      inner join tbiz.tbldemand td on (
+		                                 (case when td.tech_code1 like tr.tech_code1 then 1 else 0 end +
+		                                  case when td.tech_code2 like tr.tech_code2 then 1 else 0 end +
+		                                  case when td.tech_code3 like tr.tech_code3 then 1 else 0 end) >=2
+		                                 )
+		      inner JOIN tblresearch_temp tp ON tr.researcher_seqno = tp.researcher_seqno                            
+		      LEFT join tbiz.tblmatchlist tc on tr.researcher_seqno = tc.researcher_seqno 
+		      and td.demand_seqno = tc.demand_seqno 
+		      <if test="member_type != 'ADMIN'" >
+		      where tr.biz_name='${biz_name}'
+		      </if>
+		      AND (
+		          (SELECT COUNT(*) FROM unnest(string_to_array(td.keyword, ',')) AS keyword_list
+		           WHERE keyword_list = ANY(string_to_array(tr.keyword, ','))) >= 2
+		      )
+	    <if test="list != 'all'" >
+			AND tr.view_yn = 'Y'
+		</if>
+		<if test="keyword != ''" >
+			AND (tr.keyword like CONCAT('%',#{keyword},'%') OR td.keyword like CONCAT('%',#{keyword},'%'))
+		</if>
+		<if test="strDate != ''" >
+		<![CDATA[	
+			AND '${strDate}' <= update_date
+		]]>		
+		</if>
+		<if test="endDate != ''" >
+		<![CDATA[	
+			AND update_date <= '${endDate}'
+		]]>		
+		</if>
+		<if test="strDate2 != ''" >
+		<![CDATA[	
+			AND '${strDate2}' <= applicant_date
+		]]>		
+		</if>
+		<if test="endDate2 != ''" >
+		<![CDATA[	
+			AND applicant_date <= '${endDate2}'
+		]]>		
+		</if>
+		<if test="filterStdClassCd1 != ''" >
+			AND (tr.tech_code1 = '${filterStdClassCd1}' OR td.tech_code1 = '${filterStdClassCd1}')
+		</if>
+		<if test="filterStdClassCd2 != ''" >
+			AND (tr.tech_code2 = '${filterStdClassCd2}' OR td.tech_code2 = '${filterStdClassCd2}')
+		</if>
+		<if test="filterStdClassCd3 != ''" >
+			AND (tr.tech_code3 = '${filterStdClassCd3}' OR td.tech_code3 = '${filterStdClassCd3}')
+		</if>
+		GROUP BY tr.researcher_seqno , td.demand_seqno , tc.match_no
+		LIMIT ${rows} OFFSET (${page}-1)*10;
+	</select>
+	
+	<select id="MyPageSQL.doTloMatchHistoryList" parameterType="dataMap" resultType="dataMap">
+		/*
+			SQL ID : MyPageSQL.doTloMatchHistoryList
+			TLO 매칭 이력 보기
+		*/
+		select *
+		from tbiz.tblmatchlist   
+		where researcher_seqno = '${researcher_seqno}'
+		AND demand_seqno = '${demand_seqno}'
+		ORDER BY match_date DESC
+	</select>
+	
+	<insert id="MyPageSQL.doSetUpdate" parameterType="dataMap">
+		/*
+			SQL ID : MyPageSQL.doSetUpdate
+			마이페이지 TLO/관리자 매칭이력 추가
+		*/	
+			INSERT INTO
+				tblmatchlist
+			(
+				match_date,
+				contents,
+				business_nm,
+				business_tel,
+				business_email,
+				researcher_nm,
+				researcher_tel,
+				researcher_email,
+				demand_seqno,
+				researcher_seqno
+			)	
+			VALUES
+			(
+				'${match_date}',
+				'${contents}',
+				'${business_nm}',
+				'${business_tel}',
+				'${business_mail}',
+				'${researcher_nm}',
+				'${researcher_tel}',
+				'${researcher_mail}',
+				'${demand_seqno}',
+				'${researcher_seqno}'
+			);
+	</insert>
 </mapper>

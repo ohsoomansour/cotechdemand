@@ -73,7 +73,7 @@ public class CorporateAction extends BaseAct{
 	 * @Explain  : 
 	 *
 	 */
-	@RequestMapping (value = "/doGetCoStdCodeInfoTest.do")
+	@RequestMapping (value = "/doGetCoStdCodeInfoTestX.do")
 	public ModelAndView doGetCoStdCodeInfo(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView mav = new ModelAndView("jsonView");
 		System.out.println("paraMap : " + paraMap);
@@ -150,7 +150,7 @@ public class CorporateAction extends BaseAct{
 	 * @Explain  : 
 	 *
 	 */
-	@RequestMapping (value = "/doCorporateKeywordResult.do")
+	@RequestMapping (value = "/doCorporateKeywordResultX.do")
 	public ModelAndView doGetCorporateKeyword(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView mav = new ModelAndView("jsonView");
 		
@@ -179,7 +179,7 @@ public class CorporateAction extends BaseAct{
 	 * @Explain  : 
 	 *
 	 */	
-	@RequestMapping (value = "/viewCorprateDetail.do", method = RequestMethod.POST)
+	@RequestMapping (value = "/viewCorprateDetailX.do", method = RequestMethod.POST)
 	public ModelAndView doViewResearchDetail(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request) {
 		ModelAndView mav = new ModelAndView("/techtalk/front/corporate/viewCoDetail.front");						
 		mav.addObject("paraMap", paraMap);	

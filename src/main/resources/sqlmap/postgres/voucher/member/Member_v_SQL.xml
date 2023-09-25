@@ -315,7 +315,7 @@
 	
 	
 	<update id="Member_v_SQL.doUpdatePw" parameterType="dataMap">
-		<!-- 2021-04-21 추정완 -->
+		<!-- 2023-09-22 박성민 -->
 		/*
 			SQL ID : Member_v_SQL.doUpdatePw
 			사용자 패스워드 변경
@@ -324,13 +324,31 @@
 			UPDATE	
 				TBLMEMBER
 			SET
-				PW = #{pw}
+				PW = #{new_pwd}
 			WHERE
 				MEMBER_SEQNO = #{member_seqno}::INT
 			AND
 				ID = #{id}
 			AND
-				PW = #{pw}
+				PW = #{pwd}
+		]]>
+	</update>
+	
+	<update id="Member_v_SQL.doUpdatePwFind" parameterType="dataMap">
+		<!-- 2023-09-22 박성민 -->
+		/*
+			SQL ID : Member_v_SQL.doUpdatePw
+			사용자 패스워드 변경
+		*/
+		<![CDATA[
+			UPDATE	
+				TBLMEMBER
+			SET
+				PW = #{new_pwd}
+			WHERE
+				MEMBER_SEQNO = #{member_seqno}::INT
+			AND
+				ID = #{id}
 		]]>
 	</update>
 	
@@ -451,6 +469,88 @@
 			group by t.applicant_nm ;
 		]]>
 	</select>
+	<select id="Member_v_SQL.doCountFindId" resultType="int">
+
+		/*
+			SQL ID : Member_v_SQL.doCountFindId 
+			아이디찾기 카운트
+		*/
+		<![CDATA[
+			SELECT
+				COUNT(*)
+			FROM
+				TBLMEMBER 
+			where user_name = #{user_name}
+			and user_email = #{user_email}
+		]]>
+	</select>	
+	<select id="Member_v_SQL.doFindId" resultType="dataMap" parameterType="dataMap">	
+		/*
+			SQL ID : Member_v_SQL.doFindId
+			아이디찾기
+		*/
+		<![CDATA[
+			select *
+			from tblmember
+			where user_name = #{user_name}
+			and user_email = #{user_email}
+        ]]>	
+	</select>
+	<select id="Member_v_SQL.doCountFindPwd" resultType="int">
+
+		/*
+			SQL ID : Member_v_SQL.doCountFindPwd 
+			비밀번호찾기 카운트
+		*/
+		<![CDATA[
+			SELECT
+				COUNT(*)
+			FROM
+				TBLMEMBER 
+			where id = #{id}
+		]]>
+	</select>	
+		<select id="Member_v_SQL.doFindPwd" resultType="dataMap" parameterType="dataMap">	
+		/*
+			SQL ID : Member_v_SQL.doFindPwd
+			비밀번호찾기
+		*/
+		<![CDATA[
+			select *
+			from tblmember
+			where id = #{id}
+        ]]>	
+	</select>
 	
+	<update id="Member_v_SQL.doUpdateCertification" parameterType="dataMap">
+		<!-- 2023-09-22 박성민 -->
+		/*
+			SQL ID : Member_v_SQL.doUpdateCertification
+			인증번호 생성
+		*/
+		<![CDATA[
+			UPDATE	
+				TBLMEMBER
+			SET
+				CERTIFICATION_NO = #{certification_no},
+				CERTIFICATION_EXPIRED = now()
+			WHERE
+				MEMBER_SEQNO = #{member_seqno}::INT
+		]]>
+	</update>
 	
+	<select id="Member_v_SQL.doCheckCertification" resultType="dataMap" parameterType="dataMap">	
+		/*
+			SQL ID : Member_v_SQL.doCheckCertification
+			인증번호 검증
+		*/
+		<![CDATA[
+			select id, member_seqno
+			from tblmember
+			where user_name = #{user_name}
+			AND CERTIFICATION_NO = #{certification_no}
+			AND EXTRACT(EPOCH FROM (now() - CERTIFICATION_EXPIRED)) <= 300
+			AND user_email = #{user_email}
+        ]]>	
+	</select>
 </mapper>

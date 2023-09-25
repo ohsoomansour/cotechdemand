@@ -103,4 +103,36 @@ public class MemberFrontService extends BaseSvc<DataMap>{
 		
 		return this.dao.dolistQuery("Member_v_SQL.doAutoSearchBusiness", paraMap);
 	}
+	/* 아이디찾기 -> 아이디찾기카운트 2023/09/21/박성민 */
+	public int doCountFindMemberId(DataMap paraMap) {
+		return this.dao.countQuery("Member_v_SQL.doCountFindId", paraMap);
+	}
+	
+	/* 아이디찾기 -> 아이디찾기 2023/09/21/박성민 */
+	public DataMap doFindMemberId(DataMap paraMap) {
+		return this.dao.selectQuery("Member_v_SQL.doFindId", paraMap);
+	}
+	/* 비밀번호찾기 -> 비밀번호찾기카운트 2023/09/21/박성민 */
+	public int doCountFindMemberPwd(DataMap paraMap) {
+		return this.dao.countQuery("Member_v_SQL.doCountFindPwd", paraMap);
+	}
+	/* 비밀번호찾기 -> 비밀번호찾기 2023/09/21/박성민 */
+	public DataMap doFindMemberPwd(DataMap paraMap) {
+		return this.dao.selectQuery("Member_v_SQL.doFindPwd", paraMap);
+	}
+	/* 비밀번호변경 -> 비밀번호변경 2023/09/22/박성민 */
+	public int doChangePwd(DataMap paraMap) {
+		return this.dao.updateQuery("Member_v_SQL.doUpdatePw", paraMap);
+	}
+	/* 비밀번호변경 -> 비밀번호변경 2023/09/22/박성민 */
+	public int doChangePwdFind(DataMap paraMap) {
+		return this.dao.updateQuery("Member_v_SQL.doUpdatePwFind", paraMap);
+	}
+	/* 인증번호생성 -> 비밀번호변경 2023/09/22/박성민 */
+	public int doSetCertification(DataMap paraMap) {
+		return this.dao.updateQuery("Member_v_SQL.doUpdateCertification", paraMap);
+	}
+	public DataMap doGetCertification(DataMap paraMap) {
+		return this.dao.selectQuery("Member_v_SQL.doCheckCertification", paraMap);
+	}
 }

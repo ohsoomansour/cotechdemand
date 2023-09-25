@@ -1,8 +1,7 @@
 package com.ttmsoft.lms.cmm.intercept;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
+import java.util.List;
 import java.util.Locale;
 
 import javax.annotation.Resource;
@@ -16,12 +15,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import com.ttmsoft.lms.cmm.login.LoginService;
 import com.ttmsoft.toaf.object.DataMap;
-import com.ttmsoft.toaf.util.CookieUtil;
 import com.ttmsoft.toaf.util.StringUtil;
 
 @Component
@@ -48,56 +45,55 @@ public class SessionCheck extends HandlerInterceptorAdapter {
 	}
 
 	public boolean preHandle (HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-		/*
+		
 		boolean result = false;
 
 		try {	
 			logger.info("share session check !!!!" + getSessionValue(request, "member_seqno"));
-			
-			System.out.println("세션만료되면어케되?"+getSessionValue(request, "member_seqno"));
 			// 비로그인 가능 요청인 경우
 			if (this.isNoSessionRequest(request)) {
 				System.out.println("비로그인기능");
 				logger.debug("비로그인 가능 요청입니다.");
 				return true;
 			}
-			if ("".equals(getSessionValue(request, "member_seqno"))) {
-				logger.debug("share session check !!");
-				String requestURI = request.getRequestURI().toString();
-				int check = this.makeUserInfoSession(request);
-				if(!requestURI.equals("/front/login.do")) {
-					if(check!=1) {
-						logger.debug("해당url은 비로그인기능입니다.");
-						response.sendRedirect("/front/login.do");
-						return false;
-					}	
+			//메뉴권한확인
+			if(checkMenuList(request)) {
+				if ("".equals(getSessionValue(request, "member_seqno"))) {
+					logger.debug("share session check !!");
+					String requestURI = request.getRequestURI().toString();
+					int check = this.makeUserInfoSession(request);
+					if(!requestURI.equals("/techtalk/login.do")) {
+						if(check!=1) {
+							logger.debug("해당url은 비로그인기능입니다.");
+							response.sendRedirect("/techtalk/login.do");
+							return false;
+						}	
+					}
 				}
+				if (logger.isDebugEnabled()) {
+					logger.debug("Session Check Interceptor !!!!");
+					logger.debug("REQUEST HEADER : " + request.getHeader("X-Requested-With"));
+					logger.debug(request.getServerName());
+					logger.debug(request.getRequestURI());
+					logger.debug("sesskey : " + request.getSession().getId());
+					logger.debug("userid : " + getSessionValue(request, "member_seqno"));
+					logger.debug("userno : " + getSessionValue(request, "member_type"));
+					logger.debug("usernm : " + getSessionValue(request, "id"));
+					logger.debug("orgno : " + getSessionValue(request, "user_name"));
+				}
+				result = this.isAvailableSession(request, response);
+			}else {
+				response.sendRedirect("/techtalk/login.do");
 			}
-			if (logger.isDebugEnabled()) {
-				logger.debug("Session Check Interceptor !!!!");
-				logger.debug("REQUEST HEADER : " + request.getHeader("X-Requested-With"));
-				logger.debug(request.getServerName());
-				logger.debug(request.getRequestURI());
-				logger.debug("sesskey : " + request.getSession().getId());
-				logger.debug("userid : " + getSessionValue(request, "userid"));
-				logger.debug("userno : " + getSessionValue(request, "userno"));
-				logger.debug("usernm : " + getSessionValue(request, "usernm"));
-				logger.debug("orgno : " + getSessionValue(request, "orgno"));
-			}
-			result = this.isAvailableSession(request, response);
 		}
 		catch (Exception e) {
-			response.sendRedirect("/front/login.do");
-			/*
-			 * if (logger.isDebugEnabled()) { e.printStackTrace();
-			 * logger.debug(" Exception - preHandle : " + e.toString()); }
-			 */
-		/*
-		}
-	      
+			response.sendRedirect("/techtalk/login.do");
 			
+			  if (logger.isDebugEnabled()) { e.printStackTrace();
+			  logger.debug(" Exception - preHandle : " + e.toString()); }
+			
+		}
 		// 로그인 설정 요청 반환
-	return result;*/
 		return true;
 	}
 
@@ -142,6 +138,48 @@ public class SessionCheck extends HandlerInterceptorAdapter {
 		return result;
 	}
 
+	private boolean checkMenuList (HttpServletRequest request) {
+		boolean result = false;
+		try {
+		//메뉴권한 확인
+		DataMap paraMap = new DataMap();
+		String memeber_type = getSessionValue(request, "member_type");
+		paraMap.put("member_seqno", getSessionValue(request, "member_seqno"));
+		paraMap.put("member_type", getSessionValue(request, "member_type"));
+		paraMap.put("id", getSessionValue(request, "id"));
+		paraMap.put("user_name", getSessionValue(request, "user_name")); 
+		
+		
+		if(memeber_type.equals("R")) {
+			paraMap.put("member_type_no", "1");
+		}else if(memeber_type.equals("B")) {
+			paraMap.put("member_type_no", "2");
+		}else if(memeber_type.equals("TLO")) {
+			paraMap.put("member_type_no", "3");
+		}else if(memeber_type.equals("ADMIN")) {
+			paraMap.put("member_type_no", "4");
+		}else {
+			paraMap.put("member_type_no", "0");
+		}
+		List<DataMap> data = sessionCheckService.getMenuList(paraMap);
+		System.out.println("이거어케나옴"+ data );
+		System.out.println("이거는? + " + request.getRequestURI());
+		String url = request.getRequestURI().trim();
+		
+		for(int i=0; i<data.size(); i++) {
+			String checkUrl = data.get(i).getstr("url").trim();
+			if(checkUrl.equals(url)) {
+				result = true;
+				break;
+			}
+		}
+		}catch(Exception e) {
+			e.printStackTrace();
+		}finally {
+			
+		}
+		return result;
+	}
 	private void addSessionLoginInfo (HttpSession session, DataMap userMap) {
 		session.setAttribute("member_seqno", userMap.get("member_seqno").toString());
 		session.setAttribute("id", userMap.get("id").toString());
@@ -305,24 +343,28 @@ public class SessionCheck extends HandlerInterceptorAdapter {
 	private boolean isNoSessionRequest (HttpServletRequest request) {
 		
 		String url = request.getRequestURI();
+		System.out.println(url+"어케나오는데 왜죠 ");
 
-		boolean isListBoardItem = url.indexOf("/front/listBoardItem.do") != -1;
-		boolean isAddBoardItem = url.indexOf("/front/AddBoardItem.do") != -1;
-		boolean isViewBoardItem = url.indexOf("/front/ViewBoardItem.do") != -1;
-		boolean isLoginPage = url.indexOf("/front/login.do") != -1;
+		boolean isListBoardItem = url.indexOf("/techtalk/mainView.do") != -1;
+		boolean isAddBoardItem = url.indexOf("/techtalk/findIdPage.do") != -1;
+		boolean isViewBoardItem = url.indexOf("/techtalk/find") != -1;
+		boolean isLoginPage = url.indexOf("/techtalk/login.do") != -1;
 		boolean isLogin = url.indexOf("login") != -1;
-		boolean isMemberJoinAgrere = url.indexOf("/front/memberJoinAgreePage.do") != -1;
-		boolean isMemberJoinForm = url.indexOf("/front/memberJoinFormPage.do") != -1;
-		boolean isMemberJoinComplelte = url.indexOf("member") != -1;
+		boolean isMemberJoinForm = url.indexOf("/techtalk/memberJoinFormPage.do") != -1;
 		boolean isFile = url.indexOf("/file/") != -1;
 		boolean isFindId = url.indexOf("findId") != -1;
 		boolean isFindpw = url.indexOf("getEmailToPw") != -1;
 		boolean isGetEmailToId = url.indexOf("getEmailToId") != -1;
-	    boolean isFront = url.indexOf("front") != -1;
+		boolean isTerms = url.indexOf("/techtalk/terms.do") != -1;
+		boolean isPolicy = url.indexOf("/techtalk/policy.do") != -1;
+		boolean isNotAjax = url.indexOf("X.do") != -1;
+		boolean isNotAjaxx = url.indexOf("x.do") != -1;
+		boolean completeFind = url.indexOf("completeFind") != -1;
+			
 
 		return isListBoardItem || isAddBoardItem || isViewBoardItem || isLoginPage || isLogin || 
-				isMemberJoinAgrere || isMemberJoinForm || isMemberJoinComplelte || isFile || isFindId
-				|| isFindpw || isGetEmailToId || isFront;
+				isMemberJoinForm  || isFile || isFindId
+				|| isFindpw || isGetEmailToId || isTerms || isPolicy || isNotAjax || completeFind || isNotAjaxx;
 	}
 
 

@@ -37,6 +37,7 @@
 	<script>
 		$(document).ready(function() {
 			// family site
+			/*
             var titRelation = document.getElementsByClassName('tit_relation')[0];
             if(titRelation.addEventListener) {
                 titRelation.addEventListener('click', function (event) {
@@ -59,7 +60,7 @@
                     }
                 });
             }
-
+*/
 		});
 	</script>
 </head>
