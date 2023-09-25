@@ -134,8 +134,8 @@ public class MatchSearchAction extends BaseAct {
 			for(int i = 0; i < 2; i ++) {
 				DataMap data = null;
 				if( i == 0) {
-					System.out.println(i);
-					paraMap.put("user_email", "jimin16y@gmail.com");
+					//추후에 tbiz 메일 주석 풀기
+					//paraMap.put("user_email", "tbiz@tbizip.com");
 					paraMap.put("subject", "매칭 문의합니다");
 					paraMap.put("text", "매칭 문의해요");
 					System.out.println("TLO 담당자 이메일 없음");
