@@ -6,7 +6,7 @@
 $(document).ready(function(){	
 });
 
-function historyClick(demand_no, resear_no){
+function historyClick(dem_seqno, research_seqno){
  	var url = "/techtalk/doMatchHistoryListX.do";
  	var form = $('#frm')[0];
 	var data = new FormData(form);
@@ -14,8 +14,8 @@ function historyClick(demand_no, resear_no){
 		url : url,
        type: "post",
        data: {
-    	   demand_seqno : demand_no,
-    	   researcher_seqno : resear_no
+    	   demand_seqno : dem_seqno,
+    	   researcher_seqno : research_seqno
        	},
        dataType: "json",
        success : function(res){
@@ -294,7 +294,7 @@ function techInquiry(biz_name){
 					                                    <li><span class="mr txt_grey tech_nm ">${ dataTLO.rcode_name3}</span></li>
 					                                </ul>
 			                    				</div>
-					                            <button type="button" class="history_btn" ><span><a href="javascript:void(0);" onclick="historyClick('${ dataTLO.demand_no}','${ dataTLO.resear_no}')">이력보기</a></span></button>
+					                            <button type="button" class="history_btn" ><span><a href="javascript:void(0);" onclick="historyClick('${ dataTLO.dem_seqno}','${ dataTLO.research_seqno}')">이력보기</a></span></button>
 			                    			</div>
 			                    		</c:forEach>
 				                           
