@@ -2593,7 +2593,7 @@
 		*/
 		<![CDATA[
 			select tm.member_seqno ,tr.researcher_nm , tr.keyword , tr.re_intro_field , tt.applicant_nm , tr.researcher_seqno, 
-					tr.manager_seqno, tg.manager_demand, tg.manager_name, tg.manager_mobile_no, tg.manager_email, tg.manager_rank
+					tr.manager_seqno, tg.manager_demand, tg.manager_name, tg.manager_mobile_no, tg.manager_email, tg.manager_rank, tm.biz_name
 			, (SELECT code_name FROM tbiz.tbtech_code tc WHERE tc.code_key = tr.tech_code1) as code_name1
 	  		, (SELECT code_name FROM tbiz.tbtech_code tc WHERE tc.code_key = tr.tech_code2) as code_name2
 	  		, (SELECT code_name FROM tbiz.tbtech_code tc WHERE tc.code_key = tr.tech_code3) as code_name3
@@ -2714,7 +2714,7 @@
 			매칭된 기업수요 목록
 		*/
 		
-		select tm.*, tr.*, td.*,tt.*,  td.member_seqno as demand_seqno
+		select tm.*, tr.*, td.*,tt.*,  td.member_seqno as dem_seqno
 		, tr.keyword as Rkwd
 		, td.keyword as Bkwd
 		, td.update_date as rupdate
@@ -2724,6 +2724,7 @@
 		, ( select code_name from tbiz.tbtech_code D where D.code_key = td.tech_code1) as Bcode_name1
 		, ( select code_name from tbiz.tbtech_code D where D.code_key = td.tech_code2) as Bcode_name2
 		, ( select code_name from tbiz.tbtech_code D where D.code_key = td.tech_code3) as Bcode_name3
+		, ( select t.biz_name from tbiz.tblmember t where td.member_seqno  = t.member_seqno) as Rbiz_name
 		from tbiz.tblmember tm 
 		inner join tbiz.tblresearcher tr on tm.member_seqno = tr.member_seqno 
 		inner join tbiz.tblresearch_temp tt on tr.researcher_seqno = tt.research_seqno 
@@ -2734,8 +2735,8 @@
 		                           )
 		where tm.MEMBER_SEQNO=#{member_seqno}::INT
 		AND (
-		    (SELECT COUNT(*) FROM unnest(string_to_array(td.keyword, ',')) AS keyword_list
-		     WHERE keyword_list = ANY(string_to_array(tr.keyword, ','))) >= 2
+		    (SELECT COUNT(*) FROM unnest(string_to_array(tr.keyword, ',')) AS keyword_list
+		     WHERE keyword_list = ANY(string_to_array(td.keyword, ','))) >= 2
 		);
 	</select>
 	
@@ -2755,6 +2756,7 @@
 		, ( select code_name from tbiz.tbtech_code D where D.code_key = td.tech_code1) as Bcode_name1
 		, ( select code_name from tbiz.tbtech_code D where D.code_key = td.tech_code2) as Bcode_name2
 		, ( select code_name from tbiz.tbtech_code D where D.code_key = td.tech_code3) as Bcode_name3
+		, ( select t.biz_name from tbiz.tblmember t where tr.member_seqno  = t.member_seqno) as Bbiz_name
 		from tbiz.tblmember tm 
 		inner join tbiz.tbldemand td on tm.member_seqno = td.member_seqno 
 		inner join tbiz.tblresearcher tr on (
@@ -2767,7 +2769,8 @@
 		AND (
 		    (SELECT COUNT(*) FROM unnest(string_to_array(td.keyword, ',')) AS keyword_list
 		     WHERE keyword_list = ANY(string_to_array(tr.keyword, ','))) >= 2
-		);
+		)
+		and tr.member_seqno is not null;
 	</select>
 	
 	<select id="SubjectFrontSQL.doGetMatchTLOList" parameterType="dataMap" resultType="dataMap">
@@ -2776,30 +2779,26 @@
 			SQL ID : SubjectFrontSQL.doGetMatchTLOList
 			매칭된 연구자-기업수요 목록
 		*/
-		select DISTINCT tm.*, tr.*, td.*,  td.member_seqno as demand_no
-		, tr.keyword as Rkwd
-		, td.keyword as Bkwd
-		, td.update_date as rupdate
-		, tr.member_seqno as resear_no
-		, ( select code_name from tbiz.tbtech_code D where D.code_key = tr.tech_code1) as Rcode_name1
-		, ( select code_name from tbiz.tbtech_code D where D.code_key = tr.tech_code2) as Rcode_name2
-		, ( select code_name from tbiz.tbtech_code D where D.code_key = tr.tech_code3) as Rcode_name3
-		, ( select code_name from tbiz.tbtech_code D where D.code_key = td.tech_code1) as Bcode_name1
-		, ( select code_name from tbiz.tbtech_code D where D.code_key = td.tech_code2) as Bcode_name2
-		, ( select code_name from tbiz.tbtech_code D where D.code_key = td.tech_code3) as Bcode_name3
-		, tc.match_no
-		from tbiz.tblmember tm 
-		inner join tbiz.tblresearcher tr on tm.member_seqno = tr.member_seqno 
-		inner join tbiz.tblresearch_temp tt on tr.researcher_seqno = tt.research_seqno 
-		inner join tbiz.tbldemand td on (
+		select DISTINCT tm.*, tr.*, td.*,  td.demand_seqno as dem_seqno, tr.researcher_seqno as research_seqno
+	, tr.keyword as Rkwd
+	, td.keyword as Bkwd
+	, td.update_date as rupdate
+	, ( select code_name from tbiz.tbtech_code D where D.code_key = td.tech_code1) as Bcode_name1
+	, ( select code_name from tbiz.tbtech_code D where D.code_key = td.tech_code2) as Bcode_name2
+	, ( select code_name from tbiz.tbtech_code D where D.code_key = td.tech_code3) as Bcode_name3
+	, ( select code_name from tbiz.tbtech_code D where D.code_key = tr.tech_code1) as Rcode_name1
+	, ( select code_name from tbiz.tbtech_code D where D.code_key = tr.tech_code2) as Rcode_name2
+	, ( select code_name from tbiz.tbtech_code D where D.code_key = tr.tech_code3) as Rcode_name3
+	from tbiz.tblmember tm
+	inner join tbiz.tbldemand td on tm.member_seqno = td.member_seqno 
+	inner join tbiz.tblresearcher tr on (
 		                           (case when td.tech_code1 like tr.tech_code1 then 1 else 0 end +
 		                            case when td.tech_code2 like tr.tech_code2 then 1 else 0 end +
 		                            case when td.tech_code3 like tr.tech_code3 then 1 else 0 end) >=2
 		                           )
-		inner join tbiz.tblmatchlist tc on tr.member_seqno = tc.researcher_seqno 
-		and td.member_seqno = tc.demand_seqno 
-		where tm.biz_name=#{biz_name}
-		AND (
+	where tm.member_type ='TLO'
+	and td.member_seqno = #{member_seqno}::INT
+	AND (
 		    (SELECT COUNT(*) FROM unnest(string_to_array(td.keyword, ',')) AS keyword_list
 		     WHERE keyword_list = ANY(string_to_array(tr.keyword, ','))) >= 2
 		);
@@ -2814,10 +2813,7 @@
 		*/
 		select *
 		from tbiz.tblmatchlist   
-		<if test="match_no != ''">
-		where match_no = #{match_no}::INT
-		</if>
-		AND delete_flag = 'N'
+		where delete_flag = 'N'
 		<if test="researcher_seqno != ''">
 		AND researcher_seqno = #{researcher_seqno}::INT
 		</if>
@@ -2826,4 +2822,20 @@
 		</if>
 		ORDER BY match_list_seqno ASC
 	</select>
+	
+	<select id="SubjectFrontSQL.doViewResearchEmail" parameterType="dataMap" resultType="dataMap">
+		<!-- 2023-09-13  유지민 -->
+		/*
+			SQL ID : SubjectFrontSQL.doViewResearchEmail
+			연구자 상세보기 페이지 연구자 담당자 이메일 찾기
+		*/
+		select user_email
+		from tbiz.tblmember tm
+		where member_type = 'TLO'
+		<if test="biz_name != ''">
+		and biz_name = #{biz_name}
+		</if>
+		
+	</select>
+	
 </mapper>	
