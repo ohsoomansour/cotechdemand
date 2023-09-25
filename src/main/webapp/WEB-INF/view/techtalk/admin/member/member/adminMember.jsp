@@ -9,7 +9,7 @@
 		initDatePicker([$('#strDate'), $('#endDate')]);
 		
 		$("#list").jqGrid({
-			url : '/front/listMember.do', 
+			url : '/admin/listMember.do', 
 			mtype : 'POST',
 			datatype : 'json',
 			postData:{
@@ -143,11 +143,11 @@
 	function beforeLoad(seqno){
 		$.ajax({
 			type : 'GET',
-			url : '/front/joinAgreementConfirm.do?seqno=' + seqno,
+			url : '/admin/joinAgreementConfirm.do?seqno=' + seqno,
 			dataType : 'json',
 			success : function(data) {
 				console.log(data) //joinApprovedConfirm: {agree_flag: 'Y'}
-				var joinApprovedConfirm = data.joinApprovedConfirm.agree_flag;
+				var joinApprovedConfirm = data.joinApprovedConfirm.agree_flag
 
 				if(joinApprovedConfirm === 'Y') {
 					refresh(seqno);
@@ -163,14 +163,15 @@
 		
 	
 	
-    //meber_type이 ADMIN일 경우 가입 승인 가능ㅁ
+    //meber_type이 ADMIN일 경우 가입 승인 가능
     function fncAuthView(mode, seqno ) {
     	var member_type = '<%=(String)session.getAttribute("member_type")%>';
-    	console.log(member_type);
+    	var member_id = '<%=(String)session.getAttribute("id")%>';
+    	console.log("session: member_type:" + member_type);
     	if(member_type === "ADMIN" ){
 	    	$.ajax({
 					type : 'GET',
-					url : '/front/joinAgreementConfirm.do?seqno=' + seqno,
+					url : '/admin/joinAgreementConfirm.do?seqno=' + seqno,
 					dataType : 'json',
 					success : function(data) {
 						console.log(data) //joinApprovedConfirm: {agree_flag: 'Y'}
@@ -207,6 +208,7 @@
     
 	
 </script>
+
 
 <!-- compaVcContent s:  -->
 <div id="compaVcContent" class="cont_cv">

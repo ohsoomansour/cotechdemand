@@ -104,7 +104,7 @@
 		UPDATE TA_USER_SESS SET USEYN = 'N' WHERE USERNO = #{userno} AND SESSKEY = #{sesskey}
 		]]>
 
-<<<<<<< HEAD
+
 	</update>
 	
 	<select id="SessionCheckSql.getMenuList" parameterType="dataMap" resultType="dataMap">
@@ -123,8 +123,8 @@
 
 	</select>
 	
-=======
-	</update>
+
+	
 	
 	<select id="SessionCheckSql.getMenuList" parameterType="dataMap" resultType="dataMap">
 		/*
@@ -142,6 +142,6 @@
 
 	</select>
 	
->>>>>>> refs/remotes/origin/develop
+
 	
 </mapper>
