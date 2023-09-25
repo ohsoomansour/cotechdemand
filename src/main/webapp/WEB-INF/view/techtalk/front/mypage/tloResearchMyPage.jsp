@@ -974,7 +974,7 @@ function doSearchFilter () {
 				                		</span>
 			                		</c:if>
 									<span class="txt_left row_txt_tit">${data.researcher_nm} 연구자 </span>
-									<span class="update_date">최근 업데이트 일자 : ${data.applicant_date}</span>
+									<span class="update_date">최근 출원일 : ${data.applicant_date}</span>
 									<span class="re_beloong">${data.biz_name}</span>
 									<ul class="tag_box">
 					            	   	<li>${data. keyword}</li>
