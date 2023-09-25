@@ -4,14 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
 <script>
-var excel = new Array(); // 엑셀전역변수
 var list = new Array();
-var ex_assignm_no = new Array();
-var ex_keyword = new Array();
-var ex_re_start_date = new Array();
-var ex_re_end_date = new Array();
-var ex_re_institu_nm = new Array();
-var ex_re_project_nm = new Array();
 
 $(document).ready(function() {
 	var startIndex = 1;	// 인덱스 초기값
@@ -60,64 +53,23 @@ function detail()  {
 
     var re_intro_field = '<c:out value="${data.re_intro_field}"  escapeXml="false"/>';
   	//상세보기 정보
-	$.ajax({
-		type : 'POST',
-		url : '/techtalk/deGetResearcherDetail.do',
-		data : {
-			researcher_seqno : '<c:out value="${data.researcher_seqno}"  escapeXml="false"/>'
-		},
-		dataType : 'json',
-		success : function(res) {
-			//연구자소개
-			$('#re_intro_field').empty();
-			$('#re_intro_field').val(re_intro_field);
-			
-			//키워드
-			$('#keyword1').empty();
-			$('#keyword1').val(keyword1);
-			$('#keyword2').empty();
-			$('#keyword2').val(keyword2);
-			$('#keyword3').empty();
-			$('#keyword3').val(keyword3);
-			$('#keyword4').empty();
-			$('#keyword4').val(keyword4);
-			$('#keyword5').empty();
-			$('#keyword5').val(keyword5);
-			
-			//담당자 정보
-			$('#manager_demand').empty();
-			$('#manager_demand').val(res.manager.manager_demand);
-
-			$('#manager_rank').empty();
-			$('#manager_rank').val(res.manager.manager_rank);
-			
-			$('#manager_name').empty();
-			$('#manager_name').val(res.manager.manager_name);
-			
-			$('#manager_tel1').empty();
-			$('#manager_tel1').val(res.manager.manager_mobile_no.split('-')[0]);
-
-			$('#manager_tel2').empty();
-			$('#manager_tel2').val(res.manager.manager_mobile_no.split('-')[1]);
-
-			$('#manager_tel3').empty();
-			$('#manager_tel3').val(res.manager.manager_mobile_no.split('-')[2]);
-			
-			$('#manager_mail1').empty();
-			$('#manager_mail1').val(res.manager.manager_email.split('@')[0]);
-
-			$('#manager_mail2').empty();
-			$('#manager_mail2').val(res.manager.manager_email.split('@')[1]);
-			
-			layer_popup('#layer2');
-		},
-		error : function() {
-			
-		},
-		complete : function() {
-			
-		}
-	});
+	//연구자소개
+	$('#re_intro_field').empty();
+	$('#re_intro_field').val(re_intro_field);
+	
+	//키워드
+	$('#keyword1').empty();
+	$('#keyword1').val(keyword1);
+	$('#keyword2').empty();
+	$('#keyword2').val(keyword2);
+	$('#keyword3').empty();
+	$('#keyword3').val(keyword3);
+	$('#keyword4').empty();
+	$('#keyword4').val(keyword4);
+	$('#keyword5').empty();
+	$('#keyword5').val(keyword5);
+	
+	layer_popup('#layer2');
 }
 
 //상세보기 layer - 2023/09/07 
@@ -159,16 +111,6 @@ function layer_popup(el){
 
         return false;
     });
-}
-
-//이메일 도메인변경 - 2023/09/12
-function fncChangeEmail(obj){
-	var selValue = obj.value;
-	if(selValue == "직접입력" || selValue == ""){
-		$('#manager_mail2').val("");
-	}else{
-		$('#manager_mail2').val(selValue);
-	}
 }
 
 //기술분류 변경 - 2023/09/07
@@ -419,45 +361,10 @@ function doUpdate() {
 	for(var i=0; i<applicant_dt_ct; i++){                          
 		applicant_dt[i] = $("input[name=applicant_dt]").eq(i).val();
 	}
-	console.log(excel.length);
-	//엑셀데이터 수정값
-	if(excel.length != 0) {
-		var ex_assignm_no = new Array(excel.result.data.length);
-		var ex_re_project_nm = new Array(excel.result.data.length);
-		var ex_re_institu_nm = new Array(excel.result.data.length);
-		var ex_re_start_date = new Array(excel.result.data.length);
-		var ex_re_end_date = new Array(excel.result.data.length);
-		var ex_keyword = new Array(excel.result.data.length);
-
-	
-		for(var i=0; i<excel.result.data.length; i++) {
-			ex_assignm_no[i] = excel.result.data[i].ex_assignm_no;
-		}
-	
-		for(var i=0; i<excel.result.data.length; i++) {
-			ex_re_project_nm[i] = excel.result.data[i].ex_re_project_nm;
-		}
-	
-		for(var i=0; i<excel.result.data.length; i++) {
-			ex_re_institu_nm[i] = excel.result.data[i].ex_re_institu_nm;
-		}
-	
-		for(var i=0; i<excel.result.data.length; i++) {
-			ex_re_start_date[i] = excel.result.data[i].ex_re_start_date;
-		}
-	
-		for(var i=0; i<excel.result.data.length; i++) {
-			ex_re_end_date[i] = excel.result.data[i].ex_re_end_date;
-		}
-	
-		for(var i=0; i<excel.result.data.length; i++) {
-			ex_keyword[i] = excel.result.data[i].ex_keyword;
-		}
-	}
-	
+		
 	$.ajax({
 		type : 'POST',
-		url : '/techtalk/doUpdateResearcher.do',
+		url : '/techtalk/doUpdateResearcherX.do',
 		data : {
 			//연구자 정보 수정
 			researcher_seqno : $('#researcher_seqno').val(),
@@ -471,29 +378,11 @@ function doUpdate() {
 			keyword5 : $('#keyword5').val(),
 			re_intro_field : $('#re_intro_field').val(),
 
-			//담당자 정보 수정
-			manager_demand : $('#manager_demand').val(),
-			manager_rank : $('#manager_rank').val(),
-			manager_name : $('#manager_name').val(),
-			manager_tel1 : $('#manager_tel1').val(),
-			manager_tel2 : $('#manager_tel2').val(),
-			manager_tel3 : $('#manager_tel3').val(),
-			manager_mail1 : $('#manager_mail1').val(),
-			manager_mail2 : $('#manager_mail2').val(),
-
 			//특허리스트 수정
 			invent_research_seqno : invent_research_seqno,
 			invent_nm : invent_nm,
 			applicant_no : applicant_no,
-			applicant_dt : applicant_dt,
-
-			//엑셀 데이터
-			ex_assignm_no : ex_assignm_no,
-			ex_re_project_nm : ex_re_project_nm,
-			ex_re_institu_nm : ex_re_institu_nm,
-			ex_re_start_date : ex_re_start_date,
-			ex_re_end_date : ex_re_end_date,
-			ex_keyword : ex_keyword
+			applicant_dt : applicant_dt
 		},
 		dataType : 'json',
 		success : function(res) {
@@ -508,141 +397,7 @@ function doUpdate() {
 		}
 	});
 }
-function doupdateExcel() {
-	var history = new Array();
-	var result_history = new Array();
-	var historyList = new Array();
-	list = new Array();
-	
-	var fileupload = $("#excelFile")[0];
 
-	if(fileupload.files.length === 0){
-	    alert("엑셀파일을 선택해주세요");
-	    return;
-	}
-
-	var formData = new FormData();
-	formData.append("file", fileupload.files[0]);
-	
-	$.ajax({
-        type: "POST",
-        enctype: 'multipart/form-data',
-        url: "/techtalk/doUpdateExcel.do",
-        data: formData,
-        processData: false,
-        contentType: false,
-        cache: false,
-        timeout: 600000,
-        success: function (res) {
-        	excel = new Array();
-            excel = res;
-            alert("엑셀 데이터를 입력하였습니다.");
-           
-            //과제 수행이력 변경
-            for(var i = 0; i <excel.result.data.length; i++) {
-            	var proItem ={};
-        		proItem.re_project_nm = excel.result.data[i].ex_re_project_nm;
-        		proItem.re_institu_nm = excel.result.data[i].ex_re_institu_nm;
-        		proItem.re_start_date = excel.result.data[i].ex_re_start_date;
-        		proItem.re_end_date = excel.result.data[i].ex_re_end_date;
-        		list.push(proItem);
-            }
-            
-        	<c:forEach items="${proData}" var="list">
-	    		var proItem ={};
-	    		proItem.re_project_nm = "${list.re_project_nm}";
-	    		proItem.re_institu_nm = "${list.re_institu_nm}";
-	    		proItem.re_start_date = "${list.re_start_date}";
-	    		proItem.re_end_date = "${list.re_end_date}";
-	    		list.push(proItem);
-    		</c:forEach>
-
-    		var pro_count = (list.length > 5) ? 5 : list.length;	//연구히스토리  최대 5개 제한
-    		
-            proContens(pro_count);
-            
-            //연구 히스토리 변경
-            for(var i = 0; i <excel.result.data.length; i++) {
-            	var item ={};
-	    		item.ex_re_start_date = excel.result.data[i].ex_re_start_date;
-	    		item.ex_re_start_date = (item.ex_re_start_date+'').substr(0,4);
-	    		item.ex_keyword = excel.result.data[i].ex_keyword;
-	    		
-	    		history.push(item);	
-            }
-            
-            <c:forEach items="${dataHis}" var="list">
-	    		var item ={};
-	    		item.ex_re_start_date = "${list.re_start_date}";
-	    		item.ex_re_start_date = (item.ex_re_start_date+'').substr(0,4);
-	    		item.ex_keyword = "${list.keyword}";
-	    		
-	    		history.push(item);
-	    	</c:forEach>
-
-	    	let uniqueHis = {};
-	    	uniqueHis.ex_re_start_date = "";
-	    	uniqueHis.ex_keyword = "";
-
-	    	var year = new Array();
-
-	    	history.forEach((element) => {
-	    	    if (!year.includes(element["ex_re_start_date"])) {
-	    	    	uniqueHis.ex_re_start_date = element["ex_re_start_date"];
-	    	    	uniqueHis.ex_keyword = element["ex_keyword"];
-	    	    	year.push(element["ex_re_start_date"]);
-	    	    	result_history.push(element);
-	    	    }
-	    	});
-
-	    	//히스토리 연도별 정렬 
-	    	var tmp = 0;
-	    	var str_tmp = 0;
-	    	for(var i = 0; i < result_history.length; i++) {
-	    		for(var j = i+1; j < result_history.length; j++) { 
-					if(result_history[i]["ex_re_start_date"] > result_history[j]["ex_re_start_date"]) { 
-						tmp = result_history[i]["ex_re_start_date"];
-						str_tmp = result_history[i]["ex_keyword"];
-						result_history[i]["ex_re_start_date"] = result_history[j]["ex_re_start_date"];
-						result_history[i]["ex_keyword"] = result_history[j]["ex_keyword"];
-						result_history[j]["ex_re_start_date"] = tmp;
-						result_history[j]["ex_keyword"] = str_tmp;
-					}
-				}
-		   	} 
-	    	
-	    	for(var i = result_history.length-1; i >= 0; i--) {
-	    		var ahtml = "";
-	            ahtml += "<colgroup>"
-	            	ahtml += "<col>"
-	            		ahtml += "</colgroup>"
-	            			ahtml += "<thead>"
-	            				ahtml += "<tr>"	
-	            					ahtml += "<th style='width: 100%;'>" + result_history[i].ex_re_start_date + "</th>"
-	            					ahtml += "</tr>"
-	            						ahtml += "</thead>"
-	            							ahtml += "<tbody>"
-	            								ahtml += "<tr>"
-	            									ahtml += "<td>" + result_history[i].ex_keyword + "</td>"
-	            									ahtml += "</tr>"
-
-				historyList.push(ahtml);
-		   	}
-			
-			var count = (historyList.length > 5) ? 5 : historyList.length;	//연구히스토리  최대 5개 제한
-
-			$('#tbl_history').empty();
-			
-			for(i=0; i < count; i++) {
-				$('#tbl_history').append(historyList[i]);
-			}
-	
-        },
-        error: function (e) {
-            alert("실패");
-        }
-    });
-}
 </script>
 <div class="area_cont area_cont2" id="researcherlist">
 	<div id="compaVcContent" class="cont_cv">
@@ -916,70 +671,9 @@ function doupdateExcel() {
 							<a href="javascript:void(0);" onclick="lessPatentContens();" id="lessPatentButton"  class="btn-more">- 줄이기</a>
 						</div>
 					</div>
-					
-					<div class="area_cont area_cont2">
-						<div class="subject_corp">
-							<h4>담당자 정보</h4>
-						</div>
-						<div class="tbl_view tbl_public">
-							<table class="tbl">
-								<caption style="position:absolute !important;  width:1px;  height:1px; overflow:hidden; clip:rect(1px, 1px, 1px, 1px);" >담당자 정보</caption>
-								<colgroup>
-									<col style="width: 10%">
-									<col>
-								</colgroup>
-								<thead></thead>
-								<tbody class="view">
-									<tr>
-										<th scope="col"><label for="re_belong">소속</label></th>
-										<td class="ta_left">
-											<div class="form-control" style="max-width:100%;max-height:100%"><input type="text" style="width: 50%;" id="manager_demand" name="manager_demand" title="담당자 소속"/></div>
-										</td>
-									</tr>
-									<tr>
-										<th scope="col">직책</th>
-										<td class="ta_left"><input type="text" style="width: 50%;" id="manager_rank" name="manager_rank" title="담당자 직책"/></td>
-									</tr>
-									<tr>
-										<th scope="col">이름</th>
-										<td class="ta_left"><input type="text" style="width: 50%;" id="manager_name" name="manager_name" title="담당자 이름"/></td>
-									</tr>
-									<tr>
-										<th scope="col">연락처</th>
-										<td class="ta_left">
-											<div class="form-control" style="max-width:100%;max-height:100%">
-												<input type="text" style="width: 16%;" id="manager_tel1" name="manager_tel1" title="담당자 번호1"/> -
-												<input type="text" style="width: 16%;" id="manager_tel2" name="manager_tel2" title="담당자 번호2"/> - 
-												<input type="text" style="width: 16%;" id="manager_tel3" name="manager_tel3" title="담당자 번호3"/>
-											</div>
-										</td>
-									</tr>
-									<tr>
-										<th scope="col">이메일</th>
-										<td class="ta_left">
-											<div class="form-control" style="max-width:100%;max-height:100%">
-												<input type="text" id="manager_mail1" name="manager_mail1" style="width: 15%;" onkeyup="this.value=this.value.replace(/[\ㄱ-ㅎㅏ-ㅣ가-힣]/g, '');" maxlength="30" title="이메일아이디"> @
-			                                    <input type="text" id="manager_mail2" name="manager_mail2" style="width: 20%;" onkeyup="this.value=this.value.replace(/[\ㄱ-ㅎㅏ-ㅣ가-힣]/g, '');" maxlength="30" title="이메일 도메인 직접입력">
-			                                    <select class="form-control form_email3" id="manager_mail3" name="manager_mail3" onChange="fncChangeEmail(this);" title="이메일 도메인 선택">
-			                                        <option title="직접입력">직접입력</option>
-			                                        <option title="네이버">naver.com</option>
-			                                        <option title="G메일">gmail.com</option>
-			                                        <option title="다음">daum.net</option>
-			                                    </select>
-											</div>
-										</td>
-									</tr>
-								</tbody>
-							</table>
-						</div>
-					</div>
 					<!-- //page_content e:  -->
 					<div class="tbl_public">
                 	<div style="text-align:center;margin-top:40px;">
-                		<form id="uploadForm" enctype="multipart/form-data">
-                			<input type="file" id="excelFile" name="excelFile" accept=".xls,.xlsx,.csv">
-                		</form>
-                		<button type="button" id="updateExcel" name=updateExcel"" onClick="doupdateExcel();" class="btn_step" title="엑셀데이터 입력">엑셀데이터 입력</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
                 		<button type="button" onClick="doUpdate();" class="btn_step" title="수 정">수정</button>
                 		<button type="button" onClick="$('.dim-layer').fadeOut();" class="btn_step" title="취소">취소</button>
                 	</div>

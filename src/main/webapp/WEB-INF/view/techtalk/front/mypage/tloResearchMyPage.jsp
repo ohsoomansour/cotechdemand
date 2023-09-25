@@ -7,6 +7,8 @@
 <script>
 var invent = new Array();
 var proData = new Array();
+var list;
+var researcher_seq;
 
 $(document).ready(function() {
 	//체크박스 변경 - 2023/09/18
@@ -127,7 +129,7 @@ function proContens(length) {
 			ahtml +="<th>연구기간</th>"
 			ahtml +="<tr>"
 			ahtml +="</thead>"
-			ahtml +="<tbody>"
+			ahtml +="<tbody id='proData' name='proData'>"
 			if(list[0].re_project_nm != '' && list[0].re_project_nm != 0){
 				for(var i=0; i<length;i++){
 				ahtml +="<tr>"
@@ -285,7 +287,8 @@ function doSearch(e) {
 
 //목록관리 - 2023/09/18 
 function doListAll(e) {
-	$('#list').val('all');
+	list = 'all';
+	$('#list').val(list);
 	$('#page').val(1);
 	$('#frm').submit();
 }
@@ -304,7 +307,7 @@ function doSave(e) {
 	
 	$.ajax({
 		type : 'POST',
-		url : '/techtalk/doSaveList.do',
+		url : '/techtalk/doSaveListX.do',
 		data : {
 			researcher_seqno : researcher_seqno,
 			view_yn : view_yn
@@ -325,51 +328,11 @@ function doSave(e) {
 
 //취소 - 2023/09/18 
 function doCancel(e) {
-	$('#list').val('');
+	list='';
+	$('#list').val(list);
 	$('#page').val(1);
 	$('#frm').submit();
 }
-
-//상세보기 layer - 2023/09/15 
-/* function layer_popup(el, type){
-    var $el = $(el);    //레이어의 id를 $el 변수에 저장
-    var isdim = $el.prev().hasclass('dimbg'); //dimmed 레이어를 감지하기 위한 boolean 변수
-
-	isdim ? $('.dim-layer').fadein() : $el.fadein();
-
-    var $elwidth = ~~($el.outerwidth()),
-        $elheight = ~~($el.outerheight()),
-        docwidth = $(document).width(),
-        docheight = $(document).height();
-
-    // 화면의 중앙에 레이어를 띄운다.
-    if ($elheight < docheight || $elwidth < docwidth) {
-        $el.css({
-            margintop: -$elheight /2,
-            marginleft: -$elwidth/2
-        })
-    } else {
-        $el.css({top: 0, left: 0});
-    }
-    $('#skip_navigation').find("input, a, button").attr('tabindex','-1');
-    $('#compavchead').find("input, a, button").attr('tabindex','-1');
-    $('#compavccontent').find("input, a, button").attr('tabindex','-1');
-    $('.wrap-loading').find("input, a, button").attr('tabindex','-1');
-    $('.scroll-top').find("input, a, button").attr('tabindex','-1');
-    $('#compavcfoot').find("input, a, button").attr('tabindex','-1');
-
-    $el.find('a.btn-layerclose').click(function(){
-        isdim ? $('.dim-layer').fadeout() : $el.fadeout(); // 닫기 버튼을 클릭하면 레이어가 닫힌다.
-        $('#skip_navigation').find("input, a, button").removeattr('tabindex');
-        $('#compavchead').find("input, a, button").removeattr('tabindex');
-        $('#compavccontent').find("input, a, button").removeattr('tabindex');
-        $('.wrap-loading').find("input, a, button").removeattr('tabindex');
-        $('.scroll-top').find("input, a, button").removeattr('tabindex');
-	    $('#compavcfoot').find("input, a, button").removeattr('tabindex');
-
-        return false;
-    });
-} */
 
 //이메일 도메인변경 - 2023/09/15
 function fncChangeEmail(obj){
@@ -402,7 +365,7 @@ function fncChangeStd(obj, gubun){
 	}else{
 		$.ajax({
 			type : 'POST',
-			url : '/techtalk/deGetCodeList.do',
+			url : '/techtalk/deGetCodeListX.do',
 			data : {
 				parent_code_key : selValue,
 				gubun : gubun
@@ -443,23 +406,86 @@ function fncChangeStd(obj, gubun){
 	}
 }
 
+function filterChangeStd(obj, gubun){
+	var selValue = obj.value;
+	if(selValue == "" || selValue == "선택"){
+		if(gubun == "mid"){
+			$('#filterStdClassCd2').empty();
+			$('#filterStdClassCd3').empty();
+			$('#filterStdClassCd2').append("<option title='기술분류2' value=''>선택</option>");
+			if(selValue == "") {
+				$('#filterStdClassCd2').attr('disabled', 'disabled');
+			}
+			$('#filterStdClassCd3').append("<option title='기술분류3' value=''>선택</option>");
+			$('#filterStdClassCd3').attr('disabled', 'disabled');
+		} else if(gubun == "sub" || gubun == "end") {
+			$('#filterStdClassCd3').empty();
+			$('#filterStdClassCd3').append("<option title='기술분류3' value=''>선택</option>");
+			$('#filterStdClassCd3').attr('disabled', 'disabled');
+		} 
+	}else{
+		$.ajax({
+			type : 'POST',
+			url : '/techtalk/deGetCodeListX.do',
+			data : {
+				parent_code_key : selValue,
+				gubun : gubun
+			},
+			dataType : 'json',
+			success : function(res) {
+				var codeData = "";
+				var aHtml = "";
+				if(gubun == "mid"){
+					codeData = res.codeList;
+					aHtml += "<option title='기술분류2' value=''>선택</option>";
+					$.each(codeData, function(key, val){
+						aHtml += "<option title="+this.code_name+" value="+this.code_key+">"+this.code_name+"</option>";
+					});
+					
+					$('#filterStdClassCd2').empty();
+					$('#filterStdClassCd2').append(aHtml);
+					$('#filterStdClassCd2').removeAttr("disabled");	
+				} else if(gubun == "sub") {
+					codeData = res.codeList;
+					aHtml += "<option title='기술분류3' value=''>선택</option>";
+					$.each(codeData, function(key, val){
+						aHtml += "<option title="+this.code_name+" value="+this.code_key+">"+this.code_name+"</option>";
+					});
+					
+					$('#filterStdClassCd3').empty();
+					$('#filterStdClassCd3').append(aHtml);
+					$('#filterStdClassCd3').removeAttr("disabled");	
+				} 
+			},
+			error : function() {
+				
+			},
+			complete : function() {
+				
+			}
+		});
+	}
+}
+
 function detail(seq) {
 	invent = new Array();
 	proData = new Array();
-	
+	result = new Array();
+	researcher_seq = seq;
+
 	$.ajax({
 		type : 'POST',
-		url : '/techtalk/tloDetail.do',
+		url : '/techtalk/tloDetailX.do',
 		data : {
 			researcher_seqno : seq
 		},
 		dataType : 'json',
 		success : function(res) {
-			var result = res;
+			result = res;
+			
 			invent = result.invent;
 			proData = result.proData;
 			
-			console.log(result.dataHis);
 			//연구자 이름
 			$('#re_name').empty();
 			$('#re_name').append(result.data.researcher_nm);
@@ -470,25 +496,35 @@ function detail(seq) {
 		    $('#selStdClassCd1').val(result.data.tech_code1);
 		    $('#selStdClassCd2').val(result.data.tech_code2);   
 		    $('#selStdClassCd3').val(result.data.tech_code3);
-			
+
+		    $('#re_intro_field').val('');
 			//연구자소개
 			$('#re_intro_field').empty();
 			$('#re_intro_field').val(result.data.re_intro_field);
 			
-			//키워드
-			$('#keyword1').empty();
-			$('#keyword1').val(result.data.keyword1.trim());
-			$('#keyword2').empty();
-			$('#keyword2').val(result.data.keyword2.trim());
-			$('#keyword3').empty();
-			$('#keyword3').val(result.data.keyword3.trim());
-			$('#keyword4').empty();
-			$('#keyword4').val(result.data.keyword4.trim());
-			$('#keyword5').empty();
-			$('#keyword5').val(result.data.keyword5.trim());
+			//키워드		
+			$('#keyword1').val('');
+			$('#keyword2').val('');
+			$('#keyword3').val('');
+			$('#keyword4').val('');
+			$('#keyword5').val('');
+			
+			if(result.data.keyword != null) {
+				$('#keyword1').empty();
+				$('#keyword1').val(result.data.keyword1.trim());
+				$('#keyword2').empty();
+				$('#keyword2').val(result.data.keyword2.trim());
+				$('#keyword3').empty();
+				$('#keyword3').val(result.data.keyword3.trim());
+				$('#keyword4').empty();
+				$('#keyword4').val(result.data.keyword4.trim());
+				$('#keyword5').empty();
+				$('#keyword5').val(result.data.keyword5.trim());
+			}
+			
 
 			//국가과제수행이력
-			if(result.proData.length > 0) {
+			if(result.proData[0].re_project_nm != null) {
 				var count = (result.proData.length > 5) ? 5 : result.proData.length;
 				var aHtml = "";
 
@@ -498,14 +534,13 @@ function detail(seq) {
 					aHtml +=	"<td>" + proData[i].re_institu_nm + "</td>"
 					aHtml +=	"<td>" + proData[i].re_start_date + " ~ " +  proData[i].re_end_date + "</td>"
 					aHtml +="<tr>";
-					
 					$('#proData').empty();
 			    	$('#proData').append(aHtml);
 				}
 			}
 
 			//연구히스토리
-			if(result.dataHis.length > 0) {	
+			if(result.dataHis[0].his_date != null) {	
 				var aHtml = "";	
 				$.each(result.dataHis, function(key, dataHis){
 					aHtml += "<thead>"
@@ -559,32 +594,44 @@ function detail(seq) {
 			    	$('#invent').append(aHtml);
 				}
 			}
-			
+
 			//담당자 정보
-			$('#manager_demand').empty();
-			$('#manager_demand').val(result.data.manager_demand);
-
-			$('#manager_rank').empty();
-			$('#manager_rank').val(result.data.manager_rank);
+			$('#manager_demand').val('');
+			$('#manager_rank').val('');
+			$('#manager_name').val('');
+			$('#manager_tel1').val('');
+			$('#manager_tel2').val('');
+			$('#manager_tel3').val('');
+			$('#manager_mail1').val('');
+			$('#manager_mail2').val('');
 			
-			$('#manager_name').empty();
-			$('#manager_name').val(result.data.manager_name);
-			
-			$('#manager_tel1').empty();
-			$('#manager_tel1').val(result.data.manager_mobile_no.split('-')[0]);
+			if(result.data.manager_seqno != null) {
+				$('#manager_demand').empty();
+				$('#manager_demand').val(result.data.manager_demand);
 
-			$('#manager_tel2').empty();
-			$('#manager_tel2').val(result.data.manager_mobile_no.split('-')[1]);
+				$('#manager_rank').empty();
+				$('#manager_rank').val(result.data.manager_rank);
+				
+				$('#manager_name').empty();
+				$('#manager_name').val(result.data.manager_name);
+				
+				$('#manager_tel1').empty();
+				$('#manager_tel1').val(result.data.manager_mobile_no.split('-')[0]);
 
-			$('#manager_tel3').empty();
-			$('#manager_tel3').val(result.data.manager_mobile_no.split('-')[2]);
-			
-			$('#manager_mail1').empty();
-			$('#manager_mail1').val(result.data.manager_email.split('@')[0]);
+				$('#manager_tel2').empty();
+				$('#manager_tel2').val(result.data.manager_mobile_no.split('-')[1]);
 
-			$('#manager_mail2').empty();
-			$('#manager_mail2').val(result.data.manager_email.split('@')[1]);
-			
+				$('#manager_tel3').empty();
+				$('#manager_tel3').val(result.data.manager_mobile_no.split('-')[2]);
+				
+				$('#manager_mail1').empty();
+				$('#manager_mail1').val(result.data.manager_email.split('@')[0]);
+
+				$('#manager_mail2').empty();
+				$('#manager_mail2').val(result.data.manager_email.split('@')[1]);
+			}
+
+			$('#compaVcContent').css("overflow", "hidden");
 		    layer_popup('#researcherDetailPop', 'researcherDetailPop');
 		},
 		error : function() {
@@ -599,7 +646,260 @@ function detail(seq) {
 	
 }	
 
+function doupdateExcel() {
+	var history = new Array();
+	var result_history = new Array();
+	var historyList = new Array();
+	list = new Array();
+	
+	var fileupload = $("#excelFile")[0];
 
+	if(fileupload.files.length === 0){
+	    alert("엑셀파일을 선택해주세요");
+	    return;
+	}
+
+	var formData = new FormData();
+	formData.append("file", fileupload.files[0]);
+	
+	$.ajax({
+        type: "POST",
+        enctype: 'multipart/form-data',
+        url: "/techtalk/doUpdateExcelX.do",
+        data: formData,
+        processData: false,
+        contentType: false,
+        cache: false,
+        timeout: 600000,
+        success: function (res) {
+        	excel = new Array();
+            excel = res;
+            alert("엑셀 데이터를 입력하였습니다.");
+           
+            //과제 수행이력 변경
+            for(var i = 0; i <excel.result.data.length; i++) {
+            	var proItem ={};
+        		proItem.re_project_nm = excel.result.data[i].ex_re_project_nm;
+        		proItem.re_institu_nm = excel.result.data[i].ex_re_institu_nm;
+        		proItem.re_start_date = excel.result.data[i].ex_re_start_date;
+        		proItem.re_end_date = excel.result.data[i].ex_re_end_date;
+        		list.push(proItem);
+            }
+            
+        	<c:forEach items="${proData}" var="list">
+	    		var proItem ={};
+	    		proItem.re_project_nm = "${list.re_project_nm}";
+	    		proItem.re_institu_nm = "${list.re_institu_nm}";
+	    		proItem.re_start_date = "${list.re_start_date}";
+	    		proItem.re_end_date = "${list.re_end_date}";
+	    		list.push(proItem);
+    		</c:forEach>
+
+    		var pro_count = (list.length > 5) ? 5 : list.length;	//연구히스토리  최대 5개 제한
+    		
+            proContens(pro_count);
+            
+            //연구 히스토리 변경
+            for(var i = 0; i <excel.result.data.length; i++) {
+            	var item ={};
+	    		item.ex_re_start_date = excel.result.data[i].ex_re_start_date;
+	    		item.ex_re_start_date = (item.ex_re_start_date+'').substr(0,4);
+	    		item.ex_keyword = excel.result.data[i].ex_keyword;
+	    		
+	    		history.push(item);	
+            }
+            
+            <c:forEach items="${dataHis}" var="list">
+	    		var item ={};
+	    		item.ex_re_start_date = "${list.re_start_date}";
+	    		item.ex_re_start_date = (item.ex_re_start_date+'').substr(0,4);
+	    		item.ex_keyword = "${list.keyword}";
+	    		
+	    		history.push(item);
+	    	</c:forEach>
+
+	    	let uniqueHis = {};
+	    	uniqueHis.ex_re_start_date = "";
+	    	uniqueHis.ex_keyword = "";
+
+	    	var year = new Array();
+
+	    	history.forEach((element) => {
+	    	    if (!year.includes(element["ex_re_start_date"])) {
+	    	    	uniqueHis.ex_re_start_date = element["ex_re_start_date"];
+	    	    	uniqueHis.ex_keyword = element["ex_keyword"];
+	    	    	year.push(element["ex_re_start_date"]);
+	    	    	result_history.push(element);
+	    	    }
+	    	});
+
+	    	//히스토리 연도별 정렬 
+	    	var tmp = 0;
+	    	var str_tmp = 0;
+	    	for(var i = 0; i < result_history.length; i++) {
+	    		for(var j = i+1; j < result_history.length; j++) { 
+					if(result_history[i]["ex_re_start_date"] > result_history[j]["ex_re_start_date"]) { 
+						tmp = result_history[i]["ex_re_start_date"];
+						str_tmp = result_history[i]["ex_keyword"];
+						result_history[i]["ex_re_start_date"] = result_history[j]["ex_re_start_date"];
+						result_history[i]["ex_keyword"] = result_history[j]["ex_keyword"];
+						result_history[j]["ex_re_start_date"] = tmp;
+						result_history[j]["ex_keyword"] = str_tmp;
+					}
+				}
+		   	} 
+	    	
+	    	for(var i = result_history.length-1; i >= 0; i--) {
+	    		var ahtml = "";
+	            ahtml += "<colgroup>"
+	            	ahtml += "<col>"
+	            		ahtml += "</colgroup>"
+	            			ahtml += "<thead>"
+	            				ahtml += "<tr>"	
+	            					ahtml += "<th style='width: 100%;'>" + result_history[i].ex_re_start_date + "</th>"
+	            					ahtml += "</tr>"
+	            						ahtml += "</thead>"
+	            							ahtml += "<tbody>"
+	            								ahtml += "<tr>"
+	            									ahtml += "<td>" + result_history[i].ex_keyword + "</td>"
+	            									ahtml += "</tr>"
+
+				historyList.push(ahtml);
+		   	}
+			
+			var count = (historyList.length > 5) ? 5 : historyList.length;	//연구히스토리  최대 5개 제한
+
+			$('#tbl_history').empty();
+			
+			for(i=0; i < count; i++) {
+				$('#tbl_history').append(historyList[i]);
+			}
+	
+        },
+        error: function (e) {
+            alert("실패");
+        }
+    });
+}    
+
+function doUpdate() {
+	// 특허리스트 수정 값
+	var invent_research_seqno_ct = $("input[name=invent_research_seqno]").length;
+	var invent_nm_ct = $("input[name=invent_nm]").length;
+	var applicant_no_ct = $("input[name=applicant_no]").length;
+	var applicant_dt_ct = $("input[name=applicant_dt]").length;
+
+	var invent_research_seqno = new Array(invent_research_seqno_ct);
+	var invent_nm = new Array(invent_nm_ct);
+	var applicant_no = new Array(applicant_no_ct);
+	var applicant_dt = new Array(applicant_dt_ct);
+
+	for(var i=0; i<invent_research_seqno_ct; i++){                          
+		invent_research_seqno[i] = $("input[name=invent_research_seqno]").eq(i).val();
+	}
+	for(var i=0; i<invent_nm_ct; i++){                          
+		invent_nm[i] = $("input[name=invent_nm]").eq(i).val();
+	}
+	for(var i=0; i<applicant_no_ct; i++){                          
+		applicant_no[i] = $("input[name=applicant_no]").eq(i).val();
+	}
+	for(var i=0; i<applicant_dt_ct; i++){                          
+		applicant_dt[i] = $("input[name=applicant_dt]").eq(i).val();
+	}
+	
+	//엑셀데이터 수정값
+	if(excel.length != 0) {
+		var ex_assignm_no = new Array(excel.result.data.length);
+		var ex_re_project_nm = new Array(excel.result.data.length);
+		var ex_re_institu_nm = new Array(excel.result.data.length);
+		var ex_re_start_date = new Array(excel.result.data.length);
+		var ex_re_end_date = new Array(excel.result.data.length);
+		var ex_keyword = new Array(excel.result.data.length);
+
+	
+		for(var i=0; i<excel.result.data.length; i++) {
+			ex_assignm_no[i] = excel.result.data[i].ex_assignm_no;
+		}
+	
+		for(var i=0; i<excel.result.data.length; i++) {
+			ex_re_project_nm[i] = excel.result.data[i].ex_re_project_nm;
+		}
+	
+		for(var i=0; i<excel.result.data.length; i++) {
+			ex_re_institu_nm[i] = excel.result.data[i].ex_re_institu_nm;
+		}
+	
+		for(var i=0; i<excel.result.data.length; i++) {
+			ex_re_start_date[i] = excel.result.data[i].ex_re_start_date;
+		}
+	
+		for(var i=0; i<excel.result.data.length; i++) {
+			ex_re_end_date[i] = excel.result.data[i].ex_re_end_date;
+		}
+	
+		for(var i=0; i<excel.result.data.length; i++) {
+			ex_keyword[i] = excel.result.data[i].ex_keyword;
+		}
+	}
+	
+	$.ajax({
+		type : 'POST',
+		url : '/techtalk/doUpdateTloResearcherX.do',
+		data : {
+			//연구자 정보 수정
+			researcher_seqno : researcher_seq,
+			selStdClassCd1 :  $('#selStdClassCd1').val(),
+			selStdClassCd2 : $('#selStdClassCd2').val(),
+			selStdClassCd3 : $('#selStdClassCd3').val(),
+			keyword1 : $('#keyword1').val(),
+			keyword2 : $('#keyword2').val(),
+			keyword3 : $('#keyword3').val(),
+			keyword4 : $('#keyword4').val(),
+			keyword5 : $('#keyword5').val(),
+			re_intro_field : $('#re_intro_field').val(),
+
+			//담당자 정보 수정
+			manager_demand : $('#manager_demand').val(),
+			manager_rank : $('#manager_rank').val(),
+			manager_name : $('#manager_name').val(),
+			manager_tel1 : $('#manager_tel1').val(),
+			manager_tel2 : $('#manager_tel2').val(),
+			manager_tel3 : $('#manager_tel3').val(),
+			manager_mail1 : $('#manager_mail1').val(),
+			manager_mail2 : $('#manager_mail2').val(),
+
+			//특허리스트 수정
+			invent_research_seqno : invent_research_seqno,
+			invent_nm : invent_nm,
+			applicant_no : applicant_no,
+			applicant_dt : applicant_dt,
+
+			//엑셀 데이터
+			ex_assignm_no : ex_assignm_no,
+			ex_re_project_nm : ex_re_project_nm,
+			ex_re_institu_nm : ex_re_institu_nm,
+			ex_re_start_date : ex_re_start_date,
+			ex_re_end_date : ex_re_end_date,
+			ex_keyword : ex_keyword
+		},
+		dataType : 'json',
+		success : function(res) {
+			alert("연구자 정보를 수정했습니다.");
+			location.href = "/techtalk/tloResearchMyPage.do";
+		},
+		error : function() {
+			
+		},
+		complete : function() {
+			
+		}
+	});
+}
+
+function doSearchFilter () {
+	$('#page').val(1);
+	$('#frm2').submit();
+}
 
 
 </script>
@@ -612,7 +912,7 @@ function detail(seq) {
 <div id="compaVcContent" class="cont_cv">
 	<div id="mArticle" class="assig_app">
 		<h2 class="screen_out">본문영역</h2>
-		<div class="wrap_cont">
+		<div class="wrap_cont" >
             <!-- page_title s:  -->
 			<div class="area_tit">
 				<h3 class="tit_corp">연구자 목록</h3>
@@ -926,6 +1226,7 @@ function detail(seq) {
 	</div>
 </div>
 
+<form action="#" id="frm2" name="frm2" method="post">
 <div class="dim-layer filterPop" >
     <div class="dimBg"></div>
     <div id="filterPop" class="pop-layer" style="height:420px;width:640px">
@@ -966,24 +1267,24 @@ function detail(seq) {
 											<span class="inner"><span class="txt_checked">전체</span></span> 
 										</label>
 									</div>
-									<div class="btn_chk div-inline">
-										<input type="checkbox" name="tech_field"  id="b1" value="b1"> 
-										<label for="b1" class="option_label">  
-											<span class="inner"><span class="txt_checked">대분류 선택</span></span> 
-										</label>
-									</div>
-									<div class="btn_chk div-inline">
-										<input type="checkbox" name="tech_field"  id="b2" value="b2"> 
-										<label for="b2" class="option_label">  
-											<span class="inner"><span class="txt_checked">중분류 선택</span></span> 
-										</label>
-									</div>
-									<div class="btn_chk div-inline">
-										<input type="checkbox" name="tech_field"  id="b3" value="b3"> 
-										<label for="b3" class="option_label">  
-											<span class="inner"><span class="txt_checked">소분류 선택</span></span> 
-										</label>
-									</div>
+									<select id="filterStdClassCd1" name="filterStdClassCd1" onChange="filterChangeStd(this, 'mid');" title="기술분류1" style="width: 25%;">
+										<option title="기술분류1" value="">선택</option>
+										<c:forEach var="data" items="${codeList1}" varStatus="status">
+											<option title="${data.code_name}" value="${data.code_key}">${data.code_name}</option> 
+										</c:forEach>
+									</select>
+									<select id="filterStdClassCd2" name="filterStdClassCd2" disabled onChange="filterChangeStd(this, 'sub');" title="기술분류2" style="width: 25%;">
+										<option title="기술분류2" value="">선택</option>
+										<c:forEach var="data" items="${codeList2}" varStatus="status">
+											<option title="${data.code_name}" value="${data.code_key}">${data.code_name}</option> 
+										</c:forEach>
+									</select>
+									<select id="filterStdClassCd3" name="filterStdClassCd3" disabled title="기술분류3" style="width: 25%;">
+										<option title="기술분류3" value="">선택</option>
+										<c:forEach var="data" items="${codeList3}" varStatus="status">
+											<option title="${data.code_name}" value="${data.code_key}">${data.code_name}</option>
+										</c:forEach>
+									</select>
 								</td>
 							</tr>
 							<tr>
@@ -1037,7 +1338,7 @@ function detail(seq) {
 					</table>
 					<div class="tbl_public" >
 						<div style="text-align:center;margin-top:40px;">
-		                	<button type="button" class="btn_step btn_point_black"  title="확인">확인</button>
+		                	<button type="button" class="btn_step btn_point_black" onClick="javascript:doSearchFilter();"  title="적용">적용</button>
 		                	<button type="button" class="btn_line btn_cancel" id="cancelId"  name="btnCancel" title="닫기">닫기</button>
 	                	</div>
 	                </div>
@@ -1046,3 +1347,4 @@ function detail(seq) {
         </div>
    	</div>
 </div>
+</form>

@@ -59,12 +59,7 @@ public class MyPageService extends BaseSvc<DataMap>{
 		List<DataMap> result = this.dao.dolistQuery("MyPageSQL.doGetExcel", paraMap);
 		return result;
 	}
-	
-	/* 마이페이지 담당자정보 - 2023/09/11 */
-	public DataMap doGetManager(DataMap paraMap) {
-		DataMap result = this.dao.selectQuery("MyPageSQL.doGetManager", paraMap);
-		return result;
-	}
+
 	
 	/* 마이페이지 연구자 수정 - 2023/09/13 */
 	public void doUpdateResearcher(DataMap paraMap) {
@@ -167,8 +162,19 @@ public class MyPageService extends BaseSvc<DataMap>{
 	
 	/* 마이페이지 TLO연구자 상세 - 2023/09/05 */
 	public DataMap doGetTloDetail(DataMap paraMap) {
-		System.out.println("!!!");
 		DataMap result = this.dao.selectQuery("MyPageSQL.doGetTloDetail", paraMap);
+		return result;
+	}
+	
+	/* 마이페이지 연구자 카운트 - 2023/09/15 */
+	public int doCountAdminResearcherItem(DataMap paraMap) {
+		int result = this.dao.countQuery("MyPageSQL.doCountAdminResearcherItem", paraMap);
+		return result;
+	}
+	
+	/* 마이페이지 TLO 연구자목록 - 2023/09/15 */
+	public List<DataMap> doGetAdminResearchList(DataMap paraMap) {
+		List<DataMap> result = this.dao.dolistQuery("MyPageSQL.doGetAdminResearchList", paraMap);
 		return result;
 	}
 }
