@@ -124,4 +124,15 @@ public class MemberFrontService extends BaseSvc<DataMap>{
 	public int doChangePwd(DataMap paraMap) {
 		return this.dao.updateQuery("Member_v_SQL.doUpdatePw", paraMap);
 	}
+	/* 비밀번호변경 -> 비밀번호변경 2023/09/22/박성민 */
+	public int doChangePwdFind(DataMap paraMap) {
+		return this.dao.updateQuery("Member_v_SQL.doUpdatePwFind", paraMap);
+	}
+	/* 인증번호생성 -> 비밀번호변경 2023/09/22/박성민 */
+	public int doSetCertification(DataMap paraMap) {
+		return this.dao.updateQuery("Member_v_SQL.doUpdateCertification", paraMap);
+	}
+	public DataMap doGetCertification(DataMap paraMap) {
+		return this.dao.selectQuery("Member_v_SQL.doCheckCertification", paraMap);
+	}
 }

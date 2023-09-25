@@ -162,7 +162,7 @@ function memberJoin() {
                            		</div>
                            		<div class="lu_right">
 	                           		<a href="/techtalk/findIdPage.do" class="btn_file_pw" id="buttonFindId" title="아이디 찾기">아이디 찾기</a>
-	                           		<a href="/techtalk/findPwdPage.do" class="btn_file_pw" id="buttonFindPw" title="패스워드 찾기">패스워드 찾기</a>
+	                           		<a href="/techtalk/findPwdCheckIdPage.do" class="btn_file_pw" id="buttonFindPw" title="패스워드 찾기">패스워드 찾기</a>
                            		</div>
                            </div>
                            

@@ -16,67 +16,38 @@
 <script>
 
 $(document).ready(function() {
-	
+	$('#btnSubmitNum').click(function() {
+		fncFindPwdToEmail();
+	});
+	$('#btnCheckCerti').click(function() {
+		checkCerti();
+	});
 });
 
-//[패스워드 찾기] - 패스워드 찾기 -> 2023/09/21 - 박성민
-function fncFindPwd() {
-	var id = $('#id').val();
-	if(id ==''){
-		alert_popup_focus('아이디를 입력해주세요.',"#id");
-		}
-		$.ajax({
-			type : 'POST',
-			url : '/techtalk/findPwd1X.do',
-			data : {
-				id : id
-			},
-			dataType : 'json',
-			success : function(data) {
-				var result_count = data.result_count;
-				if(result_count == '0') {
-					alert_popup_focus('존재하지 않는 회원 아이디 입니다. 회원가입을 진행해 주세요.',"#id");
-					return false;
-				}else{
-					$('#btnFindPwd').css('display','none');
-					$('#emailDiv').css('display','block');
-					$('#btnSubmitNum').css('display','block');
-					}
-			},
-			error : function() {
-				
-			},
-			complete : function() {
-				
-			}
-		});
-}
-
-//[패스워드 찾기] - 인증번호보내기 -> 2023/09/21 - 박성민
+//[비밀번호 찾기] - 인증번호 보내기 -> 2023/09/21 - 박성민
 function fncFindPwdToEmail() {
-	var id = $('#id').val();
+	var user_name = $('#userName').val();
 	var user_email = $('#userEmail1').val()+"@"+$('#userEmail2').val();
-	if(!isBlank('아이디', '#id'))
+	if(!isBlank('이름', '#userName'))
 	if(!isBlank('이메일', '#userEmail1'))
 	if(!isBlank('이메일도메인', '#userEmail2')){
 		$.ajax({
 			type : 'POST',
-			url : '/techtalk/findPwd2X.do',
+			url : '/techtalk/findIdX.do',
 			data : {
-				id : id,
+				user_name : user_name,
 				user_email : user_email
 			},
 			dataType : 'json',
 			success : function(data) {
 				var result_count = data.result_count;
 				if(result_count == '0') {
-					alert_popup_focus('이메일 주소를 확인해 주세요.',"#id");
+					alert_popup_focus('이름 및 이메일을 확인해주세요.',"#userName");
 					return false;
-				}else{
-					$('#btnFindPwd').css('display','none');
-					$('#emailDiv').css('display','block');
-					$('#btnSubmitNum').css('display','block');
-					}
+				}
+				else if(result_count =='1'){
+					$('#divCerti').css('display','inline-block');
+				}
 			},
 			error : function() {
 				
@@ -87,6 +58,63 @@ function fncFindPwdToEmail() {
 		});
 	}
 }
+//[아이디 찾기] - 인증번호 검증 -> 2023/09/21 - 박성민
+function checkCerti() {
+	var user_name = $('#userName').val();
+	var user_email = $('#userEmail1').val()+"@"+$('#userEmail2').val();
+	var certification_no = $('#certificationNo').val();
+	if(!isBlank('인증번호', '#certificationNo')){
+		$.ajax({
+			type : 'POST',
+			url : '/techtalk/doGetCertificationX.do',
+			data : {
+				user_name : user_name,
+				certification_no : certification_no,
+				user_email : user_email
+			},
+			dataType : 'json',
+			success : function(data) {
+				console.log(data.result);
+				var result = data.result;
+				if(result == null) {
+					alert_popup_focus('인증번호를 확인하시거나 5분이내에 입력해주세요.',"#userName");
+					return false;
+				}
+				else if(result != null){
+					//alert("성공");
+					console.log(data);
+					var frm = document.createElement('form'); 
+					frm.name = 'frm'; 
+					frm.method = 'post'; 
+					frm.action = '/techtalk/completeFindPwd.do'; 
+					var input1 = document.createElement('input');
+					var input2 = document.createElement('input'); 
+					input1.setAttribute("type", "hidden"); 
+					input1.setAttribute("name", "id"); 
+					input1.setAttribute("value", data.result.id); 
+					input2.setAttribute("type", "hidden"); 
+					input2.setAttribute("name", "member_seqno"); 
+					input2.setAttribute("value", data.result.member_seqno); 
+					frm.appendChild(input1); 
+					frm.appendChild(input2);
+					document.body.appendChild(frm); 
+					console.log(frm);
+					console.log(data);
+					console.log(data.result);
+					frm.submit();
+					
+				}
+			},
+			error : function() {
+				
+			},
+			complete : function() {
+				
+			}
+		});
+	}
+}
+
 
 </script>
 	<div id="compaLogin">
@@ -100,12 +128,12 @@ function fncFindPwdToEmail() {
                    <div class="login_form_box">
                        <div class="login_form_box_inner">
                        <form id="frm_login" method="post">
-                           <h2>비밀번호 찾기</h2>
+                           <h3>본인확인 이메일로 인증( ${email} )</h3>
                             <label>비밀번호를 찾고자하는 아이디를 입력해 주세요.</label>
                            <div class="login_form">
-                               <label>아이디</label>
+                               <label>이름</label>
                                <div class="login-form-input">
-                                   <label><input type="text" class="form-control" id="id" name="id" placeholder="아이디를 입력해주세요." title="아이디" autofocus></label>
+                                   <label><input type="text" class="form-control" id="userName" name="user_name" placeholder="이름을 입력해주세요." title="이름" autofocus></label>
                                </div>
                            </div>
                            <div class="login_form" id="emailDiv" style="display:block;">
@@ -117,14 +145,17 @@ function fncFindPwdToEmail() {
                                   <button type="button" class="btn_login"  id="btnSubmitNum" title="인증번호 전송" style="width:30%; display:inline-block;">인증번호 전송</button>
                                </div>
                            </div>
-                           
+                           <div class="login-form-input" style="display:none;" id="divCerti">
+                               <label>인증번호</label>
+                                   <input type="text" class="form-control" id="certificationNo" name="certification_no"  title="인증번호" style="width:60%;">
+                                   <button type="button" class="btn_login"  id="btnCheckCerti" title="인증번호 확인" style="width:30%;">인증번호 확인</button>
+                               </div>
                            <div class="login_util">
                            		<div class="lu_left">
                            			<div class="box_checkinp">
 					                </div>
                            		</div>
                            </div>
-                           <button type="button" class="btn_login"  id="btnFindPwd" onclick="fncFindPwd();" title="다음">다음</button>
                            
                        </form>
                        </div>

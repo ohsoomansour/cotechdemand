@@ -334,6 +334,24 @@
 		]]>
 	</update>
 	
+	<update id="Member_v_SQL.doUpdatePwFind" parameterType="dataMap">
+		<!-- 2023-09-22 박성민 -->
+		/*
+			SQL ID : Member_v_SQL.doUpdatePw
+			사용자 패스워드 변경
+		*/
+		<![CDATA[
+			UPDATE	
+				TBLMEMBER
+			SET
+				PW = #{new_pwd}
+			WHERE
+				MEMBER_SEQNO = #{member_seqno}::INT
+			AND
+				ID = #{id}
+		]]>
+	</update>
+	
 	<update id="Member_v_SQL.doUpdateBusiness" parameterType="dataMap">
 		<!-- 2021-04-21 추정완 -->
 		/*
@@ -501,6 +519,38 @@
 			select *
 			from tblmember
 			where id = #{id}
+        ]]>	
+	</select>
+	
+	<update id="Member_v_SQL.doUpdateCertification" parameterType="dataMap">
+		<!-- 2023-09-22 박성민 -->
+		/*
+			SQL ID : Member_v_SQL.doUpdateCertification
+			인증번호 생성
+		*/
+		<![CDATA[
+			UPDATE	
+				TBLMEMBER
+			SET
+				CERTIFICATION_NO = #{certification_no},
+				CERTIFICATION_EXPIRED = now()
+			WHERE
+				MEMBER_SEQNO = #{member_seqno}::INT
+		]]>
+	</update>
+	
+	<select id="Member_v_SQL.doCheckCertification" resultType="dataMap" parameterType="dataMap">	
+		/*
+			SQL ID : Member_v_SQL.doCheckCertification
+			인증번호 검증
+		*/
+		<![CDATA[
+			select id, member_seqno
+			from tblmember
+			where user_name = #{user_name}
+			AND CERTIFICATION_NO = #{certification_no}
+			AND EXTRACT(EPOCH FROM (now() - CERTIFICATION_EXPIRED)) <= 300
+			AND user_email = #{user_email}
         ]]>	
 	</select>
 </mapper>

@@ -1,6 +1,7 @@
 package com.ttmsoft.toaf.util;
 
 import java.io.File;
+import java.security.SecureRandom;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
@@ -489,4 +490,65 @@ public class CommonUtil {
 	      }
 	      return ret;
 	   }
+	   
+	   //문자열랜덤생성기
+	   public static String generateRandomVerificationCode() {
+		   String ALLOWED_CHARS = "0123456789";
+		   
+	        SecureRandom random = new SecureRandom();
+	        StringBuilder verificationCode = new StringBuilder();
+
+	        for (int i = 0; i < 7; i++) {
+	            int randomIndex = random.nextInt(ALLOWED_CHARS.length());
+	            verificationCode.append(ALLOWED_CHARS.charAt(randomIndex));
+	        }
+
+	        return verificationCode.toString();
+	    }
+	   
+	   //이메일 아스트릭처리
+	  public static String getEmailToAstric(String email) {
+		    int atIndex = email.indexOf('@');
+	        int dotIndex = email.lastIndexOf('.');
+	
+	        if (atIndex < 0 || dotIndex < 0 || atIndex >= dotIndex) {
+	            // Invalid email format, process the entire email as '*'
+	            return processEntireEmail(email);
+	        }
+	
+	        StringBuilder processedEmail = new StringBuilder();
+	
+	        // Process characters before '@'
+	        for (int i = 0; i < Math.min(atIndex, 2); i++) {
+	            processedEmail.append(email.charAt(i));
+	        }
+	        for (int i = 2; i < atIndex; i++) {
+	            processedEmail.append('*');
+	        }
+	
+	        // Append '@' and process characters before '.'
+	        processedEmail.append(email.charAt(atIndex));
+	        for (int i = atIndex + 1; i < Math.min(atIndex + 3, dotIndex); i++) {
+	            processedEmail.append(email.charAt(i));
+	        }
+	        for (int i = Math.min(atIndex + 3, dotIndex); i < dotIndex; i++) {
+	            processedEmail.append('*');
+	        }
+	
+	        // Append remaining characters after '.'
+	        for (int i = dotIndex; i < email.length(); i++) {
+	            processedEmail.append(email.charAt(i));
+	        }
+	
+	        return processedEmail.toString();
+	  }
+	  private static String processEntireEmail(String email) {
+	        StringBuilder processedEmail = new StringBuilder();
+
+	        for (int i = 0; i < email.length(); i++) {
+	            processedEmail.append('*');
+	        }
+
+	        return processedEmail.toString();
+	    }
 }

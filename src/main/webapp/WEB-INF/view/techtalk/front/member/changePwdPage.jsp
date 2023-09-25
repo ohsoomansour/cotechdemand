@@ -83,7 +83,7 @@
 									<td class="ta_left">
 										<div class="form-inline">
 											<input type="password" class="form-control form_man_name"
-												id="newPwd" name="new_pwd" maxlength="20" title="새 비밀번호" value=${userInfo.user_name }>
+												id="newPwd" name="new_pwd" maxlength="20" title="새 비밀번호" >
 										</div>
 									</td>
 								</tr>

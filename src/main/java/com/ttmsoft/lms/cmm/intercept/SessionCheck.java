@@ -347,7 +347,7 @@ public class SessionCheck extends HandlerInterceptorAdapter {
 
 		boolean isListBoardItem = url.indexOf("/techtalk/mainView.do") != -1;
 		boolean isAddBoardItem = url.indexOf("/techtalk/findIdPage.do") != -1;
-		boolean isViewBoardItem = url.indexOf("/techtalk/findPwdPage.do") != -1;
+		boolean isViewBoardItem = url.indexOf("/techtalk/find") != -1;
 		boolean isLoginPage = url.indexOf("/techtalk/login.do") != -1;
 		boolean isLogin = url.indexOf("login") != -1;
 		boolean isMemberJoinForm = url.indexOf("/techtalk/memberJoinFormPage.do") != -1;

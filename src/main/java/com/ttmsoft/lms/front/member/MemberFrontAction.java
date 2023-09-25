@@ -124,7 +124,7 @@ public class MemberFrontAction extends BaseAct {
 	 */
 	@RequestMapping (value = "/findIdPage.do")
 	public ModelAndView doFindUserIdPage(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
-		ModelAndView mav = new ModelAndView("/techtalk/front/member/findIdPage.front");
+		ModelAndView mav = new ModelAndView("/techtalk/front/member/findIdPage.login");
 		return mav;
 	}
 	/**
@@ -139,7 +139,24 @@ public class MemberFrontAction extends BaseAct {
 	 */
 	@RequestMapping (value = "/findPwdPage.do")
 	public ModelAndView doFindUserPwPage(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
-		ModelAndView mav = new ModelAndView("/techtalk/front/member/findPwdPage.front");
+		ModelAndView mav = new ModelAndView("/techtalk/front/member/findPwdPage.login");
+		mav.addObject("email",paraMap.getstr("email"));
+		return mav;
+	}
+	
+	/**
+	 *
+	 * @Author   : psm
+	 * @Date	 : 2023. 9. 12. 
+	 * @Parm	 : DataMap
+	 * @Return   : ModelAndView
+	 * @Function : 사용자 패스워드 찾기
+	 * @Explain  : 
+	 *
+	 */
+	@RequestMapping (value = "/findPwdCheckIdPage.do")
+	public ModelAndView doFindCheckUserIdPage(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
+		ModelAndView mav = new ModelAndView("/techtalk/front/member/findPwdCheckIdPage.login");
 		return mav;
 	}
 	
@@ -184,11 +201,11 @@ public class MemberFrontAction extends BaseAct {
 	 */
 	@RequestMapping (value = "/completeFindPwd.do")
 	public ModelAndView doFindUserPwd(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
-		ModelAndView mav = new ModelAndView("/techtalk/front/member/findPwdComplete.front");
-		DataMap navi = new DataMap();
-		navi.put("one", "메인");
-		navi.put("two", "아이디찾기 결과");
-		mav.addObject("navi",navi);
+		ModelAndView mav = new ModelAndView("/techtalk/front/member/findPwdComplete.login");
+		System.out.println("paraMap + " + paraMap);
+		mav.addObject("id",paraMap.getstr("id"));
+		mav.addObject("member_seqno",paraMap.getstr("member_seqno"));
+		System.out.println("어케나오는데 " + paraMap.getstr("member_seqno"));
 		try {
 
 		} catch (Exception e) {
@@ -243,11 +260,28 @@ public class MemberFrontAction extends BaseAct {
 		ModelAndView mav = new ModelAndView("jsonView");
 		try {
 			System.out.println("paraMap : " + paraMap.toString());
+			
 			int count = memberFrontService.doCountFindMemberId(paraMap);
 			if(count > 0) {
 				DataMap result = memberFrontService.doFindMemberId(paraMap);
 				mav.addObject("result", result);
 				mav.addObject("result_count", count);
+				
+				paraMap.put("member_seqno", result.getstr("member_seqno")); 
+				//메일제목
+				paraMap.put("subject", "인증번호 전송");
+				//인증번호 생성
+				String certification_no = commonUtil.randomString();
+				paraMap.put("certification_no", certification_no);
+				//인증번호 db 업데이트
+				mav.addObject("result", memberFrontService.doSetCertification(paraMap));
+				
+				
+				paraMap.put("text", certification_no);
+				System.out.println("paraMap : " + paraMap.toString());
+				int sendStatus = commonUtil.doMailSender(paraMap);
+				mav.addObject("mail_result", sendStatus);
+				
 			}else {
 				mav.addObject("result_count", count);
 			}
@@ -264,13 +298,48 @@ public class MemberFrontAction extends BaseAct {
 	 * @Author   : psm
 	 * @Date	 : 2023. 9. 21. 
 	 * @Parm	 : DataMap
+	 * @Return   : email *표시해서 전송
+	 * @Function : pwd찾기 
+	 * @Explain  : 
+	 *
+	 */
+	@RequestMapping (value = "/findPwd1X.do")
+	public ModelAndView doFindPwd1(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+		ModelAndView mav = new ModelAndView("jsonView");
+		try {
+			System.out.println("paraMap : " + paraMap.toString());
+			int count = memberFrontService.doCountFindMemberPwd(paraMap);
+			if(count > 0) {
+				mav.addObject("result_count", count);
+				DataMap result = memberFrontService.doFindMemberPwd(paraMap);
+				String email = result.getstr("user_email");
+				String toAstric = commonUtil.getEmailToAstric(email);
+				System.out.println(toAstric + "어케나옴??");
+				mav.addObject("result",toAstric);
+			}else {
+				mav.addObject("result_count", count);
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ModelAndView("error");
+		}	
+	
+		return mav;
+	}
+	
+	/**
+	 *
+	 * @Author   : psm
+	 * @Date	 : 2023. 9. 21. 
+	 * @Parm	 : DataMap
 	 * @Return   : ModelAndView
 	 * @Function : pwd찾기
 	 * @Explain  : 
 	 *
 	 */
-	@RequestMapping (value = "/findPwd1X.do")
-	public ModelAndView doFindPwd(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+	@RequestMapping (value = "/findPwd2X.do")
+	public ModelAndView doFindPwd2(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
 		ModelAndView mav = new ModelAndView("jsonView");
 		try {
 			System.out.println("paraMap : " + paraMap.toString());
@@ -305,14 +374,37 @@ public class MemberFrontAction extends BaseAct {
 		paraMap.put("member_seqno", session.getAttribute("member_seqno"));
 		try {
 			System.out.println("paraMap : " + paraMap.toString());
-			System.out.println("암호화 : " + AES256Util.strEncode(paraMap.get("pwd").toString()));
 			paraMap.put("pwd", AES256Util.strEncode(paraMap.get("pwd").toString()));
-			System.out.println("암호화 : " + AES256Util.strEncode(paraMap.get("new_pwd").toString()));
 			paraMap.put("new_pwd", AES256Util.strEncode(paraMap.get("new_pwd").toString()));
 			System.out.println("바뀐 paraMap : " + paraMap.toString());
 			int result_change = memberFrontService.doChangePwd(paraMap);
 			mav.addObject("result", result_change);
-			System.out.println("어케나옴? " + result_change);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ModelAndView("error");
+		}	
+	
+		return mav;
+	}
+	/**
+	 *
+	 * @Author   : psm
+	 * @Date	 : 2023. 9. 25. 
+	 * @Parm	 : DataMap
+	 * @Return   : ModelAndView
+	 * @Function : 비밀번호 찾기 - 비밀번호 재설정
+	 * @Explain  : 
+	 *
+	 */
+	@RequestMapping (value = "/updatePw2X.do")
+	public ModelAndView doChangePwdToFind(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+		ModelAndView mav = new ModelAndView("jsonView");
+		try {
+			System.out.println("paraMap : " + paraMap.toString());
+			paraMap.put("new_pwd", AES256Util.strEncode(paraMap.get("new_pwd").toString()));
+			System.out.println("바뀐 paraMap : " + paraMap.toString());
+			int result_change = memberFrontService.doChangePwdFind(paraMap);
+			mav.addObject("result", result_change);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ModelAndView("error");
@@ -696,6 +788,61 @@ public class MemberFrontAction extends BaseAct {
 			e.printStackTrace();
 			return new ModelAndView("error");
 		}
+		return mav;
+	}
+	
+	/**
+	 *
+	 * @Author   : smpark
+	 * @Date	 : 2023. 9. 22. 
+	 * @Parm	 : DataMap
+	 * @Return   : ModelAndView
+	 * @Function : 인증번호 생성
+	 * @Explain  : 
+	 *
+	 */
+	@RequestMapping (value = "/doSetCertificationX.do")
+	public ModelAndView doSetCertification(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+		ModelAndView mav = new ModelAndView("jsonView");
+		try {
+			paraMap.put("member_seqno", session.getAttribute("member_seqno"));
+			
+			//인증번호
+			String certification_no = commonUtil.randomString();
+			paraMap.put("certification_no", certification_no);
+			System.out.println("paraMap : " + paraMap.toString());
+			
+			mav.addObject("result", memberFrontService.doSetCertification(paraMap));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ModelAndView("error");
+		}	
+	
+		return mav;
+	}
+	
+	/**
+	 *
+	 * @Author   : smpark
+	 * @Date	 : 2023. 9. 22. 
+	 * @Parm	 : DataMap
+	 * @Return   : ModelAndView
+	 * @Function : 인증번호 생성
+	 * @Explain  : 
+	 *
+	 */
+	@RequestMapping (value = "/doGetCertificationX.do")
+	public ModelAndView doGETCertification(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+		ModelAndView mav = new ModelAndView("jsonView");
+		try {
+			paraMap.put("member_seqno", session.getAttribute("member_seqno"));
+			System.out.println("paraMap : " + paraMap.toString());
+			mav.addObject("result", memberFrontService.doGetCertification(paraMap));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ModelAndView("error");
+		}	
+	
 		return mav;
 	}
 }

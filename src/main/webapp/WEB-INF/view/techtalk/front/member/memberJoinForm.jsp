@@ -285,13 +285,6 @@ var searchSource = ['엽기떡볶이', '신전떡볶이', '걸작떡볶이', '�
 			<!-- page_title s:  -->
 			<div class="area_tit">
 				<h3 class="tit_corp">회원정보입력</h3>
-				<div class="wrapper-stepper agree_box">
-					<ul class="stepper">
-						<li class="active">약관동의</li>
-						<li class="active">회원정보입력</li>
-						<li>가입완료</li>
-					</ul>
-				</div>
 			</div>
 			<!-- //page_title e:  -->
 			<!-- page_content s:  -->
