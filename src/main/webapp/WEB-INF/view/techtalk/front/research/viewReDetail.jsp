@@ -233,11 +233,14 @@ function lessPatentContens(){
 	}
 }
 
-function techInquiry(){
+function techInquiry(biz_name){
 	$.ajax({
         type : 'POST',
-        url : '/techtalk/sendTechInquiry.do',
-        data : $('#frm').serialize(),
+        url : '/techtalk/sendTechInquiryX.do',
+        data :  {
+        	biz_name : biz_name
+    	   
+       },
         dataType : 'json',
         beforeSend: function() {
            $('.wrap-loading').css('display', 'block');
@@ -454,7 +457,7 @@ function techInquiry(){
 					<a href="javascript:void(0);" onclick="lessPatentContens();" id="lessPatentButton"  class="btn-more">- 줄이기</a>
 				</div>
 				<div class="wrap_btn _center">
-                    <a href="javascript:void(0);" onclick="techInquiry();" id="techInquiryButton" title="기술이전 문의하기" class="btn_appl">기술이전 문의하기</a>
+                    <a href="javascript:void(0);" onclick="techInquiry('${data.biz_name}');" id="techInquiryButton" title="기술이전 문의하기" class="btn_appl">기술이전 문의하기</a>
                 </div>
 				
 			</div>
