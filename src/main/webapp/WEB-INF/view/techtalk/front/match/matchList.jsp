@@ -6,17 +6,16 @@
 $(document).ready(function(){	
 });
 
-function historyClick(demand_no, resear_no, match_no){
- 	var url = "/techtalk/doMatchHistoryList.do";
+function historyClick(dem_seqno, research_seqno){
+ 	var url = "/techtalk/doMatchHistoryListX.do";
  	var form = $('#frm')[0];
 	var data = new FormData(form);
 	$.ajax({
 		url : url,
        type: "post",
        data: {
-    	   match_no : match_no,
-    	   demand_seqno : demand_no,
-    	   researcher_seqno : resear_no
+    	   demand_seqno : dem_seqno,
+    	   researcher_seqno : research_seqno
        	},
        dataType: "json",
        success : function(res){
@@ -61,6 +60,29 @@ function historyClick(demand_no, resear_no, match_no){
 
        }
 	});
+}
+
+function techInquiry(biz_name){
+	$.ajax({
+        type : 'POST',
+        url : '/techtalk/sendInquiryMatchX.do',
+        data :  {
+        	biz_name : biz_name
+       },
+        dataType : 'json',
+        beforeSend: function() {
+           $('.wrap-loading').css('display', 'block');
+        },
+        success : function() {
+           alert("기술문의가 완료되었습니다.");
+        },
+        error : function() {
+           
+        },
+        complete : function() {
+           
+        }
+     });
 }
 </script>
 <form action="/techtalk/doMatchHistoryList.do" id="frm2" name="frm2" method="post">
@@ -130,7 +152,11 @@ function historyClick(demand_no, resear_no, match_no){
 					                                    <li><span class="mr txt_grey tech_nm ">${ dataR.bcode_name3}</span></li>
 					                                </ul>
 					                            </div>
-					                            <button type="button" class="email_btn "><span>문의하기</span></button>
+					                            <button type="button" class="email_btn ">
+					                            	<a href="javascript:void(0);" onclick="techInquiry('${dataR.rbiz_name}');" title="문의하기" class="btn_appl">
+					                            		<span>문의하기</span
+					                            	></a>
+					                            </button>
 			                    			</div>
 			                    		</c:forEach>
 				                           
@@ -197,7 +223,11 @@ function historyClick(demand_no, resear_no, match_no){
 					                                    <li><span class="mr txt_grey tech_nm ">${ dataB.rcode_name3}</span></li>
 					                                </ul>
 			                    				</div>
-					                            <button type="button" class="email_btn "><span>문의하기</span></button>
+					                            <button type="button" class="email_btn ">
+					                            	<a href="javascript:void(0);" onclick="techInquiry('${dataB.bbiz_name}');" title="문의하기" class="btn_appl">
+					                            		<span>문의하기</span
+					                            	></a>
+					                            </button>
 			                    			</div>
 			                    		</c:forEach>
 				                           
@@ -264,7 +294,11 @@ function historyClick(demand_no, resear_no, match_no){
 					                                    <li><span class="mr txt_grey tech_nm ">${ dataTLO.rcode_name3}</span></li>
 					                                </ul>
 			                    				</div>
+<<<<<<< HEAD
 					                            <button type="button" class="history_btn" ><span><a href="javascript:void(0);" onclick="historyClick('${ dataTLO.demand_no}','${ dataTLO.resear_no}','${ dataTLO.match_no}')">이력보기</a></span></button>
+=======
+					                            <button type="button" class="history_btn" ><span><a href="javascript:void(0);" onclick="historyClick('${ dataTLO.dem_seqno}','${ dataTLO.research_seqno}')">이력보기</a></span></button>
+>>>>>>> refs/remotes/origin/develop
 			                    			</div>
 			                    		</c:forEach>
 				                           
