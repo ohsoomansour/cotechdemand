@@ -89,7 +89,7 @@ $(document).ready(function(){
 						    <a href="javascript:doHref('/techtalk/doChangePwdPage.do');">비밀번호 변경</a>
 						    <a href="javascript:doHref('/techtalk/tloResearchMyPage.do');">연구자 목록</a>
 						    <a href="#">기업수요 목록</a>
-						    <a href="#">매칭 목록</a>
+						    <a href="javascript:doHref('/techtalk/tloMatchList.do');">매칭 목록</a>
 						</div>
 					</div>
 					<button id="loginButton" onclick="doLogout();" title="로그인버튼"><span class="user_name">로그아웃</span></button>
@@ -103,7 +103,7 @@ $(document).ready(function(){
 								<a href="javascript:doHref('/front/member.do');">회원목록</a>
 						    <a href="javascript:doHref('/techtalk/tloResearchMyPage.do');">연구자 목록</a>
 						    <a href="#">기업수요 목록</a>
-						    <a href="#">매칭 목록</a>
+						    <a href="javascript:doHref('/techtalk/tloMatchList.do');">매칭 목록</a>
 						</div>
 					</div>
 					<button id="loginButton" onclick="doLogout();" title="로그인버튼"><span class="user_name">로그아웃</span></button>

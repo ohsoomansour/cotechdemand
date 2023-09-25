@@ -383,4 +383,142 @@ public class MyPageAction extends BaseAct {
 	
 		return mav;
 	}
+	
+	/**
+	 *
+	 * @Author : JHSeo
+	 * @Date : 2023. 9. 21.
+	 * @Parm : DataMap
+	 * @Return : ModelAndView
+	 * @Function : 마이페이지 TLO 매칭목록
+	 * @Explain :
+	 *
+	 */
+	@RequestMapping (value = "/tloMatchList.do")
+	public ModelAndView dotloMatchList(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
+		ModelAndView mav = new ModelAndView("/techtalk/front/mypage/tloMatchList.front");
+		HttpSession session = request.getSession();
+		
+		DataMap navi = new DataMap();
+		navi.put("one", "마이페이지");
+		navi.put("two", "매칭목록");
+		mav.addObject("navi",navi);
+		try {
+			//기술분류 리스트
+			paraMap.put("depth", '1');
+			mav.addObject("codeList1", this.myPageService.doGetCodeListInfo(paraMap));
+			paraMap.put("depth", '2');
+			mav.addObject("codeList2", this.myPageService.doGetCodeListInfo(paraMap));
+			paraMap.put("depth", '3');
+			mav.addObject("codeList3", this.myPageService.doGetCodeListInfo(paraMap));
+			
+			//소속
+			paraMap.put("biz_name", request.getSession().getAttribute("biz_name"));
+			mav.addObject("biz_name", request.getSession().getAttribute("biz_name"));
+			
+			paraMap.put("member_type", session.getAttribute("member_type").toString());
+			//총 연구자목록 수
+			int totalCount = 0;
+			if(session.getAttribute("member_type").toString().equals("TLO")) {
+				totalCount = this.myPageService.doCountTloMatchList(paraMap);
+			} else if(session.getAttribute("member_type").toString().equals("ADMIN")) {
+				totalCount = this.myPageService.doCountTloMatchList(paraMap);
+			}
+			
+			mav.addObject("totalCount", totalCount);
+			
+			paraMap.put("count", totalCount);
+			// --------------------------------------------------------------------------
+			//현재페이지
+			String page = StringUtil.nchk((String)(paraMap.get("page")),"1");
+			//페이지에 포함되는 레코드 수
+			String rows = StringUtil.nchk((String)(paraMap.get("rows")),"10");
+			//게시물 정렬 위치
+			String sidx = StringUtil.nchk((String)(paraMap.get("sidx")),"1");
+			//게시물 정렬차순
+			String sord = StringUtil.nchk((String)(paraMap.get("sord")),"asc");
+			//페이지 그룹 수
+			int pageGroups = 5;
+			
+			//리스트 유형
+			String list = paraMap.get("list").toString();
+			
+			paraMap.put("page", page);
+			paraMap.put("rows", rows);
+			paraMap.put("sidx", sidx);
+			paraMap.put("sord", sord);
+			paraMap.put("list", list);
+			
+			mav.addObject("sPageInfo",  new PageInfo().makeIndex(
+					Integer.parseInt(page), totalCount, Integer.parseInt(rows), pageGroups, "fncList"
+			));
+			
+			if(session.getAttribute("member_type").toString().equals("TLO")) {
+				mav.addObject("dataTLO", this.myPageService.doGetTloMatchList(paraMap));
+			} else if(session.getAttribute("member_type").toString().equals("ADMIN")) {
+				mav.addObject("dataTLO", this.myPageService.doGetTloMatchList(paraMap));
+			}
+			
+			mav.addObject("paraMap", paraMap);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ModelAndView("error");
+		}	
+	
+		return mav;
+	}
+	
+	/**
+	 *
+	 * @Author   : JHSeo
+	 * @Date	 : 2023. 9. 22. 
+	 * @Parm	 : DataMap
+	 * @Return   : ModelAndView
+	 * @Function : 매칭 이력보기
+	 * @Explain  : 
+	 *
+	 */
+	@RequestMapping (value = "/doTloMatchHistoryListX.do")
+	public ModelAndView doTloMatchHistoryList(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
+		ModelAndView mav = new ModelAndView("jsonView");
+		
+		try {
+			mav.addObject("data", this.myPageService.doTloMatchHistoryList(paraMap));
+			DataMap navi = new DataMap();
+			navi.put("one", "메인");
+			navi.put("two", "매칭 목록 페이지");
+			mav.addObject("navi",navi);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ModelAndView("error");
+		}
+	
+		return mav;
+	}
+	
+	/**
+	 *
+	 * @Author : JHSeo
+	 * @Date : 2023. 9. 25.
+	 * @Parm : DataMap
+	 * @Return : ModelAndView
+	 * @Function : 매칭목록 히스토리 추가
+	 * @Explain :
+	 *
+	 */
+	@RequestMapping(value = "/doSetUpdateX.do")
+	public ModelAndView doSetUpdate(@ModelAttribute("paraMap") DataMap paraMap, HttpServletRequest request,
+			HttpServletResponse response) {
+		ModelAndView mav = new ModelAndView("jsonView");
+			
+		try {
+			this.myPageService.doSetUpdate(paraMap);		
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ModelAndView("error");
+		}
+	
+		return mav;
+	}
 }

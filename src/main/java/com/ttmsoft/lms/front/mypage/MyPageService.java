@@ -177,4 +177,47 @@ public class MyPageService extends BaseSvc<DataMap>{
 		List<DataMap> result = this.dao.dolistQuery("MyPageSQL.doGetAdminResearchList", paraMap);
 		return result;
 	}
+	
+	/* 마이페이지 TLO 매칭목록 - 2023/09/21 */
+	public List<DataMap> doGetTloMatchList(DataMap paraMap) {
+		List<DataMap> result = this.dao.dolistQuery("MyPageSQL.doGetTloMatchList", paraMap);
+		return result;
+	}
+	
+	/* 마이페이지 TLO 매칭목록 카운트 - 2023/09/21 */
+	public int doCountTloMatchList(DataMap paraMap) {
+		int result = this.dao.countQuery("MyPageSQL.doCountTloMatchList", paraMap);
+		return result;
+	}
+	
+	/* 마이페이지 TLO 매칭이력 - 2023/09/22 */
+	public List<DataMap> doTloMatchHistoryList(DataMap paraMap) {
+		List<DataMap> result = this.dao.dolistQuery("MyPageSQL.doTloMatchHistoryList", paraMap);
+		return result;
+	}
+	
+	/* 마이페이지 TLO 매칭이력 수정 - 2023/09/18 */
+	public void doSetUpdate(DataMap paraMap) {
+		String[] match_date = (String[]) paraMap.get("match_date");
+		String[] contents = (String[]) paraMap.get("contents");
+		String[] business_nm = (String[]) paraMap.get("business_nm");
+		String[] business_tel = (String[]) paraMap.get("business_tel");
+		String[] business_mail = (String[]) paraMap.get("business_mail");
+		String[] researcher_nm = (String[]) paraMap.get("researcher_nm");
+		String[] researcher_tel = (String[]) paraMap.get("researcher_tel");
+		String[] researcher_mail = (String[]) paraMap.get("researcher_mail");
+	
+		for(int i=0; i<researcher_nm.length; i++) {
+			paraMap.put("match_date", match_date[i]);
+			paraMap.put("contents", contents[i]);
+			paraMap.put("business_nm", business_nm[i]);
+			paraMap.put("business_tel", business_tel[i]);
+			paraMap.put("business_mail", business_mail[i]);
+			paraMap.put("researcher_nm", researcher_nm[i]);
+			paraMap.put("researcher_tel", researcher_tel[i]);
+			paraMap.put("researcher_mail", researcher_mail[i]);
+			
+			this.dao.insertQuery("MyPageSQL.doSetUpdate", paraMap);
+		}
+	}
 }
