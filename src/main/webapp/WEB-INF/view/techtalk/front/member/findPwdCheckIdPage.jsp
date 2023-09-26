@@ -73,7 +73,7 @@ function fncFindPwd() {
                        <div class="login_form_box_inner">
                        <form id="frm_login" method="post">
                            <h2>비밀번호 찾기</h2>
-                            <label>비밀번호를 찾고자하는 아이디를 입력해 주세요.</label>
+                            <p class="mgt10">비밀번호를 찾고자하는 아이디를 입력해 주세요.</p>
                            <div class="login_form">
                                <label>아이디</label>
                                <div class="login-form-input">
