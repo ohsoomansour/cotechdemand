@@ -51,7 +51,7 @@ $(document).ready(
 				  
 				  var data = $('#keyword').val();
 			      $.ajax({
-			          url: "/techtalk/autoSearchKeyword.do",
+			          url: "/techtalk/autoSearchKeywordX.do",
 			          type: "POST",
 			          dataType: "json",
 			          data: { code_name: request.term },
@@ -86,8 +86,6 @@ $(document).ready(
 					   if(searchList.length == 5){
 						   alert("키워드 5개를 모두 입력였습니다!")
 						   //5가 되면 keyword의 값을 db에 넘겨줌 
-						   
-						   //$("#keyword_record").text(keyword_String) 
 						   return searchList;
 					   }
 				   } 
@@ -114,23 +112,38 @@ $(document).ready(
 		if(!isBlank('업무용 이메일', '#bizEmail1'))
 		if(!isBlank('업무용 이메일 도메인', '#bizEmail2'))
 		if(!isBlank('휴대전화번호', '#userMobileNo'))	
-			
-		var url = "/techtalk/insertCoTechDemand.do"
-		var form = $('#frm')[0];  //폼
-		var data = new FormData(form);
-		//console.log(data.has('biz_name'));
+		
+		$('#frm').submit();
+		alert("등록되었습니다!");
+		setTimeout(function() {
+			moveCTDL();
+		}, 5000);
+		
+		
+		/*
+		//var form = $('#frm')[0];  //폼
+		var url = "/techtalk/insertCoTechDemandX.do"
+		//var data = new FormData(form);
+		var selStdClassCd1 = $('#selStdClassCd1').val;
+		var selStdClassCd2 = $('#selStdClassCd2').val;
+		var selStdClassCd3 = $('#selStdClassCd3').val;
+		
 			$.ajax({
 			       url : url,
 			       type: "post",
 			       processData: false,
 			       contentType: false,
-			       data: data,
+			       data:{  
+			    	   selStdClassCd1: $('#selStdClassCd1').val,
+			    	   selStdClassCd2: $('#selStdClassCd2').val,
+			    	   selStdClassCd3: $('#selStdClassCd2').val,
+			       },
 			       dataType: "json",
 			       success : function(res){
 			    	   	console.log(res)			    	   	
 				    	alert("등록되었습니다!")
 				    	//성공했다 >> 이동 함수를 호출
-				    	moveCTDL();
+				    	//moveCTDL();
 			       },
 			       error : function(){
 			    	alert('기업수요 등록에 실패했습니다.');    
@@ -138,27 +151,13 @@ $(document).ready(
 			       complete : function(){
 			       }
 			});
+		*/
 		
+	
 		}
 
-	//임시데이터만들기
-	function fncSetData() {
-		$('#memberType').val("R");
-		$('#id').val("test");
-		$('#pw').val("test");
-		$('#passWordCk').val("test");
-		$('#userName').val("박성민");
-		$('#userEmail1').val("ghkdljtjd");
-		$('#userEmail2').val("gamkil.com");
-		$('#userMobileNo').val("01094778894");
-		$('#bizName').val("회사명");
-		$('#userDepart').val("부서");
-		$('#userRank').val("직급");
-		$('#bizEmail1').val("ozs876");
-		$('#bizEmail2').val("naver.com");
-		$('#bizTelNo').val("0200000000");
-		idCheck = true;
-		pwCheck = true;
+	function moveCTDL() {
+		location.href = "/techtalk/moveCoTechDemandList.do";
 	}
 
 	function fncChangeEmail(obj) {
@@ -170,12 +169,6 @@ $(document).ready(
 		}
 	}
 
-	
-	function moveCTDL() {
-		location.href = "/techtalk/moveCoTechDemandList.do";
-	}
-
-	//
 	function popup() {
 		var url = "/images/techtalk/example.jpg";
 		var name = "popup test";
@@ -188,46 +181,101 @@ $(document).ready(
 		$(id).html(text);
 		}
 	
-	//<select> 대-중-소 분류 
-	var RNDs = false;
-
-	function update_selected() {
-	  $("#category_small").val(0);
-	  $("#category_small").find("option[value!=0]").detach();
-
-	  $("#category_small").append(RNDs.filter(".RND" + $(this).val())); // this.val 값이 
-	  
-	}
-
-	$(function() {
-	  RNDs = $("#category_small").find("option[value!=0]");
-	 
-	  RNDs.detach();
-
-	  $("#category_medi").change(update_selected);
-	  $("#category_medi").trigger("change");
-
-	});
 	
+	/*var RNDs = false;  //<select> 대-중-소 분류 
+		function update_selected() {
+		  $("#selStdClassCd2").val(0);
+		  $("#selStdClassCd2").find("option[value!=0]").detach();
+	
+		  $("#selStdClassCd2").append(RNDs.filter(".RND" + $(this).val())); // this.val 값이 
+		  
+		}
+		
+		$(function() {
+		  RNDs = $("#selStdClassCd3").find("option[value!=0]");
+		 
+		  RNDs.detach();
+	
+		  $("#selStdClassCd3").change(update_selected);
+		  $("#selStdClassCd3").trigger("change");
+
+	});*/
+	function fncChangeStd(obj, gubun){
+		var selValue = obj.value;
+		if(selValue == "" || selValue == "선택"){
+			if(gubun == "mid"){
+				$('#selStdClassCd2').empty();
+				$('#selStdClassCd3').empty();
+				$('#selStdClassCd2').append("<option title='기술분류2' value=''>선택</option>");
+				if(selValue == "") {
+					$('#selStdClassCd2').attr('disabled', 'disabled');
+				}
+				$('#selStdClassCd3').append("<option title='기술분류3' value=''>선택</option>");
+				$('#selStdClassCd3').attr('disabled', 'disabled');
+			} else if(gubun == "sub" || gubun == "end") {
+				$('#selStdClassCd3').empty();
+				$('#selStdClassCd3').append("<option title='기술분류3' value=''>선택</option>");
+				$('#selStdClassCd3').attr('disabled', 'disabled');
+			} 
+		}else{
+			$.ajax({
+				type : 'POST',
+				url : '/techtalk/doGetCodeList2X.do',
+				data : {
+					parent_code_key : selValue,
+					gubun : gubun
+				},
+				dataType : 'json',
+				success : function(res) {
+					console.log(res)
+					var codeData = "";
+					var aHtml = "";
+					if(gubun == "mid"){
+						codeData = res.codeList;
+						aHtml += "<option title='기술분류2' value=''>선택</option>";
+						$.each(codeData, function(key, val){
+							aHtml += "<option title="+this.code_name+" value="+this.code_key+">"+this.code_name+"</option>";
+						});
+						
+						$('#selStdClassCd2').empty();
+						$('#selStdClassCd2').append(aHtml);
+						$('#selStdClassCd2').removeAttr("disabled");	
+					} else if(gubun == "sub") {
+						codeData = res.codeList;
+						aHtml += "<option title='기술분류3' value=''>선택</option>";
+						$.each(codeData, function(key, val){
+							aHtml += "<option title="+this.code_name+" value="+this.code_key+">"+this.code_name+"</option>";
+						});
+						
+						$('#selStdClassCd3').empty();
+						$('#selStdClassCd3').append(aHtml);
+						$('#selStdClassCd3').removeAttr("disabled");	
+					} 
+				},
+				error : function() {
+					
+				},
+				complete : function() {
+					
+				}
+			});
+		}
+	}
 	
 </script>
 <!-- compaVcContent s:  -->
+
 <div id="compaVcContent" class="cont_cv">
 	<div id="mArticle" class="assig_app">
 		<h2 class="screen_out">본문영역</h2>
 		<div class="wrap_cont">
-			<!-- page_title s: 기업수요 정보 / 소속(회사 이름)  -->
+			<!-- page_title s: 기업수요 정보 / 소속(회사 이름)  
 			<div class="area_tit">
 				
-			</div>
+			</div>-->
 			<!-- page_content s: 기업 기술수요 등록 폼  -->
-			<form id="frm">
+			<form id="frm" action="#" method="post" >
 				<div class="area_cont ">
-				<!--  
-					<div class="subject_corp">
-						<h4>기업 수요 정보 </h4>
-					</div>
-				-->	
 					<div class="tbl_view tbl_public">
 						<table class="tbl">
 							<caption>기업수요 정보 입력폼</caption>
@@ -240,87 +288,41 @@ $(document).ready(
 								<tr>
 									<th scope="col">기술명 <span class="red">*</span></th>
 									<td class="ta_left">
-										<div class="form-inline">																				
-										<!-- 기술명 -->
-										<select id="medi_category" name="medi_category">
-										   <option value="0" selected="selected">기술분류1 선택</option>  <!-- 순서: 1번 -->
-										   <option value="01" id="1">전기자동차</option> <!-- 500ml선택, 트라움샾&위메프 선택 -->
-										   <option value="02" id="2">자율주행자동차</option>
-										   <option value="03" id="3">수소연로전지자동차</option>
-										   <option value="04" id="4">자동차 일반/기타</option>
-										   <option value="05" id="5">드론/UAM</option>
-										   <option value="06" id="6">로봇</option>
-										   <option value="07" id="7">선박</option>
-										</select>
-										<!-- 전기자동차 -->
-										<select id="small_category" name="small_category">
-										   <option value="0">기술분류2 선택</option>
-										   <option value="11" class="RND1" id="11">구동/동력</option>
-										   <option value="12" class="RND1" id="12">배터리(양극화물질)</option>
-										   <option value="13" class="RND1" id="13">기타</option>						
-										   <option value="14" class="RND1" id="14">배터리 냉각/리튬 회수</option>
-										   <option value="15" class="RND1" id="15">배터리(에너지 관리)</option>		
-										   <option value="16" class="RND1" id="16">배터리(인버터/컨버터)</option>
-										   <option value="17" class="RND1" id="17">배터리(2차전지)</option>
-										   <!-- 자율주행자동차 -->
-										   <option value="21" class="RND2" id="21">객체인식/판단/학습</option>
-										   <option value="22" class="RND2" id="22">보안</option>
-										   <option value="23" class="RND2" id="23">기타</option>
-										   <option value="24" class="RND2" id="24">운전자 편의</option>
-										   <option value="25" class="RND2" id="25">데이터 통신</option>
-										   <!-- 수소연료전지자동차 -->
-										   <option value="31" class="RND3" id="31">기타</option>
-										   <option value="32" class="RND3" id="32">배터리 냉각</option>
-										   <option value="33" class="RND3" id="33">데이터 통신/제어</option>
-										   <option value="34" class="RND3" id="34">연료전지/배터리</option>
-										   <!-- 자동차 일반/기타 -->
-										   <option value="41" class="RND4" id="41">교통/도로/안전</option>
-										   <option value="42" class="RND4" id="42">영상/촬영/학습</option>
-										   <option value="43" class="RND4" id="43">기타</option>
-										   <option value="44" class="RND4" id="44">제동/조향/구동</option>
-										   <option value="45" class="RND4" id="45">데이터 통신/배터리</option>
-										   <option value="46" class="RND4" id="46">촉매/소재</option>
-										   <option value="47" class="RND4" id="47">열차</option>
-										   <!-- 드론/UAM -->
-										   <option value="51" class="RND5" id="51">동력</option>
-										   <option value="52" class="RND5"  id="52">전지</option>
-										   <option value="53" class="RND5"  id="53">안테나/통신</option>
-										   <option value="54" class="RND5"  id="54">촬영/감시/측량</option>
-										   <option value="55" class="RND5"  id="55">암호화/보안</option>
-										   <option value="56" class="RND5"  id="56">학습/탐지/인식</option>
-										   <!-- 로봇 -->
-										   <option value="61" class="RND6" id="61">구동/동력</option>
-										   <option value="62" class="RND6" id="62">영상/탐지/인식</option>
-										   <option value="63" class="RND6" id="63">데이터 통신</option>
-										   <option value="64" class="RND6" id="64">자율주행/경로학습</option>
-										   <option value="65" class="RND6" id="65">배터리</option>
-										   <!-- 선박 -->
-										   <option value="71" class="RND7" id="71">기관/재생</option>
-										   <option value="72" class="RND7" id="72">소재</option>
-										   <option value="73" class="RND7" id="73">데이터 통신</option>
-										   <option value="74" class="RND7" id="74">자율주행</option>
-										   <option value="75" class="RND7" id="75">물류/보안/기타</option>
-										</select>													
-
+										<div class="form-inline">	
+											<select id="selStdClassCd1" name="selStdClassCd1" onChange="fncChangeStd(this, 'mid');" title="기술분류1" style="width:32%;">
+													<option title="기술분류1" value="">선택</option>
+												<c:forEach var="code1" items="${codeList1}" varStatus="status">
+												 	<option title="${code1.code_name}" value="${code1.code_key}">${code1.code_name}</option>
+												</c:forEach>
+											</select> 
+											<select id="selStdClassCd2" name="selStdClassCd2"  onChange="fncChangeStd(this, 'sub');" title="기술분류2" style="width:32%;">
+												<c:forEach var="code2" items="${codeList2}" varStatus="status">
+													<option title="기술분류2" value="${code2.code_key}">${code2.code_name}</option>
+												</c:forEach>
+											</select> 
+											<select id="selStdClassCd3" name="selStdClassCd3" title="기술분류3" style="width:32%;">
+													<option title="기술분류3" value="">선택</option>
+												<c:forEach var="code3" items="${codeList3}" varStatus="status">
+													<option title="${code3.code_name3}" value="${code3.code_key}">${code3.code_name}</option>
+												</c:forEach>
+											</select>
 										</div>
 									</td>
 								</tr>
+								
 								<!-- 키워드 검색 -->
 								<tr>
 									<th scope="col">키워드 <span class="red">*</span></th>
 									<td class="ta_left">
 										<div class="form-inline">
 											<input type="text" class="form-control form_dept"
-												id="keyword" name="keyword" maxlength="50"
-												title="검색">
+												   id="keyword" name="keyword" maxlength="50" title="검색">
 										</div>
-										
 									</td>
-									
 								</tr>
 								<tr>
 									<th scope="col">키워드 검색내용</th>
-									<td><textarea id="keyword_record" name = "keyword_record" class="form-control"></textarea></td>
+									<td><textarea id="keyword_record" name="keyword_record" class="form-control"></textarea></td>
 								</tr>
 								<tr>
 									<th scope="col">필요 기술<span class="red">*</span></th>

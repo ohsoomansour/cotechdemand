@@ -43,6 +43,7 @@ private final ExcelUtil excelUtil = new ExcelUtil();
 		ModelAndView mav = new ModelAndView("/techtalk/front/corporateMypage/TLOMyPage.front");
 		// ----------- 9.18 (월) 확인중.. -----------
 		try {
+			
 			DataMap navi = new DataMap();
 			navi.put("one", "마이페이지");
 			navi.put("two", "기업 기술수요 목록");
@@ -60,7 +61,7 @@ private final ExcelUtil excelUtil = new ExcelUtil();
 			//소속
 			paraMap.put("id", request.getSession().getAttribute("id"));
 			paraMap.put("biz_name", request.getSession().getAttribute("biz_name"));
-			paraMap.put("member_seqno", request.getSession().getAttribute("member_seqno"));
+			paraMap.put("member_seqno", request.getSession().getAttribute("member_seqno")); //3
 			//총 기업목록 수
 			int totalCount = this.tloMypageService.doCountCorporates(paraMap);
 			mav.addObject("totalCount", totalCount);
@@ -90,8 +91,8 @@ private final ExcelUtil excelUtil = new ExcelUtil();
 			mav.addObject("sPageInfo",  new PageInfo().makeIndex(
 					Integer.parseInt(page), totalCount, Integer.parseInt(rows), pageGroups, "fncList" //페이징 함수
 			));
-			mav.addObject("paraMap", paraMap);
-			System.out.println("페이징 확인:" + paraMap); 
+			
+			System.out.println("frm2:" + paraMap);
 			
 			List<DataMap> corporateList = tloMypageService.doGetCoTechDemandInfo(paraMap);  // CODE_NAME1, 2를 가져옴
 			System.out.println("9.24 corporateList 확인중:" + corporateList);
@@ -131,7 +132,7 @@ private final ExcelUtil excelUtil = new ExcelUtil();
 	 * @Explain :
 	 *
 	 */
-	@RequestMapping(value = "/doSaveList.do")
+	@RequestMapping(value = "/doSaveList1X.do")
 	public ModelAndView doSaveList(@ModelAttribute("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
 		ModelAndView mav = new ModelAndView("jsonView");
 		/*
@@ -176,7 +177,7 @@ private final ExcelUtil excelUtil = new ExcelUtil();
 	 * @Explain : 필요 확인중..
 	 *
 	 */
-	@RequestMapping(value = "/doGetCodeList1.do")
+	@RequestMapping(value = "/doGetCodeList1X.do")
 	public ModelAndView deGetCodeList(@ModelAttribute("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response,  HttpSession session) {
 		ModelAndView mav = new ModelAndView("jsonView");
 		String member_seqno = String.valueOf(session.getAttribute("member_seqno"));
@@ -206,35 +207,6 @@ private final ExcelUtil excelUtil = new ExcelUtil();
 	}
 	
 
-	/**
-	 *
-	 * @Author : osooman
-	 * @Date : 2023. 9. 20.
-	 * @Parm : DataMap
-	 * @Return : ModelAndView
-	 * @Explain : 수정중..
-	 * @Function : 마이페이지(기업) 상세보기
-	 *
-	 
-	@RequestMapping(value = "/beforeUpdate.do")
-	public ModelAndView deGetCorporateDetail(@ModelAttribute("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
-		ModelAndView mav = new ModelAndView("/techtalk/front/corporateMypage/TLOMyPage.front");
-		String member_seqno = (String)session.getAttribute("member_seqno");
-		paraMap.put("corporate_seqno", member_seqno);
-		mav.addObject("co_td_no", paraMap.get("co_td_no"));
-		
-		//System.out.println("beforeUpdate에서 co_td_no 확인중:" + paraMap.get("co_td_no"));
-		
-		try {
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new ModelAndView("error");
-		}
-		
-		return mav;
-	}
-	*/
 	
 	/**
 	 *
@@ -246,7 +218,7 @@ private final ExcelUtil excelUtil = new ExcelUtil();
 	 * @Explain : 
 	 *
 	 */
-	@RequestMapping(value = "/doUpdateCorporate.do")
+	@RequestMapping(value = "/doUpdateCorporateX.do")
 	public ModelAndView deUpdateCoTechDemandInfo(@ModelAttribute("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response,  HttpSession session) {
 		ModelAndView mav = new ModelAndView("jsonView");
 		//String co_td_no = request.getParameter("co_td_no");

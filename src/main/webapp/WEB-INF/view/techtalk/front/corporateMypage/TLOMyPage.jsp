@@ -1,4 +1,4 @@
-<%@ page language="java" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
@@ -41,7 +41,9 @@ function fncList(page) {
 //검색 - 2023/09/18 
 function doSearch(e) {
 	$('#page').val(1);
-	var keyword = $().val;
+	$('#frm').submit();
+	
+	/*
 	$.ajax({
 		type : 'POST',
 		url : '/techtalk/doSaveList.do',
@@ -51,8 +53,7 @@ function doSearch(e) {
 		},
 		dataType : 'json',
 		success : function(res) {
-			
-			location.href = "/techtalk/tloResearchMyPage.do";
+			location.href = "/techtalk/tloMyPageX.do";
 		},
 		error : function() {
 			
@@ -61,10 +62,10 @@ function doSearch(e) {
 			
 		}
 	});
+	*/
 	
 	
-	
-	//$('#frm').submit();
+	//
 	
 	
 	
@@ -89,17 +90,18 @@ function doSave(e) {
 		view_yn_arr[i] = $('input:checkbox[name="chk"]').eq(i).val();
 	}
 	
-	console.log(co_td_no_arr);
-	console.log(view_yn_arr);
+	//console.log(co_td_no_arr);
+	//console.log(view_yn_arr);
 	$.ajax({
 		type : 'POST',
-		url : '/techtalk/doSaveList.do',   //pull 이후 /techtalk/doSaveList.do으로 X변경 
+		url : '/techtalk/doSaveList1X.do',   //pull 이후 /techtalk/doSaveList.do으로 X변경
 		data : {
 			co_td_no_arr : co_td_no_arr, 
 			view_yn_arr : view_yn_arr
 		},
 		dataType : 'json',
 		success : function(res) {
+			console.log("저장전:");
 			alert("저장되었습니다.");
 			location.href = "/techtalk/tloMyPage.do";
 		},
@@ -164,7 +166,7 @@ function doUpdate() {
 	//현재의 id="NO"값을 가져와서 
 	$.ajax({
 		type : 'POST',
-		url : '/techtalk/doUpdateCorporate.do',
+		url : '/techtalk/doUpdateCorporateX.do',
 		data : {
 			//기업수요자 정보 수정
 			//corporate_seqno : $('#corporate_seqno').val(),
@@ -290,13 +292,14 @@ function fncChangeStd(obj, gubun){
 	}else{
 		$.ajax({
 			type : 'POST',
-			url : '/techtalk/doGetCodeList1.do',
+			url : '/techtalk/doGetCodeList1X.do',
 			data : {
 				parent_code_key : selValue,
 				gubun : gubun
 			},
 			dataType : 'json',
 			success : function(res) {
+				console.log("fncChangeStd 작동중..")
 				var codeData = "";
 				var aHtml = "";
 				if(gubun == "mid"){
@@ -332,9 +335,71 @@ function fncChangeStd(obj, gubun){
 }
 
 
+function filterChangeStd(obj, gubun){
+	var selValue = obj.value;
+	if(selValue == "" || selValue == "선택"){
+		if(gubun == "mid"){
+			$('#filterStdClassCd2').empty();
+			$('#filterStdClassCd3').empty();
+			$('#filterStdClassCd2').append("<option title='기술분류2' value=''>선택</option>");
+			if(selValue == "") {
+				$('#filterStdClassCd2').attr('disabled', 'disabled');
+			}
+			$('#filterStdClassCd3').append("<option title='기술분류3' value=''>선택</option>");
+			$('#filterStdClassCd3').attr('disabled', 'disabled');
+		} else if(gubun == "sub" || gubun == "end") {
+			$('#filterStdClassCd3').empty();
+			$('#filterStdClassCd3').append("<option title='기술분류3' value=''>선택</option>");
+			$('#filterStdClassCd3').attr('disabled', 'disabled');
+		} 
+	}else{
+		$.ajax({
+			type : 'POST',
+			url : '/techtalk/deGetCodeListX.do',
+			data : {
+				parent_code_key : selValue,
+				gubun : gubun
+			},
+			dataType : 'json',
+			success : function(res) {
+				var codeData = "";
+				var aHtml = "";
+				if(gubun == "mid"){
+					codeData = res.codeList;
+					aHtml += "<option title='기술분류2' value=''>선택</option>";
+					$.each(codeData, function(key, val){
+						aHtml += "<option title="+this.code_name+" value="+this.code_key+">"+this.code_name+"</option>";
+					});
+					
+					$('#filterStdClassCd2').empty();
+					$('#filterStdClassCd2').append(aHtml);
+					$('#filterStdClassCd2').removeAttr("disabled");	
+				} else if(gubun == "sub") {
+					codeData = res.codeList;
+					aHtml += "<option title='기술분류3' value=''>선택</option>";
+					$.each(codeData, function(key, val){
+						aHtml += "<option title="+this.code_name+" value="+this.code_key+">"+this.code_name+"</option>";
+					});
+					
+					$('#filterStdClassCd3').empty();
+					$('#filterStdClassCd3').append(aHtml);
+					$('#filterStdClassCd3').removeAttr("disabled");	
+				} 
+			},
+			error : function() {
+				
+			},
+			complete : function() {
+				
+			}
+		});
+	}
+}
 
-
-
+function doSearchFilter () {
+	$('#page').val(1);
+	$('#frm2').submit();
+}
 
 </script>
 <!-- 기술수요 목록 -->
@@ -499,31 +564,22 @@ function fncChangeStd(obj, gubun){
 									<tr>
 										<!-- 기본 셋팅 값 -->
 										<th scope="col">기술분류</th>
-										<td class="ta_left"><select id="selStdClassCd1"
-											name="selStdClassCd1" onChange="fncChangeStd(this, 'mid');"
-											title="기술분류1" style="width: 32%;">
-												<option title="기술분류1" value="">선택</option>
-												<c:forEach var="code1" items="${codeList1}"
-													varStatus="status">
-													<option title="${code1.code_name}"
+										<td class="ta_left">
+										<select id="selStdClassCd1" name="selStdClassCd1" onChange="fncChangeStd(this, 'mid');" title="기술분류1" style="width: 32%;">
+											<option title="기술분류1" value="">선택</option>
+											<c:forEach var="code1" items="${codeList1}" varStatus="status">
+											 <option title="${code1.code_name}"
 														value="${code1.code_key}">${code1.code_name}</option>
-												</c:forEach>
-										</select> <select id="selStdClassCd2" name="selStdClassCd2"
-											onChange="fncChangeStd(this, 'sub');" title="기술분류2"
-											style="width: 32%;">
-												<!--  <option title="기술분류2" value="">선택</option> -->
-												<c:forEach var="code2" items="${codeList2}"
-													varStatus="status">
-													<option title="기술분류2" value="${code2.code_key}">${code2.code_name}</option>
-												</c:forEach>
-										</select> <select id="selStdClassCd3" name="selStdClassCd3" disabled
-											title="기술분류3" style="width: 32%;">
-												<option title="기술분류3" value="">선택</option>
-												<c:forEach var="code3" items="${codeList3}"
-													varStatus="status">
-													<option title="${code3.code_name3}"
-														value="${code3.code_key}">${code3.code_name}</option>
-												</c:forEach>
+											</c:forEach>
+										</select> <select id="selStdClassCd2" name="selStdClassCd2"  onChange="fncChangeStd(this, 'sub');" title="기술분류2" style="width: 32%;">
+											<c:forEach var="code2" items="${codeList2}" varStatus="status">
+												<option title="기술분류2" value="${code2.code_key}">${code2.code_name}</option>
+											</c:forEach>
+										</select> <select id="selStdClassCd3" name="selStdClassCd3" title="기술분류3" style="width: 32%;">
+											<option title="기술분류3" value="">선택</option>
+											<c:forEach var="code3" items="${codeList3}" varStatus="status">
+											<option title="${code3.code_name3}" value="${code3.code_key}">${code3.code_name}</option>
+											</c:forEach>
 										</select></td>
 									</tr>
 									<tr>
@@ -731,7 +787,8 @@ function fncChangeStd(obj, gubun){
 		</div>
 	</div>
 </div>
-
+<!-- 필터 부분 -->
+<form action="#" id="frm2" name="frm2" method="post">
 <div class="dim-layer filterPop" >
     <div class="dimBg"></div>
     <div id="filterPop" class="pop-layer" style="height:420px;width:640px">
@@ -749,14 +806,6 @@ function fncChangeStd(obj, gubun){
 							<tr>
 								<th scope="col">최근 업데이트 날짜</th>
 								<td class="left form-inline">
-									<!--  
-									<div class="btn_chk div-inline">
-										<input type="checkbox" name="date_all"  id="date_all" value="date_all"> 
-										<label for="date_all" class="option_label">  
-											<span class="inner"><span class="txt_checked">전체</span></span> 
-										</label>
-									</div>
-									-->
 									<div class="datepicker_wrap">
 										<input type="date" id="strDate" name="strDate" class="form-control">
 										~
@@ -764,8 +813,7 @@ function fncChangeStd(obj, gubun){
 									</div>
 									
 								</td>
-							</tr>
-							<!--  
+							</tr>			 
 							<tr>
 								<th scope="col">기술분야</th>
 								<td class="left form-inline">
@@ -775,55 +823,26 @@ function fncChangeStd(obj, gubun){
 											<span class="inner"><span class="txt_checked">전체</span></span> 
 										</label>
 									</div>
-									<div class="btn_chk div-inline">
-										<input type="checkbox" name="tech_field"  id="b1" value="b1"> 
-										<label for="b1" class="option_label">  
-											<span class="inner"><span class="txt_checked">대분류 선택</span></span> 
-										</label>
-									</div>
-									<div class="btn_chk div-inline">
-										<input type="checkbox" name="tech_field"  id="b2" value="b2"> 
-										<label for="b2" class="option_label">  
-											<span class="inner"><span class="txt_checked">중분류 선택</span></span> 
-										</label>
-									</div>
-									<div class="btn_chk div-inline">
-										<input type="checkbox" name="tech_field"  id="b3" value="b3"> 
-										<label for="b3" class="option_label">  
-											<span class="inner"><span class="txt_checked">소분류 선택</span></span> 
-										</label>
-									</div>
+									<select id="filterStdClassCd1" name="filterStdClassCd1" onChange="filterChangeStd(this, 'mid');" title="기술분류1" style="width: 25%;">
+										<option title="기술분류1" value="">선택</option>
+										<c:forEach var="code1" items="${codeList1}" varStatus="status">
+											<option title="${code1.code_name}" value="${code1.code_key}">${code1.code_name}</option> 
+										</c:forEach>
+									</select>
+									<select id="filterStdClassCd2" name="filterStdClassCd2" disabled onChange="filterChangeStd(this, 'sub');" title="기술분류2" style="width: 25%;">
+										<option title="기술분류2" value="">선택</option>
+										<c:forEach var="code2" items="${codeList2}" varStatus="status">
+											<option title="${code2.code_name}" value="${code2.code_key}">${code2.code_name}</option> 
+										</c:forEach>
+									</select>
+									<select id="filterStdClassCd3" name="filterStdClassCd3" disabled title="기술분류3" style="width: 25%;">
+										<option title="기술분류3" value="">선택</option>
+										<c:forEach var="code3" items="${codeList3}" varStatus="status">
+											<option title="${code3.code_name}" value="${code3.code_key}">${code3.code_name}</option>
+										</c:forEach>
+									</select>
 								</td>
 							</tr>
-							-->
-							<tr>
-								<th scope="col">기술분야</th>
-								<td class="ta_left">
-									<select id="tech1" name="tech1" onChange="fncChangeStd(this, 'mid');" title="기술분류1" style="width: 32%;">		
-									<option title="기술분류1" value="">선택</option>
-										<c:forEach var="code1" items="${codeList1}" varStatus="status">
-											<option title="${code1.code_name}" value="${code1.code_key}">${code1.code_name}</option>
-										</c:forEach>
-									</select> 
-										<select id="tech2" name="tech2"
-											onChange="fncChangeStd(this, 'sub');" title="기술분류2"
-											style="width: 32%;">
-												<!--  <option title="기술분류2" value="">선택</option> -->
-												<c:forEach var="code2" items="${codeList2}"
-													varStatus="status">
-													<option title="기술분류2" value="${code2.code_key}">${code2.code_name}</option>
-												</c:forEach>
-										</select> <select id="tech3" name="tech3" disabled
-											title="기술분류3" style="width: 32%;">
-												<option title="기술분류3" value="">선택</option>
-												<c:forEach var="code3" items="${codeList3}"
-													varStatus="status">
-													<option title="${code3.code_name3}"
-														value="${code3.code_key}">${code3.code_name}</option>
-												</c:forEach>
-										</select></td>
-									</tr>							
-							
 							<tr>
 								<th scope="col">매칭 여부</th>
 								<td class="left form-inline">
@@ -852,7 +871,7 @@ function fncChangeStd(obj, gubun){
 					</table>
 					<div class="tbl_public" >
 						<div style="text-align:center;margin-top:40px;">
-		                	<button type="button" class="btn_step btn_point_black"  title="확인">확인</button>
+		                	<button type="button" class="btn_step btn_point_black"  title="적용" onClick="javascript:doSearchFilter();">적용</button>
 		                	<button type="button" class="btn_line btn_cancel" id="cancelId"  name="btnCancel" title="닫기">닫기</button>
 	                	</div>
 	                </div>
@@ -861,6 +880,6 @@ function fncChangeStd(obj, gubun){
         </div>
    	</div>
 </div>
-
+</form>
 
 

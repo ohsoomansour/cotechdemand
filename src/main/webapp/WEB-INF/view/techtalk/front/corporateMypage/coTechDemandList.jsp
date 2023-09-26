@@ -6,15 +6,10 @@
 
 
 <script>
-var list = new Array();
-var ex_assignm_no = new Array();
-var ex_keyword = new Array();
-var ex_re_start_date = new Array();
-var ex_re_end_date = new Array();
-var ex_re_institu_nm = new Array();
-var ex_re_project_nm = new Array();
+
 
 $(document).ready(function() {
+	//console.log("dom랜더링 안됨?");
 	var startIndex = 1;	// 인덱스 초기값
 	
 	$("#lessProButton").hide();
@@ -45,15 +40,25 @@ $(document).ready(function() {
 	
 });
 
+//기술수요 등록 팝업 페이지
+function regist_popup() {
+		var url = "/techtalk/registerCoTechDemand.do";
+		var name = "popup test";
+		var option = "width = 1080, height = 1000, top = 100, left = 200, location = no "
+		window.open(url, name, option);
+}
+
+
+function fncList(page) {
+	$('#page').val(page);
+	$('#frm').submit();
+}
 
 
 
-//1. 기업 기술수요 상세보기 화면만 나오면된다!
 function detail( co_td_no, compa_name, mid_category_key, small_category_key, code_name2, code_name3, keyword1,  keyword2, keyword3,  keyword4, keyword5, tech_needs, corporate_problem, hold_rnd_infra, willingness_to_invest, dept, manager_position, manager_name, mobilephone_num, biz_email, corporate_seqno)  {
  	//console.log(co_td_no); // no를 가져와서 ajax >> Controller로 보내고 >> paraMap으로 보내서 >> /doUpdateCorporate.do 로 보낸다. 
 
- 	
-  	//co_td_no 페이지 번호
   	$('#NO').val(co_td_no);
   	$('#selStdClassCd1').val("A").prop("selected", true);
   	$("#selStdClassCd2").val(mid_category_key).prop("selected", true); // option 태그의 value값
@@ -171,6 +176,7 @@ function fncChangeStd(obj, gubun){
 			},
 			dataType : 'json',
 			success : function(res) {
+				console.log(res)
 				var codeData = "";
 				var aHtml = "";
 				if(gubun == "mid"){
@@ -207,6 +213,12 @@ function fncChangeStd(obj, gubun){
 
 
 </script>
+<!-- 기술수요 목록 -->
+<form action="#" id="frm" name="frm" method="post">
+<input type="hidden" name="page" id="page" value="${paraMap.page}" />
+<input type="hidden" name="sidx" id="sidx" value="${paraMap.sidx}" />
+<input type="hidden" name="sord" id="sord" value="${paraMap.sord}" />
+<input type="hidden" name="list" id="list" value="${paraMap.list}" />
 
 <div class="area_cont area_cont2" id="researcherlist">
 
@@ -223,6 +235,11 @@ function fncChangeStd(obj, gubun){
 						</dl>
 					</div>
 				</div>
+				<!-- 등록 -->
+				 <div class="wrap_btn _center" >
+					<a href="javascript:regist_popup();" class="btn_confirm"title="등록">등록</a>
+					<h3>기술수요를 등록해 주세요. </h3>
+				</div> 
 				<div class="list_panel">
 					<div class="cont_list">
 						<c:forEach var="co" items="${corporateList}" varStatus="status">
@@ -259,6 +276,8 @@ function fncChangeStd(obj, gubun){
 		</div>
 	</div>
 </div>
+</form>
+
 
 <div class="dim-layer">
 	<div class="dimBg"></div>

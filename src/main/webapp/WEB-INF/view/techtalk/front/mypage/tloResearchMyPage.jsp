@@ -897,7 +897,7 @@ function doUpdate() {
 	});
 }
 
-function doSearchFilter () {
+function doSearchFilter() {
 	$('#page').val(1);
 	$('#frm2').submit();
 }
@@ -2698,5 +2698,5 @@ function doSearchFilter () {
         </div>
    	</div>
 </div>
->>>>>>> refs/remotes/origin/develop
+
 </form>
