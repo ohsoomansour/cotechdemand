@@ -62,7 +62,7 @@ var searchSource = ['엽기떡볶이', '신전떡볶이', '걸작떡볶이', '�
 			    source: function (request, response) {
 				    var data = $('#bizName').val();
 			        $.ajax({
-			            url: "/techtalk/autoSearchBusiness.do",
+			            url: "/techtalk/autoSearchBusinessX.do",
 			            type: "POST",
 			            dataType: "json",
 			            data: { applicant_nm: request.term },
@@ -99,7 +99,7 @@ var searchSource = ['엽기떡볶이', '신전떡볶이', '걸작떡볶이', '�
 		console.log("입력값");
 		$.ajax({
 			type : 'POST',
-			url : '/techtalk/autoSearchBusiness.do',
+			url : '/techtalk/autoSearchBusinessX.do',
 			data : {
 				applicant_nm : data
 			},
@@ -159,11 +159,9 @@ var searchSource = ['엽기떡볶이', '신전떡볶이', '걸작떡볶이', '�
 		if(!isBlank('업무용이메일도메인', '#bizEmail2'))
 		if(!isBlank('회사용직통전화번호', '#bizTelNo'))
 
-		var url = "/techtalk/memberJoin.do"
+		var url = "/techtalk/memberJoinX.do"
 		var form = $('#frm')[0];
 		var data = new FormData(form);
-		console.log("이게왜 ? + " + idCheck + " pw + " + pwCheck)
-		/*
 			$.ajax({
 			       url : url,
 			       type: "post",
@@ -173,6 +171,7 @@ var searchSource = ['엽기떡볶이', '신전떡볶이', '걸작떡볶이', '�
 			       dataType: "json",
 			       success : function(res){
 				    	alert("성공") 
+				    	location.href="/techtalk/login.do"
 			       },
 			       error : function(){
 			    	alert('게시판 등록에 실패했습니다.');    
@@ -180,7 +179,7 @@ var searchSource = ['엽기떡볶이', '신전떡볶이', '걸작떡볶이', '�
 			       complete : function(){
 			       }
 			});
-		*/
+		
 		}
 
 	//[회원가입] - 아이디 및 사업자등록번호 중복확인 -> 2021/04/16 - 추정완
@@ -198,7 +197,7 @@ var searchSource = ['엽기떡볶이', '신전떡볶이', '걸작떡볶이', '�
 				}*/
 			$.ajax({
 				type : 'POST',
-				url : '/techtalk/memberDoubleCheck.do',
+				url : '/techtalk/memberDoubleCheckX.do',
 				data : {
 					gubun : gubun,
 					id : id
@@ -214,8 +213,7 @@ var searchSource = ['엽기떡볶이', '신전떡볶이', '걸작떡볶이', '�
 						alert_popup_focus('아이디를 3글자 이상 입력해 주세요.', '#id');
 						return false;
 					} else if (id.length >= 3) {
-						alert("여기냐")
-						changeText('사용가능한 아이디 입니다.', '#checkId');
+						alert_popup_focus('사용가능한 아이디 입니다.', '#pwd');
 						idCheck = true;
 					}
 

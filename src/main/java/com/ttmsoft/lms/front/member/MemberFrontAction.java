@@ -577,7 +577,7 @@ public class MemberFrontAction extends BaseAct {
 	 * @Explain  : 
 	 *
 	 */
-	@RequestMapping (value = "/autoSearchBusiness.do")
+	@RequestMapping (value = "/autoSearchBusinessX.do")
 	public ModelAndView doAutoSearchBusiness(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
 		ModelAndView mav = new ModelAndView("jsonView");
 		System.out.println("check paraMap"+paraMap);
@@ -707,7 +707,7 @@ public class MemberFrontAction extends BaseAct {
 	 * @Explain  : 
 	 *
 	 */
-	@RequestMapping (value = "/memberDoubleCheck.do")
+	@RequestMapping (value = "/memberDoubleCheckX.do")
 	public ModelAndView doMemberDoubleCheck(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView mav = new ModelAndView("jsonView");
 		System.out.println("paraMap : " + paraMap.toString());
@@ -741,7 +741,7 @@ public class MemberFrontAction extends BaseAct {
 	 * @Explain  : 
 	 *
 	 */
-	@RequestMapping (value = "/memberJoin.do")
+	@RequestMapping (value = "/memberJoinX.do")
 	public ModelAndView doMemberJoin(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView mav = new ModelAndView("jsonView");
 		System.out.println("paraMap : " + paraMap);
