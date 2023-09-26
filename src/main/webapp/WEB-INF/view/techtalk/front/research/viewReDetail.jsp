@@ -47,6 +47,7 @@ function moreProContens(){
 	</c:forEach>
 
 	for(var i = 0; i < list.length; i++){
+		console.log(list);
 		var ahtml= "";
 		ahtml +="<table class='tbl'>"
 			ahtml +="<caption class='caption_hide'>국가 과제 수행 이력</caption>"
@@ -63,7 +64,7 @@ function moreProContens(){
 			ahtml +="<tr>"
 			ahtml +="</thead>"
 			ahtml +="<tbody>"
-			if(list[0].re_project_nm != '' && list[0].re_project_nm != 0){
+			if(list[0].re_project_nm != '' || list[0].re_project_nm != 0){
 					
 				for(var i=0; i<list.length;i++){
 				ahtml +="<tr>"
@@ -97,7 +98,7 @@ function lessProContens(){
 		list.push(proItem);
 	</c:forEach>
 	
-	for(var i = 0; i < 5; i++){
+	for(var i = 0; i < list.length && i < 5; i++){
 		console.log(list);
 		var ahtml= "";
 		ahtml +="<table class='tbl'>"
@@ -115,19 +116,19 @@ function lessProContens(){
 			ahtml +="<tr>"
 			ahtml +="</thead>"
 			ahtml +="<tbody>"
-			if(list[0].re_project_nm != '' && list[0].re_project_nm != 0){
-				for(var i=0; i<5; i++){
-					ahtml +="<tr>"
-						ahtml +=	"<td class='ta_left'>"+list[i].re_project_nm+"</td>"
-						ahtml +=	"<td >"+list[i].re_institu_nm+"</td>"
-						ahtml +=	"<td >"+list[i].re_start_date+" ~ "
-						ahtml +=	list[i].re_end_date+"</td>"
-					ahtml +="<tr>"
-					}
+			if(list[0].re_project_nm != '' || list[0].re_project_nm != 0){
+					
+				for(var i = 0; i < list.length && i < 5; i++){
+				ahtml +="<tr>"
+					ahtml +=	"<td class='ta_left'>"+list[i].re_project_nm+"</td>"
+					ahtml +=	"<td >"+list[i].re_institu_nm+"</td>"
+					ahtml +=	"<td >"+list[i].re_start_date+" ~ "
+					ahtml +=	list[i].re_end_date+"</td>"
+				ahtml +="<tr>"
+				}
 			}else{
 				ahtml +=	"<td colspan='3'>국가 과제 수행 이력이 확인되지 않았습니다.</td>"
 			}
-		
 	   ahtml +="</tbody>"
 		ahtml +="</table>"
 		$('#tbl2').empty();
@@ -196,7 +197,7 @@ function lessPatentContens(){
 		list.push(item);
 	</c:forEach>
 	
-	for(var i = 0; i < 5; i++){
+	for(var i = 0; i < list.length && i < 5; i++){
 		console.log(list);
 		var ahtml= "";
 		ahtml +="<table class='tbl'>"
@@ -215,7 +216,7 @@ function lessPatentContens(){
 			ahtml +="</thead>"
 			ahtml +="<tbody>"
 			if(list[0].invent_nm != '' && list[0].invent_nm != 0){
-				for(var i=0; i<5; i++){
+				for(var i = 0; i < list.length && i < 5; i++){
 					ahtml +="<tr>"
 						ahtml +=	"<td class='ta_left'>"+list[i].invent_nm+"</td>"
 						ahtml +=	"<td >"+list[i].applicant_no+"</td>"
@@ -332,13 +333,13 @@ function techInquiry(biz_name){
 						<tbody>
 						<c:choose>
 							<c:when test="${not empty proData[0].re_project_nm }">
-							<c:forEach var="projectData" items="${proData}" end="4">
-								<tr>
-									<td class="ta_left">${projectData.re_project_nm}</td>
-									<td>${projectData.re_institu_nm}</td>
-									<td>${projectData.re_start_date} ~ ${projectData.re_end_date}</td>
-								</tr>
-							</c:forEach>
+								<c:forEach var="projectData" items="${proData}">
+									<tr>
+										<td class="ta_left">${projectData.re_project_nm}</td>
+										<td>${projectData.re_institu_nm}</td>
+										<td>${projectData.re_start_date} ~ ${projectData.re_end_date}</td>
+									</tr>
+								</c:forEach>
 							</c:when>
 							<c:otherwise>
 								<td colspan="3">국가 과제 수행 이력이 확인되지 않았습니다.</td>
