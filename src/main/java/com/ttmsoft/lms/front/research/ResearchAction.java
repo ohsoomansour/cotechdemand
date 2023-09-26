@@ -195,11 +195,11 @@ public class ResearchAction extends BaseAct{
 			// 국가 과제 수행 이력
 			mav.addObject("proData", this.researchService.doViewResearchProject(paraMap));
 			if(paraMap.get("keyword") != null && paraMap.get("keyword") != "" && paraMap.get("keyword") != "") {
-				String keyword = (String) paraMap.get("keyword");
+				/*String keyword = (String) paraMap.get("keyword");
 				String[] keyword_split = keyword.split(",");
 				paraMap.put("keyword_split1", keyword_split[0]);
 				paraMap.put("keyword_split2", keyword_split[1]);
-				paraMap.put("keyword_split3", keyword_split[2]);
+				paraMap.put("keyword_split3", keyword_split[2]);*/
 				
 			}
 			//연구히스토리

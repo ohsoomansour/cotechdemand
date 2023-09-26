@@ -259,8 +259,8 @@ function techInquiry(biz_name){
 }
 </script>
 <form id="frm" name="frm" action ="/techtalk/viewResearchDetail.do" method="post" >
-<input type="hidden" id="research_no" name="research_no" value="${paraMap.research_no}">
-<input type="hidden" id="research_seqno" name="research_seqno" value="${paraMap.research_seqno}">
+<input type="hidden" id="member_seqno" name="member_seqno" value="${paraMap.member_seqno}">
+<input type="hidden" id="researcher_seqno" name="researcher_seqno" value="${paraMap.researcher_seqno}">
 </form>
 <div id="compaVcContent" class="cont_cv">
 	<div id="mArticle" class="assig_app">
