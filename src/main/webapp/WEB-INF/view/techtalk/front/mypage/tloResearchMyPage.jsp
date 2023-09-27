@@ -221,7 +221,10 @@ function morePatentContens(){
 
 //특허리스트 줄이기 이벤트
 function lessPatentContens(){
+	var p_count = 0;
 	list = new Array();
+
+	p_count = list.length > 5 ? 5 : list.length;
 
 	for(var i = 0; i < invent.length; i++) {
 		var item ={};
@@ -232,7 +235,7 @@ function lessPatentContens(){
 		list.push(item);
 	}
 	
-	patentContens(5);
+	patentContens(p_count);
 }
 
 //특허리스트
@@ -674,107 +677,111 @@ function doupdateExcel() {
         success: function (res) {
         	excel = new Array();
             excel = res;
-            alert("엑셀 데이터를 입력하였습니다.");
-           
-            //과제 수행이력 변경
-            for(var i = 0; i <excel.result.data.length; i++) {
-            	var proItem ={};
-        		proItem.re_project_nm = excel.result.data[i].ex_re_project_nm;
-        		proItem.re_institu_nm = excel.result.data[i].ex_re_institu_nm;
-        		proItem.re_start_date = excel.result.data[i].ex_re_start_date;
-        		proItem.re_end_date = excel.result.data[i].ex_re_end_date;
-        		list.push(proItem);
-            }
-            
-        	<c:forEach items="${proData}" var="list">
-	    		var proItem ={};
-	    		proItem.re_project_nm = "${list.re_project_nm}";
-	    		proItem.re_institu_nm = "${list.re_institu_nm}";
-	    		proItem.re_start_date = "${list.re_start_date}";
-	    		proItem.re_end_date = "${list.re_end_date}";
-	    		list.push(proItem);
-    		</c:forEach>
 
-    		var pro_count = (list.length > 5) ? 5 : list.length;	//연구히스토리  최대 5개 제한
-    		
-            proContens(pro_count);
-            
-            //연구 히스토리 변경
-            for(var i = 0; i <excel.result.data.length; i++) {
-            	var item ={};
-	    		item.ex_re_start_date = excel.result.data[i].ex_re_start_date;
-	    		item.ex_re_start_date = (item.ex_re_start_date+'').substr(0,4);
-	    		item.ex_keyword = excel.result.data[i].ex_keyword;
-	    		
-	    		history.push(item);	
-            }
-            
-            <c:forEach items="${dataHis}" var="list">
-	    		var item ={};
-	    		item.ex_re_start_date = "${list.re_start_date}";
-	    		item.ex_re_start_date = (item.ex_re_start_date+'').substr(0,4);
-	    		item.ex_keyword = "${list.keyword}";
-	    		
-	    		history.push(item);
-	    	</c:forEach>
-
-	    	let uniqueHis = {};
-	    	uniqueHis.ex_re_start_date = "";
-	    	uniqueHis.ex_keyword = "";
-
-	    	var year = new Array();
-
-	    	history.forEach((element) => {
-	    	    if (!year.includes(element["ex_re_start_date"])) {
-	    	    	uniqueHis.ex_re_start_date = element["ex_re_start_date"];
-	    	    	uniqueHis.ex_keyword = element["ex_keyword"];
-	    	    	year.push(element["ex_re_start_date"]);
-	    	    	result_history.push(element);
-	    	    }
-	    	});
-
-	    	//히스토리 연도별 정렬 
-	    	var tmp = 0;
-	    	var str_tmp = 0;
-	    	for(var i = 0; i < result_history.length; i++) {
-	    		for(var j = i+1; j < result_history.length; j++) { 
-					if(result_history[i]["ex_re_start_date"] > result_history[j]["ex_re_start_date"]) { 
-						tmp = result_history[i]["ex_re_start_date"];
-						str_tmp = result_history[i]["ex_keyword"];
-						result_history[i]["ex_re_start_date"] = result_history[j]["ex_re_start_date"];
-						result_history[i]["ex_keyword"] = result_history[j]["ex_keyword"];
-						result_history[j]["ex_re_start_date"] = tmp;
-						result_history[j]["ex_keyword"] = str_tmp;
-					}
-				}
-		   	} 
-	    	
-	    	for(var i = result_history.length-1; i >= 0; i--) {
-	    		var ahtml = "";
-	            ahtml += "<colgroup>"
-	            	ahtml += "<col>"
-	            		ahtml += "</colgroup>"
-	            			ahtml += "<thead>"
-	            				ahtml += "<tr>"	
-	            					ahtml += "<th style='width: 100%;'>" + result_history[i].ex_re_start_date + "</th>"
-	            					ahtml += "</tr>"
-	            						ahtml += "</thead>"
-	            							ahtml += "<tbody>"
-	            								ahtml += "<tr>"
-	            									ahtml += "<td>" + result_history[i].ex_keyword + "</td>"
-	            									ahtml += "</tr>"
-
-				historyList.push(ahtml);
-		   	}
-			
-			var count = (historyList.length > 5) ? 5 : historyList.length;	//연구히스토리  최대 5개 제한
-
-			$('#tbl_history').empty();
-			
-			for(i=0; i < count; i++) {
-				$('#tbl_history').append(historyList[i]);
-			}
+            if(excel.result.data[0].ex_re_project_nm != null) {
+	            alert("엑셀 데이터를 입력하였습니다.");
+	           
+	            //과제 수행이력 변경
+	            for(var i = 0; i <excel.result.data.length; i++) {
+	            	var proItem ={};
+	        		proItem.re_project_nm = excel.result.data[i].ex_re_project_nm;
+	        		proItem.re_institu_nm = excel.result.data[i].ex_re_institu_nm;
+	        		proItem.re_start_date = excel.result.data[i].ex_re_start_date;
+	        		proItem.re_end_date = excel.result.data[i].ex_re_end_date;
+	        		list.push(proItem);
+	            }
+	            
+	        	<c:forEach items="${proData}" var="list">
+		    		var proItem ={};
+		    		proItem.re_project_nm = "${list.re_project_nm}";
+		    		proItem.re_institu_nm = "${list.re_institu_nm}";
+		    		proItem.re_start_date = "${list.re_start_date}";
+		    		proItem.re_end_date = "${list.re_end_date}";
+		    		list.push(proItem);
+	    		</c:forEach>
 	
+	    		var pro_count = (list.length > 5) ? 5 : list.length;	//연구히스토리  최대 5개 제한
+	    		
+	            proContens(pro_count);
+	            
+	            //연구 히스토리 변경
+	            for(var i = 0; i <excel.result.data.length; i++) {
+	            	var item ={};
+		    		item.ex_re_start_date = excel.result.data[i].ex_re_start_date;
+		    		item.ex_re_start_date = (item.ex_re_start_date+'').substr(0,4);
+		    		item.ex_keyword = excel.result.data[i].ex_keyword;
+		    		
+		    		history.push(item);	
+	            }
+	            
+	            <c:forEach items="${dataHis}" var="list">
+		    		var item ={};
+		    		item.ex_re_start_date = "${list.re_start_date}";
+		    		item.ex_re_start_date = (item.ex_re_start_date+'').substr(0,4);
+		    		item.ex_keyword = "${list.keyword}";
+		    		
+		    		history.push(item);
+		    	</c:forEach>
+	
+		    	let uniqueHis = {};
+		    	uniqueHis.ex_re_start_date = "";
+		    	uniqueHis.ex_keyword = "";
+	
+		    	var year = new Array();
+	
+		    	history.forEach((element) => {
+		    	    if (!year.includes(element["ex_re_start_date"])) {
+		    	    	uniqueHis.ex_re_start_date = element["ex_re_start_date"];
+		    	    	uniqueHis.ex_keyword = element["ex_keyword"];
+		    	    	year.push(element["ex_re_start_date"]);
+		    	    	result_history.push(element);
+		    	    }
+		    	});
+	
+		    	//히스토리 연도별 정렬 
+		    	var tmp = 0;
+		    	var str_tmp = 0;
+		    	for(var i = 0; i < result_history.length; i++) {
+		    		for(var j = i+1; j < result_history.length; j++) { 
+						if(result_history[i]["ex_re_start_date"] > result_history[j]["ex_re_start_date"]) { 
+							tmp = result_history[i]["ex_re_start_date"];
+							str_tmp = result_history[i]["ex_keyword"];
+							result_history[i]["ex_re_start_date"] = result_history[j]["ex_re_start_date"];
+							result_history[i]["ex_keyword"] = result_history[j]["ex_keyword"];
+							result_history[j]["ex_re_start_date"] = tmp;
+							result_history[j]["ex_keyword"] = str_tmp;
+						}
+					}
+			   	} 
+		    	
+		    	for(var i = result_history.length-1; i >= 0; i--) {
+		    		var ahtml = "";
+		            ahtml += "<colgroup>"
+		            	ahtml += "<col>"
+		            		ahtml += "</colgroup>"
+		            			ahtml += "<thead>"
+		            				ahtml += "<tr>"	
+		            					ahtml += "<th style='width: 100%;'>" + result_history[i].ex_re_start_date + "</th>"
+		            					ahtml += "</tr>"
+		            						ahtml += "</thead>"
+		            							ahtml += "<tbody>"
+		            								ahtml += "<tr>"
+		            									ahtml += "<td>" + result_history[i].ex_keyword + "</td>"
+		            									ahtml += "</tr>"
+	
+					historyList.push(ahtml);
+			   	}
+				
+				var count = (historyList.length > 5) ? 5 : historyList.length;	//연구히스토리  최대 5개 제한
+	
+				$('#tbl_history').empty();
+				
+				for(i=0; i < count; i++) {
+					$('#tbl_history').append(historyList[i]);
+				}
+            } else {
+            	alert("유효하지 않은 엑셀형식 입니다.");
+            }
         },
         error: function (e) {
             alert("실패");

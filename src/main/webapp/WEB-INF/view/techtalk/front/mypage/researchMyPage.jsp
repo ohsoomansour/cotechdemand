@@ -324,8 +324,11 @@ function morePatentContens(){
 
 //특허리스트 줄이기 이벤트
 function lessPatentContens(){
+	var p_count = 0;
 	list = new Array();
-	
+
+	p_count = list.length > 5 ? 5 : list.length;
+
 	<c:forEach items="${invent}" var="list">
 		var item ={};
 		item.research_seqno = "${list.research_seqno}";
@@ -334,8 +337,9 @@ function lessPatentContens(){
 		item.applicant_dt = "${list.applicant_date}";
 		list.push(item);
 	</c:forEach>
+
 	
-	patentContens(5);
+	patentContens(p_count);
 }
 function doUpdate() {
 	// 특허리스트 수정 값

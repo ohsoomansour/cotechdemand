@@ -217,30 +217,49 @@
 			연구자 카운트
 		*/
 		<![CDATA[
-		select COUNT(*) 
-		from tblresearcher 
-		where biz_name = '${biz_name}' 
-		]]>
-		<if test="list != 'all'" >
-			AND view_yn = 'Y'
-		</if>
-		<if test="keyword != ''" >
-			AND keyword like CONCAT('%',#{keyword},'%')
-		</if>
-		<if test="strDate != ''" >
+		SELECT COUNT(*)
+		FROM (
+			SELECT tc.researcher_seqno
+					,tc.researcher_nm
+					,tc.biz_name
+					, tc.keyword
+					, MAX(applicant_date) as applicant_date
+					, (SELECT CODE_NAME FROM TBTECH_CODE AS AA WHERE AA.CODE_KEY = tc.TECH_CODE1) AS CODE_NAME1
+					, (SELECT CODE_NAME FROM TBTECH_CODE AS AA WHERE AA.CODE_KEY = tc.TECH_CODE2) AS CODE_NAME2
+					, (SELECT CODE_NAME FROM TBTECH_CODE AS AA WHERE AA.CODE_KEY = tc.TECH_CODE3) AS CODE_NAME3
+					, view_yn
+			from tblresearcher tc
+			inner join tblresearch_temp tp ON tc.researcher_seqno = tp.researcher_seqno
+			where tc.biz_name = '${biz_name}' 
+		]]>	
+			<if test="list != 'all'" >
+				AND tc.view_yn = 'Y'
+			</if>
+			<if test="keyword != ''" >
+			AND tc.keyword like CONCAT('%',#{keyword},'%')
+			</if>
+			<if test="strDate != ''" >
 		<![CDATA[	
-			AND '${strDate}' <= applicant_date AND applicant_date <= '${endDate}'
+			AND '${strDate}' <= applicant_date
 		]]>		
-		</if>
-		<if test="filterStdClassCd1 != ''" >
-			AND tech_code1 = '${filterStdClassCd1}'
+			</if>
+			<if test="endDate != ''" >
+		<![CDATA[	
+			AND applicant_date <= '${endDate}'
+		]]>		
+			</if>
+			<if test="filterStdClassCd1 != ''" >
+			AND tc.tech_code1 = '${filterStdClassCd1}'
 			</if>
 			<if test="filterStdClassCd2 != ''" >
-			AND tech_code2 = '${filterStdClassCd2}'
+			AND tc.tech_code2 = '${filterStdClassCd2}'
 			</if>
 			<if test="filterStdClassCd3 != ''" >
-			AND tech_code3 = '${filterStdClassCd3}'
+			AND tc.tech_code3 = '${filterStdClassCd3}'
 			</if>
+			GROUP BY tc.researcher_seqno
+			ORDER BY applicant_date desc
+		) CT	
 	</select>
 	
 	<select id="MyPageSQL.doGetTloResearchList" parameterType="dataMap" resultType="dataMap">
@@ -270,7 +289,12 @@
 			</if>
 			<if test="strDate != ''" >
 		<![CDATA[	
-			AND '${strDate}' <= applicant_date AND applicant_date <= '${endDate}'
+			AND '${strDate}' <= applicant_date
+		]]>		
+			</if>
+			<if test="endDate != ''" >
+		<![CDATA[	
+			AND applicant_date <= '${endDate}'
 		]]>		
 			</if>
 			<if test="filterStdClassCd1 != ''" >
