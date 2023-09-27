@@ -456,7 +456,7 @@ public class MemberFrontAction extends BaseAct {
 	 * @Explain  : 
 	 *
 	 */
-	@RequestMapping (value = "/updateMember.do")
+	@RequestMapping (value = "/updateMemberX.do")
 	public ModelAndView doUpdateMember(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
 		ModelAndView mav = new ModelAndView("jsonView");
 		try {

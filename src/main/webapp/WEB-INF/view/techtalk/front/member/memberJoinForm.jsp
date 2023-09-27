@@ -249,12 +249,28 @@ var searchSource = ['엽기떡볶이', '신전떡볶이', '걸작떡볶이', '�
 	}
 
 	function fncChangeEmail(obj) {
+		
+		var id = obj.id;
+		console.log("a" + id)
 		var selValue = obj.value;
-		if (selValue == "직접입력" || selValue == "") {
-			$('#userEmail2').val("");
-		} else {
-			$('#userEmail2').val(selValue);
+		if(id == "bizEmail3"){
+			console.log("여기?", selValue)
+			if (selValue == "직접입력" || selValue == "") {
+				$('#bizEmail2').val("");
+			} else {
+				$('#bizEmail2').val(selValue);
+			}
 		}
+		if(id == "userEmail3"){
+			console.log("여기?2")
+			if (selValue == "직접입력" || selValue == "") {
+				$('#userEmail2').val("");
+			} else {
+				$('#userEmail2').val(selValue);
+			}
+		}
+		var selValue = obj.value;
+		
 	}
 
 	//[회원가입] - 회원가입 완료 화면 이동 -> 2021/06/29 이효상

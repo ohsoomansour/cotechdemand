@@ -40,9 +40,6 @@ function fncFindId() {
 	if(!isBlank('이름', '#userName'))
 	if(!isBlank('이메일', '#userEmail1'))
 	if(!isBlank('이메일도메인', '#userEmail2')){
-		$('#btnFindId').prop('disabled','true');
-		$('#btnFindId').css('background-color','grey');
-		$('.wrap-loading').removeClass('display-none');
 		$.ajax({
 			type : 'POST',
 			url : '/techtalk/findIdX.do',
@@ -174,7 +171,4 @@ function checkCerti() {
                </div>
            </div>
 		<!-- //compaVcContent e:  -->
-		</div>
-		<div class="wrap-loading" style="display-none">
-    	<div><img src="/images/loading.gif"/></div>
 		</div>

@@ -19,7 +19,7 @@ import com.ttmsoft.toaf.basemvc.BaseAct;
 import com.ttmsoft.toaf.object.DataMap;
  
 @Controller
-@RequestMapping(value="/front")
+@RequestMapping(value="/techtalk")
 public class MemberAction extends BaseAct{
 
 	@Autowired
