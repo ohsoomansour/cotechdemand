@@ -118,39 +118,15 @@ public class LoginFrontAction extends BaseAct{
 					this.appendSessionInfo(paraMap, request);					// 유저 세션 정보 기록
 					this.loginFrontService.doUpdateInvalidCountReset(paraMap);	// 로그인 성공 시 비밀번호 오류 횟수 초기화
 					mav.addObject("result_code", "0");
-					Cookie cookie = new Cookie("rememberId", String.join(",", paraMap.getstr("id")));
-		            cookie.setMaxAge(30*24*60*60); // 쿠키의 유효 시간 (초)
-		            response.addCookie(cookie);
+					String rememberYn = paraMap.getstr("rememberId");
+					if(rememberYn.equals("on")) {
+						Cookie cookie = new Cookie("rememberId", String.join(",", paraMap.getstr("id")));
+			            cookie.setMaxAge(30*24*60*60); // 쿠키의 유효 시간 (초)
+			            response.addCookie(cookie);
+					}
+					
 				}
 			}
-//			String [] rolelist = userMap.get("roles").toString().split(",");		
-//			userMap.put("rolelist"		, rolelist);
-//			
-//			int count = this.loginService.doCountAdminMenuAuth(userMap);
-//
-//			if(count > 0) {
-//				userMap.put("roleyn", "Y");
-//			}else {
-//				userMap.put("roleyn", "N");
-//			}
-//			
-//			if(count > 0) {
-//				// 사용자정보 및 기본권한을 세션에 담는다.
-//				this.addSessionLoginInfo(session, userMap);
-//				// 권한 리스트를 세션 정보에 담는다.
-//				paraMap.put("userno", String.valueOf(userMap.get("userno")));
-//				paraMap.put("siteid", String.valueOf(userMap.get("siteid")));
-//				this.appendConnectInfo(paraMap, request);	// 접속 로그 기록
-//				this.appendSessionInfo(paraMap, request);	// 유저 세션 정보 기록
-//				DataMap results = new DataMap();
-//				results.put("item", userMap);
-//				mav.addObject("result_code", "0");
-//				mav.addObject("results", results);
-//			}
-//			else {
-//				mav.addObject("result_code", "1");
-//				mav.addObject("result_mesg", "해당 아이디는 관리자 권한이 없습니다.");
-//			}
 			
 		}
 		catch (Exception e) {
@@ -376,6 +352,7 @@ public class LoginFrontAction extends BaseAct{
 	 * @Explain  : 
 	 *
 	 */
+	@RequestMapping ("/createCookieX.do")
 	public int createCookie(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
 		int result = 0;
 		try {

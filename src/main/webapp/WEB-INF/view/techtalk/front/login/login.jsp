@@ -36,23 +36,18 @@ var LoginCtrl = {
 			success : function(resp) {
 					
 				if (resp.result_code == "0") {
-					if ($("#idsave").is(":checked")) {
-						_lsCtrl.setProperty("SAVEID", $("#userid").val().toLowerCase());
+					if ($("#c4").is(":checked")) {
+						_lsCtrl.setProperty("rememberId", $("#id").val().toLowerCase());
 					}
 					else {
-						_lsCtrl.setProperty("SAVEID", "");
+						_lsCtrl.setProperty("rememberId", "");
 					}
 					var gourl = $.trim($("#gourl").val());
-					//alert("로그인 되었습니다.");
-					//location.href = "/admin/mainView.do";
 					location.href = "/techtalk/mainView.do";
-					//parent.location.reload();
-					//parent.$('#dialog').dialog('destroy');			
 				}
 				else {
 					var msg = resp.result_mesg;
 					alert_popup(msg,"/techtalk/login.do");
-					//location.href = "/tecktalk/login.do";
 				}
 			},
 			error : function(result) {
@@ -74,7 +69,7 @@ function setCookie(){
 	console.log("id값나옴?"+id);
 	$.ajax({
 		type : 'POST',
-		url : '/techtalk/createCookie.do',
+		url : '/techtalk/createCookieX.do',
 		data : {
 			id : id,
 		},
@@ -92,13 +87,13 @@ function setCookie(){
 $(document).ready(function() {
 	var rememberId = getCookie("rememberId");
 	if(rememberId !=null){
-		$('#rememberId').prop('checked', true);
+		$('#c4').prop('checked', true);
 	  $('#id').val(rememberId);
 	}
 	
 	$("#rememberId").click(function(e) {
 		e.preventDefault();
-		setCookie();
+		//setCookie();
 	});
 	//doLogout();
 	$("#id").keyup(function(e){
@@ -154,8 +149,8 @@ function memberJoin() {
                            <div class="login_util">
                            		<div class="lu_left">
                            			<div class="box_checkinp">
-					            		<input type="checkbox" class="inp_check" name="rememberId" id="rememberId"  title="아이디 기억하기">
-					            		<label for="rememberId" class="lab_check">
+					            		<input type="checkbox" class="inp_check" name="rememberId" id="c4"  title="아이디 기억하기">
+					            		<label for="c4" class="lab_check">
 					            			<span class="icon ico_check"></span>아이디 기억하기
 					            		</label>
 					                </div>
@@ -196,28 +191,6 @@ function memberJoin() {
 						<div style="display:inline-block">
 						<span><img src="${pageContext.request.contextPath}/css/images/common/footer_logo.png" alt="바우처사업관리시스템"></span>
 						</div>
-					</div>
-					<div class="dim-layer-common alertCls">
-					    <div class="dimBgg"></div>
-					    <div id="layer99" class="pop-layer" style="height:220px">
-					        <div class="pop-container">
-					        <div class="pop-title"><h3>알림</h3></div>
-					            <div id="tap1_1" style="display: block">
-									<div class="table2 mTop5">
-										<div class="line form-inline alignCenter">
-											<div style="margin-top: 30px">
-												<label id="alertTxt">ㅅㄷㅌㅅ</label>
-											</div>
-										</div>
-										<div class="tbl_public" >
-											<div style="text-align:center;margin-top:20px;">
-							                	<button type="button" class="btn_step" id="cancelAlert" name="btnCancel" title="닫기">닫기</button>
-						                	</div>
-						                </div>
-									</div>
-								</div>
-					        </div>
-				    	</div>
 					</div>
                     <div class="info_copyright">
 						<div class="info_addr">
