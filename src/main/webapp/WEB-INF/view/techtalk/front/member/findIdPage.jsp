@@ -172,3 +172,11 @@ function checkCerti() {
            </div>
 		<!-- //compaVcContent e:  -->
 		</div>
+	</div>
+	
+	<!-- 로딩 -->
+	<div class="loading_wrap">
+		<div class="loader"></div>
+	</div>
+		
+		
