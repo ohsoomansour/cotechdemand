@@ -135,7 +135,9 @@ public class MemberAction extends BaseAct{
 	*/
 	@RequestMapping(value="/agreeMemberAuthX.do")
 	public ModelAndView doMovePopMemberAuth(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
-		ModelAndView mav = new ModelAndView("/techtalk/admin/member/member/adminMemberForm.front_popup");
+		//ModelAndView mav = new ModelAndView("/techtalk/admin/member/member/adminMemberForm.frontPopup");
+		ModelAndView mav = new ModelAndView("jsonView");
+		
 		HttpSession session = request.getSession(); //1. 요청 세션을 얻고
 		String sessionId = (String)session.getAttribute("id"); //2. id에 대한 세션값을 얻고
 		String memberType = (String)session.getAttribute("member_type");
@@ -151,13 +153,10 @@ public class MemberAction extends BaseAct{
 			//1.가입 승인 'Y' => 승인 로직
 			if(paraMap.get("mode").equals("Y")) {		 
 				mav.addObject("authLookUpList", memberService.doUpdateAgreement(paraMap));
-				
 			}
 			else if(paraMap.get("mode").equals("N")) {		// 권한 수정 시 데이터	셋팅
 				mav.addObject("authKindsList", memberService.doListAuthKinds(paraMap));				
 			}
-			
-			
 			
 		} catch (Exception e) {
 			e.printStackTrace();
