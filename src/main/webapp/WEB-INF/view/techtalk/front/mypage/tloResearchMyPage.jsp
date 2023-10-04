@@ -12,7 +12,7 @@ var researcher_seq;
 
 $(document).ready(function() {
 	//체크박스 변경 - 2023/09/18
-    $("input:checkbox").change(function(){
+    $(".inp_check").change(function(){
       if(this.checked){
         $(this).attr('value', 'Y');
       }else{
@@ -57,6 +57,17 @@ $(document).ready(function() {
 	});
 	
 });
+
+function checkOnlyOne(element) {
+	  
+  var checkboxes = document.getElementsByName("matching");
+  
+  checkboxes.forEach((cb) => {
+    cb.checked = false;
+  })
+  
+  element.checked = true; 
+}
 
 function layer_popup(el, cls, op){
 
@@ -476,7 +487,6 @@ function detail(seq) {
 	result = new Array();
 	researcher_seq = seq;
 
-	console.log(seq);
 	$.ajax({
 		type : 'POST',
 		url : '/techtalk/tloDetailX.do',
@@ -486,7 +496,7 @@ function detail(seq) {
 		dataType : 'json',
 		success : function(res) {
 			result = res;
-			console.log(result);
+			
 			invent = result.invent;
 			proData = result.proData;
 			
@@ -1323,48 +1333,23 @@ function doSearchFilter () {
 									</select>
 								</td>
 							</tr>
-							<!--  
-							<tr>
-								<th scope="col">엑셀데이터 입력 여부</th>
-								<td class="left form-inline">
-									<div class="btn_chk div-inline">
-										<input type="checkbox" name="excel"  id="e_all" value="e_all"> 
-										<label for="e_all" class="option_label">  
-											<span class="inner"><span class="txt_checked">전체</span></span> 
-										</label>
-									</div>
-									<div class="btn_chk div-inline">
-										<input type="checkbox" name="excel"  id="eY" value="Y"> 
-										<label for="eY" class="option_label">  
-											<span class="inner"><span class="txt_checked">Y</span></span> 
-										</label>
-									</div>
-									<div class="btn_chk div-inline">
-										<input type="checkbox" name="excel"  id="eN" value="N"> 
-										<label for="eN" class="option_label">  
-											<span class="inner"><span class="txt_checked">N</span></span> 
-										</label>
-									</div>
-								</td>
-							</tr>
-							-->
 							<tr>
 								<th scope="col">매칭 여부</th>
 								<td class="left form-inline">
 									<div class="btn_chk div-inline">
-										<input type="checkbox" name="matching"  id="m_all" value="m_all"> 
+										<input type="checkbox" name="matching"  id="m_all" value="m_all" onclick="checkOnlyOne(this);"> 
 										<label for="m_all" class="option_label">  
 											<span class="inner"><span class="txt_checked">전체</span></span> 
 										</label>
 									</div>
 									<div class="btn_chk div-inline">
-										<input type="checkbox" name="matching"  id="mY" value="Y"> 
+										<input type="checkbox" name="matching"  id="mY" value="Y" onclick="checkOnlyOne(this);"> 
 										<label for="mY" class="option_label">  
 											<span class="inner"><span class="txt_checked">Y</span></span> 
 										</label>
 									</div>
 									<div class="btn_chk div-inline">
-										<input type="checkbox" name="matching"  id="mN" value="N"> 
+										<input type="checkbox" name="matching"  id="mN" value="N" onclick="checkOnlyOne(this);"> 
 										<label for="mN" class="option_label">  
 											<span class="inner"><span class="txt_checked">N</span></span> 
 										</label>
