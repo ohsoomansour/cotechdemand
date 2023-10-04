@@ -93,53 +93,6 @@ function doSearch(e) {
 	$('#frm').submit();
 }
 
-//목록관리 - 2023/09/21 
-function doListAll(e) {
-	$('#list').val('all');
-	$('#page').val(1);
-	$('#frm').submit();
-}
-
-//취소 - 2023/09/21
-function doCancel(e) {
-	$('#list').val();
-	$('#page').val(1);
-	$('#frm').submit();
-}
-
-//목록저장 - 2023/09/21
-function doSave(e) {
-	var researcher_list = $('input:checkbox[name="chk"]').length;
-
-	var researcher_seqno = new Array(researcher_list);
-	var view_yn = new Array(researcher_list);
-
-	for(var i=0; i<researcher_list; i++){                          
-		researcher_seqno[i] = $('input:checkbox[name="chk"]').eq(i).attr('id');
-		view_yn[i] = $('input:checkbox[name="chk"]').eq(i).val();
-	}
-	
-	$.ajax({
-		type : 'POST',
-		url : '/techtalk/doSaveListX.do',
-		data : {
-			researcher_seqno : researcher_seqno,
-			view_yn : view_yn
-		},
-		dataType : 'json',
-		success : function(res) {
-			alert("저장되었습니다.");
-			location.href = "/techtalk/tloMatchList.do";
-		},
-		error : function() {
-			
-		},
-		complete : function() {
-			
-		}
-	});
-}
-
 //필터 기술분류 변경 - 2023/09/21
 function filterChangeStd(obj, gubun){
 	var selValue = obj.value;
@@ -450,7 +403,7 @@ function doSetUpdate() {
 					<div class="belong_box">
 		                <dl class="belong_box_inner">
 		                    <dt>소속</dt>
-		                    <dd>${dataTLO[0].biz_name}</dd>
+		                    <dd>${biz_name}</dd>
 		                </dl>
 		            </div>
 				</div>
@@ -473,23 +426,6 @@ function doSetUpdate() {
 										<button type="button" class="btn_step" onClick="javascript:doSearch();" title="검색">
 											<span>검색</span>
 										</button>
-									</div>
-									<div class="btn_box btn_box2">
-										<c:choose>
-											<c:when test="${paraMap.list eq 'all'}">
-												<button type="button" id="save" class="btn_point" onClick="javascript:doSave();" title="저장">
-													<span>저장</span>
-												</button>
-												<button type="button" id="cancel" class="btn_default" onClick="javascript:doCancel();" title="취소">
-													<span>취소</span>
-												</button>
-											</c:when>
-											<c:otherwise>
-												<button type="button" class="btn_default" title="목록관리" onClick="javascript:doListAll();">
-													<span>목록관리</span>
-												</button>
-											</c:otherwise>
-										</c:choose>
 									</div>
 								</div>
 							</div>
