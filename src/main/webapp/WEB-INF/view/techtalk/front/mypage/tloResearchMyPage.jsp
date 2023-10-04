@@ -1007,7 +1007,7 @@ function doSearchFilter () {
 </div>
 <div class="dim-layer researcherDetailPop">
     <div class="dimBg"></div>
-    <div id="researcherDetailPop" class="pop-layer" style="width:65%; height:600px">
+    <div id="researcherDetailPop" class="pop-layer wpop1160" style="height:600px">
     	<div class="pop-container" >
 	    	<div class="pop-title"><h3>연구자 상세정보</h3><button class="btn-layerClose" title="팝업닫기"><span class="icon ico_close">팝업닫기</span></button></div>
 	    	<div class="pop-cont">

@@ -1023,3 +1023,10 @@ button.btn_line { display: inline-block; width:auto;  height:36px; font-size:14p
 .btn_default+.btn_default{margin-left: 8px;}
 .col1{flex-direction: column;}
 .al-c{align-items: center;}
+
+.wpop1160{width:1160px}
+
+/* 모바일 가로, 테블릿 세로 (해상도 ~ 479px)*/ 
+@media all and (max-width:1159px) {
+  .wpop1160{width:100%;left:0; margin-left:0 !important}
+}
