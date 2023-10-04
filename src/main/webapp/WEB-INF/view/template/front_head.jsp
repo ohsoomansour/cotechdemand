@@ -99,7 +99,7 @@ $(document).ready(function(){
 					<div class="my-dropdown">
 						<button title="user_name" id="my-page-btn" ><span class="user_name">${user_name }(${id })</span></button>
 						<div class="my-dropdown-content">
-								<a href="javascript:doHref('/techtalk/member.do');">회원목록</a>
+								<a href="javascript:doHref('/admin/member.do');">회원목록</a>
 						    <a href="javascript:doHref('/techtalk/tloResearchMyPage.do');">연구자 목록</a>
 						    <a href="#">기업수요 목록</a>
 						    <a href="javascript:doHref('/techtalk/tloMatchList.do');">매칭 목록</a>

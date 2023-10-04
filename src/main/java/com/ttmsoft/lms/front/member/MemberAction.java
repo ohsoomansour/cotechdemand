@@ -19,7 +19,7 @@ import com.ttmsoft.toaf.basemvc.BaseAct;
 import com.ttmsoft.toaf.object.DataMap;
  
 @Controller
-@RequestMapping(value="/techtalk")
+@RequestMapping(value="/admin")
 public class MemberAction extends BaseAct{
 
 	@Autowired
@@ -67,7 +67,7 @@ public class MemberAction extends BaseAct{
 	 * @Explain  : 
 	 *
 	 */
-	@RequestMapping(value="/listMember.do")   
+	@RequestMapping(value="/listMemberX.do")   
 	public ModelAndView doListMember (@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request) {
 		ModelAndView mav = new ModelAndView("jsonView");
 		
@@ -133,7 +133,7 @@ public class MemberAction extends BaseAct{
 	session.setAttribute("delete_flag", userMap.get("delete_flag").toString());
 	session.setAttribute("biz_name", userMap.get("biz_name").toString());
 	*/
-	@RequestMapping(value="/agreeMemberAuth.do")
+	@RequestMapping(value="/agreeMemberAuthX.do")
 	public ModelAndView doMovePopMemberAuth(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView mav = new ModelAndView("/techtalk/admin/member/member/adminMemberForm.front_popup");
 		HttpSession session = request.getSession(); //1. 요청 세션을 얻고
@@ -166,7 +166,7 @@ public class MemberAction extends BaseAct{
 		return mav;
 	}
 
-	@RequestMapping(value="/joinAgreementConfirm.do")
+	@RequestMapping(value="/joinAgreementConfirmX.do")
 	public ModelAndView confirmJoinApproved(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView mav = new ModelAndView("jsonView");
 		mav.addObject("seqno", paraMap.get("seqno"));
@@ -204,7 +204,7 @@ public class MemberAction extends BaseAct{
 	 * @Explain  : 
 	 *
 	 */
-	@RequestMapping(value="/listMemberAuth.do")
+	@RequestMapping(value="/listMemberAuthX.do")
 	public ModelAndView doListMemberAuth(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView mav = new ModelAndView("jsonView");
 		paraMap.put("siteid", siteid);
@@ -228,7 +228,7 @@ public class MemberAction extends BaseAct{
 	 * @Explain  : 
 	 *
 	 */
-	@RequestMapping(value="/updateMemberAuth.do")
+	@RequestMapping(value="/updateMemberAuthX.do")
 	public ModelAndView doUpdateMemberAuth(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
 		ModelAndView mav = new ModelAndView("jsonView");
 		paraMap.put("seq_tblnm", "TU_USER_ROLE");

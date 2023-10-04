@@ -9,7 +9,7 @@
 		initDatePicker([$('#strDate'), $('#endDate')]);
 		
 		$("#list").jqGrid({
-			url : '/front/listMember.do', 
+			url : '/admin/listMemberX.do', 
 			mtype : 'POST',
 			datatype : 'json',
 			postData:{
@@ -143,7 +143,7 @@
 	function beforeLoad(seqno){
 		$.ajax({
 			type : 'GET',
-			url : '/front/joinAgreementConfirm.do?seqno=' + seqno,
+			url : '/admin/joinAgreementConfirmX.do?seqno=' + seqno,
 			dataType : 'json',
 			success : function(data) {
 				console.log(data) //joinApprovedConfirm: {agree_flag: 'Y'}
@@ -170,7 +170,7 @@
     	if(member_type === "ADMIN" ){
 	    	$.ajax({
 					type : 'GET',
-					url : '/front/joinAgreementConfirm.do?seqno=' + seqno,
+					url : '/admin/joinAgreementConfirmX.do?seqno=' + seqno,
 					dataType : 'json',
 					success : function(data) {
 						console.log(data) //joinApprovedConfirm: {agree_flag: 'Y'}
