@@ -134,7 +134,7 @@ function fncChangeStd(obj, gubun){
 	}else{
 		$.ajax({
 			type : 'POST',
-			url : '/techtalk/deGetCodeList.do',
+			url : '/techtalk/deGetCodeListX.do',
 			data : {
 				parent_code_key : selValue,
 				gubun : gubun
@@ -291,7 +291,7 @@ function patentContens(length) {
 					ahtml +="<tr>"
 						ahtml +=	"<td class='ta_left'><input type='hidden' id='invent_research_seqno' name='invent_research_seqno' title='발명의 명칭' value='"+list[i].research_seqno+"'/><input type='text' id='invent_nm' name='invent_nm' title='발명의 명칭' value='"+list[i].invent_nm+"'/></td>"
 						ahtml +=	"<td class='ta_left'><input type='text' id='applicant_no' name='applicant_no' title='출원번호' value='"+list[i].applicant_no+"'/></td>"
-						ahtml +=	"<td class='ta_left'><input type='text' id='applicant_dt' name='applicant_dt' title='출원일' value='"+list[i].applicant_dt+"'/></td>"
+						ahtml +=	"<td class='ta_left'><input type='date' id='applicant_dt' name='applicant_dt' class='form-control' title='출원일' value='"+list[i].applicant_dt+"'/></td>"
 					ahtml +="<tr>"
 				}
 			}else{
@@ -453,7 +453,7 @@ function doUpdate() {
 </div>
 <div class="dim-layer">
     <div class="dimBg"></div>
-    <div id="layer2" class="pop-layer" style="width:65%; height:70%; overflow: auto;">
+    <div id="layer2" class="pop-layer" style="width:1260px; height:70%; overflow: auto;">
 		<div id="compaVcContent" class="cont_cv" style="padding: 30px;">
 			<div id="mArticle" class="assig_app" style="padding-bottom: 30px;">
 				<h2 class="screen_out">본문영역</h2>
@@ -661,7 +661,7 @@ function doUpdate() {
 												<input type="text" id="invent_nm" name="invent_nm" title="발명의 명칭" value="${invent.invent_nm}"/>
 											</td>
 											<td><input type="text" id="applicant_no" name="applicant_no" title="출원번호" value="${invent.application_no}"/></td>
-											<td><input type="text" id="applicant_dt" name="applicant_dt" title="출원일" value="${invent.applicant_date}"/></td>				
+											<td><input type="date" id="applicant_dt" name="applicant_dt" class="form-control" title="출원일" value="${invent.applicant_date}"/></td>			
 										</tr>
 									</c:forEach>
 									</c:when>

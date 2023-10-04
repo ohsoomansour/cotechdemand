@@ -476,6 +476,7 @@ function detail(seq) {
 	result = new Array();
 	researcher_seq = seq;
 
+	console.log(seq);
 	$.ajax({
 		type : 'POST',
 		url : '/techtalk/tloDetailX.do',
@@ -485,7 +486,7 @@ function detail(seq) {
 		dataType : 'json',
 		success : function(res) {
 			result = res;
-			
+			console.log(result);
 			invent = result.invent;
 			proData = result.proData;
 			
@@ -525,9 +526,8 @@ function detail(seq) {
 				$('#keyword5').val(result.data.keyword5.trim());
 			}
 			
-
 			//국가과제수행이력
-			if(result.proData[0].re_project_nm != null) {
+			if(result.proData[0] != null) {
 				var count = (result.proData.length > 5) ? 5 : result.proData.length;
 				var aHtml = "";
 
@@ -540,10 +540,16 @@ function detail(seq) {
 					$('#proData').empty();
 			    	$('#proData').append(aHtml);
 				}
+			} else {
+				var aHtml = "";	
+				
+				aHtml = "<td colspan='3'>국가 과제 수행 이력이 확인되지 않았습니다.</td>";
+				$('#proData').empty();
+		    	$('#proData').append(aHtml);
 			}
 
 			//연구히스토리
-			if(result.dataHis[0].his_date != null) {	
+			if(result.dataHis[0] != null) {	
 				var aHtml = "";	
 				$.each(result.dataHis, function(key, dataHis){
 					aHtml += "<thead>"
@@ -556,6 +562,13 @@ function detail(seq) {
 					$('#tbl_history').empty();
 					$('#tbl_history').append(aHtml);
 				});
+			} else {
+				var aHtml = "";	
+				
+				aHtml = "<td>연구히스토리가 없습니다.</td>";
+				
+				$('#tbl_history').empty();
+				$('#tbl_history').append(aHtml)
 			}
 			
 			//유사연구자
@@ -579,6 +592,12 @@ function detail(seq) {
 					$('#simil').empty();
 					$('#simil').append(aHtml);
 				});
+			} else {
+				var aHtml = "";	
+				aHtml = "<td>유사분야 연구자가 없습니다.</td>";
+				
+				$('#simil').empty();
+				$('#simil').append(aHtml);
 			}
 		
 			//특허리스트
@@ -596,6 +615,12 @@ function detail(seq) {
 					$('#invent').empty();
 			    	$('#invent').append(aHtml);
 				}
+			} else {
+				var aHtml = "";	
+				aHtml = "<td colspan='3'>특허리스트가 확인되지 않았습니다.</td>";
+				
+				$('#invent').empty();
+		    	$('#invent').append(aHtml);
 			}
 
 			//담당자 정보
@@ -648,6 +673,10 @@ function detail(seq) {
 	});	
 	
 }	
+
+function doExcelFile() {
+	document.getElementById("excelFile").click();
+}
 
 function doupdateExcel() {
 	var history = new Array();
@@ -1014,7 +1043,7 @@ function doSearchFilter () {
 </div>
 <div class="dim-layer researcherDetailPop">
     <div class="dimBg"></div>
-    <div id="researcherDetailPop" class="pop-layer" style="width:65%; height:600px">
+    <div id="researcherDetailPop" class="pop-layer" style="width:1260px; height:600px">
     	<div class="pop-container" >
 	    	<div class="pop-title"><h3>연구자 상세정보</h3><button class="btn-layerClose" title="팝업닫기"><span class="icon ico_close">팝업닫기</span></button></div>
 	    	<div class="pop-cont">
@@ -1219,9 +1248,9 @@ function doSearchFilter () {
 						<div class="tbl_public">
 	                	<div style="text-align:center;margin-top:40px;">
 	                		<form id="uploadForm" enctype="multipart/form-data">
-	                			<input type="file" id="excelFile" name="excelFile" accept=".xls,.xlsx,.csv">
+	                			<input type="file" id="excelFile" name="excelFile" accept=".xls,.xlsx,.csv" style="visibility: hidden;" onchange="doupdateExcel();">
 	                		</form>
-	                		<button type="button" id="updateExcel" name="updateExcel" onClick="doupdateExcel();" class="btn_step" title="엑셀데이터 입력">엑셀데이터 입력</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	                		<button type="button" id="updateExcel" name="updateExcel" onClick="doExcelFile();" class="btn_step" title="엑셀데이터 입력">엑셀데이터 입력</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
 	                		<button type="button" onClick="doUpdate();" class="btn_step btn_point_black" title="수 정">수정</button>
 	                		<button type="button" class="btn_line btn_cancel" title="취소">취소</button>
 	                		
@@ -1294,6 +1323,7 @@ function doSearchFilter () {
 									</select>
 								</td>
 							</tr>
+							<!--  
 							<tr>
 								<th scope="col">엑셀데이터 입력 여부</th>
 								<td class="left form-inline">
@@ -1317,6 +1347,7 @@ function doSearchFilter () {
 									</div>
 								</td>
 							</tr>
+							-->
 							<tr>
 								<th scope="col">매칭 여부</th>
 								<td class="left form-inline">

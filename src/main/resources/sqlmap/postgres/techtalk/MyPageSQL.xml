@@ -489,6 +489,9 @@
 			      <if test="member_type != 'ADMIN'" >
 			      where tr.biz_name='${biz_name}'
 			      </if>
+			      <if test="member_type != 'TLO'" >
+			      where 1=1
+			  	  </if>
 			      AND (
 			          (SELECT COUNT(*) FROM unnest(string_to_array(td.keyword, ',')) AS keyword_list
 			           WHERE keyword_list = ANY(string_to_array(tr.keyword, ','))) >= 2
@@ -561,6 +564,9 @@
 		      <if test="member_type != 'ADMIN'" >
 		      where tr.biz_name='${biz_name}'
 		      </if>
+		      <if test="member_type != 'TLO'" >
+			      where 1=1
+			  </if>
 		      AND (
 		          (SELECT COUNT(*) FROM unnest(string_to_array(td.keyword, ',')) AS keyword_list
 		           WHERE keyword_list = ANY(string_to_array(tr.keyword, ','))) >= 2
