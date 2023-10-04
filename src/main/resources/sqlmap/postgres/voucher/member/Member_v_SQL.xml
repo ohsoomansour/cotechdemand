@@ -300,7 +300,18 @@
 				'5',
 				'1999-01-01'::timestamp,
 				#{agree_flag},
-				NOW(),
+				]]>
+				<if test="agree_flag == 'N'">
+         	<![CDATA[
+         		'1999-01-01'::timestamp, 
+         	]]>
+         </if>
+         <if test="agree_flag == 'Y'">
+         	<![CDATA[
+         		NOW(), 
+         	]]>
+         </if>	
+				<![CDATA[
 				#{id},
 				NOW(),
 				'2999-12-31'::timestamp,

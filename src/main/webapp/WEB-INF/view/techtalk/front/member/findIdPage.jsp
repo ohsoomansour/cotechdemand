@@ -40,6 +40,7 @@ function fncFindId() {
 	if(!isBlank('이름', '#userName'))
 	if(!isBlank('이메일', '#userEmail1'))
 	if(!isBlank('이메일도메인', '#userEmail2')){
+		$('.loading_wrap').css('display','block');
 		$.ajax({
 			type : 'POST',
 			url : '/techtalk/findIdX.do',
@@ -49,7 +50,7 @@ function fncFindId() {
 			},
 			dataType : 'json',
 			success : function(data) {
-				$('.wrap-loading').addClass('display-none');
+				$('.loading_wrap').css('display','none');
 				var result_count = data.result_count;
 				if(result_count == '0') {
 					alert_popup_focus('이름 및 이메일을 확인해주세요.',"#userName");
@@ -61,12 +62,12 @@ function fncFindId() {
 				}
 			},
 			error : function() {
-				$('.wrap-loading').addClass('display-none');
+				$('.loading_wrap').css('display','none');
 				$('#btnFindId').prop('disabled','false');
 				$('#btnFindId').css('background-color','#5f24e2');
 			},
 			complete : function() {
-				
+				$('.loading_wrap').css('display','none');
 			}
 		});
 	}
@@ -147,14 +148,14 @@ function checkCerti() {
                                    <input type="text" class="form-control" id="userEmail1" name="user_email1"  title="이메일1" style="width:25%;">
                                    <span>@</span>
                                   <input type="text" class="form-control" id="userEmail2" name="user_email2"  title="이메일2">
-                                  <button type="button" class="btn_default2 btn_nu"  id="btnFindId" title="인증번호 전송">인증번호 전송</button>
+                                  <button type="button" class="btn_default2 btn_nu"  id="btnFindId" title="인증번호 전송" style="font-size:12px;">인증번호 전송</button>
                                </div><br/>
                                
                                <div class="login-form-input" style="display:none;" id="divCerti">
                                <label>인증번호</label>
                                		<div class="d-flex g5">
 	                                   <input type="text" class="form-control" id="certificationNo" name="certification_no"  title="인증번호" style="width:60%;">
-	                                   <button type="button" class="btn_default2 btn_nu"  id="btnCheckCerti" title="인증번호 확인">인증번호 확인</button>
+	                                   <button type="button" class="btn_default2 btn_nu"  id="btnCheckCerti" title="인증번호 확인" style="font-size:12px;">인증번호 확인</button>
                                    </div>
                                </div>
                            </div>
@@ -172,3 +173,7 @@ function checkCerti() {
            </div>
 		<!-- //compaVcContent e:  -->
 		</div>
+	</div>
+	
+		
+		

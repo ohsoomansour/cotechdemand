@@ -96,4 +96,10 @@ public class ResearchService extends BaseSvc<DataMap>{
 		DataMap result = this.dao.selectQuery("SubjectFrontSQL.doViewResearchEmail", paraMap);
 		return result;
 	}
+	
+	//로그인 유저 내용 가져오기
+	public DataMap doUserGetName(DataMap paraMap) {
+		DataMap result = this.dao.selectQuery("SubjectFrontSQL.doUserGetName", paraMap);
+		return result;
+	}
 }

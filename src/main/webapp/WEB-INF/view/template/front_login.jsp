@@ -88,5 +88,9 @@
 	        </div>
     	</div>
 	</div>
+	<!-- 로딩 -->
+	<div class="loading_wrap" style="display:none;">
+		<div class="loader"></div>
+	</div>
 </body>
 </html>

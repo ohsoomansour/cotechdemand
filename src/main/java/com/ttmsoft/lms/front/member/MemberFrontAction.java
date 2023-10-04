@@ -607,43 +607,9 @@ public class MemberFrontAction extends BaseAct {
 		System.out.println("paraMap : " + paraMap);
 		
 		try {
-			LocalDate now = LocalDate.now();
-			int month = now.getMonthValue();
-			int day = now.getDayOfMonth();
-
 			String pw = paraMap.get("pw").toString();
 			paraMap.put("pw", AES256Util.strEncode(pw));
-			String text = "귀하께서는 "+month+"월"+day+"일 </br>TECHTALK  회원으로 가입되셨습니다.<br/><br/><br/> ";
-					text +="아이디 : "+ paraMap.getstr("id");
-			paraMap.put("subject", "[TECHTALK] 회원가입을 환영합니다.");
-			paraMap.put("text", text);
-			String user_email = paraMap.getstr("user_email1")+"@"+paraMap.getstr("user_email2");
-			paraMap.put("user_email", user_email);
-			paraMap.put("pw", AES256Util.strEncode(pw));
-			//CommonUtil.doMailSender(paraMap);
-			
-			/*
-			String pw = CommonUtil.randomString();
-			System.out.println("pw : " + pw);
-			
-			SimpleMailMessage message = new SimpleMailMessage();
-			message.setTo(paraMap.get("user_email").toString());
-			message.setSubject("임시비밀번호 발급");
-			message.setText("임시비밀번호는 " + pw + "입니다. 임시비밀번호로 로그인 해주세요.");
-			javaMailSender.send(message);
-			
-			System.out.println(AES256Util.strEncode(pw));
-			
-			
-			*/
-			
-			//DB 셋팅 후 회원 INSERT 관련 코드 입력필요
 			this.memberFrontService.doInsertMember(paraMap);
-			/*
-			 * String notice_title = "바우처사업관리시스템에  회원으로 가입되셨습니다.";
-			 * paraMap.put("notice_title", notice_title);
-			 */
-			//this.memberFrontService.doSMSMember(paraMap);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ModelAndView("error");
