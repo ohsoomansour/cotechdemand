@@ -2829,7 +2829,7 @@
 			SQL ID : SubjectFrontSQL.doViewResearchEmail
 			연구자 상세보기 페이지 연구자 담당자 이메일 찾기
 		*/
-		select user_email
+		select *
 		from tbiz.tblmember tm
 		where member_type = 'TLO'
 		<if test="biz_name != ''">

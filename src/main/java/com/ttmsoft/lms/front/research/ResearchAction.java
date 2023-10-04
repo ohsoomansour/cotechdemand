@@ -242,7 +242,7 @@ public class ResearchAction extends BaseAct{
 			DataMap data = researchService.doViewResearchEmail(paraMap);
 			DataMap userData = researchService.doUserGetName(paraMap);
 			paraMap.put("user_email", data.get("user_email"));
-			paraMap.put("subject", userData.get("user_name")+"님이 기술이전 문의합니다");
+			paraMap.put("subject", userData.get("user_name")+"님의 " + userData.get("biz_name")+"에서 기술이전 문의합니다");
 			paraMap.put("text", "기술이전 문의해요");
 			System.out.println(data);
 			System.out.println("paraMap:"+paraMap);
