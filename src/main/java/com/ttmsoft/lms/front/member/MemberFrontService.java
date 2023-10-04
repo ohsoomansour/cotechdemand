@@ -29,7 +29,7 @@ public class MemberFrontService extends BaseSvc<DataMap>{
 		String userEmail = paraMap.get("user_email1").toString() 
 				+ "@" + paraMap.get("user_email2").toString() ;
 		String bizEmail = paraMap.getstr("biz_email1").toString()
-				+ "@ " + paraMap.getstr("biz_email2").toString();
+				+ "@" + paraMap.getstr("biz_email2").toString();
 		
 		paraMap.put("user_email", userEmail);
 		paraMap.put("biz_email", bizEmail);
