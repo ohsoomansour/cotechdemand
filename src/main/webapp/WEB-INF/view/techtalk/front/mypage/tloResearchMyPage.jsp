@@ -1018,6 +1018,8 @@ function doSearchFilter () {
 									<colgroup>
 										<col style="width: 10%">
 										<col>
+										<col style="width: 10%">
+										<col>
 									</colgroup>
 									<thead></thead>
 									<tbody class="view">
