@@ -127,24 +127,27 @@ public class MatchSearchAction extends BaseAct {
 	 *
 	 */	
 	@RequestMapping (value = "/sendInquiryMatchX.do", method = RequestMethod.POST)
-	public ModelAndView dosendInquiryResearcher(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, Model model) {
-		ModelAndView mav = new ModelAndView("jsonView");						
+	public ModelAndView dosendInquiryResearcher(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, Model model, HttpSession session) {
+		ModelAndView mav = new ModelAndView("jsonView");		
+		String member_seqno = session.getAttribute("member_seqno").toString();
+		paraMap.put("member_seqno", member_seqno);
 		mav.addObject("paraMap", paraMap);	
+		
 		try {						
 			for(int i = 0; i < 2; i ++) {
 				DataMap data = null;
 				if( i == 0) {
-					//추후에 tbiz 메일 주석 풀기
-					//paraMap.put("user_email", "tbiz@tbizip.com");
+					paraMap.put("user_email", "tbiz@tbizip.com");
 					paraMap.put("subject", "매칭 문의합니다");
 					paraMap.put("text", "매칭 문의해요");
 					System.out.println("TLO 담당자 이메일 없음");
 					System.out.println("티비즈" + paraMap);
 					CommonUtil.doMailSender(paraMap);
 				}else if( i == 1) {
+					DataMap userData = researchService.doUserGetName(paraMap);
 					data = researchService.doViewResearchEmail(paraMap);
 					paraMap.put("user_email", data.get("user_email"));
-					paraMap.put("subject", "매칭 문의합니다");
+					paraMap.put("subject", userData.get("user_name")+"님이 매칭 문의합니다");
 					paraMap.put("text", "매칭 문의해요");
 					System.out.println("TLO" + paraMap);
 					if(data == null) {

@@ -2838,4 +2838,17 @@
 		
 	</select>
 	
+	<select id="SubjectFrontSQL.doUserGetName" parameterType="dataMap" resultType="dataMap">
+		<!-- 2023-09-13  유지민 -->
+		/*
+			SQL ID : SubjectFrontSQL.doUserGetName
+			로그인 유저 내용 가져오기
+		*/
+		select *
+		from tbiz.tblmember tm
+		<if test="member_seqno != ''">
+		where member_seqno = #{member_seqno}::INT
+		</if>
+		
+	</select>
 </mapper>	
