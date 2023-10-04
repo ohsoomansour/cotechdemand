@@ -27,9 +27,10 @@
 }
 </style>
 <script>
-var searchSource = ['엽기떡볶이', '신전떡볶이', '걸작떡볶이', '신당동떡볶이']; // 배열 생성
 var idCheck = false; //아이디 중복검사 체크
 var pwCheck = false; //패스워드 중복검사 체크
+const idRegex = /^[a-zA-Z0-9]{1,16}$/;//대소문자영문 숫자포함한 정규식
+const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,16}$/; //영문,숫자,특수문자를 포함한 8자이상 16자 이하 정규식
 $(document).ready(function(){	
 	
 	
@@ -132,50 +133,55 @@ function autoComplete(){
 function fncMemberJoin(){
 	//개인정보 유효성 검사
 	if(!isBlank('아이디', '#id')){
-		if(!idCheck){
-			alert_popup_focus('아이디 중복확인을 해주세요.',"#id");
-			return false;
-			}
-		else{
-			console.log("왜죠 " + idCheck)
-			if(!isBlank('비밀번호', '#pw')){
-				if(!isBlank('비밀번호 확인', '#passWordCk')){
-					var pw = $('#pw').val();
-					var pwChk = $('#passWordCk').val();
-					if(pw == pwChk){
-						console.log("왜죠 " + pw + pwChk)
-						if(!isBlank('이름', '#userName')){
-							if(!isBlank('개인이메일', '#userEmail1')){
-								if(!isBlank('개인이메일 도메인', '#userEmail2')){
-									if(!isBlank('휴대전화번호', '#userMobileNo')){
-										if(!isBlank('회사명', '#bizName')){
-											if(!isBlank('부서명', '#userDepart')){
-												if(!isBlank('직급', '#userRank')){
-													if(!isBlank('업무용이메일', '#bizEmail1')){
-														if(!isBlank('업무용이메일도메인', '#bizEmail2')){
-															if(!isBlank('회사용직통전화번호', '#bizTelNo')){
-																var url = "/techtalk/memberJoinX.do"
-																	var form = $('#frm')[0];
-																	var data = new FormData(form);
-																		$.ajax({
-																		       url : url,
-																		       type: "post",
-																		       processData: false,
-																		       contentType: false,
-																		       data: data,
-																		       dataType: "json",
-																		       success : function(res){
-																			       alert_popup("회원가입이 완료되었습니다. 로그인창으로 이동합니다.","/techtalk/login.do");
-																			    	//alert("성공") 
-																			    	//location.href="/techtalk/login.do"
-																		       },
-																		       error : function(){
-																			       alert_popup("에러가 발생하였습니다. 관리자에게 문의해주세요","/techtalk/memberJoinFormPage.do");
-																		    	//alert('게시판 등록에 실패했습니다.');    
-																		       },
-																		       complete : function(){
-																		       }
-																		});
+		var id = $('#id').val();
+		if(idRegex.test(id)){
+			if(!idCheck){
+				alert_popup_focus('아이디 중복확인을 해주세요.',"#id");
+				return false;
+				}
+			else{
+				console.log("왜죠 " + idCheck)
+				if(!isBlank('비밀번호', '#pw')){
+					if(!isBlank('비밀번호 확인', '#passWordCk')){
+						var pw = $('#pw').val();
+						var pwChk = $('#passWordCk').val();
+						if(passwordRegex.test(pw)){
+							if(pw == pwChk){
+								console.log("왜죠 " + pw + pwChk)
+								if(!isBlank('이름', '#userName')){
+									if(!isBlank('개인이메일', '#userEmail1')){
+										if(!isBlank('개인이메일 도메인', '#userEmail2')){
+											if(!isBlank('휴대전화번호', '#userMobileNo')){
+												if(!isBlank('회사명', '#bizName')){
+													if(!isBlank('부서명', '#userDepart')){
+														if(!isBlank('직급', '#userRank')){
+															if(!isBlank('업무용이메일', '#bizEmail1')){
+																if(!isBlank('업무용이메일도메인', '#bizEmail2')){
+																	if(!isBlank('회사용직통전화번호', '#bizTelNo')){
+																		var url = "/techtalk/memberJoinX.do"
+																			var form = $('#frm')[0];
+																			var data = new FormData(form);
+																				$.ajax({
+																				       url : url,
+																				       type: "post",
+																				       processData: false,
+																				       contentType: false,
+																				       data: data,
+																				       dataType: "json",
+																				       success : function(res){
+																					       alert_popup("회원가입이 완료되었습니다. 로그인창으로 이동합니다.","/techtalk/login.do");
+																					    	//alert("성공") 
+																					    	//location.href="/techtalk/login.do"
+																				       },
+																				       error : function(){
+																					       alert_popup("에러가 발생하였습니다. 관리자에게 문의해주세요","/techtalk/memberJoinFormPage.do");
+																				    	//alert('게시판 등록에 실패했습니다.');    
+																				       },
+																				       complete : function(){
+																				       }
+																				});
+																		}
+																	}
 																}
 															}
 														}
@@ -184,16 +190,20 @@ function fncMemberJoin(){
 											}
 										}
 									}
-								}
+							}else{
+								alert_popup_focus("비밀번호와 비밀번호 확인이  일치하지않습니다.","#pw");
 							}
-					}else{
-						alert_popup_focus("비밀번호와 비밀번호 확인이  일치하지않습니다.","#pw");
-					}
+						}else{
+							alert_popup_focus("비밀번호는 영문, 숫자, 특수문자를 포함하여 8자이상 16자이하로 설정해주세요",'#pw');
+						}
+						}
 					}
 				}
-			}
+		}else{
+			alert_popup_focus("아이디는 영문, 숫자를 포함하여 16자 이하로 설정해주세요",'#id');
 		}
 	}
+}
 
 //[회원가입] - 아이디 및 사업자등록번호 중복확인 -> 2021/04/16 - 추정완
 function fncDoubleCheck(gubun) {
@@ -360,8 +370,7 @@ function changeText(text, id){
 												onkeyup="this.value=this.value.replace(/[\ㄱ-ㅎㅏ-ㅣ가-힣]/g, '');"
 												title="아이디"> <a href="javascript:void;"
 												class="btn_step2" title="중복확인" id="btnIdCheck">중복확인</a> <span
-												style="margin-left: 10px;">8~20자 이내의 영문자(대,소) / 숫자 /
-												특수문자(.,_,-,@)만 입력가능합니다. </span>
+												style="margin-left: 10px;">아이디는 영문, 숫자를 포함하여 16자 이하로 설정 </span>
 										</div>
 										<div>
 											<p id="idCheck" />
@@ -374,8 +383,7 @@ function changeText(text, id){
 										<div class="form-inline">
 											<input type="password" class="form-control form_pw" id="pw"
 												name="pw" title="비밀번호"> <span
-												style="margin-left: 125px;">8~20자 이내의 영문자(대,소) / 숫자 /
-												특수문자만 입력가능합니다.</span>
+												style="margin-left: 125px;">비밀번호는 영문, 숫자, 특수문자를 포함하여 8자이상 16자이하로 설정.</span>
 										</div>
 									</td>
 								</tr>

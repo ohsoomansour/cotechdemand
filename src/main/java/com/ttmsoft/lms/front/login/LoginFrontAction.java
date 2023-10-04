@@ -110,21 +110,26 @@ public class LoginFrontAction extends BaseAct{
 				
 				int count = this.loginFrontService.doCountUserInfo(paraMap);
 				if(count > 0) {
-					// 세션에 사용자정보 담기
-					this.addFrontSessionLoginInfo(session, userMap);
-					paraMap.put("userid", String.valueOf(userMap.get("id")));
-					paraMap.put("userno", String.valueOf(userMap.get("member_seqno")));
-					
-					this.appendSessionInfo(paraMap, request);					// 유저 세션 정보 기록
-					this.loginFrontService.doUpdateInvalidCountReset(paraMap);	// 로그인 성공 시 비밀번호 오류 횟수 초기화
-					mav.addObject("result_code", "0");
-					String rememberYn = paraMap.getstr("rememberId");
-					if(rememberYn.equals("on")) {
-						Cookie cookie = new Cookie("rememberId", String.join(",", paraMap.getstr("id")));
-			            cookie.setMaxAge(30*24*60*60); // 쿠키의 유효 시간 (초)
-			            response.addCookie(cookie);
+					String agree_flag = userMap.getstr("agree_flag");
+					if(agree_flag.equals("Y")) {
+						// 세션에 사용자정보 담기
+						this.addFrontSessionLoginInfo(session, userMap);
+						paraMap.put("userid", String.valueOf(userMap.get("id")));
+						paraMap.put("userno", String.valueOf(userMap.get("member_seqno")));
+						
+						this.appendSessionInfo(paraMap, request);					// 유저 세션 정보 기록
+						this.loginFrontService.doUpdateInvalidCountReset(paraMap);	// 로그인 성공 시 비밀번호 오류 횟수 초기화
+						mav.addObject("result_code", "0");
+						String rememberYn = paraMap.getstr("rememberId");
+						if(rememberYn.equals("on")) {
+							Cookie cookie = new Cookie("rememberId", String.join(",", paraMap.getstr("id")));
+				            cookie.setMaxAge(30*24*60*60); // 쿠키의 유효 시간 (초)
+				            response.addCookie(cookie);
+						}
+					}else {
+						error_code = "4"; 
+						error_mesg = "TLO계정은 관리자 승인 이후 이용 가능합니다."; throw new Exception();
 					}
-					
 				}
 			}
 			

@@ -31,6 +31,7 @@ function fncFindPwdToEmail() {
 	if(!isBlank('이름', '#userName'))
 	if(!isBlank('이메일', '#userEmail1'))
 	if(!isBlank('이메일도메인', '#userEmail2')){
+		$('.loading_wrap').css('display','block');
 		$.ajax({
 			type : 'POST',
 			url : '/techtalk/findIdX.do',
@@ -40,6 +41,7 @@ function fncFindPwdToEmail() {
 			},
 			dataType : 'json',
 			success : function(data) {
+				$('.loading_wrap').css('display','none');
 				var result_count = data.result_count;
 				if(result_count == '0') {
 					alert_popup_focus('이름 및 이메일을 확인해주세요.',"#userName");
@@ -50,10 +52,10 @@ function fncFindPwdToEmail() {
 				}
 			},
 			error : function() {
-				
+				$('.loading_wrap').css('display','none');
 			},
 			complete : function() {
-				
+				$('.loading_wrap').css('display','none');
 			}
 		});
 	}
