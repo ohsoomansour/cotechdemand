@@ -6,25 +6,25 @@
 $(document).ready(function(){	
 });
 
-function historyClick(demand_no, resear_no, match_no){
- 	var url = "/techtalk/doMatchHistoryList.do";
+function historyClick(dem_seqno, research_seqno, match_number){
+ 	var url = "/techtalk/doMatchHistoryListX.do";
  	var form = $('#frm')[0];
 	var data = new FormData(form);
 	$.ajax({
 		url : url,
        type: "post",
        data: {
-    	   match_no : match_no,
-    	   demand_seqno : demand_no,
-    	   researcher_seqno : resear_no
+    	   demand_seqno : dem_seqno,
+    	   researcher_seqno : research_seqno
        	},
        dataType: "json",
        success : function(res){
-    	   console.log("@@"+res.data[0]);
+    	   console.log(res.data[0]);
+    	   console.log(res.data.length);
+    	   if(res.data.length != 0 ){
     	   var ahtml= "";
-
     	   ahtml +="<table class='tbl'>"
-    	   ahtml +="<caption class='caption_hide'>메인 과제신청 대상사업 리스트</caption>"
+    	   ahtml +="<caption class='caption_hide'>매칭리스트</caption>"
     	   ahtml +="<colgroup>"
    		   ahtml +="<col style='width:150px;'>"
    		   ahtml +="<col>"
@@ -50,8 +50,39 @@ function historyClick(demand_no, resear_no, match_no){
 			}
 		   ahtml +="</tbody>"
 		   ahtml +="</table>"
-		   $('#tbl').empty();
-		   $('#tbl').append(ahtml);
+		   $('#match_number_'+match_number).empty();
+		   $('#match_number_'+match_number).append(ahtml);
+//		   $('.tbl_public').empty();
+//		   $('.tbl_public').append(ahtml);
+    	   }else if(res.data.length == 0 ){
+    		   var ahtml= "";
+        	   ahtml +="<table class='tbl'>"
+        	   ahtml +="<caption class='caption_hide'>매칭리스트</caption>"
+        	   ahtml +="<colgroup>"
+       		   ahtml +="<col style='width:150px;'>"
+       		   ahtml +="<col>"
+    		   ahtml +="<col style='width: 300px;'>"
+    		   ahtml +="<col style='width: 300px;'>"
+    		   ahtml +="</colgroup>"
+    		   ahtml +="<thead>"
+    		   ahtml +="<tr>"
+    		   ahtml +="<th scope='col'>일자</th>"
+    		   ahtml +="<th scope='col'>내용</th>"
+    		   ahtml +="<th scope='col'>기업수요 담당자</th>"
+    		   ahtml +="<th scope='col'>연구자 담당자</th>"
+    		   ahtml +="</tr>"
+    		   ahtml +="</thead>"
+    		   ahtml +="<tbody>"
+    				ahtml +="<tr>"
+    			   ahtml +="<td colspan ='4'>매칭이력이 없습니다</td>"
+    			   ahtml +="</tr>"
+    		   ahtml +="</tbody>"
+    		   ahtml +="</table>"
+    		   $('#match_number_'+match_number).empty();
+    		   $('#match_number_'+match_number).append(ahtml);
+//    		   $('.tbl_public').empty();
+//    		   $('.tbl_public').append(ahtml);
+        	}
        },
        error : function(){
     	alert('실패했습니다.');    
@@ -61,6 +92,29 @@ function historyClick(demand_no, resear_no, match_no){
 
        }
 	});
+}
+
+function techInquiry(biz_name){
+	$.ajax({
+        type : 'POST',
+        url : '/techtalk/sendInquiryMatchX.do',
+        data :  {
+        	biz_name : biz_name
+       },
+        dataType : 'json',
+        beforeSend: function() {
+           $('.wrap-loading').css('display', 'block');
+        },
+        success : function() {
+           alert("기술문의가 완료되었습니다.");
+        },
+        error : function() {
+           
+        },
+        complete : function() {
+           
+        }
+     });
 }
 </script>
 <form action="/techtalk/doMatchHistoryList.do" id="frm2" name="frm2" method="post">
@@ -130,7 +184,11 @@ function historyClick(demand_no, resear_no, match_no){
 					                                    <li><span class="mr txt_grey tech_nm ">${ dataR.bcode_name3}</span></li>
 					                                </ul>
 					                            </div>
-					                            <button type="button" class="email_btn "><span>문의하기</span></button>
+					                            <button type="button" class="email_btn ">
+					                            	<a href="javascript:void(0);" onclick="techInquiry('${dataR.rbiz_name}');" title="문의하기" class="btn_appl">
+					                            		<span>문의하기</span
+					                            	></a>
+					                            </button>
 			                    			</div>
 			                    		</c:forEach>
 				                           
@@ -197,7 +255,11 @@ function historyClick(demand_no, resear_no, match_no){
 					                                    <li><span class="mr txt_grey tech_nm ">${ dataB.rcode_name3}</span></li>
 					                                </ul>
 			                    				</div>
-					                            <button type="button" class="email_btn "><span>문의하기</span></button>
+					                            <button type="button" class="email_btn ">
+					                            	<a href="javascript:void(0);" onclick="techInquiry('${dataB.bbiz_name}');" title="문의하기" class="btn_appl">
+					                            		<span>문의하기</span
+					                            	></a>
+					                            </button>
 			                    			</div>
 			                    		</c:forEach>
 				                           
@@ -264,7 +326,9 @@ function historyClick(demand_no, resear_no, match_no){
 					                                    <li><span class="mr txt_grey tech_nm ">${ dataTLO.rcode_name3}</span></li>
 					                                </ul>
 			                    				</div>
-					                            <button type="button" class="history_btn" ><span><a href="javascript:void(0);" onclick="historyClick('${ dataTLO.demand_no}','${ dataTLO.resear_no}','${ dataTLO.match_no}')">이력보기</a></span></button>
+					                            <button type="button" class="history_btn" ><span><a href="javascript:void(0);" onclick="historyClick('${ dataTLO.dem_seqno}','${ dataTLO.research_seqno}','${ dataTLO.match_number}')">이력보기</a></span></button>
+			                    			</div>
+			                    			<div class="tbl_public" id="match_number_${ dataTLO.match_number }">
 			                    			</div>
 			                    		</c:forEach>
 				                           
@@ -277,8 +341,7 @@ function historyClick(demand_no, resear_no, match_no){
 				                        </div>
 			                    	</c:otherwise>
 			                    </c:choose>
-			                    <div class="tbl_public" id="tbl">
-			                    </div>
+			                    
 							</div>
 						</div>
 					</c:when>

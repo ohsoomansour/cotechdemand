@@ -47,6 +47,7 @@ function moreProContens(){
 	</c:forEach>
 
 	for(var i = 0; i < list.length; i++){
+		console.log(list);
 		var ahtml= "";
 		ahtml +="<table class='tbl'>"
 			ahtml +="<caption class='caption_hide'>국가 과제 수행 이력</caption>"
@@ -63,7 +64,7 @@ function moreProContens(){
 			ahtml +="<tr>"
 			ahtml +="</thead>"
 			ahtml +="<tbody>"
-			if(list[0].re_project_nm != '' && list[0].re_project_nm != 0){
+			if(list[0].re_project_nm != '' || list[0].re_project_nm != 0){
 					
 				for(var i=0; i<list.length;i++){
 				ahtml +="<tr>"
@@ -97,7 +98,7 @@ function lessProContens(){
 		list.push(proItem);
 	</c:forEach>
 	
-	for(var i = 0; i < 5; i++){
+	for(var i = 0; i < list.length && i < 5; i++){
 		console.log(list);
 		var ahtml= "";
 		ahtml +="<table class='tbl'>"
@@ -115,19 +116,19 @@ function lessProContens(){
 			ahtml +="<tr>"
 			ahtml +="</thead>"
 			ahtml +="<tbody>"
-			if(list[0].re_project_nm != '' && list[0].re_project_nm != 0){
-				for(var i=0; i<5; i++){
-					ahtml +="<tr>"
-						ahtml +=	"<td class='ta_left'>"+list[i].re_project_nm+"</td>"
-						ahtml +=	"<td >"+list[i].re_institu_nm+"</td>"
-						ahtml +=	"<td >"+list[i].re_start_date+" ~ "
-						ahtml +=	list[i].re_end_date+"</td>"
-					ahtml +="<tr>"
-					}
+			if(list[0].re_project_nm != '' || list[0].re_project_nm != 0){
+					
+				for(var i = 0; i < list.length && i < 5; i++){
+				ahtml +="<tr>"
+					ahtml +=	"<td class='ta_left'>"+list[i].re_project_nm+"</td>"
+					ahtml +=	"<td >"+list[i].re_institu_nm+"</td>"
+					ahtml +=	"<td >"+list[i].re_start_date+" ~ "
+					ahtml +=	list[i].re_end_date+"</td>"
+				ahtml +="<tr>"
+				}
 			}else{
 				ahtml +=	"<td colspan='3'>국가 과제 수행 이력이 확인되지 않았습니다.</td>"
 			}
-		
 	   ahtml +="</tbody>"
 		ahtml +="</table>"
 		$('#tbl2').empty();
@@ -196,7 +197,7 @@ function lessPatentContens(){
 		list.push(item);
 	</c:forEach>
 	
-	for(var i = 0; i < 5; i++){
+	for(var i = 0; i < list.length && i < 5; i++){
 		console.log(list);
 		var ahtml= "";
 		ahtml +="<table class='tbl'>"
@@ -215,7 +216,7 @@ function lessPatentContens(){
 			ahtml +="</thead>"
 			ahtml +="<tbody>"
 			if(list[0].invent_nm != '' && list[0].invent_nm != 0){
-				for(var i=0; i<5; i++){
+				for(var i = 0; i < list.length && i < 5; i++){
 					ahtml +="<tr>"
 						ahtml +=	"<td class='ta_left'>"+list[i].invent_nm+"</td>"
 						ahtml +=	"<td >"+list[i].applicant_no+"</td>"
@@ -233,11 +234,14 @@ function lessPatentContens(){
 	}
 }
 
-function techInquiry(){
+function techInquiry(biz_name){
 	$.ajax({
         type : 'POST',
-        url : '/techtalk/sendTechInquiry.do',
-        data : $('#frm').serialize(),
+        url : '/techtalk/sendTechInquiryX.do',
+        data :  {
+        	biz_name : biz_name
+    	   
+       },
         dataType : 'json',
         beforeSend: function() {
            $('.wrap-loading').css('display', 'block');
@@ -255,8 +259,8 @@ function techInquiry(){
 }
 </script>
 <form id="frm" name="frm" action ="/techtalk/viewResearchDetail.do" method="post" >
-<input type="hidden" id="research_no" name="research_no" value="${paraMap.research_no}">
-<input type="hidden" id="research_seqno" name="research_seqno" value="${paraMap.research_seqno}">
+<input type="hidden" id="member_seqno" name="member_seqno" value="${paraMap.member_seqno}">
+<input type="hidden" id="researcher_seqno" name="researcher_seqno" value="${paraMap.researcher_seqno}">
 </form>
 <div id="compaVcContent" class="cont_cv">
 	<div id="mArticle" class="assig_app">
@@ -284,7 +288,7 @@ function techInquiry(){
 							<tr>
 								<th scope="col"><label for="re_nm">연구자</label></th>
 								<td class="ta_left">
-									<div class="form-control" style="max-width:100%;max-height:100%"> <c:out value="${data.research_nm }"  escapeXml="false"/> </div>
+									<div class="form-control" style="max-width:100%;max-height:100%"> <c:out value="${data.researcher_nm }"  escapeXml="false"/> </div>
 								</td>
 								<th scope="" rowspan="3">연구자 소재 및 주요 연구분야</th>
 								<td class="ta_left" rowspan="3">
@@ -293,7 +297,7 @@ function techInquiry(){
 							</tr>
 							<tr>
 								<th scope="col">기술분류</th>
-								<td class="ta_left">${data.tech_nm1} > ${data.tech_nm2} > ${data.tech_nm3}</td>
+								<td class="ta_left">${data.code_name1} > ${data.code_name2} > ${data.code_name3}</td>
 							</tr>
 							<tr>
 								<th scope="col">키워드</th>
@@ -329,13 +333,13 @@ function techInquiry(){
 						<tbody>
 						<c:choose>
 							<c:when test="${not empty proData[0].re_project_nm }">
-							<c:forEach var="projectData" items="${proData}" end="4">
-								<tr>
-									<td class="ta_left">${projectData.re_project_nm}</td>
-									<td>${projectData.re_institu_nm}</td>
-									<td>${projectData.re_start_date} ~ ${projectData.re_end_date}</td>
-								</tr>
-							</c:forEach>
+								<c:forEach var="projectData" items="${proData}">
+									<tr>
+										<td class="ta_left">${projectData.re_project_nm}</td>
+										<td>${projectData.re_institu_nm}</td>
+										<td>${projectData.re_start_date} ~ ${projectData.re_end_date}</td>
+									</tr>
+								</c:forEach>
 							</c:when>
 							<c:otherwise>
 								<td colspan="3">국가 과제 수행 이력이 확인되지 않았습니다.</td>
@@ -356,22 +360,22 @@ function techInquiry(){
 					<table class="tbl history_tbl" id="tbl2">
 						<caption class="caption_hide">연구 히스토리</caption>
 						<c:choose>
-							<c:when test="${not empty dataHis[0].ex_assignm_no }">
+							<c:when test="${not empty dataHis[0].his_date}">
 								<c:forEach var="listHis" items="${dataHis}">
-								<colgroup>
-									<col>
-								</colgroup>
-									<thead>
-										<tr>
-										<c:set var="his_date" value="${listHis.ex_re_start_date}" />
-											<th>${fn:substring(his_date,0,4)}</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr>
-											<td>${listHis.keyword}</td>
-										</tr>
-									</c:forEach>
+									<colgroup>
+										<col>
+									</colgroup>
+										<thead>
+											<tr>
+											<c:set var="his_date" value="${listHis.re_start_date}" />
+												<th style="width: 100%;">${fn:substring(his_date,0,4)}</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td>${listHis.keyword}</td>
+											</tr>
+								</c:forEach>
 							</c:when>
 							<c:otherwise>
 								등록된 연구 히스토리가 없습니다.
@@ -454,54 +458,55 @@ function techInquiry(){
 					<a href="javascript:void(0);" onclick="lessPatentContens();" id="lessPatentButton"  class="btn-more">- 줄이기</a>
 				</div>
 				<div class="wrap_btn _center">
-                    <a href="javascript:void(0);" onclick="techInquiry();" id="techInquiryButton" title="기술이전 문의하기" class="btn_appl">기술이전 문의하기</a>
+                    <a href="javascript:void(0);" onclick="techInquiry('${data.biz_name}');" id="techInquiryButton" title="기술이전 문의하기" class="btn_appl">기술이전 문의하기</a>
                 </div>
 				
 			</div>
-			
-			<div class="area_cont area_cont2">
-				<div class="subject_corp">
-					<h4>담당자 정보</h4>
+			<c:if test="${sessionScope.member_type eq 'TLO'}">
+				<div class="area_cont area_cont2">
+					<div class="subject_corp">
+						<h4>담당자 정보</h4>
+					</div>
+					<div class="tbl_view tbl_public">
+						<table class="tbl">
+							<caption style="position:absolute !important;  width:1px;  height:1px; overflow:hidden; clip:rect(1px, 1px, 1px, 1px);" >담당자 정보</caption>
+							<colgroup>
+								<col style="width: 10%">
+								<col>
+							</colgroup>
+							<thead></thead>
+							<tbody class="view">
+								<tr>
+									<th scope="col"><label for="re_belong">소속</label></th>
+									<td class="ta_left">
+										<div class="form-control" style="max-width:100%;max-height:100%"> <c:out value="${data.manager_demand }"  escapeXml="false"/> </div>
+									</td>
+								</tr>
+								<tr>
+									<th scope="col">직책</th>
+									<td class="ta_left">${data.manager_rank}</td>
+								</tr>
+								<tr>
+									<th scope="col">이름</th>
+									<td class="ta_left">${data.manager_name} </td>
+								</tr>
+								<tr>
+									<th scope="col">연락처</th>
+									<td class="ta_left">
+										<div class="form-control" style="max-width:100%;max-height:100%"><c:out value="${data.manager_mobile_no }"  escapeXml="false"/> </div>
+									</td>
+								</tr>
+								<tr>
+									<th scope="col">이메일</th>
+									<td class="ta_left">
+										<div class="form-control" style="max-width:100%;max-height:100%"><c:out value="${data.manager_email }"  escapeXml="false"/> </div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
 				</div>
-				<div class="tbl_view tbl_public">
-					<table class="tbl">
-						<caption style="position:absolute !important;  width:1px;  height:1px; overflow:hidden; clip:rect(1px, 1px, 1px, 1px);" >담당자 정보</caption>
-						<colgroup>
-							<col style="width: 10%">
-							<col>
-						</colgroup>
-						<thead></thead>
-						<tbody class="view">
-							<tr>
-								<th scope="col"><label for="re_belong">소속</label></th>
-								<td class="ta_left">
-									<div class="form-control" style="max-width:100%;max-height:100%"> <c:out value="${data.re_belong }"  escapeXml="false"/> </div>
-								</td>
-							</tr>
-							<tr>
-								<th scope="col">직책</th>
-								<td class="ta_left">${data.re_position}</td>
-							</tr>
-							<tr>
-								<th scope="col">이름</th>
-								<td class="ta_left">${data.re_nm} </td>
-							</tr>
-							<tr>
-								<th scope="col">연락처</th>
-								<td class="ta_left">
-									<div class="form-control" style="max-width:100%;max-height:100%"><c:out value="${data.re_tel }"  escapeXml="false"/> </div>
-								</td>
-							</tr>
-							<tr>
-								<th scope="col">이메일</th>
-								<td class="ta_left">
-									<div class="form-control" style="max-width:100%;max-height:100%"><c:out value="${data.re_email }"  escapeXml="false"/> </div>
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-			</div>
+			</c:if>
 			<!-- //page_content e:  -->
 		</div>
 	</div>

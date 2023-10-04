@@ -16,7 +16,8 @@ $(document).ready(function(){
         $(this).attr('value', 'N');    
       }
     });
-
+	
+   
 	initDatePicker([$('#strDate'), $('#endDate')]);
 	initDatePicker([$('#strDate2'), $('#endDate2')]);
 	
@@ -189,7 +190,7 @@ function historyClick(demand_seqno, resear_no){
     	   ahtml +="<table class='tbl'>"
     	   ahtml +="<caption class='caption_hide'>메인 과제신청 대상사업 리스트</caption>"
     	   ahtml +="<colgroup>"
-   		   ahtml +="<col style='width:150px;'>"
+   		   ahtml +="<col style='width:170px;'>"
    		   ahtml +="<col>"
 		   ahtml +="<col style='width: 300px;'>"
 		   ahtml +="<col style='width: 300px;'>"
@@ -262,27 +263,28 @@ function doUpdateRow() {
 	var ahtml = "";
 
 	ahtml +="<tr>"
-    ahtml +="<td><input type='date' id='match_date' name='match_date[]'/></td>"
-    ahtml +="<td class='ta_left'><input type='text' id='contents' name='contents[]'/></td>"
-    ahtml +="<td>"
-    ahtml +="<input type='text' id='business_nm' name='business_nm[]' style='text-align : center; width:18%; text-indent: 0;'/> / "
-    ahtml +="<input type='text' id='business_tel1' name='business_tel1[]' style='text-align : center; width:18%; text-indent: 0;'/>-"
-    ahtml +="<input type='text' id='business_tel2' name='business_tel2[]' style='text-align : center; width:18%; text-indent: 0;'/>-"
-    ahtml +="<input type='text' id='business_tel3' name='business_tel3[]' style='text-align : center; width:18%; text-indent: 0;'/> / "
-    ahtml +="<input type='text' id='business_mail1' name='business_mail1[]' style='width: 20%;' onkeyup='this.value=this.value.replace(/[\ㄱ-ㅎㅏ-ㅣ가-힣]/g, '');' maxlength='30'/> @ "
-    ahtml +="<input type='text' id='business_mail2' name='business_mail2[]' style='width: 30%;' onkeyup='this.value=this.value.replace(/[\ㄱ-ㅎㅏ-ㅣ가-힣]/g, '');' maxlength='30'/>"  
-    ahtml +="</td>"
-    ahtml +="<td>"
-    ahtml +="<input type='text' id='researcher_nm' name='researcher_nm[]' style='text-align : center; width:18%; text-indent: 0;'/> / "
-    ahtml +="<input type='text' id='researcher_tel1' name='researcher_tel1[]' style='text-align : center; width:18%; text-indent: 0;'/>-"
-    ahtml +="<input type='text' id='researcher_tel2' name='researcher_tel2[]' style='text-align : center; width:18%; text-indent: 0;'/>-"
-    ahtml +="<input type='text' id='researcher_tel3' name='researcher_tel3[]' style='text-align : center; width:18%; text-indent: 0;'/> / "
-    ahtml +="<input type='text' id='researcher_mail1' name='researcher_mail1[]' style='width: 20%;' onkeyup='this.value=this.value.replace(/[\ㄱ-ㅎㅏ-ㅣ가-힣]/g, '');' maxlength='30'/> @ "
-    ahtml +="<input type='text' id='researcher_mail2' name='researcher_mail2[]' style='width: 30%;' onkeyup='this.value=this.value.replace(/[\ㄱ-ㅎㅏ-ㅣ가-힣]/g, '');' maxlength='30'/ >"  
-    ahtml +="</td>"
+    ahtml +="<td><div class='datepicker_wrap'><input type='text' id='match_date' name='match_date[]' class='form-control match_date' placeholder='일자'/></div></td>"
+    ahtml +="<td class='ta_left'><input type='text' id='contents' name='contents[]' placeholder='내용'/></td>"
+    ahtml +="<td class='left'><div class='d-flex col1'>"
+    ahtml +="<div class='row1 d-flex g5 al-c'><input type='text' id='business_nm' name='business_nm[]' style='text-align : center; width:18%; text-indent: 0;' placeholder='이름'/> / "
+    ahtml +="<input type='text' id='business_tel1' name='business_tel1[]' style='text-align : center; width:20%; text-indent: 0;' placeholder='연락처1'/>-"
+    ahtml +="<input type='text' id='business_tel2' name='business_tel2[]' style='text-align : center; width:20%; text-indent: 0;' placeholder='연락처2'/>-"
+    ahtml +="<input type='text' id='business_tel3' name='business_tel3[]' style='text-align : center; width:20%; text-indent: 0;' placeholder='연락처3'/> / </div>"
+    ahtml +="<div class='row1 mgt10 d-flex g5 al-c' ><input type='text' id='business_mail1' name='business_mail1[]' style='width: 30%;' onkeyup='this.value=this.value.replace(/[\ㄱ-ㅎㅏ-ㅣ가-힣]/g, '');' maxlength='30' placeholder='이메일1'/> <span>@</span> "
+    ahtml +="<input type='text' id='business_mail2' name='business_mail2[]' style='width: 40%; flex:1' onkeyup='this.value=this.value.replace(/[\ㄱ-ㅎㅏ-ㅣ가-힣]/g, '');' maxlength='30' placeholder='이메일2'/>"  
+    ahtml +="</div></div></td>"
+    ahtml +="<td class='left'><div class='d-flex col1'>"
+    ahtml +="<div class='row1 d-flex g5 al-c'><input type='text' id='researcher_nm' name='researcher_nm[]' style='text-align : center; width:18%; text-indent: 0;'placeholder='이름'/> / "
+    ahtml +="<input type='text' id='researcher_tel1' name='researcher_tel1[]' style='text-align : center; width:20%; text-indent: 0;'placeholder='연락처1'/>-"
+    ahtml +="<input type='text' id='researcher_tel2' name='researcher_tel2[]' style='text-align : center; width:20%; text-indent: 0;'placeholder='연락처2'/>-"
+    ahtml +="<input type='text' id='researcher_tel3' name='researcher_tel3[]' style='text-align : center; width:20%; text-indent: 0;'placeholder='연락처3'/> / </div> "
+    ahtml +="<div class='row1 mgt10 d-flex g5 al-c' ><input type='text' id='researcher_mail1' name='researcher_mail1[]' style='width: 30%;' onkeyup='this.value=this.value.replace(/[\ㄱ-ㅎㅏ-ㅣ가-힣]/g, '');' maxlength='30'placeholder='이메일1'/> <span>@</span> "
+    ahtml +="<input type='text' id='researcher_mail2' name='researcher_mail2[]' style='width: 40%;flex:1' onkeyup='this.value=this.value.replace(/[\ㄱ-ㅎㅏ-ㅣ가-힣]/g, '');' maxlength='30'placeholder='이메일2'/ >"  
+    ahtml +="</div></div></td>"
     ahtml +="</tr>"
 
 	$('#row').append(ahtml);
+	 initDatePicker([$('.match_date'), '']);
 }
 
 function doDeleteRow() {
@@ -486,22 +488,26 @@ function doSetUpdate() {
 		         	    <div class="tbl_public" id="tbl">
 		                </div>
 					</div>
-					<div class="btn_wrap">
-						<button type="button" class="btn_step" id="updateRow" name="updateRow" style="display: none;" onClick="javascript:doUpdateRow();" title="행추가">
-							<span>+ 행 추가</span>
-						</button>
-						<button type="button" class="btn_step" id="deleteRow" name="deleteRow" style="display: none;" onClick="javascript:doDeleteRow();" title="행삭제">
-							<span>- 행 삭제</span>
-						</button>
-						<button type="button" class="btn_step" id="setCancel" name="setCancel" style="float: right; display: none;" onClick="javascript:doSetCancel();" title="취소">
-							<span>취소</span>
-						</button>
-						<button type="button" class="btn_step" id="setUpdate" name="setUpdate" style="float: right; display: none;" onClick="javascript:doSetUpdate();" title="저장">
-							<span>저장</span>
-						</button>
-						<button type="button" class="btn_step" id="set" name="set" style="float: right; display: none;" onClick="javascript:doSet();" title="수정">
-							<span>수정</span>
-						</button>
+					<div class="btn_wrap d-flex ju_be">
+						<div class="f_left">
+							<button type="button" class="btn_default" id="updateRow" name="updateRow" style="display: none;" onClick="javascript:doUpdateRow();" title="행추가">
+								<span>+ 행 추가</span>
+							</button>
+							<button type="button" class="btn_default" id="deleteRow" name="deleteRow" style="display: none;" onClick="javascript:doDeleteRow();" title="행삭제">
+								<span>- 행 삭제</span>
+							</button>
+						</div>
+						<div class="f_right">
+							<button type="button" class="btn_step" id="setCancel" name="setCancel" style="display: none;" onClick="javascript:doSetCancel();" title="취소">
+								<span>취소</span>
+							</button>
+							<button type="button" class="btn_step" id="setUpdate" name="setUpdate" style=" display: none;" onClick="javascript:doSetUpdate();" title="저장">
+								<span>저장</span>
+							</button>
+							<button type="button" class="btn_step" id="set" name="set" style="display: none;" onClick="javascript:doSet();" title="수정">
+								<span>수정</span>
+							</button>
+						</div>
 					</div>
 				</div>
 				<!-- paging -->

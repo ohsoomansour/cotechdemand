@@ -19,7 +19,7 @@ $('#stdClassSrch').click(function() {
 
 //키워드분야 클릭
 function keywordClick(corporate_no, tech_class_nm){
- 	var url = "/techtalk/doCorporateKeywordResult.do";
+ 	var url = "/techtalk/doCorporateKeywordResultX.do";
  	var form = $('#frm')[0];
 	var data = new FormData(form);
 	$.ajax({

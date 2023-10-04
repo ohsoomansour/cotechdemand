@@ -1,64 +1,104 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+
+<%@ page import="java.util.Date" %>
+<%@ page import="java.net.*" %>
+<%
+	Date date = new Date();
+	long tstamp =  date.getTime();
+%>
+
+<%-- <script src="${pageContext.request.contextPath}/plugins/icheck/icheck.min.js"></script> --%>
+<script src="/js/lms/control/LocalStorageCtrl.js?ts=<%=tstamp%>"></script>
+
 <script>
-$(document).on('ready', function() {
-	setTimeout(function(){
-		$('#btnLogin').focus();
-	}, 500);
+
+$(document).ready(function() {
 	
 });
 
-	var idCheck = false;			//아이디 중복검사 체크
-	var bizRegnoCheck = false;		//사업자등록번호 중복검사 체크
-	$(document).ready(function(){
+//[비밀번호변경] - 2023/09/25 - 박성민
+function changePwd(){
+	if(!isBlank('현재 비밀번호', '#pw'))
+	if(!isBlank('새 비밀번호', '#newPwd'))
+	if(!isBlank('새 비밀번호 확인', '#newPwdChk'))
+	if($('#newPwd').val() != $('#newPwdChk').val()){
+		alert_popup_focus('새 비밀번호와 새비밀번호 확인이 일치하지 않습니다.', '#newPwdChk');
+		return false;
+		}
+	var url = '/techtalk/updatePw2X.do';
+	var form = $('#frm')[0];
+	var data = new FormData(form);
+	$.ajax({
+		url : url,
+       type: "post",
+       processData: false,
+       contentType: false,
+       data: data,
+       dataType: "json",
+       success : function(res){
+	       if(res.result==0){
+	    	   alert_popup_focus('현재 비밀번호가 일치하지 않습니다 비밀번호를 확인해 주세요.', '#pwd');
+		       }else if(res.result==1){
+			       alert("비밀번호가 변경되었습니다. 다시 로그인 해주세요.");
+			       doLogout();
+			       }
+    	   
+       },
+       error : function(){
+    		alert('실패했습니다.');    
+       },
+       async:false,
+       complete : function(){
 
+       }
 	});
+}
 
-	//[회원가입] - 이메일 확인 이동 -> 2021/04/19 추정완
-	function fncCheckEmail() {
-		var userEmail = $('#emailUrl').val();
-		var emailUrl = userEmail.split('@')[1];
-		window.open('https://www.' + emailUrl);
-	}
-	//[회원가입] - 로그인 화면 이동 -> 2021/04/26 추정완
-	function fncLoginPage() {
-		location.href="/front/login.do";
-	}
 </script>
-<!-- compaVcContent s:  -->
-<div id="compaVcContent" class="cont_cv">
-	<div id="mArticle" class="assig_app">
-		<h2 class="screen_out">본문영역</h2>
-		<div class="wrap_cont">
-			<!-- page_title s:  -->
-			<div class="area_tit">
-				<h3 class="tit_corp">가입완료</h3>
-                <div class="wrapper-stepper agree_box">
-                    <ul class="stepper">
-                        <li class="active">약관동의</li>
-                        <li class="active">회원정보입력</li>
-                        <li class="active">가입완료</li>
-                    </ul>
-                </div>
-			</div>
-			<!-- //page_title e:  -->
-			<!-- page_content s:  -->
-			<div class="area_cont ">
-	             <div class="box_complete">
-	                 <p class="bc_list">바우처사업관리시스템에 </p>
-	                 <p class="bc_list">회원으로 가입되셨습니다. </p>
-	                 <!-- <p class="bc_list">가입하신 이메일에 <strong>임시비밀번호</strong>가 발송되었습니다. 처음 로그인 시 비밀번호를 변경하시기 바랍니다.</p> -->
-	             </div>
-			</div>      
-            <div class="wrap_btn _center">
-           		<!-- <a href="javascript:void(0);" class="btn_cancel">이메일 확인</a> -->
-            	<a href="javascript:fncLoginPage();" class="btn_confirm" title="로그인하기" id="btnLogin">로그인 하기 </a>
-            </div>
-		<!-- //page_content e:  -->
+<form id="frm">
+				<input type="hidden" id="id" name="id" value="${id }"/>
+				<input type="hidden" id="member_seqno" name="member_seqno" value="${member_seqno }"/>
+
+	<div id="compaLogin">
+		<!-- compaVcContent s:  -->
+        <div class="compaLginBg"></div>
+		<div class="compaLginCont">
+               <div class="compaLginHeader">
+                   <h1 class="login_logo"><img src="${pageContext.request.contextPath}/css/images/common/logo_header.png" alt="TECHTALK"></h1>
+               </div>
+               <div class="compaLginBox">
+                   <div class="login_form_box">
+                       <div class="login_form_box_inner">
+                       <form id="frm_login" method="post">
+                           <h2>비밀번호 재설정</h2>
+                           <div class="login_form">
+                               <label>새로운 비밀번호</label>
+                               <div class="login-form-input">
+                                   <label><input type="password" class="form-control" id="newPwd" name="new_pwd" placeholder="새로운 비밀번호를 입력해주세요." title="새로운 비밀번호" autofocus></label>
+                               </div>
+                           </div>
+                           <div class="login_form">
+                                <label>새로운 비밀번호 확인</label>
+                               <div class="login-form-input">
+                                   <label><input type="password" class="form-control" id="newPwdChk" name="new_pwd_chk" placeholder="새로운 비밀번호를 다시 입력해주세요." title="새로운 비밀번호 확인" ></label>
+                               </div>
+                           </div>
+                           <div class="login_util">
+                           		<div class="lu_left">
+                           			<div class="box_checkinp">
+					                </div>
+                           		</div>
+                           </div>
+                           <button type="button" class="btn_login"  id="btnChangePwd" onclick="changePwd();" title="변경하기">변경하기</button>
+                           
+                       </form>
+                       </div>
+                   </div>
+               </div>
+           </div>
+		<!-- //compaVcContent e:  -->
 		</div>
-	</div>
-</div>
-<!-- //compaVcContent e:  -->
+		</form>

@@ -20,9 +20,9 @@ $('#stdClassSrch').click(function() {
 });
 
 //키워드분야 클릭
-function keywordClick(research_no, research_seqno, keyword){
+function keywordClick(member_seqno, keyword){
 	keyword = decodeURIComponent(keyword);
- 	var url = "/techtalk/doKeywordResult.do";
+ 	var url = "/techtalk/doKeywordResultX.do";
  	var form = $('#frm')[0];
 	var data = new FormData(form);
 	$.ajax({
@@ -42,14 +42,14 @@ function keywordClick(research_no, research_seqno, keyword){
 					for(var i=0; i<res.data.length;i++){
 					var tempData = encodeURIComponent(res.data[i].keyword);
 					ahtml +="<div class='row'>"
-					ahtml +="<span class='row_txt_num blind'>"+res.data[i].research_seqno+"</span>"
+					ahtml +="<span class='row_txt_num blind'>"+res.data[i].member_seqno+"</span>"
 					ahtml +="<span class='txt_left row_txt_tit'>"
-					ahtml +="<a href=javascript:void(0); onclick=researchDetail("+res.data[i].research_seqno+","+tempData+")>"+res.data[i].research_nm +"연구자</a></span>"
+					ahtml +="<a href=javascript:void(0); onclick=researchDetail("+res.data[i].member_seqno+","+tempData+")>"+res.data[i].researcher_nm +"연구자</a></span>"
 					ahtml +="<span class='re_beloong'>"+res.data[i].applicant_nm+"</span>"
 					ahtml +="<ul class='step_tech'>"
-					ahtml +="<li><span class='mr txt_grey tech_nm '>"+res.data[i].tech_nm1+"</span></li>"
-					ahtml +="<li><span class='mr txt_grey tech_nm '>"+res.data[i].tech_nm2+"</span></li>"
-					ahtml +="<li><span class='mr txt_grey tech_nm '>"+res.data[i].tech_nm3+"</span></li></ul>"
+					ahtml +="<li><span class='mr txt_grey tech_nm '>"+res.data[i].code_name1+"</span></li>"
+					ahtml +="<li><span class='mr txt_grey tech_nm '>"+res.data[i].code_name2+"</span></li>"
+					ahtml +="<li><span class='mr txt_grey tech_nm '>"+res.data[i].code_name3+"</span></li></ul>"
 					ahtml +="<span class='keyword'>"+res.data[i].keyword+"</span>"
 					ahtml +="</div>"
 					}
@@ -70,7 +70,7 @@ function keywordClick(research_no, research_seqno, keyword){
 }
 
 //연구자 상세보기 화면
-function researchDetail(research_seqno, keyword){
+function researchDetail(member_seqno, researcher_seqno, keyword){
 	var frm = document.createElement('form'); 
 
 	frm.name = 'frm3'; 
@@ -79,16 +79,21 @@ function researchDetail(research_seqno, keyword){
 
 	var input1 = document.createElement('input'); 
 	var input2 = document.createElement('input'); 
+	var input3 = document.createElement('input'); 
 
 	input1.setAttribute("type", "hidden"); 
-	input1.setAttribute("name", "research_seqno"); 
-	input1.setAttribute("value", research_seqno); 
+	input1.setAttribute("name", "member_seqno"); 
+	input1.setAttribute("value", member_seqno); 
 	input2.setAttribute("type", "hidden"); 
-	input2.setAttribute("name", "keyword"); 
-	input2.setAttribute("value", keyword); 
+	input2.setAttribute("name", "researcher_seqno"); 
+	input2.setAttribute("value", researcher_seqno); 
+	input3.setAttribute("type", "hidden"); 
+	input3.setAttribute("name", "keyword"); 
+	input3.setAttribute("value", keyword); 
 
 	frm.appendChild(input1); 
 	frm.appendChild(input2); 
+	frm.appendChild(input3); 
 	
 	document.body.appendChild(frm); 
 	frm.submit();
@@ -155,13 +160,13 @@ function enterKeyClick(e){
 								<c:when test="${ not empty data }">
 									<c:forEach var="data" items="${ data }">
 										<div class="row">
-											<span class="row_txt_num blind">${ data.research_seqno }</span>
-											<span class="txt_left row_txt_tit"><a href="javascript:void(0);" onclick="researchDetail('${data.research_seqno}','${data.keyword}')" title="연구자${data.research_nm }상세보기">${ data.research_nm } 연구자</a> </span>
+											<span class="row_txt_num blind">${ data.member_seqno }</span>
+											<span class="txt_left row_txt_tit"><a href="javascript:void(0);" onclick="researchDetail('${data.member_seqno}','${data.researcher_seqno}','${data.keyword}')" title="연구자${data.researcher_nm }상세보기">${ data.researcher_nm } 연구자</a> </span>
 											<span class="re_beloong">${ data.applicant_nm }</span>
 											<ul class="step_tech">
-												<li><span class="mr txt_grey tech_nm ">${ data.tech_nm1 }</span></li>
-												<li><span class="mr txt_grey tech_nm ">${ data.tech_nm2 }</span></li>
-												<li><span class="mr txt_grey tech_nm ">${ data.tech_nm3 }</span></li>
+												<li><span class="mr txt_grey tech_nm ">${ data.code_name1 }</span></li>
+												<li><span class="mr txt_grey tech_nm ">${ data.code_name2 }</span></li>
+												<li><span class="mr txt_grey tech_nm ">${ data.code_name3 }</span></li>
 											</ul>
 											<span class="keyword">${ data.keyword }</span>
 										</div>

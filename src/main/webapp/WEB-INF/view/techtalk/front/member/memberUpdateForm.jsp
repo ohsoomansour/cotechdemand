@@ -62,7 +62,7 @@ var searchSource = ['엽기떡볶이', '신전떡볶이', '걸작떡볶이', '�
 			    source: function (request, response) {
 				    var data = $('#bizName').val();
 			        $.ajax({
-			            url: "/techtalk/autoSearchBusiness.do",
+			            url: "/techtalk/autoSearchBusinessX.do",
 			            type: "POST",
 			            dataType: "json",
 			            data: { applicant_nm: request.term },
@@ -99,7 +99,7 @@ var searchSource = ['엽기떡볶이', '신전떡볶이', '걸작떡볶이', '�
 		console.log("입력값");
 		$.ajax({
 			type : 'POST',
-			url : '/techtalk/autoSearchBusiness.do',
+			url : '/techtalk/autoSearchBusinessX.do',
 			data : {
 				applicant_nm : data
 			},
@@ -142,7 +142,7 @@ var searchSource = ['엽기떡볶이', '신전떡볶이', '걸작떡볶이', '�
 	function fncMemberUpdate(){
 		//개인정보 유효성 검사
 		
-		var url = "/techtalk/updateMember.do"
+		var url = "/techtalk/updateMemberX.do"
 		var form = $('#frm')[0];
 		var data = new FormData(form);
 		console.log("이게왜 ? + " + idCheck + " pw + " + pwCheck)
@@ -187,7 +187,7 @@ var searchSource = ['엽기떡볶이', '신전떡볶이', '걸작떡볶이', '�
 				}*/
 			$.ajax({
 				type : 'POST',
-				url : '/techtalk/memberDoubleCheck.do',
+				url : '/techtalk/memberDoubleCheckX.do',
 				data : {
 					gubun : gubun,
 					id : id

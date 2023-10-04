@@ -36,23 +36,18 @@ var LoginCtrl = {
 			success : function(resp) {
 					
 				if (resp.result_code == "0") {
-					if ($("#idsave").is(":checked")) {
-						_lsCtrl.setProperty("SAVEID", $("#userid").val().toLowerCase());
+					if ($("#c4").is(":checked")) {
+						_lsCtrl.setProperty("rememberId", $("#id").val().toLowerCase());
 					}
 					else {
-						_lsCtrl.setProperty("SAVEID", "");
+						_lsCtrl.setProperty("rememberId", "");
 					}
 					var gourl = $.trim($("#gourl").val());
-					//alert("로그인 되었습니다.");
-					//location.href = "/admin/mainView.do";
 					location.href = "/techtalk/mainView.do";
-					//parent.location.reload();
-					//parent.$('#dialog').dialog('destroy');			
 				}
 				else {
 					var msg = resp.result_mesg;
 					alert_popup(msg,"/techtalk/login.do");
-					//location.href = "/tecktalk/login.do";
 				}
 			},
 			error : function(result) {
@@ -74,7 +69,7 @@ function setCookie(){
 	console.log("id값나옴?"+id);
 	$.ajax({
 		type : 'POST',
-		url : '/techtalk/createCookie.do',
+		url : '/techtalk/createCookieX.do',
 		data : {
 			id : id,
 		},
@@ -92,13 +87,13 @@ function setCookie(){
 $(document).ready(function() {
 	var rememberId = getCookie("rememberId");
 	if(rememberId !=null){
-		$('#rememberId').prop('checked', true);
+		$('#c4').prop('checked', true);
 	  $('#id').val(rememberId);
 	}
 	
 	$("#rememberId").click(function(e) {
 		e.preventDefault();
-		setCookie();
+		//setCookie();
 	});
 	//doLogout();
 	$("#id").keyup(function(e){
@@ -154,15 +149,15 @@ function memberJoin() {
                            <div class="login_util">
                            		<div class="lu_left">
                            			<div class="box_checkinp">
-					            		<input type="checkbox" class="inp_check" name="rememberId" id="rememberId"  title="아이디 기억하기">
-					            		<label for="rememberId" class="lab_check">
+					            		<input type="checkbox" class="inp_check" name="rememberId" id="c4"  title="아이디 기억하기">
+					            		<label for="c4" class="lab_check">
 					            			<span class="icon ico_check"></span>아이디 기억하기
 					            		</label>
 					                </div>
                            		</div>
                            		<div class="lu_right">
 	                           		<a href="/techtalk/findIdPage.do" class="btn_file_pw" id="buttonFindId" title="아이디 찾기">아이디 찾기</a>
-	                           		<a href="/techtalk/findPwdPage.do" class="btn_file_pw" id="buttonFindPw" title="패스워드 찾기">패스워드 찾기</a>
+	                           		<a href="/techtalk/findPwdCheckIdPage.do" class="btn_file_pw" id="buttonFindPw" title="패스워드 찾기">패스워드 찾기</a>
                            		</div>
                            </div>
                            
@@ -176,6 +171,47 @@ function memberJoin() {
                </div>
            </div>
 		<!-- //compaVcContent e:  -->
+		<!-- compaVcFooter s:  -->
+          <footer id="compaVcFoot" class="foot_cv">
+            <div class="wrap_copyright">
+            	<div class="ckwrap">
+	            	<div class="inner_ckwrap">
+	            		<a href="/techtalk/terms.do" class="txt_addr" title="이용약관">이용약관</a> 
+						<a href="/techtalk/policy.do" class="txt_addr"  title="개인정보처리방침">개인정보처리방침</a>
+						<div class="relation_svc">
+	                        <strong class="tit_relation"><a href="javascript:void(0);" class="link_tit" aria-haspopup="true" aria-expanded="false" title="Family Site">관련사이트<span class="icon ico_arr"></span></a></strong>
+	                        <ul class="list_relation">
+	                            <li><a href="www.keywert.com" target="_blank" class="link_relation" title="키워드 링크 새창열림">키워드 링크</a></li>
+	                        </ul>
+	                   	</div>
+	            	</div>
+            	</div>
+                <div class="inner_copyright">
+					<div class="foot_logo">
+						<div style="display:inline-block">
+						<span><img src="${pageContext.request.contextPath}/css/images/common/footer_logo.png" alt="바우처사업관리시스템"></span>
+						</div>
+					</div>
+                    <div class="info_copyright">
+						<div class="info_addr">
+							<ul>
+								<li><span class="at_title">주소</span>서울특별시 강남구 테헤란로 10길 18, 6층 (역삼동, 하나빌딩)</li>
+								<li><span class="at_title">이메일</span>tbiz@tbizip.com</li>
+								<li><span class="at_title">전화</span>02-6405-3271</li>
+								<li><span class="at_title">팩스</span>02-6405-3277</li>
+							</ul>
+				
+						
+						</div>
+						<p class="tx">주식회사 티비즈의 특허 전문가와 워트인텔리전스가 함께  만들었습니다.</p>
+						<small class="txt_copyright">Copyright©2023 TBIZ All Right Reserved.</small>
+						
+					</div>
+                        
+                </div>
+            </div>
+        </footer>
+		<!-- //compaVcCFooter e:  -->
 	</div>
 
 

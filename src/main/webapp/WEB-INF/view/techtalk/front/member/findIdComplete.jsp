@@ -25,8 +25,7 @@ $(document).on('ready', function() {
 			<!-- page_content s:  -->
 			<div class="area_cont ">
 	             <div class="box_complete">
-	             		<h2>아이디 찾기 결과</h2>
-	                 <p class="bc_list">고객님의 아이디는 xxxxx입니다 </p>
+	                 <p class="p_t pdb0">고객님의 아이디는 <strong class="f_p">${id }</strong>입니다 </p>
 	             </div>
 			</div>      
             <div class="wrap_btn _center">

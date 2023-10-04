@@ -1053,7 +1053,11 @@ function doSearchFilter () {
 </div>
 <div class="dim-layer researcherDetailPop">
     <div class="dimBg"></div>
+<<<<<<< src/main/webapp/WEB-INF/view/techtalk/front/mypage/tloResearchMyPage.jsp
     <div id="researcherDetailPop" class="pop-layer" style="width:1260px; height:600px">
+=======
+    <div id="researcherDetailPop" class="pop-layer wpop1160" style="height:600px">
+>>>>>>> src/main/webapp/WEB-INF/view/techtalk/front/mypage/tloResearchMyPage.jsp
     	<div class="pop-container" >
 	    	<div class="pop-title"><h3>연구자 상세정보</h3><button class="btn-layerClose" title="팝업닫기"><span class="icon ico_close">팝업닫기</span></button></div>
 	    	<div class="pop-cont">
@@ -1062,6 +1066,8 @@ function doSearchFilter () {
 								<table class="tbl">
 									<caption style="position:absolute !important;  width:1px;  height:1px; overflow:hidden; clip:rect(1px, 1px, 1px, 1px);" >연구자 상세정보</caption>
 									<colgroup>
+										<col style="width: 10%">
+										<col>
 										<col style="width: 10%">
 										<col>
 									</colgroup>

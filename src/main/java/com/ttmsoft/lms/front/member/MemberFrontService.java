@@ -14,27 +14,31 @@ import com.ttmsoft.toaf.object.DataMap;
 @Service
 @Transactional(value = "postgresqlTransactionManager", propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 public class MemberFrontService extends BaseSvc<DataMap>{
-	@Autowired
-	private SeqService	seqService;
 	
 	/* ----[회원가입 SQL]----*/
-	/* 회원가입 -> 아이디 중복검사 - 2021/04/21 추정완 */
+	/* 회원가입 -> 아이디 중복검사 - 2023/10/03 박성민 */
 	public int doCountMemberId(DataMap paraMap) {
 		return this.dao.countQuery("Member_v_SQL.doCountMemberId", paraMap);
 	}
-	/* 회원가입 -> 사업자등록번호 중복검사 - 2021/04/21 추정완 */
+	/* 회원가입 -> 사업자등록번호 중복검사 - 2023/10/03 박성민 */
 	public int doCountBizRegno(DataMap paraMap) {
 		return this.dao.countQuery("Member_v_SQL.doCountBizRegno", paraMap);
 	}
-	/* 회원가입 -> 회원가입 - 2021/04/21 추정완*/
+	/* 회원가입 -> 회원가입 - 2023/10/03 박성민*/
 	public void doInsertMember(DataMap paraMap) {
 		String userEmail = paraMap.get("user_email1").toString() 
 				+ "@" + paraMap.get("user_email2").toString() ;
 		String bizEmail = paraMap.getstr("biz_email1").toString()
-				+ "@ " + paraMap.getstr("biz_email2").toString();
+				+ "@" + paraMap.getstr("biz_email2").toString();
 		
 		paraMap.put("user_email", userEmail);
 		paraMap.put("biz_email", bizEmail);
+		String member_type = paraMap.getstr("member_type");
+		if(member_type.equals("TLO")) {
+			paraMap.put("agree_flag", "Y");
+		}else {
+			paraMap.put("agree_flag", "N");
+		}
 		
 		System.out.println(paraMap);
 		
@@ -85,22 +89,40 @@ public class MemberFrontService extends BaseSvc<DataMap>{
 		return this.dao.selectQuery("Member_v_SQL.doMemberBiz", paraMap);
 	}
 	
-	/* 멤버 SMS 발송 - 2021/10/13 박성민 */
-	public int doSMSMember(DataMap paraMap) {
-		paraMap.put("seq_tblnm", "TBLSMSMESSAGE");
-		paraMap.put("fsequence", seqService.doAddAndGetSeq(paraMap));
-		/*DataMap checkUser = this.dao.selectQuery("Member_v_SQL.doGetVoucherMemberInfo",paraMap);
-		paraMap.put("email", checkUser.get("user_email"));
-		String mphone = checkUser.get("user_mobile_no").toString().replaceAll("-", "");*/
-		String mphone = paraMap.getstr("user_mobile_no1")+paraMap.getstr("user_mobile_no2")+paraMap.getstr("user_mobile_no3");
-		//String notice_title = "회원가입이 완료되었습니다.";
-		paraMap.put("mphone", mphone);
-		//paraMap.put("notice_title", notice_title);
-		int result = this.dao.insertQuery("MessageSQL.insertSmsMessage", paraMap);
-		return result;
-	}
 	public List<DataMap> doAutoSearchBusiness(DataMap paraMap) {
 		
 		return this.dao.dolistQuery("Member_v_SQL.doAutoSearchBusiness", paraMap);
+	}
+	/* 아이디찾기 -> 아이디찾기카운트 2023/09/21/박성민 */
+	public int doCountFindMemberId(DataMap paraMap) {
+		return this.dao.countQuery("Member_v_SQL.doCountFindId", paraMap);
+	}
+	
+	/* 아이디찾기 -> 아이디찾기 2023/09/21/박성민 */
+	public DataMap doFindMemberId(DataMap paraMap) {
+		return this.dao.selectQuery("Member_v_SQL.doFindId", paraMap);
+	}
+	/* 비밀번호찾기 -> 비밀번호찾기카운트 2023/09/21/박성민 */
+	public int doCountFindMemberPwd(DataMap paraMap) {
+		return this.dao.countQuery("Member_v_SQL.doCountFindPwd", paraMap);
+	}
+	/* 비밀번호찾기 -> 비밀번호찾기 2023/09/21/박성민 */
+	public DataMap doFindMemberPwd(DataMap paraMap) {
+		return this.dao.selectQuery("Member_v_SQL.doFindPwd", paraMap);
+	}
+	/* 비밀번호변경 -> 비밀번호변경 2023/09/22/박성민 */
+	public int doChangePwd(DataMap paraMap) {
+		return this.dao.updateQuery("Member_v_SQL.doUpdatePw", paraMap);
+	}
+	/* 비밀번호변경 -> 비밀번호변경 2023/09/22/박성민 */
+	public int doChangePwdFind(DataMap paraMap) {
+		return this.dao.updateQuery("Member_v_SQL.doUpdatePwFind", paraMap);
+	}
+	/* 인증번호생성 -> 비밀번호변경 2023/09/22/박성민 */
+	public int doSetCertification(DataMap paraMap) {
+		return this.dao.updateQuery("Member_v_SQL.doUpdateCertification", paraMap);
+	}
+	public DataMap doGetCertification(DataMap paraMap) {
+		return this.dao.selectQuery("Member_v_SQL.doCheckCertification", paraMap);
 	}
 }
