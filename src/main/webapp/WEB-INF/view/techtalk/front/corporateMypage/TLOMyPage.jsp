@@ -468,7 +468,7 @@ function doSearchFilter () {
 							    <c:choose>
 									<c:when test="${not empty corporateList}">
 								 	 <c:forEach var="co" items="${corporateList}" varStatus="status"> 
-									   <c:if test="${paraMap.list eq 'all'}">
+									<c:if test="${paraMap.list eq 'all'}">
 										 <span class="box_checkinp">
 											 <input type="checkbox" class="inp_check" value="${co.view_yn}" id="${co.co_td_no}" name="chk" title="표출유무"
 												 <c:if test="${co.view_yn eq 'Y'}">checked</c:if>

@@ -72,11 +72,14 @@ public class MatchSearchAction extends BaseAct {
 		System.out.println("member_type:"+member_type);
 		System.out.println("paraMap:"+paraMap);
 		if(paraMap.getstr("member_type").equals("R")) {
-			mav.addObject("dataR", this.matchSearchService.doGetMatchRList(paraMap));
+			mav.addObject("dataR", this.matchSearchService.doGetMatchRList(paraMap));	
+			System.out.println("dataR:" + this.matchSearchService.doGetMatchRList(paraMap));
 		}else if(paraMap.getstr("member_type").equals("B")) {
 			mav.addObject("dataB", this.matchSearchService.doGetMatchBList(paraMap));
+			
 		}else if(paraMap.getstr("member_type").equals("TLO")) {
 			mav.addObject("dataTLO", this.matchSearchService.doGetMatchTLOList(paraMap));
+			
 		}
 		System.out.println("paraMap:"+paraMap);
 		DataMap navi = new DataMap();

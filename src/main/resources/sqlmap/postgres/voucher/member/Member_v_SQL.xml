@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="Member_v_SQL">
-	<!--  2023.9.2 TBIZ search -->
+	<!--  2023.9.2 TBIZ search
+	       T.ID LIKE CONCAT('%', #{division_value}, '%')     AND T.ID LIKE '%' || #{division_value} || '%'	-->
 	<sql id="search">
 		<if test="division_type == 'all' and division_value != ''">
        		AND (T.ID LIKE '%' || #{division_value} || '%'
@@ -9,10 +10,12 @@
        		OR T.USER_MOBILE_NO LIKE '%' || #{division_value} || '%')
        	</if>
 		<if test="division_type == 'userId' and division_value != ''">
-       		AND T.ID LIKE '%' || #{division_value} || '%'
+			<![CDATA[
+       		 AND T.ID LIKE CONCAT('%', #{division_value}, '%')
+       		]]>
        	</if>
        	<if test="division_type == 'userNm' and division_value != ''">
-       		AND T.USER_NAME LIKE '%' || #{division_value} || '%'
+       		AND T.USER_NAME LIKE '%' || #{division_value} || '%' 
        	</if>
        	<if test="division_type == 'mPhone' and division_value != ''">
        		AND T.USER_MOBILE_NO LIKE '%' || #{division_value} || '%'
@@ -45,6 +48,7 @@
 				COUNT(*)
 			FROM
 				TBLMEMBER T
+			WHERE 1 = 1
 		]]>
 		<include refid="search"/>
 	</select>	
@@ -52,7 +56,8 @@
 	<select id="Member_v_SQL.GetMembersInfoData" resultType="dataMap" parameterType="dataMap">	
 		/*
 			SQL ID : Member_v_SQL.GetMembersInfoData
-			사용자 조회 리스트 -  확인 중 ... 
+			사용자 조회 리스트 -  확인 중 ...  
+			 OR T.MEMBER_TYPE = 'B' OR T.MEMBER_TYPE = 'TLO' OR T.MEMBER_TYPE = 'ADMIN' AND T.delete_flag = 'N'::bpchar
 		*/
 		<![CDATA[
 			SELECT AA.*	
@@ -74,12 +79,10 @@
 				FROM 
 					TBLMEMBER T
 				WHERE 
-					T.MEMBER_TYPE = 'R'
-					or T.MEMBER_TYPE = 'B'
-					or T.MEMBER_TYPE = 'TLO'
-					or T.MEMBER_TYPE = 'ADMIN'
-					and T.delete_flag = 'N'
-		]]>	
+					T.MEMBER_TYPE IN('R', 'B', 'TLO', 'ADMIN')
+					AND T.delete_flag = 'N'
+
+			]]>	
 		<include refid="search"/>
 		<![CDATA[
 			) AA

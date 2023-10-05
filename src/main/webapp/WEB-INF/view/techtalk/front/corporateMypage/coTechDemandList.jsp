@@ -272,6 +272,8 @@ function fncChangeStd(obj, gubun){
 						</c:forEach>
 					</div>
 				</div>
+				<!-- paging -->
+				<div class="paging_comm">${sPageInfo}</div>
 			</div>
 		</div>
 	</div>
@@ -340,7 +342,7 @@ function fncChangeStd(obj, gubun){
 										</select> <select id="selStdClassCd2" name="selStdClassCd2"
 											onChange="fncChangeStd(this, 'sub');" title="기술분류2"
 											style="width: 32%;">
-												<!--  <option title="기술분류2" value="">선택</option> -->
+											
 												<c:forEach var="code2" items="${codeList2}"
 													varStatus="status">
 													<option title="기술분류2" value="${code2.code_key}">${code2.code_name}</option>

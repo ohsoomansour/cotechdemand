@@ -57,12 +57,6 @@ public class TLOMypageService extends BaseSvc<DataMap>{
 		return result;
 	}
 
-	/* 마이페이지 TLO 페이지 수요기업 목록 - 2023/09/25 
-	public List<DataMap> doGetTLOCorporateList(DataMap paraMap) {
-		List<DataMap> result = this.dao.dolistQuery("TLOPageSQL.doGetTLOCorporateList", paraMap);
-		return result;
-	}
-	*/
 	// 09.25 수정중.. 기업은 seqno가 동일하므로 co_td_no로 종류별 view_yn을 설정하는게 적절 
 	public void doUpdateViewYn(DataMap paraMap) {
 		String[] co_td_no_arr =(String[]) paraMap.get("co_td_no_arr");
@@ -108,16 +102,10 @@ public class TLOMypageService extends BaseSvc<DataMap>{
 		}
 	}
 	
-	/* 마이페이지 연구자 기술분류 목록 - 2023/09/07 */
-	public int doCountResearcherItem(DataMap paraMap) {
-		int result = this.dao.countQuery("TLOPageSQL.doCountResearcherItem", paraMap);
-		return result;
-	}
 	/* 마이페이지 담당자정보 - 2023/09/11 */
 	public List<DataMap> doGetManager(DataMap paraMap) {
 		List<DataMap> result = this.dao.dolistQuery("TLOPageSQL.doGetManager", paraMap);
 		return result;
 	}
-	
-	
+
 }
