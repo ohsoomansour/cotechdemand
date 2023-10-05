@@ -221,14 +221,31 @@ public class MyPageAction extends BaseAct {
 			//소속
 			paraMap.put("biz_name", request.getSession().getAttribute("biz_name"));
 			mav.addObject("biz_name", request.getSession().getAttribute("biz_name"));
+
+			paraMap.put("member_type", session.getAttribute("member_type").toString());
 			
 			//총 연구자목록 수
 			int totalCount = 0;
-			if(session.getAttribute("member_type").toString().equals("TLO")) {
-				totalCount = this.myPageService.doCountResearcherItem(paraMap);
-			} else if(session.getAttribute("member_type").toString().equals("ADMIN")) {
-				totalCount = this.myPageService.doCountAdminResearcherItem(paraMap);
+			if(paraMap.get("matching").toString().equals("Y")) {
+				if(session.getAttribute("member_type").toString().equals("TLO")) {
+					totalCount = this.myPageService.doCountTloMatchList2(paraMap);
+				} else if(session.getAttribute("member_type").toString().equals("ADMIN")) {
+					totalCount = this.myPageService.doCountTloMatchList2(paraMap);
+				}
+			} else if(paraMap.get("matching").toString().equals("N")) {
+				if(session.getAttribute("member_type").toString().equals("TLO")) {
+					totalCount = this.myPageService.doCountTloMatchList3(paraMap);
+				} else if(session.getAttribute("member_type").toString().equals("ADMIN")) {
+					totalCount = this.myPageService.doCountTloMatchList3(paraMap);
+				}
+			} else {
+				if(session.getAttribute("member_type").toString().equals("TLO")) {
+					totalCount = this.myPageService.doCountResearcherItem(paraMap);
+				} else if(session.getAttribute("member_type").toString().equals("ADMIN")) {
+					totalCount = this.myPageService.doCountAdminResearcherItem(paraMap);
+				}
 			}
+			
 			
 			mav.addObject("totalCount", totalCount);
 			
@@ -259,11 +276,20 @@ public class MyPageAction extends BaseAct {
 			));
 			
 			//TLO 연구자 목록
-			if(session.getAttribute("member_type").toString().equals("TLO")) {
-				mav.addObject("data", this.myPageService.doGetTloResearchList(paraMap));
-			} else if(session.getAttribute("member_type").toString().equals("ADMIN")) {
-				mav.addObject("data", this.myPageService.doGetAdminResearchList(paraMap));
+			if(paraMap.get("matching").toString().equals("Y")) {
+				if(session.getAttribute("member_type").toString().equals("TLO")) {
+					mav.addObject("data", this.myPageService.doGetTloMatchList2(paraMap));
+				} else if(session.getAttribute("member_type").toString().equals("ADMIN")) {
+					mav.addObject("data", this.myPageService.doGetTloMatchList2(paraMap));
+				}
+			} else {
+				if(session.getAttribute("member_type").toString().equals("TLO")) {
+					mav.addObject("data", this.myPageService.doGetTloResearchList(paraMap));
+				} else if(session.getAttribute("member_type").toString().equals("ADMIN")) {
+					mav.addObject("data", this.myPageService.doGetAdminResearchList(paraMap));
+				}
 			}
+			
 			
 			mav.addObject("paraMap", paraMap);
 		} catch (Exception e) {

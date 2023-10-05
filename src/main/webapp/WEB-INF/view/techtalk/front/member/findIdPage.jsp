@@ -40,6 +40,7 @@ function fncFindId() {
 	if(!isBlank('이름', '#userName'))
 	if(!isBlank('이메일', '#userEmail1'))
 	if(!isBlank('이메일도메인', '#userEmail2')){
+		$('.loading_wrap').css('display','block');
 		$.ajax({
 			type : 'POST',
 			url : '/techtalk/findIdX.do',
@@ -49,7 +50,7 @@ function fncFindId() {
 			},
 			dataType : 'json',
 			success : function(data) {
-				$('.wrap-loading').addClass('display-none');
+				$('.loading_wrap').css('display','none');
 				var result_count = data.result_count;
 				if(result_count == '0') {
 					alert_popup_focus('이름 및 이메일을 확인해주세요.',"#userName");
@@ -61,12 +62,12 @@ function fncFindId() {
 				}
 			},
 			error : function() {
-				$('.wrap-loading').addClass('display-none');
+				$('.loading_wrap').css('display','none');
 				$('#btnFindId').prop('disabled','false');
 				$('#btnFindId').css('background-color','#5f24e2');
 			},
 			complete : function() {
-				
+				$('.loading_wrap').css('display','none');
 			}
 		});
 	}
@@ -172,3 +173,7 @@ function checkCerti() {
            </div>
 		<!-- //compaVcContent e:  -->
 		</div>
+	</div>
+	
+		
+		

@@ -3,6 +3,7 @@
 <mapper namespace="Member_v_SQL">
 	<!--  2023.9.2 TBIZ search -->
 	<sql id="search">
+		<where>
 		<if test="division_type == 'all' and division_value != ''">
        		AND (T.ID LIKE '%' || #{division_value} || '%'
        		OR T.USER_NAME LIKE '%' || #{division_value} || '%'
@@ -17,7 +18,6 @@
        	<if test="division_type == 'mPhone' and division_value != ''">
        		AND T.USER_MOBILE_NO LIKE '%' || #{division_value} || '%'
        	</if>
-       	<!-- 가이드 신청  -->
        	<if test="agree_value != null and agree_value != ''">
          	AND T.AGREE_FLAG = #{agree_value}
          </if>
@@ -31,8 +31,22 @@
          	<![CDATA[
          		AND TO_CHAR(T.regist_date,'YYYYMMDDHH24MISS') <= #{enddate} 
          	]]>
-         </if>	 	
+         </if>
          
+         <if test="member_type != null and member_type != ''">
+         	AND T.MEMBER_TYPE = #{member_type}
+         </if>	 
+         
+         <if test="keyword != null and keyword != ''">
+         	OR T.id LIKE CONCAT('%',#{keyword},'%')
+         	OR T.user_name LIKE CONCAT('%',#{keyword},'%')
+         	OR T.user_email LIKE CONCAT('%',#{keyword},'%')
+         	OR T.user_mobile_no LIKE CONCAT('%',#{keyword},'%')
+         	OR T.biz_name LIKE CONCAT('%',#{keyword},'%')
+         	OR T.biz_email LIKE CONCAT('%',#{keyword},'%')
+         	OR T.biz_tel_no LIKE CONCAT('%',#{keyword},'%')
+         </if>	
+         </where>
 	</sql>
 	<select id="Member_v_SQL.doCountVMember" resultType="int">
 
@@ -52,13 +66,10 @@
 	<select id="Member_v_SQL.GetMembersInfoData" resultType="dataMap" parameterType="dataMap">	
 		/*
 			SQL ID : Member_v_SQL.GetMembersInfoData
-			사용자 조회 리스트 -  확인 중 ... 
+			사용자 조회 리스트
 		*/
 		<![CDATA[
-			SELECT AA.*	
-			FROM(
-				SELECT
-					ROW_NUMBER() OVER(ORDER BY REGIST_DATE DESC) AS RNUM,
+			SELECT
 					T.MEMBER_SEQNO,
 					T.REGIST_DATE,
 					T.MEMBER_TYPE,
@@ -69,23 +80,28 @@
 					T.BIZ_NAME,
 					T.BIZ_EMAIL,
 					T.BIZ_TEL_NO,
-					T.AGREE_FLAG
-					
+					T.AGREE_FLAG,
+					T.DELETE_FLAG
 				FROM 
 					TBLMEMBER T
-				WHERE 
-					T.MEMBER_TYPE = 'R'
-					or T.MEMBER_TYPE = 'B'
-					or T.MEMBER_TYPE = 'TLO'
-					or T.MEMBER_TYPE = 'ADMIN'
-					and T.delete_flag = 'N'
-		]]>	
+	   	]]>
 		<include refid="search"/>
+	   	<choose>
+			<when test="sidx != null and sidx != ''">
+			<![CDATA[
+				ORDER BY T.${sidx} ${sord}
+			]]>
+			</when>
+			<otherwise>
+			<![CDATA[	
+				ORDER BY T.MEMBER_SEQNO
+			]]>
+			</otherwise>
+		</choose>
 		<![CDATA[
-			) AA
-			WHERE 
-				AA.RNUM BETWEEN (#{page}::INT -1) * (#{rows}::INT) + 1 AND #{page}::INT * #{rows}::INT
-        ]]>	
+				OFFSET ((#{page}::INT -1)*#{rows}::INT) LIMIT #{rows}::INT
+				
+		]]>	
 	</select>
 
 	
@@ -284,7 +300,18 @@
 				'5',
 				'1999-01-01'::timestamp,
 				#{agree_flag},
-				NOW(),
+				]]>
+				<if test="agree_flag == 'N'">
+         	<![CDATA[
+         		'1999-01-01'::timestamp, 
+         	]]>
+         </if>
+         <if test="agree_flag == 'Y'">
+         	<![CDATA[
+         		NOW(), 
+         	]]>
+         </if>	
+				<![CDATA[
 				#{id},
 				NOW(),
 				'2999-12-31'::timestamp,
