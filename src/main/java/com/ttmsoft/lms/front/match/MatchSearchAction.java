@@ -150,6 +150,7 @@ public class MatchSearchAction extends BaseAct {
 					paraMap.put("subject", userData.get("user_name")+"님이 매칭 문의합니다");
 					paraMap.put("text", userData.get("user_name")+"님의 " + userData.get("biz_name")+"에서 매칭 문의해요");
 					System.out.println("TLO" + paraMap);
+					CommonUtil.doMailSender(paraMap);
 					if(data == null) {
 						ModelAndView errorModelAndView = new ModelAndView("errorView");
 		                errorModelAndView.addObject("errorMessage", "Data not found");

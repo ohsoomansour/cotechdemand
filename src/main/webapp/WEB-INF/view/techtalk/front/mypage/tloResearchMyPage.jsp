@@ -12,7 +12,7 @@ var researcher_seq;
 
 $(document).ready(function() {
 	//체크박스 변경 - 2023/09/18
-    $("input:checkbox").change(function(){
+    $(".inp_check").change(function(){
       if(this.checked){
         $(this).attr('value', 'Y');
       }else{
@@ -57,6 +57,17 @@ $(document).ready(function() {
 	});
 	
 });
+
+function checkOnlyOne(element) {
+	  
+  var checkboxes = document.getElementsByName("matching");
+  
+  checkboxes.forEach((cb) => {
+    cb.checked = false;
+  })
+  
+  element.checked = true; 
+}
 
 function layer_popup(el, cls, op){
 
@@ -221,7 +232,10 @@ function morePatentContens(){
 
 //특허리스트 줄이기 이벤트
 function lessPatentContens(){
+	var p_count = 0;
 	list = new Array();
+
+	p_count = list.length > 5 ? 5 : list.length;
 
 	for(var i = 0; i < invent.length; i++) {
 		var item ={};
@@ -232,7 +246,7 @@ function lessPatentContens(){
 		list.push(item);
 	}
 	
-	patentContens(5);
+	patentContens(p_count);
 }
 
 //특허리스트
@@ -522,9 +536,8 @@ function detail(seq) {
 				$('#keyword5').val(result.data.keyword5.trim());
 			}
 			
-
 			//국가과제수행이력
-			if(result.proData[0].re_project_nm != null) {
+			if(result.proData[0] != null) {
 				var count = (result.proData.length > 5) ? 5 : result.proData.length;
 				var aHtml = "";
 
@@ -537,10 +550,16 @@ function detail(seq) {
 					$('#proData').empty();
 			    	$('#proData').append(aHtml);
 				}
+			} else {
+				var aHtml = "";	
+				
+				aHtml = "<td colspan='3'>국가 과제 수행 이력이 확인되지 않았습니다.</td>";
+				$('#proData').empty();
+		    	$('#proData').append(aHtml);
 			}
 
 			//연구히스토리
-			if(result.dataHis[0].his_date != null) {	
+			if(result.dataHis[0] != null) {	
 				var aHtml = "";	
 				$.each(result.dataHis, function(key, dataHis){
 					aHtml += "<thead>"
@@ -553,6 +572,13 @@ function detail(seq) {
 					$('#tbl_history').empty();
 					$('#tbl_history').append(aHtml);
 				});
+			} else {
+				var aHtml = "";	
+				
+				aHtml = "<td>연구히스토리가 없습니다.</td>";
+				
+				$('#tbl_history').empty();
+				$('#tbl_history').append(aHtml)
 			}
 			
 			//유사연구자
@@ -576,6 +602,12 @@ function detail(seq) {
 					$('#simil').empty();
 					$('#simil').append(aHtml);
 				});
+			} else {
+				var aHtml = "";	
+				aHtml = "<td>유사분야 연구자가 없습니다.</td>";
+				
+				$('#simil').empty();
+				$('#simil').append(aHtml);
 			}
 		
 			//특허리스트
@@ -593,6 +625,12 @@ function detail(seq) {
 					$('#invent').empty();
 			    	$('#invent').append(aHtml);
 				}
+			} else {
+				var aHtml = "";	
+				aHtml = "<td colspan='3'>특허리스트가 확인되지 않았습니다.</td>";
+				
+				$('#invent').empty();
+		    	$('#invent').append(aHtml);
 			}
 
 			//담당자 정보
@@ -646,6 +684,10 @@ function detail(seq) {
 	
 }	
 
+function doExcelFile() {
+	document.getElementById("excelFile").click();
+}
+
 function doupdateExcel() {
 	var history = new Array();
 	var result_history = new Array();
@@ -674,107 +716,111 @@ function doupdateExcel() {
         success: function (res) {
         	excel = new Array();
             excel = res;
-            alert("엑셀 데이터를 입력하였습니다.");
-           
-            //과제 수행이력 변경
-            for(var i = 0; i <excel.result.data.length; i++) {
-            	var proItem ={};
-        		proItem.re_project_nm = excel.result.data[i].ex_re_project_nm;
-        		proItem.re_institu_nm = excel.result.data[i].ex_re_institu_nm;
-        		proItem.re_start_date = excel.result.data[i].ex_re_start_date;
-        		proItem.re_end_date = excel.result.data[i].ex_re_end_date;
-        		list.push(proItem);
-            }
-            
-        	<c:forEach items="${proData}" var="list">
-	    		var proItem ={};
-	    		proItem.re_project_nm = "${list.re_project_nm}";
-	    		proItem.re_institu_nm = "${list.re_institu_nm}";
-	    		proItem.re_start_date = "${list.re_start_date}";
-	    		proItem.re_end_date = "${list.re_end_date}";
-	    		list.push(proItem);
-    		</c:forEach>
 
-    		var pro_count = (list.length > 5) ? 5 : list.length;	//연구히스토리  최대 5개 제한
-    		
-            proContens(pro_count);
-            
-            //연구 히스토리 변경
-            for(var i = 0; i <excel.result.data.length; i++) {
-            	var item ={};
-	    		item.ex_re_start_date = excel.result.data[i].ex_re_start_date;
-	    		item.ex_re_start_date = (item.ex_re_start_date+'').substr(0,4);
-	    		item.ex_keyword = excel.result.data[i].ex_keyword;
-	    		
-	    		history.push(item);	
-            }
-            
-            <c:forEach items="${dataHis}" var="list">
-	    		var item ={};
-	    		item.ex_re_start_date = "${list.re_start_date}";
-	    		item.ex_re_start_date = (item.ex_re_start_date+'').substr(0,4);
-	    		item.ex_keyword = "${list.keyword}";
-	    		
-	    		history.push(item);
-	    	</c:forEach>
-
-	    	let uniqueHis = {};
-	    	uniqueHis.ex_re_start_date = "";
-	    	uniqueHis.ex_keyword = "";
-
-	    	var year = new Array();
-
-	    	history.forEach((element) => {
-	    	    if (!year.includes(element["ex_re_start_date"])) {
-	    	    	uniqueHis.ex_re_start_date = element["ex_re_start_date"];
-	    	    	uniqueHis.ex_keyword = element["ex_keyword"];
-	    	    	year.push(element["ex_re_start_date"]);
-	    	    	result_history.push(element);
-	    	    }
-	    	});
-
-	    	//히스토리 연도별 정렬 
-	    	var tmp = 0;
-	    	var str_tmp = 0;
-	    	for(var i = 0; i < result_history.length; i++) {
-	    		for(var j = i+1; j < result_history.length; j++) { 
-					if(result_history[i]["ex_re_start_date"] > result_history[j]["ex_re_start_date"]) { 
-						tmp = result_history[i]["ex_re_start_date"];
-						str_tmp = result_history[i]["ex_keyword"];
-						result_history[i]["ex_re_start_date"] = result_history[j]["ex_re_start_date"];
-						result_history[i]["ex_keyword"] = result_history[j]["ex_keyword"];
-						result_history[j]["ex_re_start_date"] = tmp;
-						result_history[j]["ex_keyword"] = str_tmp;
-					}
-				}
-		   	} 
-	    	
-	    	for(var i = result_history.length-1; i >= 0; i--) {
-	    		var ahtml = "";
-	            ahtml += "<colgroup>"
-	            	ahtml += "<col>"
-	            		ahtml += "</colgroup>"
-	            			ahtml += "<thead>"
-	            				ahtml += "<tr>"	
-	            					ahtml += "<th style='width: 100%;'>" + result_history[i].ex_re_start_date + "</th>"
-	            					ahtml += "</tr>"
-	            						ahtml += "</thead>"
-	            							ahtml += "<tbody>"
-	            								ahtml += "<tr>"
-	            									ahtml += "<td>" + result_history[i].ex_keyword + "</td>"
-	            									ahtml += "</tr>"
-
-				historyList.push(ahtml);
-		   	}
-			
-			var count = (historyList.length > 5) ? 5 : historyList.length;	//연구히스토리  최대 5개 제한
-
-			$('#tbl_history').empty();
-			
-			for(i=0; i < count; i++) {
-				$('#tbl_history').append(historyList[i]);
-			}
+            if(excel.result.data[0].ex_re_project_nm != null) {
+	            alert("엑셀 데이터를 입력하였습니다.");
+	           
+	            //과제 수행이력 변경
+	            for(var i = 0; i <excel.result.data.length; i++) {
+	            	var proItem ={};
+	        		proItem.re_project_nm = excel.result.data[i].ex_re_project_nm;
+	        		proItem.re_institu_nm = excel.result.data[i].ex_re_institu_nm;
+	        		proItem.re_start_date = excel.result.data[i].ex_re_start_date;
+	        		proItem.re_end_date = excel.result.data[i].ex_re_end_date;
+	        		list.push(proItem);
+	            }
+	            
+	        	<c:forEach items="${proData}" var="list">
+		    		var proItem ={};
+		    		proItem.re_project_nm = "${list.re_project_nm}";
+		    		proItem.re_institu_nm = "${list.re_institu_nm}";
+		    		proItem.re_start_date = "${list.re_start_date}";
+		    		proItem.re_end_date = "${list.re_end_date}";
+		    		list.push(proItem);
+	    		</c:forEach>
 	
+	    		var pro_count = (list.length > 5) ? 5 : list.length;	//연구히스토리  최대 5개 제한
+	    		
+	            proContens(pro_count);
+	            
+	            //연구 히스토리 변경
+	            for(var i = 0; i <excel.result.data.length; i++) {
+	            	var item ={};
+		    		item.ex_re_start_date = excel.result.data[i].ex_re_start_date;
+		    		item.ex_re_start_date = (item.ex_re_start_date+'').substr(0,4);
+		    		item.ex_keyword = excel.result.data[i].ex_keyword;
+		    		
+		    		history.push(item);	
+	            }
+	            
+	            <c:forEach items="${dataHis}" var="list">
+		    		var item ={};
+		    		item.ex_re_start_date = "${list.re_start_date}";
+		    		item.ex_re_start_date = (item.ex_re_start_date+'').substr(0,4);
+		    		item.ex_keyword = "${list.keyword}";
+		    		
+		    		history.push(item);
+		    	</c:forEach>
+	
+		    	let uniqueHis = {};
+		    	uniqueHis.ex_re_start_date = "";
+		    	uniqueHis.ex_keyword = "";
+	
+		    	var year = new Array();
+	
+		    	history.forEach((element) => {
+		    	    if (!year.includes(element["ex_re_start_date"])) {
+		    	    	uniqueHis.ex_re_start_date = element["ex_re_start_date"];
+		    	    	uniqueHis.ex_keyword = element["ex_keyword"];
+		    	    	year.push(element["ex_re_start_date"]);
+		    	    	result_history.push(element);
+		    	    }
+		    	});
+	
+		    	//히스토리 연도별 정렬 
+		    	var tmp = 0;
+		    	var str_tmp = 0;
+		    	for(var i = 0; i < result_history.length; i++) {
+		    		for(var j = i+1; j < result_history.length; j++) { 
+						if(result_history[i]["ex_re_start_date"] > result_history[j]["ex_re_start_date"]) { 
+							tmp = result_history[i]["ex_re_start_date"];
+							str_tmp = result_history[i]["ex_keyword"];
+							result_history[i]["ex_re_start_date"] = result_history[j]["ex_re_start_date"];
+							result_history[i]["ex_keyword"] = result_history[j]["ex_keyword"];
+							result_history[j]["ex_re_start_date"] = tmp;
+							result_history[j]["ex_keyword"] = str_tmp;
+						}
+					}
+			   	} 
+		    	
+		    	for(var i = result_history.length-1; i >= 0; i--) {
+		    		var ahtml = "";
+		            ahtml += "<colgroup>"
+		            	ahtml += "<col>"
+		            		ahtml += "</colgroup>"
+		            			ahtml += "<thead>"
+		            				ahtml += "<tr>"	
+		            					ahtml += "<th style='width: 100%;'>" + result_history[i].ex_re_start_date + "</th>"
+		            					ahtml += "</tr>"
+		            						ahtml += "</thead>"
+		            							ahtml += "<tbody>"
+		            								ahtml += "<tr>"
+		            									ahtml += "<td>" + result_history[i].ex_keyword + "</td>"
+		            									ahtml += "</tr>"
+	
+					historyList.push(ahtml);
+			   	}
+				
+				var count = (historyList.length > 5) ? 5 : historyList.length;	//연구히스토리  최대 5개 제한
+	
+				$('#tbl_history').empty();
+				
+				for(i=0; i < count; i++) {
+					$('#tbl_history').append(historyList[i]);
+				}
+            } else {
+            	alert("유효하지 않은 엑셀형식 입니다.");
+            }
         },
         error: function (e) {
             alert("실패");
@@ -1007,7 +1053,11 @@ function doSearchFilter () {
 </div>
 <div class="dim-layer researcherDetailPop">
     <div class="dimBg"></div>
+<<<<<<< src/main/webapp/WEB-INF/view/techtalk/front/mypage/tloResearchMyPage.jsp
+    <div id="researcherDetailPop" class="pop-layer" style="width:1260px; height:600px">
+=======
     <div id="researcherDetailPop" class="pop-layer wpop1160" style="height:600px">
+>>>>>>> src/main/webapp/WEB-INF/view/techtalk/front/mypage/tloResearchMyPage.jsp
     	<div class="pop-container" >
 	    	<div class="pop-title"><h3>연구자 상세정보</h3><button class="btn-layerClose" title="팝업닫기"><span class="icon ico_close">팝업닫기</span></button></div>
 	    	<div class="pop-cont">
@@ -1214,9 +1264,9 @@ function doSearchFilter () {
 						<div class="tbl_public">
 	                	<div style="text-align:center;margin-top:40px;">
 	                		<form id="uploadForm" enctype="multipart/form-data">
-	                			<input type="file" id="excelFile" name="excelFile" accept=".xls,.xlsx,.csv">
+	                			<input type="file" id="excelFile" name="excelFile" accept=".xls,.xlsx,.csv" style="visibility: hidden;" onchange="doupdateExcel();">
 	                		</form>
-	                		<button type="button" id="updateExcel" name="updateExcel" onClick="doupdateExcel();" class="btn_step" title="엑셀데이터 입력">엑셀데이터 입력</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	                		<button type="button" id="updateExcel" name="updateExcel" onClick="doExcelFile();" class="btn_step" title="엑셀데이터 입력">엑셀데이터 입력</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
 	                		<button type="button" onClick="doUpdate();" class="btn_step btn_point_black" title="수 정">수정</button>
 	                		<button type="button" class="btn_line btn_cancel" title="취소">취소</button>
 	                		
@@ -1290,45 +1340,22 @@ function doSearchFilter () {
 								</td>
 							</tr>
 							<tr>
-								<th scope="col">엑셀데이터 입력 여부</th>
-								<td class="left form-inline">
-									<div class="btn_chk div-inline">
-										<input type="checkbox" name="excel"  id="e_all" value="e_all"> 
-										<label for="e_all" class="option_label">  
-											<span class="inner"><span class="txt_checked">전체</span></span> 
-										</label>
-									</div>
-									<div class="btn_chk div-inline">
-										<input type="checkbox" name="excel"  id="eY" value="Y"> 
-										<label for="eY" class="option_label">  
-											<span class="inner"><span class="txt_checked">Y</span></span> 
-										</label>
-									</div>
-									<div class="btn_chk div-inline">
-										<input type="checkbox" name="excel"  id="eN" value="N"> 
-										<label for="eN" class="option_label">  
-											<span class="inner"><span class="txt_checked">N</span></span> 
-										</label>
-									</div>
-								</td>
-							</tr>
-							<tr>
 								<th scope="col">매칭 여부</th>
 								<td class="left form-inline">
 									<div class="btn_chk div-inline">
-										<input type="checkbox" name="matching"  id="m_all" value="m_all"> 
+										<input type="checkbox" name="matching"  id="m_all" value="m_all" onclick="checkOnlyOne(this);"> 
 										<label for="m_all" class="option_label">  
 											<span class="inner"><span class="txt_checked">전체</span></span> 
 										</label>
 									</div>
 									<div class="btn_chk div-inline">
-										<input type="checkbox" name="matching"  id="mY" value="Y"> 
+										<input type="checkbox" name="matching"  id="mY" value="Y" onclick="checkOnlyOne(this);"> 
 										<label for="mY" class="option_label">  
 											<span class="inner"><span class="txt_checked">Y</span></span> 
 										</label>
 									</div>
 									<div class="btn_chk div-inline">
-										<input type="checkbox" name="matching"  id="mN" value="N"> 
+										<input type="checkbox" name="matching"  id="mN" value="N" onclick="checkOnlyOne(this);"> 
 										<label for="mN" class="option_label">  
 											<span class="inner"><span class="txt_checked">N</span></span> 
 										</label>

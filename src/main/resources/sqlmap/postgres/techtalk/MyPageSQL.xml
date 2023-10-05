@@ -217,30 +217,49 @@
 			연구자 카운트
 		*/
 		<![CDATA[
-		select COUNT(*) 
-		from tblresearcher 
-		where biz_name = '${biz_name}' 
-		]]>
-		<if test="list != 'all'" >
-			AND view_yn = 'Y'
-		</if>
-		<if test="keyword != ''" >
-			AND keyword like CONCAT('%',#{keyword},'%')
-		</if>
-		<if test="strDate != ''" >
+		SELECT COUNT(*)
+		FROM (
+			SELECT tc.researcher_seqno
+					,tc.researcher_nm
+					,tc.biz_name
+					, tc.keyword
+					, MAX(applicant_date) as applicant_date
+					, (SELECT CODE_NAME FROM TBTECH_CODE AS AA WHERE AA.CODE_KEY = tc.TECH_CODE1) AS CODE_NAME1
+					, (SELECT CODE_NAME FROM TBTECH_CODE AS AA WHERE AA.CODE_KEY = tc.TECH_CODE2) AS CODE_NAME2
+					, (SELECT CODE_NAME FROM TBTECH_CODE AS AA WHERE AA.CODE_KEY = tc.TECH_CODE3) AS CODE_NAME3
+					, view_yn
+			from tblresearcher tc
+			inner join tblresearch_temp tp ON tc.researcher_seqno = tp.researcher_seqno
+			where tc.biz_name = '${biz_name}' 
+		]]>	
+			<if test="list != 'all'" >
+				AND tc.view_yn = 'Y'
+			</if>
+			<if test="keyword != ''" >
+			AND tc.keyword like CONCAT('%',#{keyword},'%')
+			</if>
+			<if test="strDate != ''" >
 		<![CDATA[	
-			AND '${strDate}' <= applicant_date AND applicant_date <= '${endDate}'
+			AND '${strDate}' <= applicant_date
 		]]>		
-		</if>
-		<if test="filterStdClassCd1 != ''" >
-			AND tech_code1 = '${filterStdClassCd1}'
+			</if>
+			<if test="endDate != ''" >
+		<![CDATA[	
+			AND applicant_date <= '${endDate}'
+		]]>		
+			</if>
+			<if test="filterStdClassCd1 != ''" >
+			AND tc.tech_code1 = '${filterStdClassCd1}'
 			</if>
 			<if test="filterStdClassCd2 != ''" >
-			AND tech_code2 = '${filterStdClassCd2}'
+			AND tc.tech_code2 = '${filterStdClassCd2}'
 			</if>
 			<if test="filterStdClassCd3 != ''" >
-			AND tech_code3 = '${filterStdClassCd3}'
+			AND tc.tech_code3 = '${filterStdClassCd3}'
 			</if>
+			GROUP BY tc.researcher_seqno
+			ORDER BY applicant_date desc
+		) CT	
 	</select>
 	
 	<select id="MyPageSQL.doGetTloResearchList" parameterType="dataMap" resultType="dataMap">
@@ -270,7 +289,12 @@
 			</if>
 			<if test="strDate != ''" >
 		<![CDATA[	
-			AND '${strDate}' <= applicant_date AND applicant_date <= '${endDate}'
+			AND '${strDate}' <= applicant_date
+		]]>		
+			</if>
+			<if test="endDate != ''" >
+		<![CDATA[	
+			AND applicant_date <= '${endDate}'
 		]]>		
 			</if>
 			<if test="filterStdClassCd1 != ''" >
@@ -441,34 +465,52 @@
 		*/
 		select COUNT(*)
 		from (
-			select DISTINCT tr.*, td.*,  td.member_seqno as demand_no
-			      , tr.keyword as Rkwd
-			      , td.keyword as Bkwd
-			      , td.update_date as rupdate
-			      , tr.member_seqno as resear_no
-			      , MAX(applicant_date) applicant_date
-			      , ( select code_name from tbiz.tbtech_code D where D.code_key = tr.tech_code1) as Rcode_name1
-			      , ( select code_name from tbiz.tbtech_code D where D.code_key = tr.tech_code2) as Rcode_name2
-			      , ( select code_name from tbiz.tbtech_code D where D.code_key = tr.tech_code3) as Rcode_name3
-			      , ( select code_name from tbiz.tbtech_code D where D.code_key = td.tech_code1) as Bcode_name1
-			      , ( select code_name from tbiz.tbtech_code D where D.code_key = td.tech_code2) as Bcode_name2
-			      , ( select code_name from tbiz.tbtech_code D where D.code_key = td.tech_code3) as Bcode_name3
-			      from tbiz.tblresearcher tr
-			      inner join tbiz.tbldemand td on (
-			                                 (case when td.tech_code1 like tr.tech_code1 then 1 else 0 end +
-			                                  case when td.tech_code2 like tr.tech_code2 then 1 else 0 end +
-			                                  case when td.tech_code3 like tr.tech_code3 then 1 else 0 end) >=2
-			                                 )
-			      inner JOIN tblresearch_temp tp ON tr.researcher_seqno = tp.researcher_seqno                            
-			      LEFT join tbiz.tblmatchlist tc on tr.researcher_seqno = tc.researcher_seqno 
-			      and td.demand_seqno = tc.demand_seqno 
+				select DISTINCT tr.*, td.*,  td.member_seqno as demand_no
+	            , tr.keyword as Rkwd
+	            , td.keyword as Bkwd
+	            , td.update_date as rupdate
+	            , tr.member_seqno as resear_no
+	            , MAX(applicant_date) applicant_date
+	
+	            , D11.code_name AS  Rcode_name1
+	            , D12.code_name AS  Rcode_name2
+	            , D13.code_name AS  Rcode_name3
+	         
+	            , D21.code_name AS  Bcode_name1
+	            , D22.code_name AS  Bcode_name2
+	            , D23.code_name AS  Bcode_name3
+	         
+	
+	            from tbiz.tblresearcher tr
+	            inner join tbiz.tbldemand td on (
+	                                       (case when td.tech_code1 like tr.tech_code1 then 1 else 0 end +
+	                                        case when td.tech_code2 like tr.tech_code2 then 1 else 0 end +
+	                                        case when td.tech_code3 like tr.tech_code3 then 1 else 0 END) >=2
+	                                       )
+	            inner JOIN tblresearch_temp tp ON tr.researcher_seqno = tp.researcher_seqno                            
+	            
+	            
+	            
+	            INNER JOIN  tbtech_code D11 ON D11.code_key = tr.tech_code1
+	            INNER JOIN  tbtech_code D12 ON D12.code_key = tr.tech_code2
+	            INNER JOIN  tbtech_code D13 ON D13.code_key = tr.tech_code3         
+	            
+	            INNER JOIN  tbtech_code D21 ON D21.code_key = td.tech_code1
+	            INNER JOIN  tbtech_code D22 ON D22.code_key = td.tech_code2
+	            INNER JOIN  tbtech_code D23 ON D23.code_key = td.tech_code3      
+	            
+	            LEFT join tbiz.tblmatchlist tc on tr.researcher_seqno = tc.researcher_seqno 
+	            and td.demand_seqno = tc.demand_seqno 
 			      <if test="member_type != 'ADMIN'" >
 			      where tr.biz_name='${biz_name}'
 			      </if>
+			      <if test="member_type != 'TLO'" >
+				      where 1=1
+				  </if>
 			      AND (
-			          (SELECT COUNT(*) FROM unnest(string_to_array(td.keyword, ',')) AS keyword_list
-			           WHERE keyword_list = ANY(string_to_array(tr.keyword, ','))) >= 2
-			      )
+	                (SELECT COUNT(*) FROM unnest(string_to_array(td.keyword, ',')) AS keyword_list
+	                 WHERE keyword_list = ANY(string_to_array(tr.keyword, ','))) >= 2
+	            )
 		    <if test="list != 'all'" >
 				AND tr.view_yn = 'Y'
 			</if>
@@ -504,7 +546,7 @@
 			<if test="filterStdClassCd3 != ''" >
 				AND (tr.tech_code3 = '${filterStdClassCd3}' OR td.tech_code3 = '${filterStdClassCd3}')
 			</if>
-			GROUP BY tr.researcher_seqno , td.demand_seqno , tc.match_no
+			GROUP BY tr.researcher_seqno , td.demand_seqno , tc.match_no, Rcode_name1,Rcode_name2,Rcode_name3,Bcode_name1,Bcode_name2,Bcode_name3
 		) CT		
 	</select>
 	
@@ -514,33 +556,51 @@
 			TLO 매칭목록
 		*/
 		select DISTINCT tr.*, td.*,  td.member_seqno as demand_no
-		      , tr.keyword as Rkwd
-		      , td.keyword as Bkwd
-		      , td.update_date as rupdate
-		      , tr.member_seqno as resear_no
-		      , MAX(applicant_date) applicant_date
-		      , ( select code_name from tbiz.tbtech_code D where D.code_key = tr.tech_code1) as Rcode_name1
-		      , ( select code_name from tbiz.tbtech_code D where D.code_key = tr.tech_code2) as Rcode_name2
-		      , ( select code_name from tbiz.tbtech_code D where D.code_key = tr.tech_code3) as Rcode_name3
-		      , ( select code_name from tbiz.tbtech_code D where D.code_key = td.tech_code1) as Bcode_name1
-		      , ( select code_name from tbiz.tbtech_code D where D.code_key = td.tech_code2) as Bcode_name2
-		      , ( select code_name from tbiz.tbtech_code D where D.code_key = td.tech_code3) as Bcode_name3
-		      from tbiz.tblresearcher tr
-		      inner join tbiz.tbldemand td on (
-		                                 (case when td.tech_code1 like tr.tech_code1 then 1 else 0 end +
-		                                  case when td.tech_code2 like tr.tech_code2 then 1 else 0 end +
-		                                  case when td.tech_code3 like tr.tech_code3 then 1 else 0 end) >=2
-		                                 )
-		      inner JOIN tblresearch_temp tp ON tr.researcher_seqno = tp.researcher_seqno                            
-		      LEFT join tbiz.tblmatchlist tc on tr.researcher_seqno = tc.researcher_seqno 
-		      and td.demand_seqno = tc.demand_seqno 
+            , tr.keyword as Rkwd
+            , td.keyword as Bkwd
+            , td.update_date as rupdate
+            , tr.member_seqno as resear_no
+            , MAX(applicant_date) applicant_date
+
+            , D11.code_name AS  Rcode_name1
+            , D12.code_name AS  Rcode_name2
+            , D13.code_name AS  Rcode_name3
+         
+            , D21.code_name AS  Bcode_name1
+            , D22.code_name AS  Bcode_name2
+            , D23.code_name AS  Bcode_name3
+         
+
+            from tbiz.tblresearcher tr
+            inner join tbiz.tbldemand td on (
+                                       (case when td.tech_code1 like tr.tech_code1 then 1 else 0 end +
+                                        case when td.tech_code2 like tr.tech_code2 then 1 else 0 end +
+                                        case when td.tech_code3 like tr.tech_code3 then 1 else 0 END) >=2
+                                       )
+            inner JOIN tblresearch_temp tp ON tr.researcher_seqno = tp.researcher_seqno                            
+            
+            
+            
+            INNER JOIN  tbtech_code D11 ON D11.code_key = tr.tech_code1
+            INNER JOIN  tbtech_code D12 ON D12.code_key = tr.tech_code2
+            INNER JOIN  tbtech_code D13 ON D13.code_key = tr.tech_code3         
+            
+            INNER JOIN  tbtech_code D21 ON D21.code_key = td.tech_code1
+            INNER JOIN  tbtech_code D22 ON D22.code_key = td.tech_code2
+            INNER JOIN  tbtech_code D23 ON D23.code_key = td.tech_code3      
+            
+            LEFT join tbiz.tblmatchlist tc on tr.researcher_seqno = tc.researcher_seqno 
+            and td.demand_seqno = tc.demand_seqno 
 		      <if test="member_type != 'ADMIN'" >
 		      where tr.biz_name='${biz_name}'
 		      </if>
+		      <if test="member_type != 'TLO'" >
+			      where 1=1
+			  </if>
 		      AND (
-		          (SELECT COUNT(*) FROM unnest(string_to_array(td.keyword, ',')) AS keyword_list
-		           WHERE keyword_list = ANY(string_to_array(tr.keyword, ','))) >= 2
-		      )
+                (SELECT COUNT(*) FROM unnest(string_to_array(td.keyword, ',')) AS keyword_list
+                 WHERE keyword_list = ANY(string_to_array(tr.keyword, ','))) >= 2
+            )
 	    <if test="list != 'all'" >
 			AND tr.view_yn = 'Y'
 		</if>
@@ -576,7 +636,7 @@
 		<if test="filterStdClassCd3 != ''" >
 			AND (tr.tech_code3 = '${filterStdClassCd3}' OR td.tech_code3 = '${filterStdClassCd3}')
 		</if>
-		GROUP BY tr.researcher_seqno , td.demand_seqno , tc.match_no
+		GROUP BY tr.researcher_seqno , td.demand_seqno , tc.match_no, Rcode_name1,Rcode_name2,Rcode_name3,Bcode_name1,Bcode_name2,Bcode_name3
 		LIMIT ${rows} OFFSET (${page}-1)*10;
 	</select>
 	
@@ -625,4 +685,202 @@
 				'${researcher_seqno}'
 			);
 	</insert>
+	
+	<select id="MyPageSQL.doGetTloMatchList2" parameterType="dataMap" resultType="dataMap">
+		/*
+			SQL ID : MyPageSQL.doGetTloMatchList2
+			TLO 매칭여부 필터 Y
+		*/
+		select DISTINCT tr.researcher_seqno
+					,tr.researcher_nm
+					,tr.biz_name
+					, tr.keyword
+					, MAX(applicant_date) as applicant_date
+					, (SELECT CODE_NAME FROM TBTECH_CODE AS AA WHERE AA.CODE_KEY = tr.TECH_CODE1) AS CODE_NAME1
+					, (SELECT CODE_NAME FROM TBTECH_CODE AS AA WHERE AA.CODE_KEY = tr.TECH_CODE2) AS CODE_NAME2
+					, (SELECT CODE_NAME FROM TBTECH_CODE AS AA WHERE AA.CODE_KEY = tr.TECH_CODE3) AS CODE_NAME3
+					, view_yn
+            from tbiz.tblresearcher tr
+            inner join tbiz.tbldemand td on (
+                                       (case when td.tech_code1 like tr.tech_code1 then 1 else 0 end +
+                                        case when td.tech_code2 like tr.tech_code2 then 1 else 0 end +
+                                        case when td.tech_code3 like tr.tech_code3 then 1 else 0 END) >=2
+                                       )
+            inner JOIN tblresearch_temp tp ON tr.researcher_seqno = tp.researcher_seqno                            
+
+            INNER JOIN  tbtech_code D11 ON D11.code_key = tr.tech_code1
+            INNER JOIN  tbtech_code D12 ON D12.code_key = tr.tech_code2
+            INNER JOIN  tbtech_code D13 ON D13.code_key = tr.tech_code3         
+
+            INNER JOIN  tbtech_code D21 ON D21.code_key = td.tech_code1
+            INNER JOIN  tbtech_code D22 ON D22.code_key = td.tech_code2
+            INNER JOIN  tbtech_code D23 ON D23.code_key = td.tech_code3      
+
+            LEFT join tbiz.tblmatchlist tc on tr.researcher_seqno = tc.researcher_seqno 
+            and td.demand_seqno = tc.demand_seqno 
+		      <if test="member_type != 'ADMIN'" >
+		      where tr.biz_name='${biz_name}'
+		      </if>
+		      <if test="member_type != 'TLO'" >
+			      where 1=1
+			  </if>
+		      AND (
+                (SELECT COUNT(*) FROM unnest(string_to_array(td.keyword, ',')) AS keyword_list
+                 WHERE keyword_list = ANY(string_to_array(tr.keyword, ','))) >= 2
+            )
+		GROUP BY tr.researcher_seqno 
+		LIMIT ${rows} OFFSET (${page}-1)*10;
+	</select>
+	
+	<select id="MyPageSQL.doCountTloMatchList2" resultType="int">
+		/*
+			SQL ID : MyPageSQL.doCountTloMatchList2
+			TLO 매칭여부필터 카운트 Y
+		*/
+		select COUNT(*)
+		from (
+		select DISTINCT tr.researcher_seqno
+					,tr.researcher_nm
+					,tr.biz_name
+					, tr.keyword
+					, MAX(applicant_date) as applicant_date
+					, (SELECT CODE_NAME FROM TBTECH_CODE AS AA WHERE AA.CODE_KEY = tr.TECH_CODE1) AS CODE_NAME1
+					, (SELECT CODE_NAME FROM TBTECH_CODE AS AA WHERE AA.CODE_KEY = tr.TECH_CODE2) AS CODE_NAME2
+					, (SELECT CODE_NAME FROM TBTECH_CODE AS AA WHERE AA.CODE_KEY = tr.TECH_CODE3) AS CODE_NAME3
+					, view_yn
+            from tbiz.tblresearcher tr
+            inner join tbiz.tbldemand td on (
+                                       (case when td.tech_code1 like tr.tech_code1 then 1 else 0 end +
+                                        case when td.tech_code2 like tr.tech_code2 then 1 else 0 end +
+                                        case when td.tech_code3 like tr.tech_code3 then 1 else 0 END) >=2
+                                       )
+            inner JOIN tblresearch_temp tp ON tr.researcher_seqno = tp.researcher_seqno                            
+
+            INNER JOIN  tbtech_code D11 ON D11.code_key = tr.tech_code1
+            INNER JOIN  tbtech_code D12 ON D12.code_key = tr.tech_code2
+            INNER JOIN  tbtech_code D13 ON D13.code_key = tr.tech_code3         
+
+            INNER JOIN  tbtech_code D21 ON D21.code_key = td.tech_code1
+            INNER JOIN  tbtech_code D22 ON D22.code_key = td.tech_code2
+            INNER JOIN  tbtech_code D23 ON D23.code_key = td.tech_code3      
+
+            LEFT join tbiz.tblmatchlist tc on tr.researcher_seqno = tc.researcher_seqno 
+            and td.demand_seqno = tc.demand_seqno 
+		      <if test="member_type != 'ADMIN'" >
+		      where tr.biz_name='${biz_name}'
+		      </if>
+		      <if test="member_type != 'TLO'" >
+			      where 1=1
+			  </if>
+		      AND (
+                (SELECT COUNT(*) FROM unnest(string_to_array(td.keyword, ',')) AS keyword_list
+                 WHERE keyword_list = ANY(string_to_array(tr.keyword, ','))) >= 2
+            )
+		GROUP BY tr.researcher_seqno 
+		) CT		
+	</select>
+	
+	<select id="MyPageSQL.doGetTloMatchList3" parameterType="dataMap" resultType="dataMap">
+		/*
+			SQL ID : MyPageSQL.doGetTloMatchList3
+			TLO 매칭여부 필터 N
+		*/
+		select DISTINCT tr.researcher_seqno
+					,tr.researcher_nm
+					,tr.biz_name
+					, tr.keyword
+					, MAX(applicant_date) as applicant_date
+					, (SELECT CODE_NAME FROM TBTECH_CODE AS AA WHERE AA.CODE_KEY = tr.TECH_CODE1) AS CODE_NAME1
+					, (SELECT CODE_NAME FROM TBTECH_CODE AS AA WHERE AA.CODE_KEY = tr.TECH_CODE2) AS CODE_NAME2
+					, (SELECT CODE_NAME FROM TBTECH_CODE AS AA WHERE AA.CODE_KEY = tr.TECH_CODE3) AS CODE_NAME3
+					, view_yn
+            from tbiz.tblresearcher tr
+            inner join tbiz.tbldemand td on (
+                                       (
+                                       <![CDATA[
+                                       case when td.tech_code1 like tr.tech_code1 then 1 else 0 end +
+                                        case when td.tech_code2 like tr.tech_code2 then 1 else 0 end +
+                                        case when td.tech_code3 like tr.tech_code3 then 1 else 0 END) < 2
+                                        ]]>	
+                                       )
+            inner JOIN tblresearch_temp tp ON tr.researcher_seqno = tp.researcher_seqno                            
+
+            INNER JOIN  tbtech_code D11 ON D11.code_key = tr.tech_code1
+            INNER JOIN  tbtech_code D12 ON D12.code_key = tr.tech_code2
+            INNER JOIN  tbtech_code D13 ON D13.code_key = tr.tech_code3         
+
+            INNER JOIN  tbtech_code D21 ON D21.code_key = td.tech_code1
+            INNER JOIN  tbtech_code D22 ON D22.code_key = td.tech_code2
+            INNER JOIN  tbtech_code D23 ON D23.code_key = td.tech_code3      
+
+            LEFT join tbiz.tblmatchlist tc on tr.researcher_seqno = tc.researcher_seqno 
+            and td.demand_seqno = tc.demand_seqno 
+		      <if test="member_type != 'ADMIN'" >
+		      where tr.biz_name='${biz_name}'
+		      </if>
+		      <if test="member_type != 'TLO'" >
+			      where 1=1
+			  </if>
+		      AND (
+                (SELECT COUNT(*) FROM unnest(string_to_array(td.keyword, ',')) AS keyword_list
+                <![CDATA[
+                 WHERE keyword_list = ANY(string_to_array(tr.keyword, ','))) < 2
+                  ]]>	
+            )
+		GROUP BY tr.researcher_seqno 
+		LIMIT ${rows} OFFSET (${page}-1)*10;
+	</select>
+	
+	<select id="MyPageSQL.doCountTloMatchList3" resultType="int">
+		/*
+			SQL ID : MyPageSQL.doCountTloMatchList3
+			TLO 매칭여부필터 카운트 N
+		*/
+		select COUNT(*)
+		from (
+		select DISTINCT tr.researcher_seqno
+					,tr.researcher_nm
+					,tr.biz_name
+					, tr.keyword
+					, MAX(applicant_date) as applicant_date
+					, (SELECT CODE_NAME FROM TBTECH_CODE AS AA WHERE AA.CODE_KEY = tr.TECH_CODE1) AS CODE_NAME1
+					, (SELECT CODE_NAME FROM TBTECH_CODE AS AA WHERE AA.CODE_KEY = tr.TECH_CODE2) AS CODE_NAME2
+					, (SELECT CODE_NAME FROM TBTECH_CODE AS AA WHERE AA.CODE_KEY = tr.TECH_CODE3) AS CODE_NAME3
+					, view_yn
+            from tbiz.tblresearcher tr
+            inner join tbiz.tbldemand td on (
+                                       (
+                                       <![CDATA[
+                                       case when td.tech_code1 like tr.tech_code1 then 1 else 0 end +
+                                        case when td.tech_code2 like tr.tech_code2 then 1 else 0 end +
+                                        case when td.tech_code3 like tr.tech_code3 then 1 else 0 END) < 2
+                                         ]]>	
+                                       )
+            inner JOIN tblresearch_temp tp ON tr.researcher_seqno = tp.researcher_seqno                            
+
+            INNER JOIN  tbtech_code D11 ON D11.code_key = tr.tech_code1
+            INNER JOIN  tbtech_code D12 ON D12.code_key = tr.tech_code2
+            INNER JOIN  tbtech_code D13 ON D13.code_key = tr.tech_code3         
+
+            INNER JOIN  tbtech_code D21 ON D21.code_key = td.tech_code1
+            INNER JOIN  tbtech_code D22 ON D22.code_key = td.tech_code2
+            INNER JOIN  tbtech_code D23 ON D23.code_key = td.tech_code3      
+
+            LEFT join tbiz.tblmatchlist tc on tr.researcher_seqno = tc.researcher_seqno 
+            and td.demand_seqno = tc.demand_seqno 
+		      <if test="member_type != 'ADMIN'" >
+		      where tr.biz_name='${biz_name}'
+		      </if>
+		      <if test="member_type != 'TLO'" >
+			      where 1=1
+			  </if>
+		      AND (
+                (SELECT COUNT(*) FROM unnest(string_to_array(td.keyword, ',')) AS keyword_list
+                 <![CDATA[
+                 WHERE keyword_list = ANY(string_to_array(tr.keyword, ','))) < 2
+                 ]]>	
+            )
+		GROUP BY tr.researcher_seqno 
+		) CT		
+	</select>
 </mapper>

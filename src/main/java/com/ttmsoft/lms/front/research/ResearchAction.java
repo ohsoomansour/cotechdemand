@@ -247,7 +247,7 @@ public class ResearchAction extends BaseAct{
 			System.out.println(data);
 			System.out.println("paraMap:"+paraMap);
 			if(data.get("user_email") != null) {
-				//CommonUtil.doMailSender(paraMap);
+				CommonUtil.doMailSender(paraMap);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
