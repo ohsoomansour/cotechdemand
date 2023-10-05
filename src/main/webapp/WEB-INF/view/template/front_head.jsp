@@ -87,7 +87,7 @@ $(document).ready(function(){
 						    <a href="javascript:doHref('/techtalk/memberUpdatePage.do');">내 정보 관리</a>
 						    <a href="javascript:doHref('/techtalk/doChangePwdPage.do');">비밀번호 변경</a>
 						    <a href="javascript:doHref('/techtalk/tloResearchMyPage.do');">연구자 목록</a>
-						    <a href="#">기업수요 목록</a>
+						    <a href="javascript:doHref('/techtalk/tloMyPage.do');">기업수요 목록</a>
 						    <a href="javascript:doHref('/techtalk/tloMatchList.do');">매칭 목록</a>
 						</div>
 					</div>
@@ -97,9 +97,9 @@ $(document).ready(function(){
 					<div class="my-dropdown">
 						<button title="user_name" id="my-page-btn" ><span class="user_name">${user_name }(${id })</span></button>
 						<div class="my-dropdown-content">
-								<a href="javascript:doHref('/admin/member.do');">회원목록</a>
+							<a href="javascript:doHref('/admin/member.do');">회원목록</a>
 						    <a href="javascript:doHref('/techtalk/tloResearchMyPage.do');">연구자 목록</a>
-						    <a href="#">기업수요 목록</a>
+						    <a href="javascript:doHref('/techtalk/tloMyPage.do');">기업수요 목록</a>
 						    <a href="javascript:doHref('/techtalk/tloMatchList.do');">매칭 목록</a>
 						</div>
 					</div>
@@ -143,7 +143,6 @@ $(document).ready(function(){
 			</div>
 		</div>
 		</c:if>
-		
 		<!-- 메인페이지일때만 안나오게 변경 -->
 	</div>
 </header>

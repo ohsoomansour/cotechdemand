@@ -3,6 +3,7 @@ package com.ttmsoft.lms.front.member;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,14 +41,34 @@ public class MemberAction extends BaseAct{
 	 * @Explain  : 일반회원 관리
 	 *
 	 */
+
 	@RequestMapping(value = "/member.do")
-	public ModelAndView doMemberManagement (@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request) {
+	public ModelAndView doMemberManagement (@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpSession session) {
 		ModelAndView mav = new ModelAndView("/techtalk/admin/member/member/adminMember.front");
 		paraMap.put("siteid", siteid);   // {siteid=ttmsoft}
-		try {//----------------- 가이드 등록 여부 확인 Y/N 옵션 -------------------
-			List<String> guideList = new ArrayList<String>(Arrays.asList("Y", "N")); //
-			mav.addObject("guideList", guideList);
-			System.out.println("모델앤드뷰"+mav);
+		
+		try {
+			String member_type = (String) session.getAttribute("member_type");
+			String  id = (String) session.getAttribute("id");
+			//'비로그인'의 경우 
+			if(Objects.isNull(id)){
+
+				mav.setViewName("redirect:/techtalk/login.do");
+				return mav;
+
+			}//'로그인'의 경우
+			else if(!Objects.isNull(id)){
+				if(member_type.equals("ADMIN")) {
+					//----------------- 가이드 등록 여부 확인 Y/N 옵션 -------------------
+					List<String> guideList = new ArrayList<String>(Arrays.asList("Y", "N")); //
+					mav.addObject("guideList", guideList);
+					return mav;
+				} else {
+					mav.setViewName("redirect:/");
+					return mav;
+				}
+			}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ModelAndView("error");
@@ -57,10 +78,17 @@ public class MemberAction extends BaseAct{
 	
 	
 
+	private boolean isNull() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+
 	/**
 	 *
-	 * @Author   : jwchoo
-	 * @Date	 : 2020. 3. 19
+	 * @Author   : osooman
+	 * @Date	 : 2023. 8. 31
 	 * @Parm	 : DataMap
 	 * @Return   : ModelAndView
 	 * @Function : 사용자리스트조회
@@ -70,8 +98,6 @@ public class MemberAction extends BaseAct{
 	@RequestMapping(value="/listMemberX.do")   
 	public ModelAndView doListMember (@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request) {
 		ModelAndView mav = new ModelAndView("jsonView");
-		
-		//row와 rows가 어떻게 오나? {_search=false, nd=1693723912773, rows=15, page=1, sidx=, sord=asc, siteid=ttmsoft}
 		try {		
 			// 총 데이터 갯수
 			int totalCount = memberService.doCountVMember(paraMap);	
@@ -89,9 +115,10 @@ public class MemberAction extends BaseAct{
 			// 총 데이터 갯수
 			mav.addObject("records", totalCount);
 			// 그리드 데이터
-
+			System.out.println("검색:" + memberService.doGetMemberInfoData(paraMap));
+			//여기서 부터 디버깅 시작! 
 			mav.addObject("rows",   memberService.doGetMemberInfoData(paraMap));
-			System.out.println(mav);
+			
 			// --------------------------------------------------------------------------
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -101,38 +128,16 @@ public class MemberAction extends BaseAct{
 	}
 
 	/**
-	 *
-	 * @Author   : jwchoo
-	 * @Date	 : 2020. 3. 23
+	 * @Author   : osooman
+	 * @Date	 : 2023. 8. 31
 	 * @Parm	 : DataMap
 	 * @Return   : ModelAndView
 	 * @Function : 멤버폼
 	 * @Explain  : 
 	 *
 	 */
-	/*
-	**********  유저정보 불러올때 예시 **********
-
-	@RequestMapping("/~~")
-	public ModelAndView doXXX(HttpServletRequest request){
-		HttpSession session = request.getSession();
-		String biz_name = session.getAttribute("biz_name").toString();
-	}
-
-	<현재 로그인 시 세션이 담기는 정보>
-	session.setAttribute("member_seqno", userMap.get("member_seqno").toString());
-	session.setAttribute("member_type", userMap.get("member_type").toString());
-	session.setAttribute("id", userMap.get("id").toString());
-	session.setAttribute("user_name", userMap.get("user_name").toString());
-	session.setAttribute("user_email", userMap.get("user_email").toString());
-	session.setAttribute("user_depart", userMap.get("user_depart").toString());
-	session.setAttribute("user_rank", userMap.get("user_rank").toString());
-	session.setAttribute("pw_temp_flag", userMap.get("pw_temp_flag").toString());
-	session.setAttribute("pw_next_change_date", userMap.get("pw_next_change_date").toString());
-	session.setAttribute("agree_flag", userMap.get("agree_flag").toString());
-	session.setAttribute("delete_flag", userMap.get("delete_flag").toString());
-	session.setAttribute("biz_name", userMap.get("biz_name").toString());
-	*/
+	
+	
 	@RequestMapping(value="/agreeMemberAuthX.do")
 	public ModelAndView doMovePopMemberAuth(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
 		//ModelAndView mav = new ModelAndView("/techtalk/admin/member/member/adminMemberForm.frontPopup");
@@ -157,7 +162,7 @@ public class MemberAction extends BaseAct{
 			else if(paraMap.get("mode").equals("N")) {		// 권한 수정 시 데이터	셋팅
 				mav.addObject("authKindsList", memberService.doListAuthKinds(paraMap));				
 			}
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ModelAndView("error");
@@ -180,9 +185,6 @@ public class MemberAction extends BaseAct{
 				mav.addObject("joinApprovedConfirm", memberService.getJoinApprovedFlag(paraMap));
 				return mav;
 			}
-
-			//memberService.getJoinApprovedFlag(paraMap) >> {agree_flag=Y}
-			  
 			
 		} catch (Exception e) {
 			e.printStackTrace();

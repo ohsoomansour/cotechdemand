@@ -326,9 +326,17 @@ function techInquiry(biz_name){
 					                                    <li><span class="mr txt_grey tech_nm ">${ dataTLO.rcode_name3}</span></li>
 					                                </ul>
 			                    				</div>
+<<<<<<< HEAD
+<<<<<<< HEAD
+					                            <button type="button" class="history_btn" ><span><a href="javascript:void(0);" onclick="historyClick('${ dataTLO.demand_no}','${ dataTLO.resear_no}','${ dataTLO.match_no}')">이력보기</a></span></button>
+=======
+					                            <button type="button" class="history_btn" ><span><a href="javascript:void(0);" onclick="historyClick('${ dataTLO.dem_seqno}','${ dataTLO.research_seqno}')">이력보기</a></span></button>
+>>>>>>> refs/remotes/origin/develop
+=======
 					                            <button type="button" class="history_btn" ><span><a href="javascript:void(0);" onclick="historyClick('${ dataTLO.dem_seqno}','${ dataTLO.research_seqno}','${ dataTLO.match_number}')">이력보기</a></span></button>
 			                    			</div>
 			                    			<div class="tbl_public" id="match_number_${ dataTLO.match_number }">
+>>>>>>> branch 'develop' of https://git.ttmsoft.co.kr/wert/tibiz.git
 			                    			</div>
 			                    		</c:forEach>
 				                           
