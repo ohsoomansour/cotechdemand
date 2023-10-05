@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -195,11 +196,11 @@ public class ResearchAction extends BaseAct{
 			// 국가 과제 수행 이력
 			mav.addObject("proData", this.researchService.doViewResearchProject(paraMap));
 			if(paraMap.get("keyword") != null && paraMap.get("keyword") != "" && paraMap.get("keyword") != "") {
-				String keyword = (String) paraMap.get("keyword");
+				/*String keyword = (String) paraMap.get("keyword");
 				String[] keyword_split = keyword.split(",");
 				paraMap.put("keyword_split1", keyword_split[0]);
 				paraMap.put("keyword_split2", keyword_split[1]);
-				paraMap.put("keyword_split3", keyword_split[2]);
+				paraMap.put("keyword_split3", keyword_split[2]);*/
 				
 			}
 			//연구히스토리
@@ -231,16 +232,20 @@ public class ResearchAction extends BaseAct{
 	 *
 	 */	
 	@RequestMapping (value = "/sendTechInquiryX.do", method = RequestMethod.POST)
-	public ModelAndView doSendTechInquiry(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, Model model) {
-		ModelAndView mav = new ModelAndView("jsonView");						
+	public ModelAndView doSendTechInquiry(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, Model model, HttpSession session) {
+		ModelAndView mav = new ModelAndView("jsonView");	
+		String member_seqno = session.getAttribute("member_seqno").toString();
+		paraMap.put("member_seqno", member_seqno);
 		mav.addObject("paraMap", paraMap);	
 		
 		try {						
 			DataMap data = researchService.doViewResearchEmail(paraMap);
+			DataMap userData = researchService.doUserGetName(paraMap);
 			paraMap.put("user_email", data.get("user_email"));
-			paraMap.put("subject", "기술이전 문의합니다");
+			paraMap.put("subject", userData.get("user_name")+"님의 " + userData.get("biz_name")+"에서 기술이전 문의합니다");
 			paraMap.put("text", "기술이전 문의해요");
 			System.out.println(data);
+			System.out.println("paraMap:"+paraMap);
 			if(data.get("user_email") != null) {
 				CommonUtil.doMailSender(paraMap);
 			}

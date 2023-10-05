@@ -37,41 +37,41 @@ $(document).ready(function() {
 function fncFindId() {
 	var user_name = $('#userName').val();
 	var user_email = $('#userEmail1').val()+"@"+$('#userEmail2').val();
-	if(!isBlank('이름', '#userName'))
-	if(!isBlank('이메일', '#userEmail1'))
-	if(!isBlank('이메일도메인', '#userEmail2')){
-		$('#btnFindId').prop('disabled','true');
-		$('#btnFindId').css('background-color','grey');
-		$('.wrap-loading').removeClass('display-none');
-		$.ajax({
-			type : 'POST',
-			url : '/techtalk/findIdX.do',
-			data : {
-				user_name : user_name,
-				user_email : user_email
-			},
-			dataType : 'json',
-			success : function(data) {
-				$('.wrap-loading').addClass('display-none');
-				var result_count = data.result_count;
-				if(result_count == '0') {
-					alert_popup_focus('이름 및 이메일을 확인해주세요.',"#userName");
-					return false;
-				}
-				else if(result_count =='1'){
-					$('#divCerti').css('display','inline-block');
-					alert_popup_focus('인증번호를 발송했습니다. 인증번호가 오지 않으면 입력하신 정보가 회원정보와 일치하는지 확인해 주세요..',"#certificationNo");
-				}
-			},
-			error : function() {
-				$('.wrap-loading').addClass('display-none');
-				$('#btnFindId').prop('disabled','false');
-				$('#btnFindId').css('background-color','#5f24e2');
-			},
-			complete : function() {
-				
+	if(!isBlank('이름', '#userName')){
+		if(!isBlank('이메일', '#userEmail1')){
+			if(!isBlank('이메일도메인', '#userEmail2')){
+				$('.loading_wrap').css('display','block');
+				$.ajax({
+					type : 'POST',
+					url : '/techtalk/findIdX.do',
+					data : {
+						user_name : user_name,
+						user_email : user_email
+					},
+					dataType : 'json',
+					success : function(data) {
+						$('.loading_wrap').css('display','none');
+						var result_count = data.result_count;
+						if(result_count == '0') {
+							alert_popup_focus('이름 및 이메일을 확인해주세요.',"#userName");
+							return false;
+						}
+						else if(result_count =='1'){
+							$('#divCerti').css('display','inline-block');
+							alert_popup_focus('인증번호를 발송했습니다. 인증번호가 오지 않으면 입력하신 정보가 회원정보와 일치하는지 확인해 주세요..',"#certificationNo");
+						}
+					},
+					error : function() {
+						$('.loading_wrap').css('display','none');
+						$('#btnFindId').prop('disabled','false');
+						$('#btnFindId').css('background-color','#5f24e2');
+					},
+					complete : function() {
+						$('.loading_wrap').css('display','none');
+					}
+				});
 			}
-		});
+		}
 	}
 }
 //[아이디 찾기] - 인증번호 검증 -> 2023/09/21 - 박성민
@@ -136,8 +136,8 @@ function checkCerti() {
                        <div class="login_form_box_inner">
                        <form id="frm_login" method="post">
                            <h2>아이디 찾기</h2>
-                           <h2 style="font-size:20px; margin-top:20px;">본인확인 이메일로 인증</h2>
-                            <label>본인확인 이메일 주소와 입력한 이메일 주소가 같아야 인증번호를 받을 수 있습니다.</label>
+                           <h3 class="mgt20">본인확인 이메일로 인증</h3>
+                            <p class="mgt10">본인확인 이메일 주소와 입력한 이메일 주소가 같아야 인증번호를 받을 수 있습니다.</p>
                            <div class="login_form">
                                <label>이름</label>
                                <div class="login-form-input">
@@ -146,17 +146,19 @@ function checkCerti() {
                            </div>
                            <div class="login_form">
                                <label>이메일 주소</label>
-                               <div class="login-form-input" style="display:inline-block;">
-                                   <input type="text" class="form-control" id="userEmail1" name="user_email1"  title="이메일1" style="width:31%;">
-                                   @
-                                  <input type="text" class="form-control" id="userEmail2" name="user_email2"  title="이메일2" style="width:31%;">
-                                  <button type="button" class="btn_login"  id="btnFindId" title="인증번호 전송" style="width:30%;">인증번호 전송</button>
+                               <div class="login-form-input d-flex g5">
+                                   <input type="text" class="form-control" id="userEmail1" name="user_email1"  title="이메일1" style="width:25%;">
+                                   <span>@</span>
+                                  <input type="text" class="form-control" id="userEmail2" name="user_email2"  title="이메일2">
+                                  <button type="button" class="btn_default2 btn_nu"  id="btnFindId" title="인증번호 전송" style="font-size:12px;">인증번호 전송</button>
                                </div><br/>
                                
                                <div class="login-form-input" style="display:none;" id="divCerti">
                                <label>인증번호</label>
-                                   <input type="text" class="form-control" id="certificationNo" name="certification_no"  title="인증번호" style="width:60%;">
-                                   <button type="button" class="btn_login"  id="btnCheckCerti" title="인증번호 확인" style="width:30%;">인증번호 확인</button>
+                               		<div class="d-flex g5">
+	                                   <input type="text" class="form-control" id="certificationNo" name="certification_no"  title="인증번호" style="width:60%;">
+	                                   <button type="button" class="btn_default2 btn_nu"  id="btnCheckCerti" title="인증번호 확인" style="font-size:12px;">인증번호 확인</button>
+                                   </div>
                                </div>
                            </div>
                            <div class="login_util">
@@ -173,6 +175,7 @@ function checkCerti() {
            </div>
 		<!-- //compaVcContent e:  -->
 		</div>
-		<div class="wrap-loading" style="display-none">
-    	<div><img src="/images/loading.gif"/></div>
-		</div>
+	</div>
+	
+		
+		

@@ -66,5 +66,31 @@
 </head>
 <body class="Login">
 	<tiles:insertAttribute name="body" />
+	<div class="dim-layer-common alertCls">
+	    <div class="dimBgg"></div>
+	    <div id="layer99" class="pop-layer" style="height:220px">
+	        <div class="pop-container">
+	        <div class="pop-title"><h3>알림</h3></div>
+	            <div id="tap1_1" style="display: block">
+					<div class="table2 mTop5">
+						<div class="line form-inline alignCenter">
+							<div style="margin-top: 30px">
+								<label id="alertTxt">ㅅㄷㅌㅅ</label>
+							</div>
+						</div>
+						<div class="tbl_public" >
+							<div style="text-align:center;margin-top:20px;">
+			                	<button type="button" class="btn_step" id="cancelAlert" name="btnCancel" title="닫기">닫기</button>
+		                	</div>
+		                </div>
+					</div>
+				</div>
+	        </div>
+    	</div>
+	</div>
+	<!-- 로딩 -->
+	<div class="loading_wrap" style="display:none;">
+		<div class="loader"></div>
+	</div>
 </body>
 </html>

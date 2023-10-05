@@ -30,7 +30,7 @@ address,caption,cite,code,dfn,em,var { font-style:normal; font-weight:normal }
 .loss_word { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; word-break:break-all } /* 1줄 말줄임 */
 .emph_g { font-family:'NotoSans Regular','Malgun Gothic','맑은 고딕','Apple SD Gothic Neo','돋움',dotum, sans-serif; color:#1e1e1e } 
 .link_g { color:#3c64e6 } 
-select, input[type="text"], input[type="password"], input[type="number"], input[type="tel"], input[type="email"] { width:100%; height:34px; border:1px solid #ccc; line-height:32px; font-size:14px; color:#000; } 
+select, input[type="text"], input[type="password"], input[type="number"], input[type="date"], input[type="tel"], input[type="email"] { width:100%; height:34px; border:1px solid #ccc; line-height:32px; font-size:14px; color:#000; } 
 select { padding:0 38px 0 10px; background:#fff url('../images/common/ico_sel_arrow.png') no-repeat; background-position:right 1rem top 50%; -webkit-appearance:none; } 
 input[type="text"],input[type="password"] { text-indent: 10px; } 
 textarea.form-control { box-sizing: border-box; width:100%; resize:none; border:1px solid #ccc; line-height:36px; font-size:14px; color:#000; padding: 6px 12px; } 
@@ -972,9 +972,81 @@ button.btn_line { display: inline-block; width:auto;  height:36px; font-size:14p
     padding-top: 0;}
 .pop-container .pop-cont{ overflow-y: auto;height: calc(100% - 100px);}
 
+.mgt10{margin-top:10px}
+.mgt20{margin-top:20px}
+.btn_default2{
+	display: inline-block;
+    width: auto;
+    min-width: 40px;
+    height: 40px;
+    font-size: 14px;
+    line-height: 40px;
+    font-family: 'NotoSans Regular','Malgun Gothic','맑은 고딕','Apple SD Gothic Neo','돋움',dotum, sans-serif;
+    color: #1e1e1e;
+    border: 1px solid #1e1e1e;
+    background-color: #fff;
+    text-align: center;
+    text-decoration: none;
+    padding: 0 10px;
+    margin: 0 0px;
+}
+.mgt20{margin-top:20px}
+.d-flex{display:flex}
+.g5{gap:5px}
+.btn_nu{width:100px}
 
+.d-flex #userEmail2, .d-flex #certificationNo{flex:1}
+.pdb0{padding-bottom:0}
+.f_p{color:#d35a00}
+.w100{width:100%}
+.ju_be{justify-content: space-between;}
+.btn_default+.btn_default{margin-left: 8px;}
+.col1{flex-direction: column;}
+.al-c{align-items: center;}
 
-/*color_컨셉 재정의*/
+.wpop1160{width:1160px}
+
+@media all and (max-width:1159px) {
+  .wpop1160{width:100%;left:0; margin-left:0 !important}
+}
+
+/*로딩*/ 
+.loading_wrap{
+	position:fixed;
+	background:rgb(0 0 0 / 50%);;
+	top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 100;
+}
+.loader {
+  margin: 5% auto;
+  height: 100px;
+  width: 100px;
+  border: 6px solid #cdcdcd;
+  border-right-color: #5f24e2;
+  border-top-color: #5f24e2;
+  border-radius: 100%;
+  animation: spinning 800ms infinite linear;
+  left: 50%;
+  margin-top: -50px;
+  margin-left: -50px;
+  top: 50%;
+  position:absolute
+}
+
+@keyframes spinning {
+    from {
+        transform: rotate(0);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+/*로딩*/
+
+/*티비즈 전용_____color_컨셉 재정의*/
 #compaVcHead {background: linear-gradient(181deg, rgb(255 199 151) 0%, rgb(233 214 183) 100%);border-bottom: 1px solid rgb(255 255 255 / 29%);}
 .main_wrap {background: linear-gradient(180deg, #e8d5b7 9%,#efdcaf 34%,#ffd4a4 87%);}
 .main_txt_wrap .main_title_txt span { color: #5f24e2;}
@@ -992,3 +1064,10 @@ button.btn_line { display: inline-block; width:auto;  height:36px; font-size:14p
 .btn_login { background-color: #5f24e2;}
 .join_ad_box a { color: #5f24e2;}
 .compaLginBg{background:linear-gradient(180deg, #e8d5b7 9%,#efdcaf 34%,#ffd4a4 87%);}
+/*티비즈 전용_____color_컨셉 재정의*/
+
+
+
+
+
+

@@ -2779,7 +2779,7 @@
 			SQL ID : SubjectFrontSQL.doGetMatchTLOList
 			매칭된 연구자-기업수요 목록
 		*/
-		select DISTINCT tm.*, tr.*, td.*,  td.demand_seqno as dem_seqno, tr.researcher_seqno as research_seqno
+		select DISTINCT ROW_NUMBER() OVER (ORDER BY tr.researcher_seqno) AS match_number, tm.*, tr.*, td.*,  td.demand_seqno as dem_seqno, tr.researcher_seqno as research_seqno
 	, tr.keyword as Rkwd
 	, td.keyword as Bkwd
 	, td.update_date as rupdate
@@ -2829,7 +2829,7 @@
 			SQL ID : SubjectFrontSQL.doViewResearchEmail
 			연구자 상세보기 페이지 연구자 담당자 이메일 찾기
 		*/
-		select user_email
+		select *
 		from tbiz.tblmember tm
 		where member_type = 'TLO'
 		<if test="biz_name != ''">
@@ -2838,4 +2838,17 @@
 		
 	</select>
 	
+	<select id="SubjectFrontSQL.doUserGetName" parameterType="dataMap" resultType="dataMap">
+		<!-- 2023-09-13  유지민 -->
+		/*
+			SQL ID : SubjectFrontSQL.doUserGetName
+			로그인 유저 내용 가져오기
+		*/
+		select *
+		from tbiz.tblmember tm
+		<if test="member_seqno != ''">
+		where member_seqno = #{member_seqno}::INT
+		</if>
+		
+	</select>
 </mapper>	

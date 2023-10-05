@@ -95,7 +95,7 @@ public class MemberAction extends BaseAct{
 	 * @Explain  : 
 	 *
 	 */
-	@RequestMapping(value="/listMember.do")   
+	@RequestMapping(value="/listMemberX.do")   
 	public ModelAndView doListMember (@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request) {
 		ModelAndView mav = new ModelAndView("jsonView");
 		try {		
@@ -135,10 +135,39 @@ public class MemberAction extends BaseAct{
 	 * @Explain  : 
 	 *
 	 */
+<<<<<<< HEAD
 	
 	@RequestMapping(value="/agreeMemberAuth.do")
+=======
+	/*
+	**********  유저정보 불러올때 예시 **********
+
+	@RequestMapping("/~~")
+	public ModelAndView doXXX(HttpServletRequest request){
+		HttpSession session = request.getSession();
+		String biz_name = session.getAttribute("biz_name").toString();
+	}
+
+	<현재 로그인 시 세션이 담기는 정보>
+	session.setAttribute("member_seqno", userMap.get("member_seqno").toString());
+	session.setAttribute("member_type", userMap.get("member_type").toString());
+	session.setAttribute("id", userMap.get("id").toString());
+	session.setAttribute("user_name", userMap.get("user_name").toString());
+	session.setAttribute("user_email", userMap.get("user_email").toString());
+	session.setAttribute("user_depart", userMap.get("user_depart").toString());
+	session.setAttribute("user_rank", userMap.get("user_rank").toString());
+	session.setAttribute("pw_temp_flag", userMap.get("pw_temp_flag").toString());
+	session.setAttribute("pw_next_change_date", userMap.get("pw_next_change_date").toString());
+	session.setAttribute("agree_flag", userMap.get("agree_flag").toString());
+	session.setAttribute("delete_flag", userMap.get("delete_flag").toString());
+	session.setAttribute("biz_name", userMap.get("biz_name").toString());
+	*/
+	@RequestMapping(value="/agreeMemberAuthX.do")
+>>>>>>> branch 'develop' of https://git.ttmsoft.co.kr/wert/tibiz.git
 	public ModelAndView doMovePopMemberAuth(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
-		ModelAndView mav = new ModelAndView("/techtalk/admin/member/member/adminMemberForm.front_popup");
+		//ModelAndView mav = new ModelAndView("/techtalk/admin/member/member/adminMemberForm.frontPopup");
+		ModelAndView mav = new ModelAndView("jsonView");
+		
 		HttpSession session = request.getSession(); //1. 요청 세션을 얻고
 		String sessionId = (String)session.getAttribute("id"); //2. id에 대한 세션값을 얻고
 		String memberType = (String)session.getAttribute("member_type");
@@ -154,12 +183,15 @@ public class MemberAction extends BaseAct{
 			//1.가입 승인 'Y' => 승인 로직
 			if(paraMap.get("mode").equals("Y")) {		 
 				mav.addObject("authLookUpList", memberService.doUpdateAgreement(paraMap));
-				
 			}
 			else if(paraMap.get("mode").equals("N")) {		// 권한 수정 시 데이터	셋팅
 				mav.addObject("authKindsList", memberService.doListAuthKinds(paraMap));				
 			}
+<<<<<<< HEAD
 	
+=======
+			
+>>>>>>> branch 'develop' of https://git.ttmsoft.co.kr/wert/tibiz.git
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ModelAndView("error");
@@ -167,7 +199,7 @@ public class MemberAction extends BaseAct{
 		return mav;
 	}
 
-	@RequestMapping(value="/joinAgreementConfirm.do")
+	@RequestMapping(value="/joinAgreementConfirmX.do")
 	public ModelAndView confirmJoinApproved(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView mav = new ModelAndView("jsonView");
 		mav.addObject("seqno", paraMap.get("seqno"));
@@ -202,7 +234,7 @@ public class MemberAction extends BaseAct{
 	 * @Explain  : 
 	 *
 	 */
-	@RequestMapping(value="/listMemberAuth.do")
+	@RequestMapping(value="/listMemberAuthX.do")
 	public ModelAndView doListMemberAuth(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView mav = new ModelAndView("jsonView");
 		paraMap.put("siteid", siteid);
@@ -226,7 +258,7 @@ public class MemberAction extends BaseAct{
 	 * @Explain  : 
 	 *
 	 */
-	@RequestMapping(value="/updateMemberAuth.do")
+	@RequestMapping(value="/updateMemberAuthX.do")
 	public ModelAndView doUpdateMemberAuth(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
 		ModelAndView mav = new ModelAndView("jsonView");
 		paraMap.put("seq_tblnm", "TU_USER_ROLE");
