@@ -2767,8 +2767,8 @@
 		inner join tbiz.tblresearch_temp tt on tr.researcher_seqno = tt.research_seqno 
 		where tm.MEMBER_SEQNO=#{member_seqno}::INT
 		AND (
-		    (SELECT COUNT(*) FROM unnest(string_to_array(td.keyword, ',')) AS keyword_list
-		     WHERE keyword_list = ANY(string_to_array(tr.keyword, ','))) >= 2
+		    ( SELECT COUNT(*) FROM unnest(string_to_array(td.keyword, ',')) AS keyword_list
+		     WHERE keyword_list = ANY(string_to_array(tr.keyword, ',')) ) >= 2
 		)
 		and tr.member_seqno is not null;
 	</select>

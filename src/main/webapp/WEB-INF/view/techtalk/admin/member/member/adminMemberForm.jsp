@@ -14,7 +14,7 @@
 		else if(mode == 'U') {
 			$('#divUpdate').css('display', 'block');
 			$.ajax({
-				url : '/admin/listMemberAuth.do',
+				url : '/admin/listMemberAuthX.do',
 				type : 'POST',
 				dataType : 'json',
 				data : {
@@ -63,7 +63,7 @@
 		if(authCode.length != 0) {
 			$.ajax({
 		        type:'POST',
-		        url:'/admin/updateMemberAuth.do',
+		        url:'/admin/updateMemberAuthX.do',
 		        dataType : 'json',
 		        data : {
 		        	userno : userno,

@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="CoTechDemandSQL">
+		<select id="CoTechDemandSQL.doGetCodeListInfo" parameterType="dataMap" resultType="dataMap">
+		/*   2023.09.18 
+			기술분류 목록, SQL ID: TLOPageSQL.doGetCodeListInfo
+		*/
+		<![CDATA[
+			SELECT
+				*
+			FROM
+				TBTECH_CODE
+			WHERE CODE_DEPTH = #{depth}::INT
+			
+		]]>
+		<if test="parent_code_key != ''">
+			AND PARENT_CODE_KEY = #{parent_code_key}
+		</if>
+			ORDER BY CODE_KEY ASC
+		</select>	
+		<select id="CoTechDemandSQL.doCountCorporates" resultType="int">
+		/*
+			2023.09.24 수정중... 
+			SQL ID : TLOPageSQL.doCountCorporates
+			기업 카운트
+		*/
+		<![CDATA[
+			select COUNT(*) 
+			from techdemand_corporate tc
+			left outer join tblmember t on tc.member_seqno::INT = t.member_seqno
+			left outer join tblbusiness b on t.biz_name = b.biz_name
+			where b.biz_name = #{biz_name} 
+		]]>
+	</select>
+		
+	<select id="CoTechDemandSQL.doGetCoTechDemandInfo" parameterType="dataMap" resultType="dataMap" >
+		/*
+			SQL ID: CoTechDemandSQL.doGetCoTechDemandInfo
+			기업 목록 조회  >> 변경중..
+			code_key를 tbtec_code테이블에서 가져옴 
+				
+		*/
+			<![CDATA[
+			SELECT 
+				A.COMPA_NAME
+				, CO_TD_NO
+				, KEYWORD
+				, SPLIT_PART(KEYWORD::VARCHAR, ',', 1) AS KEYWORD1
+				, SPLIT_PART(KEYWORD::VARCHAR, ',', 2) AS KEYWORD2
+				, SPLIT_PART(KEYWORD::VARCHAR, ',', 3) AS KEYWORD3
+				, SPLIT_PART(KEYWORD::VARCHAR, ',', 4) AS KEYWORD4
+				, SPLIT_PART(KEYWORD::VARCHAR, ',', 5) AS KEYWORD5
+				, BIG_CATEGORY
+				, MID_CATEGORY
+				, SMALL_CATEGORY
+				, (SELECT CODE_NAME FROM tbtech_code AA WHERE AA.CODE_KEY = A.BIG_CATEGORY) AS CODE_NAME1
+				, (SELECT CODE_NAME FROM tbtech_code AA WHERE AA.CODE_KEY = A.MID_CATEGORY) AS CODE_NAME2
+				, (SELECT CODE_NAME FROM tbtech_code AA WHERE AA.CODE_KEY = A.SMALL_CATEGORY) AS CODE_NAME3
+				, CORPORATE_PROBLEM
+				, HOLD_RND_INFRA
+				, WILLINGNESS_TO_INVEST
+				, DEPT
+				, MANAGER_POSITION
+				, MANAGER_NAME
+				, MOBILEPHONE_NUM
+				, A.biz_email
+				, A.MEMBER_SEQNO
+				, TECH_NEEDS
+				, view_yn
+			FROM TECHDEMAND_CORPORATE AS A
+			INNER JOIN (SELECT * FROM TBLMEMBER WHERE id = '${id}') AS B
+			ON A.COMPA_NAME = B.BIZ_NAME
+			]]>
+			
+	</select>
+
+	<select id="CoTechDemandSQL.doAutoSearchKeyword" resultType="dataMap" parameterType="dataMap">
+		/*
+			키워드 검색
+			2023.09.15
+			SQL ID : CoTechDemandSQL.doAutoSearchKeyword
+		*/
+		<![CDATA[
+			select tc.code_name 
+			from tbtech_code tc 
+			where tc.code_name like '%${code_name}%'
+			group by tc.code_key;
+		]]>
+	</select>
+
+	<select id="CoTechDemandSQL.getTLOSeqNo" resultType="dataMap" parameterType="dataMap">
+		/*
+		    지금 로그인한 기업 멤버아이디의 session 중 biz_name과 같은 tblmember.biz_name과 같은 tblmember.member_seqno를 찾아와야된다.
+			CoTechDemandSQL.getTLOSeq_no
+			2023.09.23
+			SQL ID : CoTechDemandSQL.getTLOSeqNo
+			TBLMEMBER의 MEMBER_SEQNO = 3 
+		*/
+		<![CDATA[
+			SELECT MEMBER_SEQNO 
+			FROM TBLMEMBER T 
+			WHERE T.BIZ_NAME = #{biz_name} AND T.MEMBER_TYPE = 'TLO' 
+		]]>
+	</select>
+	<insert id="CoTechDemandSQL.registTechDemandCo" parameterType="dataMap" >
+		/*
+		2023.09.26 수정중.. 
+		SQL ID : CoTechDemandSQL.registTechDemandCo
+		기술수요 등록 
+		*/
+		  
+		<![CDATA[
+			INSERT INTO 
+				techdemand_corporate
+				(
+					co_td_no,
+					mid_category,
+					small_category,
+					keyword,
+					corporate_problem,
+					hold_rnd_infra,	
+					willingness_to_invest,	
+					compa_name,	
+					dept,	
+					manager_position,	
+					manager_name,	
+					mobilephone_num,	
+					biz_email,
+					member_seqno,
+					tech_needs,
+					tlo_seqno,
+					big_category
+						
+				) 
+			VALUES
+			(
+				nextval('co_techdemand__increment_seq'),
+				#{selStdClassCd2},
+				#{selStdClassCd3},
+				#{keyword_record},
+				#{erro},
+				#{rndInfra},
+				#{investWilling},
+				#{bizName},
+				#{dept},
+				#{managerPosition},
+				#{managerName},
+				#{userMobileNo},
+				#{biz_email},
+				#{member_seqno},
+				#{tech_needs},
+				#{tlo_seqno},
+				#{selStdClassCd1}		
+			)
+		]]>
+
+	</insert>
+</mapper>	

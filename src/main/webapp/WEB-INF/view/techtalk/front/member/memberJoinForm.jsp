@@ -95,7 +95,49 @@ $(document).ready(function(){
     autoFocus: true
 	});
 
+<<<<<<< HEAD
+				//이메일 확인 이동
+				$('#btnEmailCheck').click(function() {
+					fncCheckEmail();
+				});
+				 // input필드에 자동완성 기능을 걸어준다
+				$("#bizName").autocomplete({
+			    source: function (request, response) {
+			    	console.log(request)
+				    var data = $('#bizName').val();
+			        $.ajax({
+			            url: "/techtalk/autoSearchBusiness.do",
+			            type: "POST",
+			            dataType: "json",
+			            data: { applicant_nm: request.term },
+			            success: function (data) {
+			                response(
+			                    $.map(data.result, function (item) {
+				                    //console.log("어케나옴"+JSON.stringify(item));
+			                        return {
+			                            label: item.applicant_nm+'label',
+			                            value: item.applicant_nm,
+			                            idx: item.applicant_nm+'idx',
+			                        }
+			                    })
+			                )
+			            }
+			        })
+			    },
+			    focus: function (event, ui) {
+			        return false;
+			    },
+			    select: function (event, ui) {
+			    	console.log(ui.item.idx)
+			    },
+			    delay: 500,
+			    autoFocus: true
+			});
+
+			});
+=======
 });
+>>>>>>> branch 'develop' of https://git.ttmsoft.co.kr/wert/tibiz.git
 
 	
 //[회원가입] - 기업명 자동검색 -> 2023/09/06 - 박성민
@@ -239,6 +281,129 @@ function fncDoubleCheck(gubun) {
 				id : id
 			},
 			dataType : 'json',
+<<<<<<< HEAD
+			success : function(data) {
+				console.log("dd"+JSON.stringify(data.result));
+             $.map(data.result, function(item) {
+                 //console.log("어케나옴:+"+JSON.stringify(item.applicant_nm))
+                 return {
+                     label : item.applicant_nm + 'label',
+                     value : item.applicant_nm,
+                     test : item.applicant_nm + 'test'
+                 }
+             })
+					},
+			select : function(event, ui) {
+	            console.log(ui);
+	            console.log(ui.item.label);
+	            console.log(ui.item.value);
+	            console.log(ui.item.test);
+       },
+       focus : function(event, ui) {
+           return false;
+       },
+       minLength : 1,
+       autoFocus : true,
+       classes : {
+           'ui-autocomplete': 'highlight'
+       },
+       delay : 500,
+       position : { my : 'right top', at : 'right bottom' },
+       close : function(event) {
+           console.log(event);
+       }
+		});
+
+	}
+	
+	//회원가입 -> 2023/09/03 - 박성민
+	function fncMemberJoin(){
+		//개인정보 유효성 검사
+		if(!isBlank('아이디', '#id'))
+		if(!idCheck){
+			alert_popup_focus('아이디 중복확인을 해주세요.',"#id");
+			return false;
+			}
+		if(!isBlank('비밀번호', '#pw'))
+		if(!isBlank('비밀번호 확인', '#passWordCk'))
+		if(!isBlank('이름', '#userName'))
+		if(!isBlank('개인이메일', '#userEmail1'))
+		if(!isBlank('개인이메일 도메인', '#userEmail2'))
+		if(!isBlank('휴대전화번호', '#userMobileNo'))
+		if(!isBlank('회사명', '#bizName'))
+		if(!isBlank('부서명', '#userDepart'))
+		if(!isBlank('직급', '#userRank'))
+		if(!isBlank('업무용이메일', '#bizEmail1'))
+		if(!isBlank('업무용이메일도메인', '#bizEmail2'))
+		if(!isBlank('회사용직통전화번호', '#bizTelNo'))
+
+		var url = "/techtalk/memberJoin.do"
+		var form = $('#frm')[0];
+		var data = new FormData(form);
+		console.log("이게왜 ? + " + idCheck + " pw + " + pwCheck)
+		/*
+			$.ajax({
+			       url : url,
+			       type: "post",
+			       processData: false,
+			       contentType: false,
+			       data: data,
+			       dataType: "json",
+			       success : function(res){
+				    	alert("성공") 
+			       },
+			       error : function(){
+			    	alert('게시판 등록에 실패했습니다.');    
+			       },
+			       complete : function(){
+			       }
+			});
+		*/
+		}
+
+	//[회원가입] - 아이디 및 사업자등록번호 중복확인 -> 2021/04/16 - 추정완
+	function fncDoubleCheck(gubun) {
+		if (gubun == 'ID') {
+			var id = $('#id').val();
+			console.log('id : ' + id);
+			if (id == '' || id == null) {
+				alert_popup_focus('아이디를 입력 후 중복확인 버튼을 클릭해주세요.', '#id');
+				return false;
+			}
+			/*if(id.length < 8){
+				alert_popup_focus('아이디를 8글자 이상 입력해 주세요.','#id');
+				return false;
+				}*/
+			$.ajax({
+				type : 'POST',
+				url : '/techtalk/memberDoubleCheck.do',
+				data : {
+					gubun : gubun,
+					id : id
+				},
+				dataType : 'json',
+				success : function(transport) {
+					var memberCount = transport.memberCount;
+					if (memberCount == '1') {
+						alert_popup_focus('중복된 아이디가 있습니다. 다른 아이디를 사용해주세요.',
+								'#id');
+						idCheck = false;
+					} else if (id.length < 3) {
+						alert_popup_focus('아이디를 3글자 이상 입력해 주세요.', '#id');
+						return false;
+					} else if (id.length >= 3) {
+						alert("여기냐")
+						changeText('사용가능한 아이디 입니다.', '#checkId');
+						idCheck = true;
+					}
+
+				},
+				error : function() {
+
+				},
+				complete : function() {
+
+=======
 			success : function(transport) {
 				var memberCount = transport.memberCount;
 				if (memberCount == '1') {
@@ -251,6 +416,7 @@ function fncDoubleCheck(gubun) {
 				} else if (id.length >= 3) {
 					alert_popup_focus('사용가능한 아이디 입니다.', '#pwd');
 					idCheck = true;
+>>>>>>> branch 'develop' of https://git.ttmsoft.co.kr/wert/tibiz.git
 				}
 
 			},

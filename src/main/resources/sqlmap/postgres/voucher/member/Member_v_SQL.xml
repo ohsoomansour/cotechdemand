@@ -10,10 +10,12 @@
        		OR T.USER_MOBILE_NO LIKE '%' || #{division_value} || '%')
        	</if>
 		<if test="division_type == 'userId' and division_value != ''">
-       		AND T.ID LIKE '%' || #{division_value} || '%'
+			<![CDATA[
+       		 AND T.ID LIKE CONCAT('%', #{division_value}, '%')
+       		]]>
        	</if>
        	<if test="division_type == 'userNm' and division_value != ''">
-       		AND T.USER_NAME LIKE '%' || #{division_value} || '%'
+       		AND T.USER_NAME LIKE '%' || #{division_value} || '%' 
        	</if>
        	<if test="division_type == 'mPhone' and division_value != ''">
        		AND T.USER_MOBILE_NO LIKE '%' || #{division_value} || '%'
