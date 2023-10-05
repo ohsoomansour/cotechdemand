@@ -196,6 +196,30 @@ public class MyPageService extends BaseSvc<DataMap>{
 		return result;
 	}
 	
+	/* 마이페이지 TLO 매칭여부필터 Y - 2023/09/21 */
+	public List<DataMap> doGetTloMatchList2(DataMap paraMap) {
+		List<DataMap> result = this.dao.dolistQuery("MyPageSQL.doGetTloMatchList2", paraMap);
+		return result;
+	}
+	
+	/* 마이페이지 TLO 매칭여부필터 카운트 Y - 2023/09/21 */
+	public int doCountTloMatchList2(DataMap paraMap) {
+		int result = this.dao.countQuery("MyPageSQL.doCountTloMatchList2", paraMap);
+		return result;
+	}
+	
+	/* 마이페이지 TLO 매칭여부필터 N - 2023/09/21 */
+	public List<DataMap> doGetTloMatchList3(DataMap paraMap) {
+		List<DataMap> result = this.dao.dolistQuery("MyPageSQL.doGetTloMatchList3", paraMap);
+		return result;
+	}
+	
+	/* 마이페이지 TLO 매칭여부필터 카운트 N - 2023/09/21 */
+	public int doCountTloMatchList3(DataMap paraMap) {
+		int result = this.dao.countQuery("MyPageSQL.doCountTloMatchList3", paraMap);
+		return result;
+	}
+	
 	/* 마이페이지 TLO 매칭이력 수정 - 2023/09/18 */
 	public void doSetUpdate(DataMap paraMap) {
 		String[] match_date = (String[]) paraMap.get("match_date");

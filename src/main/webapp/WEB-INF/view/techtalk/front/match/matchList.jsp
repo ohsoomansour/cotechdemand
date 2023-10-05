@@ -6,7 +6,7 @@
 $(document).ready(function(){	
 });
 
-function historyClick(dem_seqno, research_seqno){
+function historyClick(dem_seqno, research_seqno, match_number){
  	var url = "/techtalk/doMatchHistoryListX.do";
  	var form = $('#frm')[0];
 	var data = new FormData(form);
@@ -19,11 +19,12 @@ function historyClick(dem_seqno, research_seqno){
        	},
        dataType: "json",
        success : function(res){
-    	   console.log("@@"+res.data[0]);
+    	   console.log(res.data[0]);
+    	   console.log(res.data.length);
+    	   if(res.data.length != 0 ){
     	   var ahtml= "";
-
     	   ahtml +="<table class='tbl'>"
-    	   ahtml +="<caption class='caption_hide'>메인 과제신청 대상사업 리스트</caption>"
+    	   ahtml +="<caption class='caption_hide'>매칭리스트</caption>"
     	   ahtml +="<colgroup>"
    		   ahtml +="<col style='width:150px;'>"
    		   ahtml +="<col>"
@@ -49,8 +50,39 @@ function historyClick(dem_seqno, research_seqno){
 			}
 		   ahtml +="</tbody>"
 		   ahtml +="</table>"
-		   $('#tbl').empty();
-		   $('#tbl').append(ahtml);
+		   $('#match_number_'+match_number).empty();
+		   $('#match_number_'+match_number).append(ahtml);
+//		   $('.tbl_public').empty();
+//		   $('.tbl_public').append(ahtml);
+    	   }else if(res.data.length == 0 ){
+    		   var ahtml= "";
+        	   ahtml +="<table class='tbl'>"
+        	   ahtml +="<caption class='caption_hide'>매칭리스트</caption>"
+        	   ahtml +="<colgroup>"
+       		   ahtml +="<col style='width:150px;'>"
+       		   ahtml +="<col>"
+    		   ahtml +="<col style='width: 300px;'>"
+    		   ahtml +="<col style='width: 300px;'>"
+    		   ahtml +="</colgroup>"
+    		   ahtml +="<thead>"
+    		   ahtml +="<tr>"
+    		   ahtml +="<th scope='col'>일자</th>"
+    		   ahtml +="<th scope='col'>내용</th>"
+    		   ahtml +="<th scope='col'>기업수요 담당자</th>"
+    		   ahtml +="<th scope='col'>연구자 담당자</th>"
+    		   ahtml +="</tr>"
+    		   ahtml +="</thead>"
+    		   ahtml +="<tbody>"
+    				ahtml +="<tr>"
+    			   ahtml +="<td colspan ='4'>매칭이력이 없습니다</td>"
+    			   ahtml +="</tr>"
+    		   ahtml +="</tbody>"
+    		   ahtml +="</table>"
+    		   $('#match_number_'+match_number).empty();
+    		   $('#match_number_'+match_number).append(ahtml);
+//    		   $('.tbl_public').empty();
+//    		   $('.tbl_public').append(ahtml);
+        	}
        },
        error : function(){
     	alert('실패했습니다.');    
@@ -295,10 +327,16 @@ function techInquiry(biz_name){
 					                                </ul>
 			                    				</div>
 <<<<<<< HEAD
+<<<<<<< HEAD
 					                            <button type="button" class="history_btn" ><span><a href="javascript:void(0);" onclick="historyClick('${ dataTLO.demand_no}','${ dataTLO.resear_no}','${ dataTLO.match_no}')">이력보기</a></span></button>
 =======
 					                            <button type="button" class="history_btn" ><span><a href="javascript:void(0);" onclick="historyClick('${ dataTLO.dem_seqno}','${ dataTLO.research_seqno}')">이력보기</a></span></button>
 >>>>>>> refs/remotes/origin/develop
+=======
+					                            <button type="button" class="history_btn" ><span><a href="javascript:void(0);" onclick="historyClick('${ dataTLO.dem_seqno}','${ dataTLO.research_seqno}','${ dataTLO.match_number}')">이력보기</a></span></button>
+			                    			</div>
+			                    			<div class="tbl_public" id="match_number_${ dataTLO.match_number }">
+>>>>>>> branch 'develop' of https://git.ttmsoft.co.kr/wert/tibiz.git
 			                    			</div>
 			                    		</c:forEach>
 				                           
@@ -311,8 +349,7 @@ function techInquiry(biz_name){
 				                        </div>
 			                    	</c:otherwise>
 			                    </c:choose>
-			                    <div class="tbl_public" id="tbl">
-			                    </div>
+			                    
 							</div>
 						</div>
 					</c:when>

@@ -60,3 +60,42 @@ function fncFindPwd() {
 		});
 }
 
+
+
+
+</script>
+	<div id="compaLogin">
+		<!-- compaVcContent s:  -->
+        <div class="compaLginBg"></div>
+		<div class="compaLginCont">
+               <div class="compaLginHeader">
+                   <h1 class="login_logo"><img src="${pageContext.request.contextPath}/css/images/common/logo_header.png" alt="TECHTALK"></h1>
+               </div>
+               <div class="compaLginBox">
+                   <div class="login_form_box">
+                       <div class="login_form_box_inner">
+                       <form id="frm_login" method="post">
+                           <h2>비밀번호 찾기</h2>
+                            <p class="mgt10">비밀번호를 찾고자하는 아이디를 입력해 주세요.</p>
+                           <div class="login_form">
+                               <label>아이디</label>
+                               <div class="login-form-input">
+                                   <label><input type="text" class="form-control" id="id" name="id" placeholder="아이디를 입력해주세요." title="아이디" autofocus></label>
+                               </div>
+                           </div>
+                           <div class="login_util">
+                           		<div class="lu_left">
+                           			<div class="box_checkinp">
+					                </div>
+                           		</div>
+                           </div>
+                           <button type="button" class="btn_login"  id="btnFindPwd" onclick="fncFindPwd();" title="다음">다음</button>
+                           
+                       </form>
+                       </div>
+                   </div>
+               </div>
+           </div>
+		<!-- //compaVcContent e:  -->
+		</div>
+>>>>>>> branch 'develop' of https://git.ttmsoft.co.kr/wert/tibiz.git

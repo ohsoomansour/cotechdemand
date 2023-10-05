@@ -31,6 +31,7 @@ function fncFindPwdToEmail() {
 	if(!isBlank('이름', '#userName'))
 	if(!isBlank('이메일', '#userEmail1'))
 	if(!isBlank('이메일도메인', '#userEmail2')){
+		$('.loading_wrap').css('display','block');
 		$.ajax({
 			type : 'POST',
 			url : '/techtalk/findIdX.do',
@@ -40,20 +41,21 @@ function fncFindPwdToEmail() {
 			},
 			dataType : 'json',
 			success : function(data) {
+				$('.loading_wrap').css('display','none');
 				var result_count = data.result_count;
 				if(result_count == '0') {
 					alert_popup_focus('이름 및 이메일을 확인해주세요.',"#userName");
 					return false;
 				}
 				else if(result_count =='1'){
-					$('#divCerti').css('display','inline-block');
+					$('#divCerti').css('display','block');
 				}
 			},
 			error : function() {
-				
+				$('.loading_wrap').css('display','none');
 			},
 			complete : function() {
-				
+				$('.loading_wrap').css('display','none');
 			}
 		});
 	}
@@ -81,8 +83,6 @@ function checkCerti() {
 					return false;
 				}
 				else if(result != null){
-					//alert("성공");
-					console.log(data);
 					var frm = document.createElement('form'); 
 					frm.name = 'frm'; 
 					frm.method = 'post'; 
@@ -102,7 +102,6 @@ function checkCerti() {
 					console.log(data);
 					console.log(data.result);
 					frm.submit();
-					
 				}
 			},
 			error : function() {
@@ -128,8 +127,9 @@ function checkCerti() {
                    <div class="login_form_box">
                        <div class="login_form_box_inner">
                        <form id="frm_login" method="post">
-                           <h3>본인확인 이메일로 인증( ${email} )</h3>
-                            <label>비밀번호를 찾고자하는 아이디를 입력해 주세요.</label>
+                       <h2>비밀번호 찾기</h2>
+                           <h3 class="mgt20">본인확인 이메일로 인증( ${email} )</h3>
+                           <p class="mgt10">비밀번호를 찾고자하는 아이디를 입력해 주세요.</p>
                            <div class="login_form">
                                <label>이름</label>
                                <div class="login-form-input">
@@ -138,17 +138,19 @@ function checkCerti() {
                            </div>
                            <div class="login_form" id="emailDiv" style="display:block;">
                                <label>이메일 주소</label>
-                               <div class="login-form-input" style="display:inline-block;">
-                                   <input type="text" class="form-control" id="userEmail1" name="user_email1"  title="이메일1" style="width:30%;">
-                                   @
-                                  <input type="text" class="form-control" id="userEmail2" name="user_email2"  title="이메일2" style="width:30%;">
-                                  <button type="button" class="btn_login"  id="btnSubmitNum" title="인증번호 전송" style="width:30%; display:inline-block;">인증번호 전송</button>
+                               <div class="login-form-input  d-flex g5" >
+                                   <input type="text" class="form-control" id="userEmail1" name="user_email1"  title="이메일1" style="width:25%;">
+                                   <span>@</span>
+                                  <input type="text" class="form-control" id="userEmail2" name="user_email2"  title="이메일2">
+                                  <button type="button" class="btn_default2 btn_nu"  id="btnSubmitNum" title="인증번호 전송" style="font-size:11px;">인증번호 전송</button>
                                </div>
                            </div>
-                           <div class="login-form-input" style="display:none;" id="divCerti">
+                           <div class="login_form" style="display:none" id="divCerti">
                                <label>인증번호</label>
-                                   <input type="text" class="form-control" id="certificationNo" name="certification_no"  title="인증번호" style="width:60%;">
-                                   <button type="button" class="btn_login"  id="btnCheckCerti" title="인증번호 확인" style="width:30%;">인증번호 확인</button>
+	                               <div class="d-flex g5">
+	                                   <input type="text" class="form-control" id="certificationNo" name="certification_no"  title="인증번호" style="width:60%;">
+	                                   <button type="button" class="btn_default btn_nu"  id="btnCheckCerti" title="인증번호 확인" style="font-size:12px;">인증번호 확인</button>
+                                   </div>
                                </div>
                            <div class="login_util">
                            		<div class="lu_left">

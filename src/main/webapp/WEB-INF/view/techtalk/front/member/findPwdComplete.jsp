@@ -79,6 +79,8 @@ function changePwd(){
                                <div class="login-form-input">
                                    <label><input type="password" class="form-control" id="newPwd" name="new_pwd" placeholder="새로운 비밀번호를 입력해주세요." title="새로운 비밀번호" autofocus></label>
                                </div>
+                           </div>
+                           <div class="login_form">
                                 <label>새로운 비밀번호 확인</label>
                                <div class="login-form-input">
                                    <label><input type="password" class="form-control" id="newPwdChk" name="new_pwd_chk" placeholder="새로운 비밀번호를 다시 입력해주세요." title="새로운 비밀번호 확인" ></label>

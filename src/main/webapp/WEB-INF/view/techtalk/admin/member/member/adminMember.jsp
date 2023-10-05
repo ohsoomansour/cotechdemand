@@ -224,8 +224,35 @@
 		$('#list').trigger('reloadGrid');
 	}
 	
+
+	//가입 승인 이미 되어있음: 버튼을 누르기에 승인완료 처리
+	function beforeLoad(seqno){
+		$.ajax({
+			type : 'GET',
+			url : '/admin/joinAgreementConfirm.do?seqno=' + seqno,
+			dataType : 'json',
+			success : function(data) {
+				console.log(data) //joinApprovedConfirm: {agree_flag: 'Y'}
+				var joinApprovedConfirm = data.joinApprovedConfirm.agree_flag
+
+				if(joinApprovedConfirm === 'Y') {
+					refresh(seqno);
+				}else if(joinApprovedConfirm === 'N'){
+					return null;
+				}
+			},
+			error : function() {
+				console.log("로드하기 전 에러났다 고쳐라")
+			}
+		}) 
+	}
+		
+	
+	
+
     //meber_type이 ADMIN일 경우 가입 승인 가능ㅁ
 	function fncAuthView(mode, seqno ) {
+
     	var member_type = '<%=(String)session.getAttribute("member_type")%>';
     	console.log(member_type);
     	if(member_type === "ADMIN" ){
@@ -527,3 +554,6 @@
 			</div>
 	 </div>
 </div>
+
+</div>
+
