@@ -35,9 +35,10 @@ public class MemberFrontService extends BaseSvc<DataMap>{
 		paraMap.put("biz_email", bizEmail);
 		String member_type = paraMap.getstr("member_type");
 		if(member_type.equals("TLO")) {
-			paraMap.put("agree_flag", "Y");
+			paraMap.put("agree_flag", 'N');
+			paraMap.put("chkAgree", 'N');
 		}else {
-			paraMap.put("agree_flag", "N");
+			paraMap.put("agree_flag", 'Y');
 		}
 		
 		System.out.println(paraMap);

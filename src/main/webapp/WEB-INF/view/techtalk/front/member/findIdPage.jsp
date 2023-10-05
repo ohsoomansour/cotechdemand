@@ -37,39 +37,41 @@ $(document).ready(function() {
 function fncFindId() {
 	var user_name = $('#userName').val();
 	var user_email = $('#userEmail1').val()+"@"+$('#userEmail2').val();
-	if(!isBlank('이름', '#userName'))
-	if(!isBlank('이메일', '#userEmail1'))
-	if(!isBlank('이메일도메인', '#userEmail2')){
-		$('.loading_wrap').css('display','block');
-		$.ajax({
-			type : 'POST',
-			url : '/techtalk/findIdX.do',
-			data : {
-				user_name : user_name,
-				user_email : user_email
-			},
-			dataType : 'json',
-			success : function(data) {
-				$('.loading_wrap').css('display','none');
-				var result_count = data.result_count;
-				if(result_count == '0') {
-					alert_popup_focus('이름 및 이메일을 확인해주세요.',"#userName");
-					return false;
-				}
-				else if(result_count =='1'){
-					$('#divCerti').css('display','inline-block');
-					alert_popup_focus('인증번호를 발송했습니다. 인증번호가 오지 않으면 입력하신 정보가 회원정보와 일치하는지 확인해 주세요..',"#certificationNo");
-				}
-			},
-			error : function() {
-				$('.loading_wrap').css('display','none');
-				$('#btnFindId').prop('disabled','false');
-				$('#btnFindId').css('background-color','#5f24e2');
-			},
-			complete : function() {
-				$('.loading_wrap').css('display','none');
+	if(!isBlank('이름', '#userName')){
+		if(!isBlank('이메일', '#userEmail1')){
+			if(!isBlank('이메일도메인', '#userEmail2')){
+				$('.loading_wrap').css('display','block');
+				$.ajax({
+					type : 'POST',
+					url : '/techtalk/findIdX.do',
+					data : {
+						user_name : user_name,
+						user_email : user_email
+					},
+					dataType : 'json',
+					success : function(data) {
+						$('.loading_wrap').css('display','none');
+						var result_count = data.result_count;
+						if(result_count == '0') {
+							alert_popup_focus('이름 및 이메일을 확인해주세요.',"#userName");
+							return false;
+						}
+						else if(result_count =='1'){
+							$('#divCerti').css('display','inline-block');
+							alert_popup_focus('인증번호를 발송했습니다. 인증번호가 오지 않으면 입력하신 정보가 회원정보와 일치하는지 확인해 주세요..',"#certificationNo");
+						}
+					},
+					error : function() {
+						$('.loading_wrap').css('display','none');
+						$('#btnFindId').prop('disabled','false');
+						$('#btnFindId').css('background-color','#5f24e2');
+					},
+					complete : function() {
+						$('.loading_wrap').css('display','none');
+					}
+				});
 			}
-		});
+		}
 	}
 }
 //[아이디 찾기] - 인증번호 검증 -> 2023/09/21 - 박성민

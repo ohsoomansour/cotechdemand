@@ -83,8 +83,6 @@ function checkCerti() {
 					return false;
 				}
 				else if(result != null){
-					//alert("성공");
-					console.log(data);
 					var frm = document.createElement('form'); 
 					frm.name = 'frm'; 
 					frm.method = 'post'; 
@@ -104,7 +102,6 @@ function checkCerti() {
 					console.log(data);
 					console.log(data.result);
 					frm.submit();
-					
 				}
 			},
 			error : function() {
