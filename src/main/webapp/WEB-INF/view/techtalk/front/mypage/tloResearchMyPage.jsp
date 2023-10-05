@@ -55,8 +55,27 @@ $(document).ready(function() {
 		var op = $(this);
 	    layer_popup($href, cls, op);
 	});
-	
+
+
+	$('.ui-datepicker-trigger').click(function(){
+		$('#date_all').prop("checked", false);
+	});
 });
+
+
+function checkDateAll(element) {
+	$('#strDate').val('');
+	$('#endDate').val('');
+}
+
+function checkTechOnlyOne(element) {
+	$("#filterStdClassCd1 option:eq(0)").prop("selected", true); 
+	$("#filterStdClassCd2 option:eq(0)").prop("selected", true); 
+	$("#filterStdClassCd2").prop("disabled", true); 
+	$("#filterStdClassCd3 option:eq(0)").prop("selected", true); 
+	$("#filterStdClassCd3").prop("disabled", true); 
+}
+
 
 function checkOnlyOne(element) {
 	  
@@ -421,6 +440,7 @@ function fncChangeStd(obj, gubun){
 }
 
 function filterChangeStd(obj, gubun){
+	$('#tech_all').prop("checked", false);
 	var selValue = obj.value;
 	if(selValue == "" || selValue == "선택"){
 		if(gubun == "mid"){
@@ -1053,11 +1073,7 @@ function doSearchFilter () {
 </div>
 <div class="dim-layer researcherDetailPop">
     <div class="dimBg"></div>
-<<<<<<< src/main/webapp/WEB-INF/view/techtalk/front/mypage/tloResearchMyPage.jsp
     <div id="researcherDetailPop" class="pop-layer" style="width:1260px; height:600px">
-=======
-    <div id="researcherDetailPop" class="pop-layer wpop1160" style="height:600px">
->>>>>>> src/main/webapp/WEB-INF/view/techtalk/front/mypage/tloResearchMyPage.jsp
     	<div class="pop-container" >
 	    	<div class="pop-title"><h3>연구자 상세정보</h3><button class="btn-layerClose" title="팝업닫기"><span class="icon ico_close">팝업닫기</span></button></div>
 	    	<div class="pop-cont">
@@ -1066,8 +1082,6 @@ function doSearchFilter () {
 								<table class="tbl">
 									<caption style="position:absolute !important;  width:1px;  height:1px; overflow:hidden; clip:rect(1px, 1px, 1px, 1px);" >연구자 상세정보</caption>
 									<colgroup>
-										<col style="width: 10%">
-										<col>
 										<col style="width: 10%">
 										<col>
 									</colgroup>
@@ -1297,7 +1311,7 @@ function doSearchFilter () {
 								<th scope="col">최근 출원일</th>
 								<td class="left form-inline">
 									<div class="btn_chk div-inline">
-										<input type="checkbox" name="date_all"  id="date_all" value="date_all"> 
+										<input type="checkbox" name="date_all"  id="date_all" value="date_all" onclick="checkDateAll(this);"> 
 										<label for="date_all" class="option_label">  
 											<span class="inner"><span class="txt_checked">전체</span></span> 
 										</label>
@@ -1314,7 +1328,7 @@ function doSearchFilter () {
 								<th scope="col">기술분야</th>
 								<td class="left form-inline">
 									<div class="btn_chk div-inline">
-										<input type="checkbox" name="tech_field"  id="tech_all" value="tech_all"> 
+										<input type="checkbox" name="tech_field"  id="tech_all" value="tech_all" onclick="checkTechOnlyOne(this);"> 
 										<label for="tech_all" class="option_label">  
 											<span class="inner"><span class="txt_checked">전체</span></span> 
 										</label>
