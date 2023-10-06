@@ -5,7 +5,6 @@
 
 <script>
 var proData = new Array();
-
 $(document).ready(function() {
 	//체크박스 변경 - 2023/09/18
     $("input:checkbox").change(function(){
