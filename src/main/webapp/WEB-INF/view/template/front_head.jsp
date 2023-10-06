@@ -72,6 +72,7 @@ $(document).ready(function(){
 					<div class="my-dropdown">
 						<button title="user_name" id="my-page-btn" ><span class="user_name">${user_name }(${id })</span></button>
 						<div class="my-dropdown-content">
+							<a href="javascript:doHref('/techtalk/moveCoTechDemandList.do');">기업수요 목록</a>
 						    <a href="javascript:doHref('/techtalk/memberUpdatePage.do');">내 정보 관리</a>
 						    <a href="javascript:doHref('/techtalk/doChangePwdPage.do');">비밀번호 변경</a>
 						</div>
