@@ -4,7 +4,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
 <script>
-
 var proData = new Array();
 
 $(document).ready(function() {
