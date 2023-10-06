@@ -51,10 +51,12 @@ public class CoTechDemandAction extends BaseAct {
 				mav.addObject("codeList2", this.coTechDemandService.doGetCodeListInfo(paraMap));
 				paraMap.put("depth", '3');
 				mav.addObject("codeList3", this.coTechDemandService.doGetCodeListInfo(paraMap));
+				//기업 등록 시 'B 타입'과 'TLO타입'의 계정인 'seqno'를 등록  
 				String member_seqno = (String) session.getAttribute("member_seqno");
+				DataMap tlo_seqno = coTechDemandService.doGetTLOSeqno(paraMap);
 				String biz_name = (String) session.getAttribute("biz_name");
 				String biz_email = paraMap.getstr("bizEmail1")+"@"+paraMap.getstr("bizEmail2");
-				DataMap tlo_seqno = coTechDemandService.doGetTLOSeqno(paraMap);
+				
 				paraMap.put("member_seqno", member_seqno);
 				paraMap.put("tlo_seqno", tlo_seqno);
 				paraMap.put("biz_name", biz_name);
