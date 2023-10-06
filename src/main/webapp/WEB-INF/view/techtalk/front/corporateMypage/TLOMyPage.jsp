@@ -4,9 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
 <script>
-
 var proData = new Array();
-
 $(document).ready(function() {
 	//체크박스 변경 - 2023/09/18
     $("input:checkbox").change(function(){
@@ -651,12 +649,9 @@ function checkOnlyOne(element) {
 						<input id="NO" type="hidden"></input>
 						<h3 class="tit_corp">기술수요 기업 상세정보</h3>
 						<button class="btn-layerClose" title="팝업닫기"><span class="icon ico_close">팝업닫기</span></button>
-					</div>
-					
-					
+					</div>					
 					<!-- page_content s:  -->
-				
-				
+
 						<div class="tbl_view tbl_public">
 							<table class="tbl">
 								<caption style="position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(1px, 1px, 1px, 1px);">기업 수요 목록 상세정보</caption>
