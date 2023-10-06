@@ -9,7 +9,7 @@ var proData = new Array();
 
 $(document).ready(function() {
 	//체크박스 변경 - 2023/09/18
-    $(".inp_check").change(function(){
+    $("input:checkbox").change(function(){
       if(this.checked){
         $(this).attr('value', 'Y');
       }else{
@@ -19,6 +19,7 @@ $(document).ready(function() {
 	
 	
 	initDatePicker([$('#strDate'), $('#endDate')]);
+	initDatePicker([$('#strDate2'), $('#endDate2')]);
 	
 	$('#filterBtn').click(function() {
 		var $href = "#filterPop";
@@ -28,8 +29,12 @@ $(document).ready(function() {
 	    layer_popup($href, cls, op);
 	});
 	
-	$('.ui-datepicker-trigger').click(function(){
+	$('#date1').find(".ui-datepicker-trigger").click(function(){
 		$('#date_all').prop("checked", false);
+	});
+
+	$('#date2').find(".ui-datepicker-trigger").click(function(){
+		$('#date_all2').prop("checked", false);
 	});
 	
 });
@@ -380,6 +385,27 @@ function doSearchFilter () {
 	$('#frm2').submit();
 }
 
+function checkDateAll(element) {
+	$('#strDate').val('');
+	$('#endDate').val('');
+}
+/*
+function checkDateAll2(element) {
+	$('#strDate2').val('');
+	$('#endDate2').val('');
+}*/
+
+function checkOnlyOne(element) {
+	  
+	  var checkboxes = document.getElementsByName("matching");
+	  console.log(checkboxes)
+	  checkboxes.forEach((cb) => {
+	    cb.checked = false;
+	  })
+	  //선택한 것만 true이고 외에는 false 이다. 
+	  element.checked = true; 
+}
+
 </script>
 <!-- 기술수요 목록 -->
 <form action="#" id="frm" name="frm" method="post">
@@ -505,12 +531,9 @@ function doSearchFilter () {
 						<input id="NO" type="hidden"></input>
 						<h3 class="tit_corp">기술수요 기업 상세정보</h3>
 						<button class="btn-layerClose" title="팝업닫기"><span class="icon ico_close">팝업닫기</span></button>
-					</div>
-					
-					
+					</div>					
 					<!-- page_content s:  -->
-				
-				
+
 						<div class="tbl_view tbl_public">
 							<table class="tbl">
 								<caption style="position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(1px, 1px, 1px, 1px);">기업 수요 목록 상세정보</caption>
@@ -774,11 +797,17 @@ function doSearchFilter () {
 							<tr>
 								<th scope="col">최근 업데이트 날짜</th>
 								<td class="left form-inline">
-									<div class="datepicker_wrap">
-										<input type="text" id="strDate" name="strDate" class="form-control">
-										~
-										<input type="text" id="endDate" name="endDate" class="form-control">
+									<div class="btn_chk div-inline">
+										<input type="checkbox" name="date_all"  id="date_all" value="date_all" onclick="checkDateAll(this);"> 
+										<label for="date_all" class="option_label">  
+											<span class="inner"><span class="txt_checked">전체</span></span> 
+										</label>
 									</div>
+									<div class="datepicker_wrap" id="date2">
+										<input type="text" id="strDate2" name="strDate2" class="form-control">
+										~
+										<input type="text" id="endDate2" name="endDate2" class="form-control">
+									</div>>
 									
 								</td>
 							</tr>			 
@@ -786,7 +815,7 @@ function doSearchFilter () {
 								<th scope="col">기술분야</th>
 								<td class="left form-inline">
 									<div class="btn_chk div-inline">
-										<input type="checkbox" name="tech_field"  id="tech_all" value="tech_all"> 
+										<input type="checkbox" name="tech_field"  id="tech_all" value="tech_all" onclick="checkTechOnlyOne(this);"> 
 										<label for="tech_all" class="option_label">  
 											<span class="inner"><span class="txt_checked">전체</span></span> 
 										</label>
@@ -815,19 +844,19 @@ function doSearchFilter () {
 								<th scope="col">매칭 여부</th>
 								<td class="left form-inline">
 									<div class="btn_chk div-inline">
-										<input type="checkbox" name="matching"  id="m_all" value="m_all"> 
+										<input type="checkbox" name="matching"  id="m_all" value="m_all" onclick="checkOnlyOne(this);"> 
 										<label for="m_all" class="option_label">  
 											<span class="inner"><span class="txt_checked">전체</span></span> 
 										</label>
 									</div>
 									<div class="btn_chk div-inline">
-										<input type="checkbox" name="matching"  id="mY" value="Y"> 
+										<input type="checkbox" name="matching"  id="mY" value="Y" onclick="checkOnlyOne(this);"> 
 										<label for="mY" class="option_label">  
 											<span class="inner"><span class="txt_checked">Y</span></span> 
 										</label>
 									</div>
 									<div class="btn_chk div-inline">
-										<input type="checkbox" name="matching"  id="mN" value="N"> 
+										<input type="checkbox" name="matching"  id="mN" value="N" onclick="checkOnlyOne(this);"> 
 										<label for="mN" class="option_label">  
 											<span class="inner"><span class="txt_checked">N</span></span> 
 										</label>
