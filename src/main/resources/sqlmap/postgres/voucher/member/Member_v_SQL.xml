@@ -26,18 +26,26 @@
 
          <if test="strdate != null and strdate != ''">
        		<![CDATA[
-       			AND TO_CHAR(T.regist_date,'YYYYMMDDHH24MISS') >= #{strdate} 
+       			AND TO_CHAR(T.regist_date,'YYYYMMDD') >= #{strdate} 
        		]]>
          </if>
          <if test="enddate != null and enddate != ''">
          	<![CDATA[
-         		AND TO_CHAR(T.regist_date,'YYYYMMDDHH24MISS') <= #{enddate} 
+         		AND TO_CHAR(T.regist_date,'YYYYMMDD') <= #{enddate} 
          	]]>
          </if>
          
          <if test="member_type != null and member_type != ''">
-         	AND T.MEMBER_TYPE = #{member_type}
+			<![CDATA[
+         		AND T.MEMBER_TYPE = #{member_type}
+         	]]>
          </if>	 
+         
+         <if test="agree_value != null and agree_value != ''">
+			<![CDATA[
+         		AND T.AGREE_FLAG = #{agree_value}
+         	]]>
+         </if>	
          
          <if test="keyword != null and keyword != ''">
          	OR T.id LIKE CONCAT('%',#{keyword},'%')
@@ -79,9 +87,9 @@
 					T.USER_NAME,
 					T.USER_EMAIL,
 					T.USER_MOBILE_NO,
-					T.BIZ_NAME,
-					T.BIZ_EMAIL,
-					T.BIZ_TEL_NO,
+					T.COMPANY_NAME,
+					T.COMPANY_EMAIL,
+					T.COMPANY_TEL_NO,
 					T.AGREE_FLAG,
 					T.DELETE_FLAG
 				FROM 
@@ -96,7 +104,7 @@
 			</when>
 			<otherwise>
 			<![CDATA[	
-				ORDER BY T.MEMBER_SEQNO
+				ORDER BY T.regist_date desc , T.member_seqno desc
 			]]>
 			</otherwise>
 		</choose>

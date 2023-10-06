@@ -377,19 +377,30 @@
 		if(dateFilter != null) {
 			if(isNotEmpty(dateFilter[0])) {
 				result['strdate'] = dateFilter[0].replace(/-/gi, "");
+			}else{
+				result['strdate'] = null;
 			}
 
 			if(isNotEmpty(dateFilter[1])) {
 				result['enddate'] = dateFilter[1].replace(/-/gi, "");
+			}else{
+				result['enddate'] = null;
 			}
+		}else{
+			result['strdate'] = null;
+			result['enddate'] = null;
 		}
 
 		if(memberTypeFilter != 'ALL' && isNotEmpty(memberTypeFilter)){
 			result['member_type'] = memberTypeFilter;
+		}else{
+			result['member_type'] = null;
 		}
 
 		if(agreeJoinFilter != 'ALL' && isNotEmpty(agreeJoinFilter)){
 			result['agree_value'] = agreeJoinFilter;
+		}else{
+			result['agree_value'] = null;
 		}
 
 		fncList(result);
@@ -500,13 +511,13 @@
 								<div class="btn_chk div-inline">
 									<input type="checkbox" name="member_type" id="member_type_R" value="R"> 
 									<label for="member_type_R" class="option_label">  
-										<span class="inner"><span class="txt_checked">연구자</span></span> 
+										<span class="inner"><span class="txt_checked">유저</span></span> 
 									</label>
 								</div>
 								<div class="btn_chk div-inline">
 									<input type="checkbox" name="member_type" id="member_type_B" value="B"> 
 									<label for="member_type_B" class="option_label">  
-										<span class="inner"><span class="txt_checked">기업</span></span> 
+										<span class="inner"><span class="txt_checked">운영자</span></span> 
 									</label>
 								</div>
 								<div class="btn_chk div-inline">
