@@ -141,7 +141,7 @@
 			<if test= "strDate != ''" >
 				<![CDATA[
 					
-				AND A.UPDATE > #{strDate}
+				AND A.UPDATE > '${strDate}'
 					]]>	
 			</if>
 				
@@ -200,7 +200,6 @@
 			</if>
 			ORDER BY CODE_KEY ASC
 	</select>
-	
 	<select id="TLOPageSQL.doGetManager" parameterType="dataMap" resultType="dataMap">
 		/*
 			SQL ID: TLOPageSQL.doGetManager
