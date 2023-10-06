@@ -27,7 +27,7 @@ public class TLOMypageService extends BaseSvc<DataMap>{
 		List<DataMap> result = this.dao.dolistQuery("TLOPageSQL.doGetCoTechDemandInfo", paraMap);
 		return result;
 	}
-	/* 마이페이지 기업 수요자 수정 - 2023/09/19  >> 수정 중..*/
+	/* 마이페이지 기업 수요자 수정 - 2023/09/19 */
 	public void doUpdateCorporate(DataMap paraMap) { 
 		String keyword1 = paraMap.get("keyword1").toString().trim();
 		String keyword2 = paraMap.get("keyword2").toString().trim(); 
@@ -46,8 +46,9 @@ public class TLOMypageService extends BaseSvc<DataMap>{
 		paraMap.put("keyword3", keyword3);
 		paraMap.put("keyword4", keyword4);
 		paraMap.put("keyword5", keyword5);
-		
+		System.out.println("paraMap: "+paraMap);
 		this.dao.insertQuery("TLOPageSQL.doUpdateCorporate", paraMap);
+		this.dao.insertQuery("TLOPageSQL.doUpdateCorporateUser", paraMap);
 	}
 	
 	/* 마이페이지 기업 카운트 - 2023/09/24*/
@@ -107,4 +108,7 @@ public class TLOMypageService extends BaseSvc<DataMap>{
 		return result;
 	}
 
+	public DataMap deTechPopupView (DataMap paraMap) {
+		return this.dao.selectQuery("TLOPageSQL.deTechPopupView", paraMap);
+	}
 }

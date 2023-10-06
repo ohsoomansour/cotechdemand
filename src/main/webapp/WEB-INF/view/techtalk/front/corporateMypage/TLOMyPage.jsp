@@ -9,7 +9,7 @@ var proData = new Array();
 
 $(document).ready(function() {
 	//체크박스 변경 - 2023/09/18
-    $(".inp_check").change(function(){
+    $("input:checkbox").change(function(){
       if(this.checked){
         $(this).attr('value', 'Y');
       }else{
@@ -19,6 +19,7 @@ $(document).ready(function() {
 	
 	
 	initDatePicker([$('#strDate'), $('#endDate')]);
+	initDatePicker([$('#strDate2'), $('#endDate2')]);
 	
 	$('#filterBtn').click(function() {
 		var $href = "#filterPop";
@@ -28,8 +29,12 @@ $(document).ready(function() {
 	    layer_popup($href, cls, op);
 	});
 	
-	$('.ui-datepicker-trigger').click(function(){
+	$('#date1').find(".ui-datepicker-trigger").click(function(){
 		$('#date_all').prop("checked", false);
+	});
+
+	$('#date2').find(".ui-datepicker-trigger").click(function(){
+		$('#date_all2').prop("checked", false);
 	});
 	
 });
@@ -96,9 +101,84 @@ function doCancel(e) {
 }
 
 //기업수요 상세정보 
-function detail( co_td_no, compa_name, mid_category_key, small_category_key, code_name2, code_name3, keyword1,  keyword2, keyword3,  keyword4, keyword5, tech_needs, corporate_problem, hold_rnd_infra, willingness_to_invest, dept, manager_position, manager_name, mobilephone_num, biz_email, corporate_seqno)  {
+function detailPopup(demand_seqno, member_seqno)  {
  	
-  	$('#NO').val(co_td_no);
+	$.ajax({
+        type : 'POST',
+        url : '/techtalk/techPopupViewX.do',
+        data :  {
+        	demand_seqno : demand_seqno,
+        	member_seqno : member_seqno
+       },
+        dataType : 'json',
+        beforeSend: function() {
+           $('.wrap-loading').css('display', 'block');
+        },
+        success : function(res) {
+        	result = res;
+        	console.log(result.member_seqno);
+        	$('#demand_seqno').val(result.data.demand_seqno);
+        	$('#member_seqno').val(result.data.member_seqno);
+        	
+			$("#selStdClassCd3").attr("disabled","disabled");
+			
+		    $('#selStdClassCd1').val(result.data.tech_code1);
+		    $('#selStdClassCd2').val(result.data.tech_code2);   
+		    $('#selStdClassCd3').val(result.data.tech_code3);
+
+		  //키워드		
+			$('#keyword1').val('');
+			$('#keyword2').val('');
+			$('#keyword3').val('');
+			$('#keyword4').val('');
+			$('#keyword5').val('');
+			
+			if(result.data.keyword != null) {
+				var keyword_split = result.data.keyword.split(",");
+				$('#keyword1').empty();
+				$('#keyword1').val(keyword_split[0]);
+				$('#keyword2').empty();
+				$('#keyword2').val(keyword_split[1]);
+				$('#keyword3').empty();
+				$('#keyword3').val(keyword_split[2]);
+				$('#keyword4').empty();
+				$('#keyword4').val(keyword_split[3]);
+				$('#keyword5').empty();
+				$('#keyword5').val(keyword_split[4]);
+			}
+			
+        	//기술명
+        	$('#tech_nm').val(result.data.tech_nm);
+        	//필요 기술
+        	$('#need_tech').val(result.data.need_tech);
+        	//기업 에로사항
+        	$('#biz_problems').val(result.data.biz_problems);		 	
+        	//보유 연구 인프라
+        	$('#biz_infra').val(result.data.biz_infra);	
+        	//투자 의지(사업 투자 여력 )
+        	$('#invest_yn').val(result.data.invest_yn);
+        	//담당자 정보 수정
+            $('#user_depart').val(result.data.user_depart);
+        	$('#user_rank').val(result.data.user_rank);
+        	$('#user_name').val(result.data.user_name);
+        	$('#user_mobile_no').val(result.data.user_mobile_no);
+        	//이메일
+        	$('#manager_mail1').val(result.data.biz_email.split('@')[0]);
+        	$('#manager_mail2').val(result.data.biz_email.split('@')[1]);
+        	
+        	$('#compaVcContent').css("overflow", "hidden");
+        	layer_popup('#corporateDetailPop', 'corporateDetailPop');
+        	console.log(res.dataList);
+        },
+        error : function() {
+           
+        },
+        complete : function() {
+           
+        }
+     });
+    
+  	/* $('#NO').val(co_td_no);
   	$('#selStdClassCd1').val("A").prop("selected", true);
   	$("#selStdClassCd2").val(mid_category_key).prop("selected", true); // option 태그의 value값
     $("#selStdClassCd3").val(small_category_key).prop("selected", true); //code_name2 뿌려준 값을 받아와서 각 기업별 옵션 값 띄워줌 
@@ -133,7 +213,7 @@ function detail( co_td_no, compa_name, mid_category_key, small_category_key, cod
 	$('#manager_mail2').val(biz_email.split('@')[1]);
 	
 	$('#compaVcContent').css("overflow", "hidden");
-	layer_popup('#corporateDetailPop', 'corporateDetailPop');
+	layer_popup('#corporateDetailPop', 'corporateDetailPop'); */
     
 	
 }
@@ -145,27 +225,34 @@ function doUpdate() {
 		data : {
 			//기업수요자 정보 수정
 			//corporate_seqno : $('#corporate_seqno').val(),
-			co_td_no: $('#NO').val(),
-			compa_name: $('#compa_name').val(),
-			mid_category: $('#selStdClassCd2').val(),
-			small_category: $('#selStdClassCd3').val(),
-			keyword: $('#keyword1').val() + $('#keyword2').val() + $('#keyword3').val() + $('#keyword4').val() + $('#keyword5').val(),
+			//co_td_no: $('#NO').val(),
+			demand_seqno : $('#demand_seqno').val(),
+			member_seqno : $('#member_seqno').val(),
+			tech_nm: $('#tech_nm').val(),
+			selStdClassCd1 :  $('#selStdClassCd1').val(),
+			selStdClassCd2 : $('#selStdClassCd2').val(),
+			selStdClassCd3 : $('#selStdClassCd3').val(),
+			keyword1: $('#keyword1').val(),
+			keyword2: $('#keyword2').val(),
+			keyword3: $('#keyword3').val(),
+			keyword4: $('#keyword4').val(),
+			keyword5: $('#keyword5').val(),
 			
 			//필요 기술
-			tech_needs: $('#tech_needs').val(),
+			need_tech: $('#need_tech').val(),
 			//기업 에로사항
-			corporate_problem: $('#corporate_problem').val(),		 	
+			biz_problems: $('#biz_problems').val(),		 	
 			//보유 연구 인프라
-			hold_rnd_infra: $('#hold_rnd_infra').val(),	
+			biz_infra: $('#biz_infra').val(),	
 			//투자 의지(사업 투자 여력 )
-			willingness_to_invest: $('#willingness_to_invest').val(),	
+			invest_yn: $('#invest_yn').val(),	
 			//담당자 정보 수정
-			dept: $('#manager_dept').val(),
-			manager_position: $('#manager_position').val(),
-			manager_name: $('#manager_name').val(),
+			user_depart: $('#user_depart').val(),
+			user_rank: $('#user_rank').val(),
+			user_name: $('#user_name').val(),
 			// 2023.09.22 확인 필요
-			mobilephone_num: $('#manager_tel1').val(),
-			biz_email: ($('#manager_mail1').val()) + '@' + ($('#manager_mail2').val())
+			user_mobile_no: $('#user_mobile_no').val(),
+			user_email: ($('#manager_mail1').val()) + '@' + ($('#manager_mail2').val())
 			
 			
 		},
@@ -380,6 +467,27 @@ function doSearchFilter () {
 	$('#frm2').submit();
 }
 
+function checkDateAll(element) {
+	$('#strDate').val('');
+	$('#endDate').val('');
+}
+/*
+function checkDateAll2(element) {
+	$('#strDate2').val('');
+	$('#endDate2').val('');
+}*/
+
+function checkOnlyOne(element) {
+	  
+	  var checkboxes = document.getElementsByName("matching");
+	  console.log(checkboxes)
+	  checkboxes.forEach((cb) => {
+	    cb.checked = false;
+	  })
+	  //선택한 것만 true이고 외에는 false 이다. 
+	  element.checked = true; 
+}
+
 </script>
 <!-- 기술수요 목록 -->
 <form action="#" id="frm" name="frm" method="post">
@@ -442,43 +550,81 @@ function doSearchFilter () {
 								</div>
 							</div>
 						</div>
-					
-							
+						
 							  <c:choose>
-								<c:when test="${not empty corporateList}">
-								 	 <c:forEach var="co" items="${corporateList}" > 
-									<c:if test="${paraMap.list eq 'all'}">
-										 <span class="box_checkinp">
-											 <input type="checkbox" class="inp_check" value="${co.view_yn}" id="${co.co_td_no}" name="chk" title="표출유무"
-												 <c:if test="${co.view_yn eq 'Y'}">checked</c:if>
-											  >
-										 </span>
-						    		 </c:if> 	 
-								 	  <div class="row col-box col3" onclick="detail('${co.get("co_td_no")}','${co.get("compa_name")}', '${co.get("mid_category")}', '${co.get("small_category")}',  '${co.get("code_name2")}', '${co.get("code_name3")}','${co.get("keyword1")}', '${co.get("keyword2")}', '${co.get("keyword3")}', '${co.get("keyword4")}', '${co.get("keyword5")}'
-                   						 ,'${co.get("tech_needs")}', '${co.get("corporate_problem")}', '${co.get("hold_rnd_infra")}', '${co.get("willingness_to_invest")}', '${co.get("dept")}'
-                   						,'${co.get("manager_position")}', '${co.get("manager_name")}', '${co.get("mobilephone_num")}', '${co.get("biz_email")}', '${co.get("corporate_seqno")}' )">
-										<div class="col">
-							
-											<span class="row_txt_num blind">1</span> <span class="txt_left row_txt_tit">${co.hold_rnd_infra}</span>
-
-											<ul class="tag_box">
-												<li>${co.keyword}</li>
-											</ul>
-											<ul class="step_tech">
-												<li><span class="mr txt_grey tech_nm ">미래모빌리티</span></li>
-												<li><span class="mr txt_grey tech_nm ">${co.code_name2}</span></li>
-												<li><span class="mr txt_grey tech_nm ">${co.code_name3}</span></li>
-											</ul>
-											<input id="business_seqno" name="business_seqno" type="hidden" value="${co.business_seqno}">
-										</div>
-									</div>	
-									  </c:forEach>
-									</c:when>
-									<c:otherwise>
-										귀하의 기업 아이디가 확인되지 않았습니다. 로그인 해주세요.
-									</c:otherwise>
-								  
-								 </c:choose>
+							  	<c:when test="${sessionScope.member_type eq 'TLO' || sessionScope.member_type eq 'B'}">
+							  		<c:choose>
+										<c:when test="${not empty corporateList}">
+										 	 <c:forEach var="co" items="${corporateList}" > 
+											<c:if test="${paraMap.list eq 'all'}">
+												 <span class="box_checkinp">
+													 <input type="checkbox" class="inp_check" value="${co.view_yn}" id="${co.co_td_no}" name="chk" title="표출유무"
+														 <c:if test="${co.view_yn eq 'Y'}">checked</c:if>
+													  >
+												 </span>
+								    		 </c:if> 	 
+								    		 <div class="row col-box col3" onclick="detailPopup('${co.demand_seqno}', '${co.member_seq}')">
+												<div class="col">
+										 	  <%-- <div class="row col-box col3" onclick="detail('${co.get("co_td_no")}','${co.get("compa_name")}', '${co.get("mid_category")}', '${co.get("small_category")}',  '${co.get("code_name2")}', '${co.get("code_name3")}','${co.get("keyword1")}', '${co.get("keyword2")}', '${co.get("keyword3")}', '${co.get("keyword4")}', '${co.get("keyword5")}'
+		                   						 ,'${co.get("tech_needs")}', '${co.get("corporate_problem")}', '${co.get("hold_rnd_infra")}', '${co.get("willingness_to_invest")}', '${co.get("dept")}'
+		                   						,'${co.get("manager_position")}', '${co.get("manager_name")}', '${co.get("mobilephone_num")}', '${co.get("biz_email")}', '${co.get("corporate_seqno")}' )">
+												<div class="col"> --%>
+									
+													<span class="row_txt_num blind">1</span> <span class="txt_left row_txt_tit">${co.tech_nm}</span>
+		
+													<ul class="tag_box">
+														<li>${co.keyword}</li>
+													</ul>
+													<ul class="step_tech">
+														<li><span class="mr txt_grey tech_nm ">${co.code_name1}</span></li>
+														<li><span class="mr txt_grey tech_nm ">${co.code_name2}</span></li>
+														<li><span class="mr txt_grey tech_nm ">${co.code_name3}</span></li>
+													</ul>
+													<input id="business_seqno" name="business_seqno" type="hidden" value="${co.business_seqno}">
+												</div>
+											</div>	
+											  </c:forEach>
+											</c:when>
+											<c:otherwise>
+												귀하의 기술수요가 확인되지 않았습니다.
+											</c:otherwise>
+									</c:choose>
+								</c:when>
+								<c:when test="${sessionScope.member_type eq 'ADMIN'}">
+									<c:choose>
+										<c:when test="${not empty corporateList}">
+										 	 <c:forEach var="co" items="${corporateList}" > 
+											<c:if test="${paraMap.list eq 'all'}">
+												 <span class="box_checkinp">
+													 <input type="checkbox" class="inp_check" value="${co.view_yn}" id="${co.co_td_no}" name="chk" title="표출유무"
+														 <c:if test="${co.view_yn eq 'Y'}">checked</c:if>
+													  >
+												 </span>
+								    		 </c:if> 	 
+										 	  <div class="row col-box col3">
+												<div class="col">
+									
+													<span class="row_txt_num blind">1</span> <span class="txt_left row_txt_tit">${co.tech_nm}</span>
+		
+													<ul class="tag_box">
+														<li>${co.keyword}</li>
+													</ul>
+													<ul class="step_tech">
+														<li><span class="mr txt_grey tech_nm ">${co.code_name1}</span></li>
+														<li><span class="mr txt_grey tech_nm ">${co.code_name2}</span></li>
+														<li><span class="mr txt_grey tech_nm ">${co.code_name3}</span></li>
+													</ul>
+													<input id="business_seqno" name="business_seqno" type="hidden" value="${co.business_seqno}">
+												</div>
+											</div>	
+											  </c:forEach>
+											</c:when>
+											<c:otherwise>
+												귀하의 기술수요가 확인되지 않았습니다.
+											</c:otherwise>
+									</c:choose>
+								</c:when>
+							</c:choose>
 							
 					</div>
 				</div>
@@ -521,13 +667,14 @@ function doSearchFilter () {
 								<thead></thead>
 								<tbody class="view">
 									<tr>
-										<th scope="col"><label for="re_nm">기술수요 기업</label></th>
+										<th scope="col" id="demand_seqno"><label for="re_nm">기술수요 기업</label></th>
+										<input type="hidden" id="member_seqno">
 										<td class="form-control">
-											<input id="compa_name" class="form-control" style="max-width: 100%; max-height: 100%" />
+											<input id="tech_nm" class="form-control" style="max-width: 100%; max-height: 100%" />
 											
 										</td>
 										<th scope="" rowspan="3">필요기술</th>
-										<td class="form-control" rowspan="3"><textarea id="tech_needs"
+										<td class="form-control" rowspan="3"><textarea id="need_tech"
 												name="tech_needs" style="width: 100%;" rows="8" cols=""></textarea>
 										</td>
 
@@ -556,23 +703,12 @@ function doSearchFilter () {
 									<tr>
 										<th scope="col">키워드</th>
 										<td class="ta_left">
-											<div class="form-control"
-												style="max-width: 100%; max-height: 100%">
-												<input type="text" id="keyword1" name="keyword1"
-													style="text-align: center; width: 18%; text-indent: 0;"
-													title="키워드1" /> <input type="text" id="keyword2"
-													name="keyword2"
-													style="text-align: center; width: 18%; text-indent: 0;"
-													title="키워드2" /> <input type="text" id="keyword3"
-													name="keyword3"
-													style="text-align: center; width: 18%; text-indent: 0;"
-													title="키워드3" /> <input type="text" id="keyword4"
-													name="keyword4"
-													style="text-align: center; width: 18%; text-indent: 0;"
-													title="키워드4" /> <input type="text" id="keyword5"
-													name="keyword5"
-													style="text-align: center; width: 18%; text-indent: 0;"
-													title="키워드5" />
+											<div class="form-control" style="max-width:100%;max-height:100%">
+												<input type="text" id="keyword1" name="keyword1" style="text-align : center; width:18%; text-indent: 0;" title="키워드1" />
+												<input type="text" id="keyword2" name="keyword2" style="text-align : center; width:18%; text-indent: 0;" title="키워드2" />
+												<input type="text" id="keyword3" name="keyword3" style="text-align : center; width:18%; text-indent: 0;" title="키워드3" />
+												<input type="text" id="keyword4" name="keyword4" style="text-align : center; width:18%; text-indent: 0;" title="키워드4" />
+												<input type="text" id="keyword5" name="keyword5" style="text-align : center; width:18%; text-indent: 0;" title="키워드5" /> 
 											</div>
 										</td>
 									</tr>
@@ -589,19 +725,12 @@ function doSearchFilter () {
 						<div class="tbl_comm tbl_public history_tbl_wrap">
 							<table class="tbl history_tbl" id="tbl_history">
 								<caption class="caption_hide">기업 에로사항</caption>
-								<c:choose>
-									<c:when test="${not empty corporateList[0].corporate_problem}">
 										<tbody>
 											<tr>
-												<td class="ta_left" rowspan="3"><textarea id="corporate_problem" name="corporate_problem" style="width: 100%;" rows="8" cols=""></textarea>
+												<td class="ta_left" rowspan="3"><textarea id="biz_problems" name="biz_problems" style="width: 100%;" rows="8" cols=""></textarea>
 												</td>
 											</tr>							
 										</tbody>
-									</c:when>
-									<c:otherwise>
-										등록된 에로사항이 없습니다.
-									</c:otherwise>
-								</c:choose>
 							</table>
 						</div>
 					</div>
@@ -613,20 +742,13 @@ function doSearchFilter () {
 						<div class="tbl_comm tbl_public history_tbl_wrap">
 							<table class="tbl history_tbl" id="tbl_history">
 								<caption class="caption_hide">보유 연구 인프라</caption>
-								<c:choose>
-									<c:when test="${not empty corporateList[0].hold_rnd_infra}">
 										<tbody>
 											<tr>
 												<td class="ta_left" rowspan="3"><textarea
-														id="hold_rnd_infra" name="hold_rnd_infra"
+														id="biz_infra" name="biz_infra"
 														style="width: 100%;" rows="8" cols=""></textarea></td>
 											</tr>
 										</tbody>
-									</c:when>
-									<c:otherwise>
-										등록된 보유 연구 인프라이 없습니다.
-									</c:otherwise>
-								</c:choose>
 
 							</table>
 						</div>
@@ -638,20 +760,13 @@ function doSearchFilter () {
 						<div class="tbl_comm tbl_public history_tbl_wrap">
 							<table class="tbl history_tbl" id="tbl_history">
 								<caption class="caption_hide">투자 의지( 사업 투자 여력 )</caption>
-								<c:choose>
-									<c:when test="${not empty corporateList[0]}">
 										<tbody>
 											<tr>
 												<td class="ta_left" rowspan="3"><textarea
-														id="willingness_to_invest" name="willingness_to_invest"
+														id="invest_yn" name="invest_yn"
 														style="width: 100%;" rows="8" cols=""></textarea></td>
 											</tr>
 										</tbody>
-									</c:when>
-									<c:otherwise>
-										등록된 보유 연구 인프라이 없습니다.
-									</c:otherwise>
-								</c:choose>
 
 							</table>
 						</div>
@@ -676,21 +791,21 @@ function doSearchFilter () {
 										<td class="ta_left">
 											<div class="form-control"
 												style="max-width: 100%; max-height: 100%">
-												<input type="text" style="width: 50%;" id="manager_dept"
-													name="manager_dept" title="담당자 소속" />
+												<input type="text" style="width: 50%;" id="user_depart"
+													name="user_depart" title="담당자 소속" />
 											</div>
 										</td>
 									</tr>
 									<tr>
 										<th scope="col">직책</th>
 										<td class="ta_left"><input type="text"
-											style="width: 50%;" id="manager_position"
-											name="manager_position" title="담당자 직책" /></td>
+											style="width: 50%;" id="user_rank"
+											name="user_rank" title="담당자 직책" /></td>
 									</tr>
 									<tr>
 										<th scope="col">이름</th>
 										<td class="ta_left"><input type="text"
-											style="width: 50%;" id="manager_name" name="manager_name"
+											style="width: 50%;" id="user_name" name="user_name"
 											title="담당자 이름" /></td>
 									</tr>
 									<tr>
@@ -699,8 +814,8 @@ function doSearchFilter () {
 											<div class="form-control"
 												style="max-width: 100%; max-height: 100%">
 												<input 
-													id="manager_tel1"
-													name="manager_tel1" 
+													id="user_mobile_no"
+													name="user_mobile_no" 
 													title="담당자 번호1"
 													type="text" 
 													style="width: 16%" 
@@ -774,11 +889,17 @@ function doSearchFilter () {
 							<tr>
 								<th scope="col">최근 업데이트 날짜</th>
 								<td class="left form-inline">
-									<div class="datepicker_wrap">
-										<input type="text" id="strDate" name="strDate" class="form-control">
-										~
-										<input type="text" id="endDate" name="endDate" class="form-control">
+									<div class="btn_chk div-inline">
+										<input type="checkbox" name="date_all"  id="date_all" value="date_all" onclick="checkDateAll(this);"> 
+										<label for="date_all" class="option_label">  
+											<span class="inner"><span class="txt_checked">전체</span></span> 
+										</label>
 									</div>
+									<div class="datepicker_wrap" id="date2">
+										<input type="text" id="strDate2" name="strDate2" class="form-control">
+										~
+										<input type="text" id="endDate2" name="endDate2" class="form-control">
+									</div>>
 									
 								</td>
 							</tr>			 
@@ -786,7 +907,7 @@ function doSearchFilter () {
 								<th scope="col">기술분야</th>
 								<td class="left form-inline">
 									<div class="btn_chk div-inline">
-										<input type="checkbox" name="tech_field"  id="tech_all" value="tech_all"> 
+										<input type="checkbox" name="tech_field"  id="tech_all" value="tech_all" onclick="checkTechOnlyOne(this);"> 
 										<label for="tech_all" class="option_label">  
 											<span class="inner"><span class="txt_checked">전체</span></span> 
 										</label>
@@ -815,19 +936,19 @@ function doSearchFilter () {
 								<th scope="col">매칭 여부</th>
 								<td class="left form-inline">
 									<div class="btn_chk div-inline">
-										<input type="checkbox" name="matching"  id="m_all" value="m_all"> 
+										<input type="checkbox" name="matching"  id="m_all" value="m_all" onclick="checkOnlyOne(this);"> 
 										<label for="m_all" class="option_label">  
 											<span class="inner"><span class="txt_checked">전체</span></span> 
 										</label>
 									</div>
 									<div class="btn_chk div-inline">
-										<input type="checkbox" name="matching"  id="mY" value="Y"> 
+										<input type="checkbox" name="matching"  id="mY" value="Y" onclick="checkOnlyOne(this);"> 
 										<label for="mY" class="option_label">  
 											<span class="inner"><span class="txt_checked">Y</span></span> 
 										</label>
 									</div>
 									<div class="btn_chk div-inline">
-										<input type="checkbox" name="matching"  id="mN" value="N"> 
+										<input type="checkbox" name="matching"  id="mN" value="N" onclick="checkOnlyOne(this);"> 
 										<label for="mN" class="option_label">  
 											<span class="inner"><span class="txt_checked">N</span></span> 
 										</label>

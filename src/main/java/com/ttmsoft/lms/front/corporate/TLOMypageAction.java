@@ -205,4 +205,27 @@ public class TLOMypageAction extends BaseAct {
 		}
 		return mav;
 	}
+	
+	/**
+	 * @Author : jmyoo 
+	 * @Date : 2023.10.06.
+	 * @Parm : DataMap
+	 * @Return : ModelAndView
+	 * @Function : 팝업 정보 가져오기
+	 */
+	@RequestMapping(value = "/techPopupViewX.do")
+	public ModelAndView deTechPopupView(@ModelAttribute("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response,  HttpSession session) {
+		ModelAndView mav = new ModelAndView("jsonView");
+		
+		
+		try {
+			DataMap data = tloMypageService.deTechPopupView(paraMap);
+			mav.addObject("data", data);
+			System.out.println("data:"+data);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ModelAndView("error");
+		}
+		return mav;
+	}
 }

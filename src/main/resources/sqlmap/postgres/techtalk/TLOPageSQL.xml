@@ -22,17 +22,16 @@
 			<if test="member_type == 'TLO'" >
 				<![CDATA[
 					select COUNT(*) 
-					from techdemand_corporate tc
-					where tc.compa_name = #{biz_name}
-					AND tc.view_yn = 'Y'
+					from tbiz.tblmember tm
+					inner join tbiz.tbldemand td on tm.member_seqno = td.member_seqno 
+					where tm.biz_name = #{biz_name}
 				]]>	
 			</if>
 			<if test="member_type == 'ADMIN'" >
 			
 			<![CDATA[
 				select COUNT(*) 
-					from techdemand_corporate tc
-				WHERE tc.view_yn = 'Y' 
+				from tbiz.tblmember tm
 				]]>
 				
 				<!--
@@ -83,12 +82,16 @@
 					
 			</if>
 	</select>
-	<select id="TLOPageSQL.doGetCoTechDemandInfo" parameterType="dataMap" resultType="dataMap">
+	<select id="TLOPageSQL.doGetCoTechDemandInfoTest" parameterType="dataMap" resultType="dataMap">
 		<!--  
 			SQL ID: TLOPageSQL.doGetCoTechDemandInfo
 			TLO가 관리하는 기업에 따른 기업 목록 조회: 예) '고려대학교' TLO의 경우 == Business 멤버 아이디가 멤버타입이 '고려대학교'의 경우 (9.22)  
 			*추가 예정:
 		-->
+		/*
+			SQL ID : TLOPageSQL.doGetCoTechDemandInfoTest
+			기업수요목록
+		*/
 		<![CDATA[
 			SELECT 
 				A.COMPA_NAME
@@ -181,6 +184,26 @@
 				LIMIT ${rows} OFFSET (${page}-1) * 5;
 		   
 	</select>
+	
+	<select id="TLOPageSQL.doGetCoTechDemandInfo" parameterType="dataMap" resultType="dataMap">
+		/*
+			2023.09.18 
+			기술수요 목록, SQL ID: TLOPageSQL.doGetCoTechDemandInfo
+			 
+		*/
+		select tm.*, td.*
+		, (select code_name  from tbiz.tbtech_code tc2 where tc2.code_key = td.tech_code1) as code_name1 
+		, (select code_name  from tbiz.tbtech_code tc2 where tc2.code_key = td.tech_code2) as code_name2 
+		, (select code_name  from tbiz.tbtech_code tc2 where tc2.code_key = td.tech_code3) as code_name3 
+		, (select biz_name from tbiz.tblmember tm where tm.member_seqno = td.member_seqno) as biz_name
+		from tbiz.tblmember tm
+		inner join tbiz.tbldemand td on tm.member_seqno = td.member_seqno 
+		inner join tbiz.tbtech_code tc on td.tech_code1 = tc.code_key
+		where tm.biz_name = #{biz_name}
+		ORDER BY td.UPDATE_DATE DESC
+		LIMIT 5;
+	</select>
+	
 	<select id="TLOPageSQL.doGetCodeListInfo" parameterType="dataMap" resultType="dataMap">
 		/*
 			2023.09.18 
@@ -243,30 +266,63 @@
 	<update id="TLOPageSQL.doUpdateCorporate" parameterType="dataMap" >
 			 /* 
 				SQL ID : TLOPageSQL.doUpdateCorporate
-				2023.09.19 마이페이지 기업 수정중.. 
+				2023.09.19 마이페이지 기술수요 수정 
 			*/
 				
 				<![CDATA[
-				UPDATE TECHDEMAND_CORPORATE
+				UPDATE tbldemand
 					SET 
-						COMPA_NAME = #{compa_name},
-						MID_CATEGORY = #{mid_category},
-						SMALL_CATEGORY = #{small_category}, 
-						KEYWORD = #{keyword},
-						TECH_NEEDS = #{tech_needs},
-						CORPORATE_PROBLEM = #{corporate_problem},
-						HOLD_RND_INFRA =  #{hold_rnd_infra},	
-						WILLINGNESS_TO_INVEST = #{willingness_to_invest},
-						DEPT = #{dept},
-						MANAGER_POSITION = #{manager_position},
-						MANAGER_NAME = #{manager_name},
-						MOBILEPHONE_NUM = #{mobilephone_num},
-						BIZ_EMAIL = #{biz_email}
-					
-				WHERE CO_TD_NO = #{co_td_no}::INT
+						tech_nm = #{tech_nm},
+						TECH_CODE1 = #{selStdClassCd1},
+						TECH_CODE2 = #{selStdClassCd2},
+						TECH_CODE3 = #{selStdClassCd3},
+						KEYWORD = '${keyword1}${keyword2}${keyword3}${keyword4}${keyword5}',
+						need_tech = #{need_tech},
+						biz_problems = #{biz_problems},
+						biz_infra = #{biz_infra},
+						invest_yn = #{invest_yn}
+				WHERE demand_seqno = #{demand_seqno}::INT
+				
+			]]>
+			
+	</update>
+	
+	<update id="TLOPageSQL.doUpdateCorporateUser" parameterType="dataMap" >
+			 /* 
+				SQL ID : TLOPageSQL.doUpdateCorporateUser
+				2023.09.19 마이페이지 기술수요 담당자 수정 
+			*/
+				
+				<![CDATA[
+				UPDATE tblmember
+					SET 
+						user_name = #{user_name},
+						user_email = #{user_email},
+						user_mobile_no = #{user_mobile_no},
+						user_depart = #{user_depart},
+						user_rank = #{user_rank}
+				WHERE member_seqno = #{member_seqno}::INT
 				
 			]]>
 			
 	</update>
 
+	<select id="TLOPageSQL.deTechPopupView" parameterType="dataMap" resultType="dataMap">
+		/*
+			SQL ID: TLOPageSQL.deTechPopupView
+			기술수요 기업 상세정보
+		*/
+		<![CDATA[
+			SELECT  td.*, tm.*
+			, (select member_seqno from tbiz.tblmember tm2 where td.member_seqno = tm2.member_seqno) as member_seq
+			, (select code_name  from tbiz.tbtech_code tc2 where tc2.code_key = td.tech_code1) as code_name1 
+			, (select code_name  from tbiz.tbtech_code tc2 where tc2.code_key = td.tech_code2) as code_name2 
+			, (select code_name  from tbiz.tbtech_code tc2 where tc2.code_key = td.tech_code3) as code_name3 
+			, (select biz_name from tbiz.tblmember tm where tm.member_seqno = td.member_seqno) as biz_name
+			FROM tbiz.tbldemand td
+			inner join tbiz.tblmember tm on tm.member_seqno = td.member_seqno 
+			inner join tbiz.tbtech_code tc on td.tech_code1 = tc.code_key
+			WHERE demand_seqno = #{demand_seqno}::INT
+		]]>
+	</select>
 </mapper>
