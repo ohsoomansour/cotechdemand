@@ -31,7 +31,7 @@
 			<![CDATA[
 				select COUNT(*) 
 					from techdemand_corporate tc
-				WHERE tc.view_yn = 'Y'
+				WHERE tc.view_yn = 'Y' 
 				]]>
 				
 				<!--
