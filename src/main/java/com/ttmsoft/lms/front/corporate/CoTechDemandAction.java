@@ -37,11 +37,6 @@ public class CoTechDemandAction extends BaseAct {
 		ModelAndView mav = new ModelAndView("/techtalk/front/corporateMypage/registCoTechDemandForm.front");	
 		String member_type = (String) session.getAttribute("member_type");
 		String  id = (String) session.getAttribute("id");
-		//'비로그인'의 경우 
-		if(Objects.isNull(id)){
-			mav.setViewName("redirect:/techtalk/login.do");
-			return mav;
-		}
 		//'로그인'의 경우
 		else if(!Objects.isNull(id)){
 			if(member_type.equals("B")) {
