@@ -80,25 +80,30 @@ public class CorporateAction extends BaseAct{
 		try {
 			String name_path = (String) paraMap.get("name_path");
 			String[] name_path_split = name_path.split("\\^");
+			String code_key = null;
+			int size = 2;
 			
-			if(paraMap.get("parent_depth").equals("3")) {
-				System.out.println("소분류");
-		        int size = 2;
-		        String code_key_change = StringUtils.leftPad(String.valueOf(paraMap.get("code_key")), size, '0');
-				paraMap.put("parent_code_key", code_key_change);
-				paraMap.put("tech_code2", code_key_change);
-				paraMap.put("tech_nm1", name_path_split[0]);
-				paraMap.put("tech_nm2", name_path_split[1]);
-			}else if(paraMap.get("parent_depth").equals("2"))  {
-				System.out.println("중분류");
+			if(paraMap.get("parent_depth").equals("2")) {
+				paraMap.put("code_key1", paraMap.get("code_key"));
 				paraMap.put("parent_code_key", paraMap.get("code_key"));
+				System.out.println("중분류 : "+paraMap);
+				//paraMap.put("tech_nm1", name_path_split[0]);
+			}else if(paraMap.get("parent_depth").equals("3")) {
+		        
+		        String code_key_change = StringUtils.leftPad(String.valueOf(paraMap.get("code_key")), size, '0');
+		        paraMap.put("code_key2", code_key_change);
+				paraMap.put("parent_code_key", code_key_change);
+				/*paraMap.put("tech_code2", code_key_change);
 				paraMap.put("tech_nm1", name_path_split[0]);
+				paraMap.put("tech_nm2", name_path_split[1]);*/
+				System.out.println("소분류 : "+paraMap);
 			}else if(paraMap.get("parent_depth").equals("4"))  {
+				paraMap.put("code_key3", paraMap.get("code_key"));
 				paraMap.put("parent_depth", "3");
 				paraMap.put("code_end", "end");
-				paraMap.put("tech_nm1", name_path_split[0]);
+				/*paraMap.put("tech_nm1", name_path_split[0]);
 				paraMap.put("tech_nm2", name_path_split[1]);
-				paraMap.put("tech_nm3", name_path_split[2]);
+				paraMap.put("tech_nm3", name_path_split[2]);*/
 			}
 			System.out.println("paraMap2 : " + paraMap);
 			List<DataMap> stdCode = researchService.doResearchCountSubCode(paraMap);

@@ -21,7 +21,7 @@ $(document).ready(function() {
 			<div class="area_tit">
 				<h3 class="tit_corp">기업수요 상세정보</h3>
 				<div class="right">
-					<p>최근 업데이트 일자 :<strong> <c:out value="${data.co_update_dt }"  escapeXml="false"/></strong></p>
+					<p>최근 업데이트 일자 :<strong> <c:out value="${data.update_date }"  escapeXml="false"/></strong></p>
 					<a href="javascript:window.history.back();" class="btn_back">뒤로가기</a>
 				</div>
 			</div>
@@ -41,16 +41,16 @@ $(document).ready(function() {
 							<tr>
 								<th scope="col"><label for="re_nm">기술명</label></th>
 								<td class="ta_left">
-									<div class="form-control" style="max-width:100%;max-height:100%"> <c:out value="${data.tech_class_nm }"  escapeXml="false"/> </div>
+									<div class="form-control" style="max-width:100%;max-height:100%"> <c:out value="${data.tech_nm }"  escapeXml="false"/> </div>
 								</td>
 								<th scope="" rowspan="3">필수기술</th>
 								<td class="ta_left" rowspan="3">
-									<div class="form-control" style="max-width:100%;max-height:100%"><c:out value="${data.requir_skill }"  escapeXml="false"/> </div>
+									<div class="form-control" style="max-width:100%;max-height:100%"><c:out value="${data.need_tech }"  escapeXml="false"/> </div>
 								</td>
 							</tr>
 							<tr>
 								<th scope="col">기술분류</th>
-								<td class="ta_left">${data.tech_nm1} > ${data.tech_nm2} > ${data.tech_nm3}</td>
+								<td class="ta_left">${data.code_name1} > ${data.code_name2} > ${data.code_name3}</td>
 							</tr>
 							<tr>
 								<th scope="col">키워드</th>
@@ -61,19 +61,19 @@ $(document).ready(function() {
 							<tr>
 								<th scope="col">기업 애로사항</th>
 								<td class="ta_left" colspan="3">
-									<div class="form-control" style="max-width:100%;max-height:100%"><c:out value="${data.corporate_proble }"  escapeXml="false"/> </div>
+									<div class="form-control" style="max-width:100%;max-height:100%"><c:out value="${data.biz_problems }"  escapeXml="false"/> </div>
 								</td>
 							</tr>
 							<tr>
 								<th scope="col">보유 연구 인프라</th>
 								<td class="ta_left" colspan="3">
-									<div class="form-control" style="max-width:100%;max-height:100%"><c:out value="${data.research_infra }"  escapeXml="false"/> </div>
+									<div class="form-control" style="max-width:100%;max-height:100%"><c:out value="${data.biz_infra }"  escapeXml="false"/> </div>
 								</td>
 							</tr>
 							<tr>
 								<th scope="col">투자의지(사업 투자 여력)</th>
 								<td class="ta_left" colspan="3">
-									<div class="form-control" style="max-width:100%;max-height:100%"><c:out value="${data.invest }"  escapeXml="false"/> </div>
+									<div class="form-control" style="max-width:100%;max-height:100%"><c:out value="${data.invest_yn }"  escapeXml="false"/> </div>
 								</td>
 							</tr>
 						</tbody>
@@ -98,27 +98,27 @@ $(document).ready(function() {
 							<tr>
 								<th scope="col"><label for="re_belong">소속</label></th>
 								<td class="ta_left">
-									<div class="form-control" style="max-width:100%;max-height:100%"> <c:out value="${data.co_belong }"  escapeXml="false"/> </div>
+									<div class="form-control" style="max-width:100%;max-height:100%"> <c:out value="${data.user_depart }"  escapeXml="false"/> </div>
 								</td>
 							</tr>
 							<tr>
 								<th scope="col">직책</th>
-								<td class="ta_left">${data.co_position}</td>
+								<td class="ta_left">${data.user_rank}</td>
 							</tr>
 							<tr>
 								<th scope="col">이름</th>
-								<td class="ta_left">${data.co_nm} </td>
+								<td class="ta_left">${data.user_name} </td>
 							</tr>
 							<tr>
 								<th scope="col">연락처</th>
 								<td class="ta_left">
-									<div class="form-control" style="max-width:100%;max-height:100%"><c:out value="${data.co_tel }"  escapeXml="false"/> </div>
+									<div class="form-control" style="max-width:100%;max-height:100%"><c:out value="${data.user_mobile_no }"  escapeXml="false"/> </div>
 								</td>
 							</tr>
 							<tr>
 								<th scope="col">이메일</th>
 								<td class="ta_left">
-									<div class="form-control" style="max-width:100%;max-height:100%"><c:out value="${data.co_email }"  escapeXml="false"/> </div>
+									<div class="form-control" style="max-width:100%;max-height:100%"><c:out value="${data.user_email }"  escapeXml="false"/> </div>
 								</td>
 							</tr>
 						</tbody>

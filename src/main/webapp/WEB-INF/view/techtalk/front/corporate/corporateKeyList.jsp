@@ -18,7 +18,7 @@ $('#stdClassSrch').click(function() {
 });
 
 //키워드분야 클릭
-function keywordClick(corporate_no, tech_class_nm){
+function keywordClick(demand_seqno, tech_nm){
  	var url = "/techtalk/doCorporateKeywordResultX.do";
  	var form = $('#frm')[0];
 	var data = new FormData(form);
@@ -39,10 +39,10 @@ function keywordClick(corporate_no, tech_class_nm){
 			}else{
 				for(var i=0; i<res.data.length;i++){
 				ahtml +="<div class='row'>"
-				ahtml +="<span class='row_txt_num blind'>"+res.data[i].corporate_no+"</span>"
+				ahtml +="<span class='row_txt_num blind'>"+res.data[i].demand_seqno+"</span>"
 				ahtml +="<span class='txt_left row_txt_tit'>"
-				ahtml +="<a href=javascript:void(0); onclick=corporateDetail("+res.data[i].corporate_no+")>"+res.data[i].tech_class_nm +"</a></span>"
-				ahtml +="<span class='co_update_dt'>"+res.data[i].co_update_dt+"</span>"
+				ahtml +="<a href=javascript:void(0); onclick=corporateDetail("+res.data[i].demand_seqno+")>"+res.data[i].tech_nm +"</a></span>"
+				ahtml +="<span class='co_update_dt'>"+res.data[i].update_date+"</span>"
 				ahtml +="<ul class='step_tech'>"
 				ahtml +="<li><span class='mr txt_grey tech_nm '>"+res.data[i].keyword+"</span></li></ul>"
 				ahtml +="</div>"
@@ -64,18 +64,18 @@ function keywordClick(corporate_no, tech_class_nm){
 }
 
 //연구자 상세보기 화면
-function corporateDetail(corporate_no){
+function corporateDetail(demand_seqno){
 	var frm = document.createElement('form'); 
 
 	frm.name = 'frm3'; 
 	frm.method = 'post'; 
-	frm.action = '/techtalk/viewCorprateDetail.do'; 
+	frm.action = '/techtalk/viewCorprateDetailX.do'; 
 
 	var input1 = document.createElement('input'); 
 
 	input1.setAttribute("type", "hidden"); 
-	input1.setAttribute("name", "corporate_no"); 
-	input1.setAttribute("value", corporate_no); 
+	input1.setAttribute("name", "demand_seqno"); 
+	input1.setAttribute("value", demand_seqno); 
 
 	frm.appendChild(input1); 
 	
@@ -116,7 +116,7 @@ function enterKeyClick(e){
 				<!-- page_title s:  -->            
             <div class="area_cont">
 					<div class="search_box">
-						<p class="p_t"><strong>핵심 키워드</strong>를 통해 <strong>주요 연구자</strong>를 찾아보세요.</p>
+						<p class="p_t"><strong>핵심 키워드</strong>를 통해 <strong>연관 기업수요</strong>를 찾아보세요.</p>
 						<div class="search_box_inner">
 							<div class="search_keyword_box">
 								<input type="text" class="keyword_input" id="keyword" name="keyword" onkeypress="enterKeyClick(event)" placeholder="키워드를 입력하세요." value="" title="검색어"/>
@@ -131,7 +131,7 @@ function enterKeyClick(e){
 					</div>	
 					<div class="subject_corp">
 						<h3 class="tbl_ttc">
-							연구자 목록  
+							기업수요 목록  
 						</h3>
 					</div>			
 				<!-- page_content s:  -->
@@ -141,12 +141,15 @@ function enterKeyClick(e){
 								<c:when test="${ not empty data }">
 									<c:forEach var="data" items="${ data }">
 										<div class="row">
-											<span class="row_txt_num blind">${ data.corporate_no }</span>
-											<span class="txt_left row_txt_tit"><a href="javascript:void(0);" onclick="corporateDetail('${data.corporate_no}')" title="연구자${data.tech_class_nm }상세보기">${ data.tech_class_nm } </a> </span>
-											<span class="co_update_dt">${ data.co_update_dt }</span>
+											<span class="row_txt_num blind">${ data.demand_seqno }</span>
+											<span class="txt_left row_txt_tit"><a href="javascript:void(0);" onclick="corporateDetail('${data.demand_seqno}')" title="연구자${data.tech_nm }상세보기">${ data.tech_nm } </a> </span>
+											<span class="re_beloong">최근 업데이트 일자 : ${ data.update_date }</span>
 											<ul class="step_tech">
-												<li><span class="mr txt_grey tech_nm ">${ data.keyword }</span></li>
+												<li><span class="mr txt_grey tech_nm ">${ data.code_name1 }</span></li>
+												<li><span class="mr txt_grey tech_nm ">${ data.code_name2 }</span></li>
+												<li><span class="mr txt_grey tech_nm ">${ data.code_name3 }</span></li>
 											</ul>
+											<span class="keyword">${ data.keyword }</span>
 										</div>
 									</c:forEach>
 								</c:when>
