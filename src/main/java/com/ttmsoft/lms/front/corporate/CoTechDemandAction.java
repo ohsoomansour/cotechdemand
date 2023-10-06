@@ -38,7 +38,6 @@ public class CoTechDemandAction extends BaseAct {
 		String member_type = (String) session.getAttribute("member_type");
 		String  id = (String) session.getAttribute("id");
 		//'로그인'의 경우
-		else if(!Objects.isNull(id)){
 			if(member_type.equals("B")) {
 				paraMap.put("depth", '1');
 				mav.addObject("codeList1", this.coTechDemandService.doGetCodeListInfo(paraMap)); 
@@ -94,10 +93,6 @@ public class CoTechDemandAction extends BaseAct {
 				mav.setViewName("redirect:/");
 				return mav;
 			 }
-		}
-		
-		
-		return mav;
 	}
 	/**
 	 * @Author   : OSM
