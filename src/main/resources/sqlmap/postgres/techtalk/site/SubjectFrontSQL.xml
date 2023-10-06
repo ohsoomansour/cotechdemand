@@ -2508,13 +2508,17 @@
 			키워드 기업수요 정보 가져오기
 		*/
 		<![CDATA[
-			SELECT CORPORATE_NO, CO_BELONG ,CO_POSITION ,CO_NM ,CO_TEL ,CO_EMAIL ,TECH_NM1, TECH_NM2, TECH_NM3, KEYWORD, CO_UPDATE_DT, TECH_CLASS_NM
-			FROM TBCORPORATE 
+			select td.demand_seqno , td.member_seqno , td.tech_nm , td.update_date , td.keyword 
+			, (select code_name  from tbiz.tbtech_code tc2 where tc2.code_key = td.tech_code1) as code_name1 
+			, (select code_name  from tbiz.tbtech_code tc2 where tc2.code_key = td.tech_code2) as code_name2 
+			, (select code_name  from tbiz.tbtech_code tc2 where tc2.code_key = td.tech_code3) as code_name3 
+			from tbiz.tbldemand td
+			inner join tbiz.tbtech_code tc on td.tech_code1 = tc.code_key  
 		]]>
 		<if test="keyword != ''">
 			WHERE KEYWORD LIKE '%' || #{keyword} || '%'
 		</if>
-		ORDER BY CO_UPDATE_DT DESC
+		ORDER BY update_date DESC
 	</select>
 	
 	<select id="SubjectFrontSQL.doViewCorporateDetail" parameterType="dataMap" resultType="dataMap">
@@ -2524,13 +2528,19 @@
 			기업수요 정보 상세
 		*/
 		<![CDATA[
-			SELECT CORPORATE_NO, CO_BELONG ,CO_POSITION ,CO_NM ,CO_TEL ,CO_EMAIL ,TECH_NM1, TECH_NM2, TECH_NM3, KEYWORD, CO_UPDATE_DT, TECH_CLASS_NM, CORPORATE_PROBLE, RESEARCH_INFRA, INVEST
-			FROM TBCORPORATE 
+			select td.demand_seqno , td.tech_nm 
+			, (select code_name  from tbiz.tbtech_code tc2 where tc2.code_key = td.tech_code1) as code_name1 
+			, (select code_name  from tbiz.tbtech_code tc2 where tc2.code_key = td.tech_code2) as code_name2 
+			, (select code_name  from tbiz.tbtech_code tc2 where tc2.code_key = td.tech_code3) as code_name3 
+			, td.keyword , td.need_tech , td.biz_problems , td.biz_infra , td.invest_yn , td.update_date , tm.user_name , tm.user_email , tm.user_mobile_no , tm.user_depart , tm.user_rank 
+			from tbiz.tbldemand td
+			inner join tbiz.tblmember tm on td.member_seqno = tm.member_seqno 
+			inner join tbiz.tbtech_code tc on td.tech_code1 = tc.code_key 
 		]]>
-		<if test="corporate_no != ''">
-			WHERE CORPORATE_NO = #{corporate_no}::INT
+		<if test="demand_seqno != ''">
+			WHERE demand_seqno = #{demand_seqno}::INT
 		</if>
-		ORDER BY CO_UPDATE_DT DESC
+		ORDER BY update_date DESC
 	</select>
 	
 	<select id="SubjectFrontSQL.doGetResearchList" parameterType="dataMap" resultType="dataMap">
@@ -2569,10 +2579,23 @@
 			기술분야 기업수요 목록
 		*/
 		<![CDATA[
-			SELECT CORPORATE_NO, CO_BELONG ,CO_POSITION ,CO_NM ,CO_TEL ,CO_EMAIL ,TECH_NM1, TECH_NM2, TECH_NM3, KEYWORD, CO_UPDATE_DT, TECH_CLASS_NM
-			FROM TBCORPORATE 
+			select td.demand_seqno , td.member_seqno , td.tech_nm , td.update_date , td.keyword 
+			, (select code_name  from tbiz.tbtech_code tc2 where tc2.code_key = td.tech_code1) as code_name1 
+			, (select code_name  from tbiz.tbtech_code tc2 where tc2.code_key = td.tech_code2) as code_name2 
+			, (select code_name  from tbiz.tbtech_code tc2 where tc2.code_key = td.tech_code3) as code_name3 
+			from tbiz.tbldemand td
+			inner join tbiz.tbtech_code tc on td.tech_code1 = tc.code_key  
 		]]>
-		<if test="tech_nm1 != ''">
+		<if test="code_key1 != ''">
+			where td.tech_code1 = #{code_key1}
+		</if>
+		<if test="code_key2 != ''">
+			where td.tech_code2 = #{code_key2}
+		</if>
+		<if test="code_key3 != ''">
+			where td.tech_code3 = #{code_key3}
+		</if>
+		<!-- <if test="tech_nm1 != ''">
 			WHERE TECH_NM1 = #{tech_nm1}
 		</if>
 		<if test="tech_nm2 != ''">
@@ -2580,8 +2603,8 @@
 		</if>
 		<if test="tech_nm3 != ''">
 			AND TECH_NM3 = #{tech_nm3}
-		</if>
-		ORDER BY CO_UPDATE_DT DESC
+		</if> -->
+		ORDER BY td.UPDATE_DATE DESC
 		LIMIT 5;
 	</select>
 	

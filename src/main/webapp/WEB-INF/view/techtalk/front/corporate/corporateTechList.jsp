@@ -73,18 +73,18 @@ function clickCode(code_key,parent_depth,name_path){
 	   	   	   		}else{   	   	   	   		
    					for(var i=0; i<res.data.length;i++){
    					ahtml +="<div class='row'>"
-   						ahtml +="<span class='row_txt_num blind'>"+res.data[i].corporate_no+"</span>"
+   						ahtml +="<span class='row_txt_num blind'>"+res.data[i].demand_seqno+"</span>"
    						ahtml +="<span class='txt_left row_txt_tit'>"
-   						ahtml +="<a href=javascript:void(0); onclick=corporateDetail("+res.data[i].corporate_no+")>"+res.data[i].tech_class_nm +"</a> </span>"
-   						if(typeof res.data[i].co_update_dt == "undefined" || res.data[i].co_update_dt == null || res.data[i].co_update_dt == ""){
+   						ahtml +="<a href=javascript:void(0); onclick=corporateDetail("+res.data[i].demand_seqno+")>"+res.data[i].tech_nm +"</a> </span>"
+   						if(typeof res.data[i].update_date == "undefined" || res.data[i].update_date == null || res.data[i].update_date == ""){
    							ahtml +="<span class='re_beloong'>최근 업데이트 일자 : </span>"
    	   					}else{
-   	   						ahtml +="<span class='re_beloong'>최근 업데이트 일자 : "+ res.data[i].co_update_dt+" </span>"
+   	   						ahtml +="<span class='re_beloong'>최근 업데이트 일자 : "+ res.data[i].update_date+" </span>"
    	   					}
    						ahtml +="<ul class='step_tech'>"
-   						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].tech_nm1+"</span></li>"
-   						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].tech_nm2+"</span></li>"
-   						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].tech_nm3+"</span></li></ul>"
+   						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].code_name1+"</span></li>"
+   						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].code_name2+"</span></li>"
+   						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].code_name3+"</span></li></ul>"
    						ahtml +="<ul class='tag_box'>"
    						if(typeof res.data[i].keyword == "undefined" || res.data[i].keyword == null || res.data[i].keyword == ""){
    							ahtml +="<li></li>"
@@ -130,18 +130,18 @@ function clickCode(code_key,parent_depth,name_path){
 	   	   	   		}else{   	   	   	   		
    					for(var i=0; i<res.data.length;i++){
    					ahtml +="<div class='row'>"
-   						ahtml +="<span class='row_txt_num blind'>"+res.data[i].corporate_no+"</span>"
+   						ahtml +="<span class='row_txt_num blind'>"+res.data[i].demand_seqno+"</span>"
    						ahtml +="<span class='txt_left row_txt_tit'>"
-   						ahtml +="<a href=javascript:void(0); onclick=corporateDetail("+res.data[i].corporate_no+")>"+res.data[i].tech_class_nm +"</a> </span>"
-   						if(typeof res.data[i].co_update_dt == "undefined" || res.data[i].co_update_dt == null || res.data[i].co_update_dt == ""){
+   						ahtml +="<a href=javascript:void(0); onclick=corporateDetail("+res.data[i].demand_seqno+")>"+res.data[i].tech_nm +"</a> </span>"
+   						if(typeof res.data[i].update_date == "undefined" || res.data[i].update_date == null || res.data[i].update_date == ""){
    							ahtml +="<span class='re_beloong'>최근 업데이트 일자 : </span>"
    	   					}else{
-   	   						ahtml +="<span class='re_beloong'>최근 업데이트 일자 : "+ res.data[i].co_update_dt+" </span>"
+   	   						ahtml +="<span class='re_beloong'>최근 업데이트 일자 : "+ res.data[i].update_date+" </span>"
    	   					}
    						ahtml +="<ul class='step_tech'>"
-   						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].tech_nm1+"</span></li>"
-   						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].tech_nm2+"</span></li>"
-   						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].tech_nm3+"</span></li></ul>"
+   						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].code_name1+"</span></li>"
+   						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].code_name2+"</span></li>"
+   						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].code_name3+"</span></li></ul>"
    						ahtml +="<ul class='tag_box'>"
    						if(typeof res.data[i].keyword == "undefined" || res.data[i].keyword == null || res.data[i].keyword == ""){
    	   						ahtml +="<li></li>"
@@ -184,18 +184,18 @@ function clickCode(code_key,parent_depth,name_path){
    		   	   	   	}else{  	   	   	   		
 	   					for(var i=0; i<res.data.length;i++){
 	   					ahtml +="<div class='row'>"
-	   						ahtml +="<span class='row_txt_num blind'>"+res.data[i].corporate_no+"</span>"
+	   						ahtml +="<span class='row_txt_num blind'>"+res.data[i].demand_seqno+"</span>"
 	   						ahtml +="<span class='txt_left row_txt_tit'>"
-	   						ahtml +="<a href=javascript:void(0); onclick=corporateDetail("+res.data[i].corporate_no+")>"+res.data[i].tech_class_nm +"</a> </span>"
-	   						if(typeof res.data[i].co_update_dt == "undefined" || res.data[i].co_update_dt == null || res.data[i].co_update_dt == ""){
+	   						ahtml +="<a href=javascript:void(0); onclick=corporateDetail("+res.data[i].demand_seqno+")>"+res.data[i].tech_nm +"</a> </span>"
+	   						if(typeof res.data[i].update_date == "undefined" || res.data[i].update_date == null || res.data[i].update_date == ""){
 	   							ahtml +="<span class='re_beloong'>최근 업데이트 일자 : </span>"
 	   	   					}else{
-	   	   						ahtml +="<span class='re_beloong'>최근 업데이트 일자 : "+ res.data[i].co_update_dt+" </span>"
+	   	   						ahtml +="<span class='re_beloong'>최근 업데이트 일자 : "+ res.data[i].update_date+" </span>"
 	   	   					}
 	   						ahtml +="<ul class='step_tech'>"
-	   						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].tech_nm1+"</span></li>"
-	   						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].tech_nm2+"</span></li>"
-	   						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].tech_nm3+"</span></li></ul>"
+	   						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].code_name1+"</span></li>"
+	   						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].code_name2+"</span></li>"
+	   						ahtml +="<li><span class='mr txt_grey tech_nm' >"+res.data[i].code_name3+"</span></li></ul>"
 	   						ahtml +="<ul class='tag_box'>"
 	   	   					if(typeof res.data[i].keyword == "undefined" || res.data[i].keyword == null || res.data[i].keyword == ""){
 	   	   	   					ahtml +="<li></li>"
@@ -228,7 +228,7 @@ function clickCode(code_key,parent_depth,name_path){
 }
 
 //연구자 상세보기 화면
-function corporateDetail(corporate_no){
+function corporateDetail(demand_seqno){
 	var frm = document.createElement('form'); 
 
 	frm.name = 'frm3'; 
@@ -238,8 +238,8 @@ function corporateDetail(corporate_no){
 	var input1 = document.createElement('input'); 
 
 	input1.setAttribute("type", "hidden"); 
-	input1.setAttribute("name", "corporate_no"); 
-	input1.setAttribute("value", corporate_no); 
+	input1.setAttribute("name", "demand_seqno"); 
+	input1.setAttribute("value", demand_seqno); 
 
 	frm.appendChild(input1); 
 	
@@ -326,13 +326,13 @@ function corporateDetail(corporate_no){
 								<c:when test="${ not empty data }">
 									<c:forEach var="data" items="${ data }">
 										<div class="row">
-											<span class="row_txt_num blind">${ data.corporate_no }</span>
-											<span class="txt_left row_txt_tit"><a href="javascript:void(0);" onclick="corporateDetail('${data.corporate_no}')" title="기술명${data.tech_class_nm }상세보기">${ data.tech_class_nm }</a> </span>
-											<span class="re_beloong">최근 업데이트 일자 : ${ data.co_update_dt }</span>
+											<span class="row_txt_num blind">${ data.demand_seqno }</span>
+											<span class="txt_left row_txt_tit"><a href="javascript:void(0);" onclick="corporateDetail('${data.demand_seqno}')" title="기술명${data.tech_nm }상세보기">${ data.tech_nm }</a> </span>
+											<span class="re_beloong">최근 업데이트 일자 : ${ data.update_date }</span>
 											<ul class="step_tech">
-												<li><span class="mr txt_grey tech_nm ">${ data.tech_nm1 }</span></li>
-												<li><span class="mr txt_grey tech_nm ">${ data.tech_nm2 }</span></li>
-												<li><span class="mr txt_grey tech_nm ">${ data.tech_nm3 }</span></li>
+												<li><span class="mr txt_grey tech_nm ">${ data.code_name1 }</span></li>
+												<li><span class="mr txt_grey tech_nm ">${ data.code_name2 }</span></li>
+												<li><span class="mr txt_grey tech_nm ">${ data.code_name3 }</span></li>
 												
 											</ul>
 											<ul class="tag_box">
