@@ -79,7 +79,7 @@
 						ORDER BY TD.UPDATE desc
 					) CT	
 			  -->	
-				
+					
 			</if>
 	</select>
 	<select id="TLOPageSQL.doGetCoTechDemandInfo" parameterType="dataMap" resultType="dataMap">
