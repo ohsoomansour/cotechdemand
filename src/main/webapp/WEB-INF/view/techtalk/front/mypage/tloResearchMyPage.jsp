@@ -1285,7 +1285,8 @@ function doSearchFilter () {
 	                		<button type="button" class="btn_line btn_cancel" title="취소">취소</button>
 	                		
 	                	</div>
-					</div>  
+						</div>  
+						
 	    	</div>
 						    
 	    </div>

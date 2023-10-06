@@ -9,7 +9,7 @@ var proData = new Array();
 
 $(document).ready(function() {
 	//체크박스 변경 - 2023/09/18
-    $("input:checkbox").change(function(){
+    $(".inp_check").change(function(){
       if(this.checked){
         $(this).attr('value', 'Y');
       }else{
@@ -28,7 +28,9 @@ $(document).ready(function() {
 	    layer_popup($href, cls, op);
 	});
 	
-	
+	$('.ui-datepicker-trigger').click(function(){
+		$('#date_all').prop("checked", false);
+	});
 	
 });
 
@@ -42,32 +44,6 @@ function fncList(page) {
 function doSearch(e) {
 	$('#page').val(1);
 	$('#frm').submit();
-	
-	/*
-	$.ajax({
-		type : 'POST',
-		url : '/techtalk/doSaveList.do',
-		data : {
-			co_td_no_arr : co_td_no_arr, 
-			view_yn_arr : view_yn_arr
-		},
-		dataType : 'json',
-		success : function(res) {
-			location.href = "/techtalk/tloMyPageX.do";
-		},
-		error : function() {
-			
-		},
-		complete : function() {
-			
-		}
-	});
-	*/
-	
-	
-	//
-	
-	
 	
 	
 }
@@ -90,8 +66,6 @@ function doSave(e) {
 		view_yn_arr[i] = $('input:checkbox[name="chk"]').eq(i).val();
 	}
 	
-	//console.log(co_td_no_arr);
-	//console.log(view_yn_arr);
 	$.ajax({
 		type : 'POST',
 		url : '/techtalk/doSaveList1X.do',   //pull 이후 /techtalk/doSaveList.do으로 X변경
@@ -158,6 +132,7 @@ function detail( co_td_no, compa_name, mid_category_key, small_category_key, cod
 	$('#manager_mail1').val(biz_email.split('@')[0]);
 	$('#manager_mail2').val(biz_email.split('@')[1]);
 	
+	$('#compaVcContent').css("overflow", "hidden");
 	layer_popup('#corporateDetailPop', 'corporateDetailPop');
     
 	
@@ -175,7 +150,6 @@ function doUpdate() {
 			mid_category: $('#selStdClassCd2').val(),
 			small_category: $('#selStdClassCd3').val(),
 			keyword: $('#keyword1').val() + $('#keyword2').val() + $('#keyword3').val() + $('#keyword4').val() + $('#keyword5').val(),
-			
 			
 			//필요 기술
 			tech_needs: $('#tech_needs').val(),
@@ -214,14 +188,17 @@ function doUpdate() {
 function layer_popup(el, cls, op){
     var $el = $(el);  //레이어의 id를 $el 변수에 저장
     var $op = $(op);    
-    // prev() - 이전 요소를 선택하도록 반환, hasClass - 
     var isDim = $el.prev().hasClass('dimBg'); //dimmed 레이어를 감지하기 위한 boolean 변수
-    console.log(isDim);
+  
     isDim ? $("."+cls).fadeIn() : $el.fadeIn();
+  	var inputId = $("."+cls).find("input").first().attr('id');  //예) .corporateDetailPop
+  	 setTimeout(function(){
+     	$('#'+inputId).focus();
+         }, 500);
     //find(): 어떤 요소의 하위 요소 중 특정 요소를 찾을 때 사용
     //first() 메소드는 현재 위치에 해당하는 가장 첫 번째 엘리먼트를 반환
     //attr()예시 $( 'div' ).attr( 'class' );  "div 요소의 class속성의 값을 가져온다 "
-    //var inputId = $("."+cls).find("input").first().attr('id');  //예) .corporateDetailPop
+    
 
     var $elWidth = ~~($el.outerWidth()),
         $elHeight = ~~($el.outerHeight()),
@@ -247,16 +224,18 @@ function layer_popup(el, cls, op){
     $('#compaVcFoot').find("input, a, button").attr('tabindex','-1');
 
     $el.find('.btn_cancel, .btn-layerClose').click(function(){
-        //isDim ? $('.dim-layer').fadeOut() : $el.fadeOut(); // 닫기 버튼을 클릭하면 레이어가 닫힌다.
         isDim ? $("."+cls).fadeOut() : $el.fadeOut(); // 닫기 버튼을 클릭하면 레이어가 닫힌다.
-        
+        /*
         $('#skip_navigation').find("input, a, button").removeAttr('tabindex');
         $('#compaVcHead').find("input, a, button").removeAttr('tabindex');
         $('#compaVcContent').find("input, a, button").removeAttr('tabindex');
         $('.wrap-loading').find("input, a, button").removeAttr('tabindex');
         $('.scroll-top').find("input, a, button").removeAttr('tabindex');
-	    $('#compaVcFoot').find("input, a, button").removeAttr('tabindex');
+	    $('#compaVcFoot').find("input, a, button").removeAttr('tabindex'); */
 
+        setTimeout(function(){
+        	$op.focus();
+           }, 500);
         return false;
     });
 }
@@ -465,16 +444,16 @@ function doSearchFilter () {
 						</div>
 					
 							
-							    <c:choose>
-									<c:when test="${not empty corporateList}">
-								 	 <c:forEach var="co" items="${corporateList}" varStatus="status"> 
+							  <c:choose>
+								<c:when test="${not empty corporateList}">
+								 	 <c:forEach var="co" items="${corporateList}" > 
 									<c:if test="${paraMap.list eq 'all'}">
 										 <span class="box_checkinp">
 											 <input type="checkbox" class="inp_check" value="${co.view_yn}" id="${co.co_td_no}" name="chk" title="표출유무"
 												 <c:if test="${co.view_yn eq 'Y'}">checked</c:if>
 											  >
 										 </span>
-						    		    </c:if> 	 
+						    		 </c:if> 	 
 								 	  <div class="row col-box col3" onclick="detail('${co.get("co_td_no")}','${co.get("compa_name")}', '${co.get("mid_category")}', '${co.get("small_category")}',  '${co.get("code_name2")}', '${co.get("code_name3")}','${co.get("keyword1")}', '${co.get("keyword2")}', '${co.get("keyword3")}', '${co.get("keyword4")}', '${co.get("keyword5")}'
                    						 ,'${co.get("tech_needs")}', '${co.get("corporate_problem")}', '${co.get("hold_rnd_infra")}', '${co.get("willingness_to_invest")}', '${co.get("dept")}'
                    						,'${co.get("manager_position")}', '${co.get("manager_name")}', '${co.get("mobilephone_num")}', '${co.get("biz_email")}', '${co.get("corporate_seqno")}' )">
@@ -517,28 +496,24 @@ function doSearchFilter () {
 
 <!-- detail -->
 <div class="dim-layer corporateDetailPop">
-	<div class="dimBg"></div>
-	<div id="corporateDetailPop" class="pop-layer" style="width: 65%; height: 70%; overflow: auto;">
-		<div id="pop-container" class="cont_cv" style="padding: 30px;">
-			<div id="mArticle" class="assig_app" style="padding-bottom: 30px;"><h2 class="screen_out">본문영역</h2>
-				<div class="wrap_cont">
-					<!-- detail() :  -->
-
-					<div class="area_tit">
-						<!-- type="hidden" -->
+	<div class="dimBg" ></div>  					<!-- class="pop-layer" width: 90%; height: 70%; overflow: auto; / id="pop-container" class="cont_cv" style="padding: 30px;-->
+	<div id="corporateDetailPop" class="pop-layer" style="width:1260px; height:600px; overflow:auto; ">
+		<div id="pop-container" >
+			<div class="pop_cont">
+				<div class="area_cont">
+					<div class="pop-title">
 						<input id="NO" type="hidden"></input>
 						<h3 class="tit_corp">기술수요 기업 상세정보</h3>
-						<a href="javascript:void(0);" class="btn-layerClose" title="연구자정보"><span
-							class="icon ico_close" title="팝업닫기">팝업닫기</span></a>
+						<button class="btn-layerClose" title="팝업닫기"><span class="icon ico_close">팝업닫기</span></button>
 					</div>
-					<!-- //page_title e:  -->
+					
+					
 					<!-- page_content s:  -->
-					<div class="area_cont">
+				
+				
 						<div class="tbl_view tbl_public">
 							<table class="tbl">
-								<caption
-									style="position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(1px, 1px, 1px, 1px);">연구자
-									상세정보</caption>
+								<caption style="position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(1px, 1px, 1px, 1px);">기업 수요 목록 상세정보</caption>
 								<colgroup>
 									<col style="width: 10%">
 									<col>
@@ -547,16 +522,12 @@ function doSearchFilter () {
 								<tbody class="view">
 									<tr>
 										<th scope="col"><label for="re_nm">기술수요 기업</label></th>
-										<td class="ta_left">
-											<input 
-												id="compa_name"
-												class="form-control"
-												style="max-width: 100%; max-height: 100%" 
-											/>
+										<td class="form-control">
+											<input id="compa_name" class="form-control" style="max-width: 100%; max-height: 100%" />
 											
 										</td>
 										<th scope="" rowspan="3">필요기술</th>
-										<td class="ta_left" rowspan="3"><textarea id="tech_needs"
+										<td class="form-control" rowspan="3"><textarea id="tech_needs"
 												name="tech_needs" style="width: 100%;" rows="8" cols=""></textarea>
 										</td>
 
@@ -622,18 +593,15 @@ function doSearchFilter () {
 									<c:when test="${not empty corporateList[0].corporate_problem}">
 										<tbody>
 											<tr>
-												<td class="ta_left" rowspan="3"><textarea
-														id="corporate_problem" name="corporate_problem"
-														style="width: 100%;" rows="8" cols=""></textarea>
-											</tr>
-											</td>
+												<td class="ta_left" rowspan="3"><textarea id="corporate_problem" name="corporate_problem" style="width: 100%;" rows="8" cols=""></textarea>
+												</td>
+											</tr>							
 										</tbody>
 									</c:when>
 									<c:otherwise>
 										등록된 에로사항이 없습니다.
 									</c:otherwise>
 								</c:choose>
-
 							</table>
 						</div>
 					</div>
@@ -771,7 +739,7 @@ function doSearchFilter () {
 							</table>
 						</div>
 					</div>
-
+					<!-- 수정 취소 -->
 					<div class="tbl_public">
 						<div style="text-align: center; margin-top: 40px;">
 							<!-- doUpdate(co_td_no) 가져와서  -->
@@ -782,7 +750,7 @@ function doSearchFilter () {
 								class="btn_step" title="취소">취소</button>
 						</div>
 					</div>
-				</div>
+
 			</div>
 		</div>
 	</div>
@@ -807,9 +775,9 @@ function doSearchFilter () {
 								<th scope="col">최근 업데이트 날짜</th>
 								<td class="left form-inline">
 									<div class="datepicker_wrap">
-										<input type="date" id="strDate" name="strDate" class="form-control">
+										<input type="text" id="strDate" name="strDate" class="form-control">
 										~
-										<input type="date" id="endDate" name="endDate" class="form-control">
+										<input type="text" id="endDate" name="endDate" class="form-control">
 									</div>
 									
 								</td>

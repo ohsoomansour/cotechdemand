@@ -43,7 +43,7 @@ public class TLOMypageAction extends BaseAct {
 		try {		
 			String id = (String) session.getAttribute("id");
 			String member_type = (String) session.getAttribute("member_type");
-
+			paraMap.put("member_type", member_type); 
 			// 문제점: 이동은 정상적으로 되었다 그런데 데이터가 안들어온다 
 			if(id.equals("")){
 				mav.setViewName("redirect:/techtalk/login.do");
@@ -51,7 +51,10 @@ public class TLOMypageAction extends BaseAct {
 
 			}//'로그인'의 경우
 			else if(!id.equals("")){
-				if(member_type.equals("TLO")) {
+				// 로그인 후 멤버 타입 확인
+				
+				if(member_type.equals("TLO") || member_type.equals("ADMIN")) {
+					System.out.println("member_type:" + member_type); // TLO 또는 ADMIN이 들어왔나 확인 
 					DataMap navi = new DataMap();
 					navi.put("one", "마이페이지");
 					navi.put("two", "기업 기술수요 목록");
@@ -87,19 +90,20 @@ public class TLOMypageAction extends BaseAct {
 					
 					//리스트 유형: 전체 all을 받아옴 
 					String list = paraMap.get("list").toString();
-							
+						
 					paraMap.put("page", page);
 					paraMap.put("rows", rows);
 					paraMap.put("sidx", sidx);
 					paraMap.put("sord", sord);
 					paraMap.put("list", list);
-			
+					System.out.println("list:" + list);	
 					mav.addObject("sPageInfo",  new PageInfo().makeIndex(
 							Integer.parseInt(page), totalCount, Integer.parseInt(rows), pageGroups, "fncList" 
 					));
+					mav.addObject("paraMap", paraMap);
 					// --------------------------- 페이징 end ----------------------------------------
 					List<DataMap> corporateList = tloMypageService.doGetCoTechDemandInfo(paraMap); 
-					System.out.println("9.27 corporateList 확인중:" + corporateList);
+					System.out.println("10.06 corporateList 확인중:" + corporateList);
 					mav.addObject("corporateList", corporateList);
 					
 					return mav; 
