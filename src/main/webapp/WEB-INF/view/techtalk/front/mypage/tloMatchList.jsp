@@ -27,7 +27,33 @@ $(document).ready(function(){
 		var op = $(this);
 	    layer_popup($href, cls, op);
 	});
+
+	$('#date1').find(".ui-datepicker-trigger").click(function(){
+		$('#date_all').prop("checked", false);
+	});
+
+	$('#date2').find(".ui-datepicker-trigger").click(function(){
+		$('#date_all2').prop("checked", false);
+	});
 });
+
+function checkDateAll(element) {
+	$('#strDate').val('');
+	$('#endDate').val('');
+}
+
+function checkDateAll2(element) {
+	$('#strDate2').val('');
+	$('#endDate2').val('');
+}
+
+function checkTechOnlyOne(element) {
+	$("#filterStdClassCd1 option:eq(0)").prop("selected", true); 
+	$("#filterStdClassCd2 option:eq(0)").prop("selected", true); 
+	$("#filterStdClassCd2").prop("disabled", true); 
+	$("#filterStdClassCd3 option:eq(0)").prop("selected", true); 
+	$("#filterStdClassCd3").prop("disabled", true); 
+}
 
 function layer_popup(el, cls, op){
 
@@ -95,6 +121,7 @@ function doSearch(e) {
 
 //필터 기술분류 변경 - 2023/09/21
 function filterChangeStd(obj, gubun){
+	$('#tech_all').prop("checked", false);
 	var selValue = obj.value;
 	if(selValue == "" || selValue == "선택"){
 		if(gubun == "mid"){
@@ -164,12 +191,13 @@ function doSearchFilter () {
 function historyClick(demand_seqno, resear_no){
 	r_seqno = resear_no;
 	d_seqno = demand_seqno;
-	
-	$('#set').hide();
-	$('#setUpdate').hide();
-	$('#setCancel').hide();
-	$('#updateRow').hide();
-	$('#deleteRow').hide();
+
+	$('.tbl').empty();
+	$('[id^=set_]').hide();
+	$('[id^=updateRow_]').hide();
+	$('[id^=deleteRow_]').hide();
+	$('[id^=setCancel_]').hide();
+	$('[id^=setUpdate_]').hide();
 	
  	var url = "/techtalk/doTloMatchHistoryListX.do";
  	var form = $('#frm')[0];
@@ -187,7 +215,7 @@ function historyClick(demand_seqno, resear_no){
     	   var ahtml= "";
 
     	   ahtml +="<form action='#' id='tblFrm' name='tblFrm' method='post'>"
-    	   ahtml +="<table class='tbl'>"
+    	   ahtml +="<table class='tbl' id='tbl_"+demand_seqno+"_"+resear_no+"'>"
     	   ahtml +="<caption class='caption_hide'>메인 과제신청 대상사업 리스트</caption>"
     	   ahtml +="<colgroup>"
    		   ahtml +="<col style='width:170px;'>"
@@ -203,8 +231,8 @@ function historyClick(demand_seqno, resear_no){
 		   ahtml +="<th scope='col'>연구자 담당자</th>"
 		   ahtml +="</tr>"
 		   ahtml +="</thead>"
-		   ahtml +="<tbody id='row'>"
 		   if(res.data.length > 0) {
+			    ahtml +="<tbody id='row_"+demand_seqno+"_"+resear_no+"'>"
 				for(var i=0; i<res.data.length; i++){
 				   if(res.data[i].business_tel == undefined){
 					   res.data[i].business_tel = '';
@@ -218,25 +246,74 @@ function historyClick(demand_seqno, resear_no){
 				   if(res.data[i].researcher_email == undefined){
 					   res.data[i].researcher_email = '';
 				   }
+				   
 				   ahtml +="<tr>"
 				   ahtml +="<td>"+res.data[i].match_date+"</td>"
 				   ahtml +="<td class='ta_left'>"+res.data[i].contents+"</td>"
 				   ahtml +="<td>"+res.data[i].business_nm+" / "+res.data[i].business_tel+" / "+res.data[i].business_email+"</td>"
 				   ahtml +="<td>"+res.data[i].researcher_nm+" / "+res.data[i].researcher_tel+" / "+res.data[i].researcher_email+"</td>"
 				   ahtml +="</tr>"
-				}
+				}	
+				ahtml +="</tbody>"
+				ahtml +="</table>"
+				ahtml += "<div class='btn_wrap d-flex ju_be'>"
+				ahtml += "<div class='f_left'>"
+				ahtml += "<button type='button' class='btn_default' id='updateRow_"+demand_seqno+"_"+resear_no+"' name='updateRow_"+demand_seqno+"_"+resear_no+"' style='display: none; margin-top:10px; margin-bottom:10px;' onClick='javascript:doUpdateRow("+demand_seqno+","+resear_no+");' title='행추가'>"	   
+		        ahtml += "<span>+ 행 추가</span>"
+			    ahtml += "</button>"	
+			    ahtml += "<button type='button' class='btn_default' id='deleteRow_"+demand_seqno+"_"+resear_no+"' name='deleteRow_"+demand_seqno+"_"+resear_no+"' style='display: none; margin-top:10px; margin-bottom:10px;' onClick='javascript:doDeleteRow("+demand_seqno+","+resear_no+");' title='행삭제'>"
+			    ahtml += "<span>- 행 삭제</span>"	
+			    ahtml += "</button>"	   	
+			    ahtml += "</div>"	
+			    ahtml += "<div class='f_right'>"
+			    ahtml += "<button type='button' class='btn_step' id='setCancel_"+demand_seqno+"_"+resear_no+"' name='setCancel_"+demand_seqno+"_"+resear_no+"' style='display: none; margin-top:10px; margin-bottom:10px;' onClick='javascript:doSetCancel("+demand_seqno+","+resear_no+");' title='취소'>"		
+			    ahtml += "<span>취소</span>"
+		        ahtml += "</button>"	   
+			    ahtml += "<button type='button' class='btn_step' id='setUpdate_"+demand_seqno+"_"+resear_no+"' name='setUpdate_"+demand_seqno+"_"+resear_no+"' style='display: none; margin-top:10px; margin-bottom:10px;' onClick='javascript:doSetUpdate("+demand_seqno+","+resear_no+");' title='저장'>"		
+			    ahtml += "<span>저장</span>"		
+			    ahtml += "</button>"	
+			    ahtml += "<button type='button' class='btn_step' id='set_"+demand_seqno+"_"+resear_no+"' name='set_"+demand_seqno+"_"+resear_no+"' style='display: none; margin-top:10px; margin-bottom:10px;' onClick='javascript:doSet("+demand_seqno+","+resear_no+");' title='수정'>"
+			    ahtml += "<span>수정</span>"
+			    ahtml += "</button>"	   
+			    ahtml += "</div>"   
+			    ahtml += "</div>"	
+				ahtml +="</form>"	
 		   } else {
+			    ahtml +="<tbody id='row_"+demand_seqno+"_"+resear_no+"'>"
 				ahtml +="<tr>"
 				ahtml +="<td colspan='4' style='text-aline: centrer;'>매칭 이력이 없습니다.</td>"	
 				ahtml +="</tr>"	
+				ahtml +="</tbody>"
+				ahtml +="</table>"
+				ahtml += "<div class='btn_wrap d-flex ju_be'>"
+			    ahtml += "<div class='f_left'>"
+			    ahtml += "<button type='button' class='btn_default' id='updateRow_"+demand_seqno+"_"+resear_no+"' name='updateRow_"+demand_seqno+"_"+resear_no+"' style='display: none; margin-top:10px; margin-bottom:10px;' onClick='javascript:doUpdateRow("+demand_seqno+","+resear_no+");' title='행추가'>"	   
+		        ahtml += "<span>+ 행 추가</span>"
+			    ahtml += "</button>"	
+			    ahtml += "<button type='button' class='btn_default' id='deleteRow_"+demand_seqno+"_"+resear_no+"' name='deleteRow_"+demand_seqno+"_"+resear_no+"' style='display: none; margin-top:10px; margin-bottom:10px;' onClick='javascript:doDeleteRow("+demand_seqno+","+resear_no+");' title='행삭제'>"
+			    ahtml += "<span>- 행 삭제</span>"	
+			    ahtml += "</button>"	   	
+			    ahtml += "</div>"	
+			    ahtml += "<div class='f_right'>"
+			    ahtml += "<button type='button' class='btn_step' id='setCancel_"+demand_seqno+"_"+resear_no+"' name='setCancel_"+demand_seqno+"_"+resear_no+"' style='display: none; margin-top:10px; margin-bottom:10px;' onClick='javascript:doSetCancel("+demand_seqno+","+resear_no+");' title='취소'>"		
+			    ahtml += "<span>취소</span>"
+		        ahtml += "</button>"	   
+			    ahtml += "<button type='button' class='btn_step' id='setUpdate_"+demand_seqno+"_"+resear_no+"' name='setUpdate_"+demand_seqno+"_"+resear_no+"' style='display: none; margin-top:10px; margin-bottom:10px;' onClick='javascript:doSetUpdate("+demand_seqno+","+resear_no+");' title='저장'>"		
+			    ahtml += "<span>저장</span>"		
+			    ahtml += "</button>"	
+			    ahtml += "<button type='button' class='btn_step' id='set_"+demand_seqno+"_"+resear_no+"' name='set_"+demand_seqno+"_"+resear_no+"' style='display: none; margin-top:10px; margin-bottom:10px;' onClick='javascript:doSet("+demand_seqno+","+resear_no+");' title='수정'>"
+			    ahtml += "<span>수정</span>"
+			    ahtml += "</button>"	   
+			    ahtml += "</div>"   
+			    ahtml += "</div>"	
+				ahtml +="</form>"
 		   }
-		   ahtml +="</tbody>"
-		   ahtml +="</table>"
-		   ahtml +="</form>"
-		   $('#tbl').empty();
-		   $('#tbl').append(ahtml);
 
-		   $('#set').show();
+			   
+		   $('#match_number_'+demand_seqno+'_'+resear_no).empty();
+		   $('#match_number_'+demand_seqno+'_'+resear_no).append(ahtml);
+
+		   $('#set_'+demand_seqno+'_'+resear_no).show();
        },
        error : function(){
     	alert('실패했습니다.');    
@@ -247,23 +324,23 @@ function historyClick(demand_seqno, resear_no){
        }
 	});
 }	
-function doSet() {
-   $('#set').hide();
-   $('#updateRow').show();
-   $('#deleteRow').show();
-   $('#setUpdate').show();
-   $('#setCancel').show();
+function doSet(demand_seqno,resear_no) {
+   $('#set_'+demand_seqno+'_'+resear_no).hide();
+   $('#updateRow_'+demand_seqno+'_'+resear_no).show();
+   $('#deleteRow_'+demand_seqno+'_'+resear_no).show();
+   $('#setUpdate_'+demand_seqno+'_'+resear_no).show();
+   $('#setCancel_'+demand_seqno+'_'+resear_no).show();
 }
 
-function doSetCancel() {
-	historyClick(d_seqno, r_seqno)
+function doSetCancel(demand_seqno,resear_no) {
+	historyClick(demand_seqno,resear_no)
 }
 
-function doUpdateRow() {
+function doUpdateRow(demand_seqno,resear_no) {
 	var ahtml = "";
 
 	ahtml +="<tr>"
-    ahtml +="<td><div class='datepicker_wrap'><input type='text' id='match_date' name='match_date[]' class='form-control match_date' placeholder='일자'/></div></td>"
+    ahtml +="<td><input type='date' id='match_date' name='match_date[]' class='form-control match_date' placeholder='일자'/></td>"
     ahtml +="<td class='ta_left'><input type='text' id='contents' name='contents[]' placeholder='내용'/></td>"
     ahtml +="<td class='left'><div class='d-flex col1'>"
     ahtml +="<div class='row1 d-flex g5 al-c'><input type='text' id='business_nm' name='business_nm[]' style='text-align : center; width:18%; text-indent: 0;' placeholder='이름'/> / "
@@ -283,17 +360,16 @@ function doUpdateRow() {
     ahtml +="</div></div></td>"
     ahtml +="</tr>"
 
-	$('#row').append(ahtml);
-	 initDatePicker([$('.match_date'), '']);
+	$('#row_'+demand_seqno+'_'+resear_no).append(ahtml);
 }
 
-function doDeleteRow() {
-	if($('#row tr').length <= his_row || $('#row tr').length <= 1) return;
-	$('#tbl tr:last').remove();
+function doDeleteRow(demand_seqno,resear_no) {
+	if($('#row_'+demand_seqno+'_'+resear_no+' tr').length <= his_row || $('#row_'+demand_seqno+'_'+resear_no+' tr').length <= 1) return;
+	$('#tbl_'+demand_seqno+'_'+resear_no+' tr:last').remove();
 }
 
-function doSetUpdate() {
-	if($('#row tr').length <= his_row || $('#row tr').length <= 1) return;
+function doSetUpdate(demand_seqno,resear_no) {
+	if($('#row_'+demand_seqno+'_'+resear_no+' tr').length <= his_row || $('#row_'+demand_seqno+'_'+resear_no+' tr').length <= 1) return;
 
 	var match_date = new Array();
 	var contents = new Array();
@@ -477,6 +553,8 @@ function doSetUpdate() {
 		                    			</div>
 				                    	<button type="button" class="history_btn" ><span><a href="javascript:void(0);" onclick="historyClick('${ dataTLO.demand_seqno}','${ dataTLO.researcher_seqno}')">이력보기</a></span></button>
 		                    		</div>
+		                    		<div class="tbl_public" id="match_number_${ dataTLO.demand_seqno }_${dataTLO.researcher_seqno}">
+			                    	</div>
 		                    	</c:forEach>                        
 		                    </c:when>
 		                    <c:otherwise>
@@ -485,9 +563,11 @@ function doSetUpdate() {
 		                        </div>
 		                   	</c:otherwise>
 		                </c:choose>
+		               <!--
 		         	    <div class="tbl_public" id="tbl">
 		                </div>
 					</div>
+					  
 					<div class="btn_wrap d-flex ju_be">
 						<div class="f_left">
 							<button type="button" class="btn_default" id="updateRow" name="updateRow" style="display: none;" onClick="javascript:doUpdateRow();" title="행추가">
@@ -509,6 +589,7 @@ function doSetUpdate() {
 							</button>
 						</div>
 					</div>
+					-->
 				</div>
 				<!-- paging -->
 				<div class="paging_comm">${sPageInfo}</div>
@@ -536,12 +617,12 @@ function doSetUpdate() {
 								<th scope="col">최근 업데이트 일자</th>
 								<td class="left form-inline">
 									<div class="btn_chk div-inline">
-										<input type="checkbox" name="date_all"  id="date_all" value="date_all"> 
+										<input type="checkbox" name="date_all"  id="date_all" value="date_all" onclick="checkDateAll(this);"> 
 										<label for="date_all" class="option_label">  
 											<span class="inner"><span class="txt_checked">전체</span></span> 
 										</label>
 									</div>
-									<div class="datepicker_wrap">
+									<div class="datepicker_wrap" id="date1">
 										<input type="text" id="strDate" name="strDate" class="form-control">
 										~
 										<input type="text" id="endDate" name="endDate" class="form-control">
@@ -553,12 +634,12 @@ function doSetUpdate() {
 								<th scope="col">최근 출원일</th>
 								<td class="left form-inline">
 									<div class="btn_chk div-inline">
-										<input type="checkbox" name="date_all2"  id="date_all2" value="date_all2"> 
+										<input type="checkbox" name="date_all2"  id="date_all2" value="date_all2" onclick="checkDateAll2(this);"> 
 										<label for="date_all2" class="option_label">  
 											<span class="inner"><span class="txt_checked">전체</span></span> 
 										</label>
 									</div>
-									<div class="datepicker_wrap">
+									<div class="datepicker_wrap" id="date2">
 										<input type="text" id="strDate2" name="strDate2" class="form-control">
 										~
 										<input type="text" id="endDate2" name="endDate2" class="form-control">
@@ -570,7 +651,7 @@ function doSetUpdate() {
 								<th scope="col">기술분야</th>
 								<td class="left form-inline">
 									<div class="btn_chk div-inline">
-										<input type="checkbox" name="tech_field"  id="tech_all" value="tech_all"> 
+										<input type="checkbox" name="tech_field"  id="tech_all" value="tech_all" onclick="checkTechOnlyOne(this);"> 
 										<label for="tech_all" class="option_label">  
 											<span class="inner"><span class="txt_checked">전체</span></span> 
 										</label>
@@ -609,5 +690,4 @@ function doSetUpdate() {
         </div>
    	</div>
 </div>
-
 </form>

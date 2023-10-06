@@ -32,7 +32,21 @@ var pwCheck = false; //패스워드 중복검사 체크
 const idRegex = /^[a-zA-Z0-9]{1,16}$/;//대소문자영문 숫자포함한 정규식
 const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@#$%^&*!])[A-Za-z\d@#$%^&*!]{8,16}$/; //영문,숫자,특수문자를 포함한 8자이상 16자 이하 정규식
 $(document).ready(function(){	
-	
+	$('#userEmail2').keyup(function () {
+	    $(this).val($(this).val().replace(/[\ㄱ-ㅎㅏ-ㅣ가-힣]/g, ''));
+	    if ($('#userEmail3').val() !== "직접입력") {
+		    $('#userEmail3').val("직접입력");
+	        console.log("틀림 " + $('#userEmail3').val());
+	    }
+	});
+
+	$('#bizEmail2').keyup(function () {
+	    $(this).val($(this).val().replace(/[\ㄱ-ㅎㅏ-ㅣ가-힣]/g, ''));
+	    if ($('#bizEmail3').val() !== "직접입력") {
+		    $('#bizEmail3').val("직접입력");
+	        console.log("틀림 " + $('#bizEmail3').val());
+	    }
+	});
 	
 	//아이디 중복체크 클릭
 	$('#btnIdCheck').click(function() {
@@ -574,17 +588,10 @@ function changeText(text, id){
 									<th scope="col">개인이메일 <span class="red">*</span></th>
 									<td class="ta_left">
 										<div class="form-inline">
-											<input type="text" class="form-control form_email1"
-												id="userEmail1" name="user_email1"
-												onkeyup="this.value=this.value.replace(/[\ㄱ-ㅎㅏ-ㅣ가-힣]/g, '');"
-												maxlength="30" title="담당자 이메일아이디">@ <input
-												type="text" class="form-control form_email2" id="userEmail2"
-												name="user_email2"
-												onkeyup="this.value=this.value.replace(/[\ㄱ-ㅎㅏ-ㅣ가-힣]/g, '');"
-												maxlength="30" title="담당자 이메일 도메인 직접입력"> <select
-												class="form-control form_email3" id="userEmail3"
-												name="user_email3" onChange="fncChangeEmail(this);"
-												title="담당자 이메일주소3">
+											<input type="text" class="form-control form_email1" id="userEmail1" name="user_email1" onkeyup="this.value=this.value.replace(/[\ㄱ-ㅎㅏ-ㅣ가-힣]/g, '');" maxlength="30" title="담당자 이메일아이디">
+											@ 
+											<input type="text" class="form-control form_email2" id="userEmail2" name="user_email2" maxlength="30" title="담당자 이메일 도메인 직접입력"> 
+											<select class="form-control form_email3" id="userEmail3" name="user_email3" onChange="fncChangeEmail(this);" title="담당자 이메일주소3">
 												<option title="직접입력">직접입력</option>
 												<option title="네이버">naver.com</option>
 												<option title="G메일">gmail.com</option>
@@ -656,16 +663,10 @@ function changeText(text, id){
 									<th scope="col">업무용이메일 <span class="red">*</span></th>
 									<td class="ta_left">
 										<div class="form-inline">
-											<input type="text" class="form-control form_email1"
-												id="bizEmail1" name="biz_email1"
-												onkeyup="this.value=this.value.replace(/[\ㄱ-ㅎㅏ-ㅣ가-힣]/g, '');"
-												maxlength="30" title="담당자 이메일아이디">@ <input
-												type="text" class="form-control form_email2" id="bizEmail2"
-												name="biz_email2"
-												onkeyup="this.value=this.value.replace(/[\ㄱ-ㅎㅏ-ㅣ가-힣]/g, '');"
-												maxlength="30" title="담당자 이메일 도메인 직접입력"> 
-												<select class="form-control form_email3" id="bizEmail3"name="biz_email3" onChange="fncChangeEmail(this);"
-												title="담당자 이메일주소3">
+											<input type="text" class="form-control form_email1"	id="bizEmail1" name="biz_email1" onkeyup="" maxlength="30" title="담당자 이메일아이디">
+											@ 
+											<input type="text" class="form-control form_email2" id="bizEmail2" name="biz_email2" maxlength="30" title="담당자 이메일 도메인 직접입력"> 
+												<select class="form-control form_email3" id="bizEmail3"name="biz_email3" onChange="fncChangeEmail(this);" title="담당자 이메일주소3">
 												<option title="직접입력">직접입력</option>
 												<option title="네이버">naver.com</option>
 												<option title="G메일">gmail.com</option>
