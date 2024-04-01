@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 # 프로젝트 이름: tibiz
 # 프로젝트 목적
@@ -44,3 +45,7 @@ member_type = 연구자
 
     
     
+=======
+# cotechdemand
+기업 기술 수요자와 연구자 매칭
+>>>>>>> refs/remotes/origin/main
