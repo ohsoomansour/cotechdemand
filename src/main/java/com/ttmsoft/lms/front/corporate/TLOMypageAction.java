@@ -44,7 +44,7 @@ public class TLOMypageAction extends BaseAct {
 			String id = (String) session.getAttribute("id");
 			String member_type = (String) session.getAttribute("member_type");
 			paraMap.put("member_type", member_type); 
-			// 문제점: 이동은 정상적으로 되었다 그런데 데이터가 안들어온다 
+			
 			if(id.equals("")){
 				mav.setViewName("redirect:/techtalk/login.do");
 				return mav;
@@ -52,7 +52,6 @@ public class TLOMypageAction extends BaseAct {
 			}//'로그인'의 경우
 			else if(!id.equals("")){
 				// 로그인 후 멤버 타입 확인
-				
 				if(member_type.equals("TLO") || member_type.equals("ADMIN")) {
 					System.out.println("member_type:" + member_type); // TLO 또는 ADMIN이 들어왔나 확인 
 					DataMap navi = new DataMap();
@@ -70,7 +69,7 @@ public class TLOMypageAction extends BaseAct {
 					//소속
 					paraMap.put("id", request.getSession().getAttribute("id"));
 					paraMap.put("biz_name", request.getSession().getAttribute("biz_name"));
-					paraMap.put("member_seqno", request.getSession().getAttribute("member_seqno")); //3
+					paraMap.put("member_seqno", request.getSession().getAttribute("member_seqno")); 
 					// --------------------------- 페이징 start----------------------------------------
 					//총 기업목록 수
 					int totalCount = this.tloMypageService.doCountCorporates(paraMap);
@@ -113,8 +112,6 @@ public class TLOMypageAction extends BaseAct {
 				}
 			}
 			
-			
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ModelAndView("error");
@@ -151,7 +148,7 @@ public class TLOMypageAction extends BaseAct {
 	 * @Date : 2023. 9. 22.
 	 * @Parm : DataMap
 	 * @Return : ModelAndView
-	 * @Function : 마이페이지(연구자) 상세보기 기술분류목록
+	 * @Function : 마이페이지(기업 수요) 상세보기 기술분류목록
 	 * @Explain :
 	 */
 	@RequestMapping(value = "/doGetCodeList1X.do")
@@ -197,8 +194,7 @@ public class TLOMypageAction extends BaseAct {
 		
 		try {
 				this.tloMypageService.doUpdateCorporate(paraMap);
-				//담당자 정보: this.tloMypageService.doUpdateManager(paraMap);
-
+				
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ModelAndView("error");
@@ -216,8 +212,6 @@ public class TLOMypageAction extends BaseAct {
 	@RequestMapping(value = "/techPopupViewX.do")
 	public ModelAndView deTechPopupView(@ModelAttribute("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response,  HttpSession session) {
 		ModelAndView mav = new ModelAndView("jsonView");
-		
-		
 		try {
 			DataMap data = tloMypageService.deTechPopupView(paraMap);
 			mav.addObject("data", data);

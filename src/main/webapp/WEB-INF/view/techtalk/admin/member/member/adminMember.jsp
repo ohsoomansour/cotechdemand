@@ -47,16 +47,16 @@
 			colModel : [
 				{name:'member_seqno', 		index:'member_seqno',		width:30,			align:'center'},
 				{name:'regist_date', 		index:'regist_date',		width:40,			align:'center'},
-				{name:'member_type', 		index:'member_type',			width:30,			align:'center'},						
+				{name:'member_type', 		index:'member_type',		width:30,			align:'center'},						
 				{name:'id', 				index:'id',					width:30,			align:'center'},
 				{name:'user_name', 			index:'user_name',			width:30,			align:'center'},
 				{name:'user_email', 		index:'user_email',			width:80,			align:'center'},
-				{name:'user_mobile_no', 	index:'user_mobile_no',			width:40,			align:'center'},
+				{name:'user_mobile_no', 	index:'user_mobile_no',		width:40,			align:'center'},
 				{name:'biz_name', 			index:'biz_name',			width:50,			align:'center'},
 				{name:'biz_email', 			index:'biz_email',			width:80,			align:'center'},
 				{name:'biz_tel_no', 		index:'biz_tel_no',			width:40,			align:'center'},
-				{name:'delete_flag', 		index:'delete_flag',			width:20,			align:'center'},
-				{name:'agree_flag', 			index:'agree_flag',				width:40,			align:'center', formatter: renderAgreeBtn}
+				{name:'delete_flag', 		index:'delete_flag',		width:20,			align:'center'},
+				{name:'agree_flag', 		index:'agree_flag',			width:40,			align:'center', formatter: renderAgreeBtn}
 			],
 			pager: $('#pager'), 
 			rowNum:10,
@@ -160,7 +160,7 @@
 		})
 
 	});	//jquery 종료
-
+    // c cj
 	function isNotEmpty(value) {
 		return (value != undefined && value != '')? true : false;
 	}
@@ -250,12 +250,10 @@
 	
 	
 
-    //meber_type이 ADMIN일 경우 가입 승인 가능ㅁ
+    //meber_type이 ADMIN일 경우 가입 승인 가능
 	function fncAuthView(mode, seqno ) {
-
     	var member_type = '<%=(String)session.getAttribute("member_type")%>';
-    	console.log(member_type);
-    	if(member_type === "ADMIN" ){
+    	if(member_type === "ADMIN"){
 	    	$.ajax({
 					type : 'GET',
 					url : '/admin/joinAgreementConfirmX.do?seqno=' + seqno,
@@ -272,7 +270,6 @@
 								},
 								method:"POST"		
 							};
-					    	
 					    	//seqno의해 agree_flag = 'Y'로 변경 (*현재 DB에 기입)
 					    	fetch(url, config);
 					    	refresh(seqno);
@@ -356,7 +353,7 @@
 
 	function doSearch() {
 		var keyword = $('#keyword').val();
-
+		//검사 
 		if(isNotEmpty(keyword)) {
 			fncList({
 				keyword: keyword
@@ -367,11 +364,11 @@
 			});
 		}
 	}
-  
+  	//필터 
 	function doSearchFilter() {
 		var result = {};
 		var dateFilter = getDateFilter();
-		var memberTypeFilter = $('input[name=member_type]').filter(':checked').val();
+		var memberTypeFilter = $('input[name=member_type]').filter(':checked').val(); // 속성이 'member_type'를 
 		var agreeJoinFilter = $('input[name=agree_join]').filter(':checked').val();
 
 		if(dateFilter != null) {
@@ -385,7 +382,7 @@
 				result['enddate'] = dateFilter[1].replace(/-/gi, "");
 			}else{
 				result['enddate'] = null;
-			}
+			} 
 		}else{
 			result['strdate'] = null;
 			result['enddate'] = null;

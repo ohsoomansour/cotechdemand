@@ -48,7 +48,6 @@ function doSearch(e) {
 	$('#page').val(1);
 	$('#frm').submit();
 	
-	
 }
 
 //목록관리 - 2023/09/18 
@@ -61,19 +60,20 @@ function doListAll(e) {
 //목록저장 - 2023/09/25
 function doSave(e) {
 	var corporate_list = $('input:checkbox[name="chk"]').length;
-	console.log("corporate_list:" + corporate_list); // 현재 기업의 리스트는 2
-	var co_td_no_arr = new Array(corporate_list); //***매개변수 확인 
+	console.log("corporate_list:" + corporate_list); // 현재 기업의 리스트는 
+	
+	var demand_seqno_arr = new Array(corporate_list); //***매개변수 확인 
 	var view_yn_arr = new Array(corporate_list);
 	for(var i=0; i < corporate_list; i++){                          
-		co_td_no_arr[i] = $('input:checkbox[name="chk"]').eq(i).attr('id');
+		demand_seqno_arr[i] = $('input:checkbox[name="chk"]').eq(i).attr('id');
 		view_yn_arr[i] = $('input:checkbox[name="chk"]').eq(i).val();
 	}
-	
+
 	$.ajax({
 		type : 'POST',
-		url : '/techtalk/doSaveList1X.do',   //pull 이후 /techtalk/doSaveList.do으로 X변경
+		url : '/techtalk/doSaveList1X.do',   
 		data : {
-			co_td_no_arr : co_td_no_arr, 
+			demand_seqno_arr : demand_seqno_arr, 
 			view_yn_arr : view_yn_arr
 		},
 		dataType : 'json',
@@ -107,7 +107,7 @@ function detailPopup(demand_seqno, member_seqno)  {
         data :  {
         	demand_seqno : demand_seqno,
         	member_seqno : member_seqno
-       },
+        },
         dataType : 'json',
         beforeSend: function() {
            $('.wrap-loading').css('display', 'block');
@@ -553,23 +553,19 @@ function checkOnlyOne(element) {
 							  	<c:when test="${sessionScope.member_type eq 'TLO' || sessionScope.member_type eq 'B'}">
 							  		<c:choose>
 										<c:when test="${not empty corporateList}">
-										 	 <c:forEach var="co" items="${corporateList}" > 
+										 <c:forEach var="co" items="${corporateList}" >
+										 	<!-- 표출 Y/N --> 
 											<c:if test="${paraMap.list eq 'all'}">
 												 <span class="box_checkinp">
-													 <input type="checkbox" class="inp_check" value="${co.view_yn}" id="${co.co_td_no}" name="chk" title="표출유무"
+													 <input type="checkbox" class="inp_check" value="${co.view_yn}" id="${co.demand_seqno}" name="chk" title="표출유무"
 														 <c:if test="${co.view_yn eq 'Y'}">checked</c:if>
 													  >
 												 </span>
-								    		 </c:if> 	 
+								    		 </c:if>
+								    		 <!-- 목록 --> 	 
 								    		 <div class="row col-box col3" onclick="detailPopup('${co.demand_seqno}', '${co.member_seq}')">
 												<div class="col">
-										 	  <%-- <div class="row col-box col3" onclick="detail('${co.get("co_td_no")}','${co.get("compa_name")}', '${co.get("mid_category")}', '${co.get("small_category")}',  '${co.get("code_name2")}', '${co.get("code_name3")}','${co.get("keyword1")}', '${co.get("keyword2")}', '${co.get("keyword3")}', '${co.get("keyword4")}', '${co.get("keyword5")}'
-		                   						 ,'${co.get("tech_needs")}', '${co.get("corporate_problem")}', '${co.get("hold_rnd_infra")}', '${co.get("willingness_to_invest")}', '${co.get("dept")}'
-		                   						,'${co.get("manager_position")}', '${co.get("manager_name")}', '${co.get("mobilephone_num")}', '${co.get("biz_email")}', '${co.get("corporate_seqno")}' )">
-												<div class="col"> --%>
-									
 													<span class="row_txt_num blind">1</span> <span class="txt_left row_txt_tit">${co.tech_nm}</span>
-		
 													<ul class="tag_box">
 														<li>${co.keyword}</li>
 													</ul>
@@ -581,7 +577,7 @@ function checkOnlyOne(element) {
 													<input id="business_seqno" name="business_seqno" type="hidden" value="${co.business_seqno}">
 												</div>
 											</div>	
-											  </c:forEach>
+										</c:forEach>
 											</c:when>
 											<c:otherwise>
 												귀하의 기술수요가 확인되지 않았습니다.
@@ -594,7 +590,7 @@ function checkOnlyOne(element) {
 										 	 <c:forEach var="co" items="${corporateList}" > 
 											<c:if test="${paraMap.list eq 'all'}">
 												 <span class="box_checkinp">
-													 <input type="checkbox" class="inp_check" value="${co.view_yn}" id="${co.co_td_no}" name="chk" title="표출유무"
+													 <input type="checkbox" class="inp_check" value="${co.view_yn}" id="${co.demand_seqno}" name="chk" title="표출유무"
 														 <c:if test="${co.view_yn eq 'Y'}">checked</c:if>
 													  >
 												 </span>
@@ -852,7 +848,7 @@ function checkOnlyOne(element) {
 					<!-- 수정 취소 -->
 					<div class="tbl_public">
 						<div style="text-align: center; margin-top: 40px;">
-							<!-- doUpdate(co_td_no) 가져와서  -->
+							
 
 							<button id="update" type="button" onClick="doUpdate();"
 								class="btn_step" title="수 정">수정</button>

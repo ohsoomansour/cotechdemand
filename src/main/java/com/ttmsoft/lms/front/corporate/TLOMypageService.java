@@ -7,22 +7,22 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ttmsoft.toaf.object.DataMap;
 import com.ttmsoft.lms.cmm.seq.SeqService;
 import com.ttmsoft.toaf.basemvc.BaseSvc;
-import com.ttmsoft.toaf.object.DataMap;
 
 @Service
 @Transactional(value = "postgresqlTransactionManager", propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 public class TLOMypageService extends BaseSvc<DataMap>{
 	
 
-	/* 마이페이지 기업 기술분류 목록 - 2023/09/18 */
+	/* 마이페이지 기업 기술분류 목록 - 2023/09/18 osm*/
 	public List<DataMap> doGetCodeListInfo(DataMap paraMap) {
 		List<DataMap> result = this.dao.dolistQuery("TLOPageSQL.doGetCodeListInfo", paraMap);
 		return result;
 	}
 	
-	/* 마이페이지 기업 기술수요 목록 - 2023/09/24 */
+	/* 마이페이지 기업 기술수요 목록 - 2023/09/24 osm*/
 	public List<DataMap> doGetCoTechDemandInfo(DataMap paraMap) {
 		List<DataMap> result = this.dao.dolistQuery("TLOPageSQL.doGetCoTechDemandInfo", paraMap);
 		return result;
@@ -51,7 +51,7 @@ public class TLOMypageService extends BaseSvc<DataMap>{
 		this.dao.insertQuery("TLOPageSQL.doUpdateCorporateUser", paraMap);
 	}
 	
-	/* 마이페이지 기업 카운트 - 2023/09/24*/
+	/* 마이페이지 기업 카운트 - 2023/09/24 osm*/
 	public int doCountCorporates(DataMap paraMap) {
 		int result = this.dao.countQuery("TLOPageSQL.doCountCorporates", paraMap);
 		return result;
@@ -59,18 +59,18 @@ public class TLOMypageService extends BaseSvc<DataMap>{
 
 	// 09.25 수정중.. 기업은 seqno가 동일하므로 co_td_no로 종류별 view_yn을 설정하는게 적절 
 	public void doUpdateViewYn(DataMap paraMap) {
-		String[] co_td_no_arr =(String[]) paraMap.get("co_td_no_arr");
+		String[] demand_seqno_arr =(String[]) paraMap.get("demand_seqno_arr");
 		String[] view_yn_arr = (String[]) paraMap.get("view_yn_arr");
 		
-		for(int i=0; i< co_td_no_arr.length; i++) {
-			paraMap.put("co_td_no", co_td_no_arr[i]);
+		for(int i=0; i< demand_seqno_arr.length; i++) {
+			paraMap.put("demand_seqno", demand_seqno_arr[i]);
 			paraMap.put("view_yn", view_yn_arr[i]);
 			this.dao.insertQuery("TLOPageSQL.doUpdateViewYn", paraMap);
 		}
 			
 	}
 
-	/* 마이페이지 기업 담당자 수정중.. - 2023/09/20 */
+	/* 마이페이지 기업 담당자 수정중.. - 2023/09/20 osm*/
 	public void doUpdateManager(DataMap paraMap) {
 		String tel = paraMap.get("manager_tel1").toString() ;
 				//+ "-" + paraMap.get("manager_tel2").toString() 
@@ -85,7 +85,7 @@ public class TLOMypageService extends BaseSvc<DataMap>{
 		this.dao.insertQuery("TLOPageSQL.doUpdateManager", paraMap);
 	}
 	
-	/* 마이페이지 연구자 특허 수정 - 2023/09/13 */
+	/* 마이페이지 연구자 특허 수정 - 2023/09/13 osm*/
 	public void doUpdateInvent(DataMap paraMap) {
 	String[] invent_research_seqno =(String[]) paraMap.get("invent_research_seqno");
 	String[] invent_nm =(String[]) paraMap.get("invent_nm");
@@ -102,7 +102,7 @@ public class TLOMypageService extends BaseSvc<DataMap>{
 		}
 	}
 	
-	/* 마이페이지 담당자정보 - 2023/09/11 */
+	/* 마이페이지 담당자정보 - 2023/09/11 osm*/
 	public List<DataMap> doGetManager(DataMap paraMap) {
 		List<DataMap> result = this.dao.dolistQuery("TLOPageSQL.doGetManager", paraMap);
 		return result;

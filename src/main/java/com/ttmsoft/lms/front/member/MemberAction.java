@@ -26,8 +26,6 @@ public class MemberAction extends BaseAct{
 	@Autowired
 	private MemberService memberService;
 
-	@Autowired
-	private CodeService codeService;
 
 	@Value ("${siteid}")
 	private String			siteid;
@@ -76,13 +74,6 @@ public class MemberAction extends BaseAct{
 		return mav;
 	}
 	
-	
-
-	private boolean isNull() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 
 
 	/**
@@ -95,7 +86,7 @@ public class MemberAction extends BaseAct{
 	 * @Explain  : 
 	 *
 	 */
-	@RequestMapping(value="/listMemberX.do")   
+	@RequestMapping(value="/listMemberX.do")
 	public ModelAndView doListMember (@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request) {
 		ModelAndView mav = new ModelAndView("jsonView");
 		try {		
@@ -176,7 +167,7 @@ public class MemberAction extends BaseAct{
 		mav.addObject("seqno", paraMap.get("seqno"));
 		
 		try {
-			//2. DB에서 agree_flag 'Y'값인지 확인해서 
+			//2. DB에서 agree_flag 'Y'값인지 확인
 			if(memberService.getJoinApprovedFlag(paraMap).get("agree_flag").equals("Y")) {
 				mav.addObject("joinApprovedConfirm", memberService.getJoinApprovedFlag(paraMap));  
 				return mav;
@@ -194,64 +185,4 @@ public class MemberAction extends BaseAct{
 	}
 	
 	
-	
-	/**
-	 *
-	 * @Author   : jwchoo
-	 * @Date	 : 2020. 3. 27
-	 * @Parm	 : DataMap
-	 * @Return   : ModelAndView
-	 * @Function : 멤버권한정보가져오기
-	 * @Explain  : 
-	 *
-	 */
-	@RequestMapping(value="/listMemberAuthX.do")
-	public ModelAndView doListMemberAuth(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response) {
-		ModelAndView mav = new ModelAndView("jsonView");
-		paraMap.put("siteid", siteid);
-		
-		try {
-			mav.addObject("memberAuthList", memberService.doListMemberAuth(paraMap));		//수정 버튼 클릭 한 사용자 정보 가져오기
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new ModelAndView("error");
-		}
-		return mav;
-	}
-	
-	/**
-	 *
-	 * @Author   : jwchoo
-	 * @Date	 : 2020. 4. 16
-	 * @Parm	 : DataMap
-	 * @Return   : ModelAndView
-	 * @Function : 멤버권한수정
-	 * @Explain  : 
-	 *
-	 */
-	@RequestMapping(value="/updateMemberAuthX.do")
-	public ModelAndView doUpdateMemberAuth(@ModelAttribute ("paraMap") DataMap paraMap, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
-		ModelAndView mav = new ModelAndView("jsonView");
-		paraMap.put("seq_tblnm", "TU_USER_ROLE");
-		paraMap.put("reguid", request.getSession().getAttribute("userid"));
-		paraMap.put("moduid", request.getSession().getAttribute("userid"));
-		paraMap.put("siteid", siteid);
-		
-		try {
-			//사용자 선택 권한 리스트			
-			String[] strAuths = request.getParameterValues("authCode");	
-			List<String> list = new ArrayList<String>();
-			
-			for(int i = 0; i < strAuths.length; i++) {
-				list.add(strAuths[i]);
-			}
-			
-			paraMap.put("list", list);
-			memberService.doUpdateMemberAuth(paraMap);			
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new ModelAndView("error");
-		}
-		return mav;
-	}
 }

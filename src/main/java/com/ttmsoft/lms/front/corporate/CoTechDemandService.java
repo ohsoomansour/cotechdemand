@@ -32,7 +32,7 @@ public class CoTechDemandService extends BaseSvc<DataMap>{
 		return result;
 	}
 	
-	/* 마이페이지 기업입장, 기술수요 목록 - 2023/09/26  수정중..*/
+	/* 마이페이지 기업입장, 기술수요 목록 - 2023/09/26 */
 	public List<DataMap> doGetCoTechDemandInfo(DataMap paraMap) {
 		List<DataMap> result = this.dao.dolistQuery("CoTechDemandSQL.doGetCoTechDemandInfo", paraMap);
 		return result;

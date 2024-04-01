@@ -181,7 +181,7 @@ public class CoTechDemandAction extends BaseAct {
 	 * @Date	 : 2023.9.26
 	 * @Parm	 : DataMap
 	 * @Return   : ModelAndView
-	 * @Function : 기업 기술수요 목록으롱 이동 
+	 * @Function : 기업 기술수요 목록으로 이동 
 	 * @Explain  : 기업입장에서 등록이 되어있는 목록을 보여준다. 
 	 */
 	@RequestMapping(value = "/moveCoTechDemandList.do")
