@@ -32,18 +32,3 @@ member_type = TLO
 member_type = 기업
 member_type = 연구자
 
-
-
-
-
-
-
-
-
-
-    
-    
-=======
-# cotechdemand
-기업 기술 수요자와 연구자 매칭
->>>>>>> refs/remotes/origin/main
