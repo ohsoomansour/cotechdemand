@@ -52,5 +52,3 @@ session.setAttribute("pw_next_change_date", userMap.get("pw_next_change_date").t
 session.setAttribute("agree_flag", userMap.get("agree_flag").toString());
 session.setAttribute("delete_flag", userMap.get("delete_flag").toString());
 session.setAttribute("biz_name", userMap.get("biz_name").toString());
-
-
