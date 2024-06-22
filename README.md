@@ -1,49 +1,57 @@
-# 프로젝트 이름: tibiz
-# 프로젝트 목적
-- 기술을 가지고 있는 연구자와 기술이 필요한 기업을 매칭하는 프로젝트입니다.  
+# 프로젝트 소개
+- 이름: tbiz
+- 설명: 필요한 기술을 보유한 연구자 수요 기업과 기업이 필요한 기술을 가진 연구자를 매칭하는 시스템   
+
+### ⏲️프로젝트 개발 기간 
++ 2023.09.01 ~ 2023.11.01
+
+### ⚙️개발 환경
++ **BackEnd language** : java (jdk1.8)
++ **FrontEnd language** : Javascript 
++ **library** : jQuery
++ **Framework** : SpringBoot sts4 
++ **Tool** : JSP
++ **Database** : Postgresql
+
+# 📌주요 기능 담당 
+## 관리자가 일반회원 관리
+### 경로 
++ java/com/ttmsoft/lms/front/member/MemberAction.java 
++ java/com/ttmsoft/lms/front/member/MemberService.java
++ /techtalk/admin/member/member/adminMember.jsp
++ /techtalk/front/member/member/adminMemberForm.jsp
++ src/main/resources/sqlmap/postgres/voucher/member/Member_v_SQL.xml
 
 
-### 프로젝트 개발 기간
- 2023년 9월 1일 ~ 23년 10월 31일
+## 기업 기술 수요 등록
+### 경로
++ java/com/ttmsoft/lms/front/corporate/CoTechDemandAction.java
++ java/com/ttmsoft/lms/front/corporate/CoTechDemandService.java
++ /techtalk/front/corporateMypage/registCotechDemandForm.jsp
++ /techtalk/front/corporateMypage/coTechDemandList.jsp
++ src/main/resources/sqlmap/postgres/techtalk/site/CoTechDemandSQL.xml
 
-### 개발 환경 
+## 기업 기술 수요 관리
+### 경로
++ java/com/ttmsoft/lms/front/corporate/TLOMyPageAction.java
++ java/com/ttmsoft/lms/front/corporate/TLOMyPageService.java
++ + /techtalk/front/corporateMypage/TLOMypage.jsp
 
-- jdk 1.8
-- **Framework:**: springboot 4.0
-- JSP 
-- jQuery 
-- **Database:** Postgresql 
++ src/main/resources/sqlmap/postgres/techtalk/system/TLOPageSQL.xml
 
-### 디자인 패턴 
-- MVC 
-
-### 담당 업무
-
-#### 1. 회원관리
- REST API를 통해 관리자가 '회원을 검색'하고 '가입 승인'을 하는 기능을 만들었습니다.   
-   
-#### 2. 기업 기술 수요 관리(CRUD)  
- 기업이 필요한 기술 키워드를 대/중/소로 구분하여 '자동 검색' 기능을 만들고 기업 입장에서 '기술 수요를 등록 및 수정'이 가능한 기능을 만들었습니다. 
- 그리고 기술을 원하는 기업들의 리스트 페이지를 만들어서 가시적으로 수요자를 볼 수 있도록 만들었습니다.
-
-#####계정정보 참고 
-member_type = 관리자(Admin)
-member_type = TLO
-member_type = 기업
-member_type = 연구자
-
-
-
-
+### 유저정보 세션관련 처리
+현재 로그인 시 세션이 담기는 정보
+session.setAttribute("member_seqno", userMap.get("member_seqno").toString());
+session.setAttribute("member_type", userMap.get("member_type").toString());
+session.setAttribute("id", userMap.get("id").toString());
+session.setAttribute("user_name", userMap.get("user_name").toString());
+session.setAttribute("user_email", userMap.get("user_email").toString());
+session.setAttribute("user_depart", userMap.get("user_depart").toString());
+session.setAttribute("user_rank", userMap.get("user_rank").toString());
+session.setAttribute("pw_temp_flag", userMap.get("pw_temp_flag").toString());
+session.setAttribute("pw_next_change_date", userMap.get("pw_next_change_date").toString());
+session.setAttribute("agree_flag", userMap.get("agree_flag").toString());
+session.setAttribute("delete_flag", userMap.get("delete_flag").toString());
+session.setAttribute("biz_name", userMap.get("biz_name").toString());
 
 
-
-
-
-
-    
-    
-=======
-# cotechdemand
-기업 기술 수요자와 연구자 매칭
->>>>>>> refs/remotes/origin/main
