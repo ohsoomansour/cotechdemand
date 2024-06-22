@@ -34,7 +34,7 @@
 ### 경로
 + java/com/ttmsoft/lms/front/corporate/TLOMyPageAction.java
 + java/com/ttmsoft/lms/front/corporate/TLOMyPageService.java
-+ + /techtalk/front/corporateMypage/TLOMypage.jsp
++ /techtalk/front/corporateMypage/TLOMypage.jsp
 
 + src/main/resources/sqlmap/postgres/techtalk/system/TLOPageSQL.xml
 

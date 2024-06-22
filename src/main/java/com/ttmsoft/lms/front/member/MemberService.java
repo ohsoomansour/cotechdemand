@@ -43,7 +43,10 @@ public class MemberService extends BaseSvc<DataMap>{
 		return this.dao.dolistQuery("Member_v_SQL.GetMembersInfoData", paraMap );
 	}
 	//--------------------------------------------------------------------------------  
-	
+	/* 권한종류리스트 - 2020/03/26 추정완*/
+	public List<DataMap> doListAuthKinds(DataMap paraMap) {
+		return this.dao.dolistQuery("MemberSQL.doListAuthKinds", paraMap);
+	}
 	
 		
 }
